@@ -4,7 +4,7 @@
 
 | | Count |
 |--|-------|
-| Architecture docs (`nextjs-arch/`) | 16 |
+| Architecture docs (`reference/`) | 16 |
 | Agents (`.claude/agents/`) | 5 |
 | Skills (`.claude/skills/`) | 13 |
 | `hooks/` | 3 automation hooks (Impl import guard, lint on edit, use server warn) |
@@ -20,13 +20,13 @@
 
 ```bash
 mkdir -p .claude
-cp -r path/to/starter-kit/agents   .claude/agents/
-cp -r path/to/starter-kit/skills   .claude/skills/
-cp -r path/to/starter-kit/hooks    .claude/hooks/ && chmod +x .claude/hooks/*.sh
-cp -r path/to/starter-kit/rules    .claude/rules/
-cp path/to/starter-kit/settings-template.json .claude/settings.local.json
+cp -r path/to/web-agentic/agents   .claude/agents/
+cp -r path/to/web-agentic/skills   .claude/skills/
+cp -r path/to/web-agentic/hooks    .claude/hooks/ && chmod +x .claude/hooks/*.sh
+cp -r path/to/web-agentic/rules    .claude/rules/
+cp path/to/web-agentic/settings-template.json .claude/settings.local.json
 # Edit .claude/settings.local.json — replace PROJECT_ROOT with $(pwd)/.claude
-cp path/to/starter-kit/di-CLAUDE.md src/shared/di/CLAUDE.md
+cp path/to/web-agentic/di-CLAUDE.md src/shared/di/CLAUDE.md
 ```
 
 **Step 2 — Tell Claude to set up the project**
@@ -102,8 +102,8 @@ These are intentionally left open — decide them per project:
 | Styling / UI library | Install + configure in `app/layout.tsx` |
 | Database / ORM | `src/lib/db.ts` + fill in `*DbDataSourceImpl` stubs |
 | Authentication | `src/lib/auth.ts` + update `src/lib/safe-action.ts` |
-| Environment variables | `.env.local` — template in `nextjs-arch/project-setup.md` |
+| Environment variables | `.env.local` — template in `reference/project-setup.md` |
 | Error monitoring | Wrap `app/layout.tsx` with provider |
 | Deployment target | `next.config.ts` output setting |
 
-Full details: `nextjs-arch/project-setup.md`
+Full details: `reference/project-setup.md`

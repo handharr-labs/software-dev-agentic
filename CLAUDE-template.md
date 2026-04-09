@@ -12,7 +12,7 @@ npm run dev | build | lint | test
 
 ## Structure
 Feature slices: `src/features/{auth,[feature-a],[feature-b],...}` · `src/shared/{domain,presentation,core,di}` · `src/lib/` · `src/app/`
-Arch docs: `.claude/nextjs-arch/` · DI/arch rules: `.claude/docs/`
+Arch docs: `.claude/reference/` · DI/arch rules: `.claude/docs/`
 
 ## Workflow
 Before any work: `/create-issue [title]` → wait for instruction → invoke agent

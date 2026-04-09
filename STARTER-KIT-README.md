@@ -66,22 +66,22 @@ You can also mix both in the same project — one feature calls an external API,
 
 | File | Contents |
 |------|----------|
-| `nextjs-arch/overview.md` | Core principles, layer diagram, dependency rule |
-| `nextjs-arch/domain.md` | Entities, repository interfaces, use cases, services, domain errors |
-| `nextjs-arch/data.md` | DTOs, mappers, data sources, repository impl, Axios networking |
-| `nextjs-arch/presentation.md` | Component patterns, ViewModel hooks, state conventions |
-| `nextjs-arch/navigation.md` | App Router structure, route constants, middleware |
-| `nextjs-arch/di.md` | DI containers, server/client split, DIContext |
-| `nextjs-arch/error-handling.md` | Error flow, error types, error boundaries |
-| `nextjs-arch/utilities.md` | StorageService, DateService, Logger, Validator, etc. |
-| `nextjs-arch/testing.md` | Test pyramid, unit/integration/component test patterns |
-| `nextjs-arch/ssr.md` | Server vs client rendering decision table |
-| `nextjs-arch/modular.md` | Turborepo package structure for large-scale apps |
-| `nextjs-arch/project.md` | Project layout, naming conventions, design decisions |
-| `nextjs-arch/server-actions.md` | **Full-stack** — next-safe-action, auth guard, cache revalidation |
-| `nextjs-arch/database.md` | **Full-stack** — DB DataSource, ORM-agnostic repository, DB mappers |
-| `nextjs-arch/api-routes.md` | **Full-stack** — Route Handlers (webhooks, file upload, external API) |
-| `nextjs-arch/project-setup.md` | Detailed setup guide for each project-specific decision |
+| `reference/overview.md` | Core principles, layer diagram, dependency rule |
+| `reference/domain.md` | Entities, repository interfaces, use cases, services, domain errors |
+| `reference/data.md` | DTOs, mappers, data sources, repository impl, Axios networking |
+| `reference/presentation.md` | Component patterns, ViewModel hooks, state conventions |
+| `reference/navigation.md` | App Router structure, route constants, middleware |
+| `reference/di.md` | DI containers, server/client split, DIContext |
+| `reference/error-handling.md` | Error flow, error types, error boundaries |
+| `reference/utilities.md` | StorageService, DateService, Logger, Validator, etc. |
+| `reference/testing.md` | Test pyramid, unit/integration/component test patterns |
+| `reference/ssr.md` | Server vs client rendering decision table |
+| `reference/modular.md` | Turborepo package structure for large-scale apps |
+| `reference/project.md` | Project layout, naming conventions, design decisions |
+| `reference/server-actions.md` | **Full-stack** — next-safe-action, auth guard, cache revalidation |
+| `reference/database.md` | **Full-stack** — DB DataSource, ORM-agnostic repository, DB mappers |
+| `reference/api-routes.md` | **Full-stack** — Route Handlers (webhooks, file upload, external API) |
+| `reference/project-setup.md` | Detailed setup guide for each project-specific decision |
 
 ## Agents & Skills
 
@@ -128,7 +128,7 @@ These are **intentionally left undefined** in this starter kit. They must be dec
 | **Deployment target** | Affects `next.config.ts` output and env var strategy | Vercel (zero-config), Docker (`output: standalone`), or cloud provider |
 | **Environment variables** | Values differ per project | See `.env.local` template in `project-setup.md` |
 
-> Full details, options, and setup steps for each decision: `nextjs-arch/project-setup.md`
+> Full details, options, and setup steps for each decision: `reference/project-setup.md`
 
 ---
 
@@ -183,15 +183,15 @@ If the user says "I don't know" or "you decide" for any item, use the default re
 Before generating anything, read:
 
 ```
-Read: nextjs-arch/overview.md
-Read: nextjs-arch/di.md
-Read: nextjs-arch/project.md
+Read: reference/overview.md
+Read: reference/di.md
+Read: reference/project.md
 ```
 
 If full-stack mode:
 ```
-Read: nextjs-arch/server-actions.md
-Read: nextjs-arch/database.md
+Read: reference/server-actions.md
+Read: reference/database.md
 ```
 
 ---
@@ -227,27 +227,27 @@ Generate or instruct the user to run the following in order:
    # or: npm install -D jest @types/jest ts-jest @testing-library/react @testing-library/jest-dom
    ```
 
-3. **Create the folder structure** matching `nextjs-arch/project.md` Section 12.1
+3. **Create the folder structure** matching `reference/project.md` Section 12.1
 
-4. **Create `.env.local`** with the template from `nextjs-arch/project-setup.md` Section 4
+4. **Create `.env.local`** with the template from `reference/project-setup.md` Section 4
 
 5. **Add the starter kit as a git submodule and create symlinks:**
    ```bash
-   git submodule add https://github.com/handharr-labs/nextjs-arch .claude/starter-kit
+   git submodule add https://github.com/handharr-labs/web-agentic .claude/web-agentic
    cd .claude
-   ln -s starter-kit/agents     agents
-   ln -s starter-kit/docs       docs
-   ln -s starter-kit/hooks      hooks
-   ln -s starter-kit/nextjs-arch nextjs-arch
-   ln -s starter-kit/skills     skills
+   ln -s web-agentic/agents     agents
+   ln -s web-agentic/docs       docs
+   ln -s web-agentic/hooks      hooks
+   ln -s web-agentic/reference reference
+   ln -s web-agentic/skills     skills
    cd ..
-   chmod +x .claude/starter-kit/hooks/*.sh
-   cp .claude/starter-kit/settings-template.json .claude/settings.local.json
+   chmod +x .claude/web-agentic/hooks/*.sh
+   cp .claude/web-agentic/settings-template.json .claude/settings.local.json
    # Edit .claude/settings.local.json — replace PROJECT_ROOT with $(pwd)/.claude
    ```
 
    > **Why submodule + symlinks instead of copying?**
-   > Updates to agents, skills, and arch docs flow from a single place. Run `cd .claude/starter-kit && git pull` to get the latest — no manual re-copying across projects.
+   > Updates to agents, skills, and arch docs flow from a single place. Run `cd .claude/web-agentic && git pull` to get the latest — no manual re-copying across projects.
 
    > **Tip:** You can automate this entire step with the `/setup-nextjs-project` skill once the starter kit is wired.
 
@@ -260,7 +260,7 @@ Generate or instruct the user to run the following in order:
 
 5a. **Copy and customize `CLAUDE.md`** (or let `/setup-nextjs-project` do it):
    ```bash
-   cp docs/starter-kit/nextjs/CLAUDE-template.md CLAUDE.md
+   cp docs/web-agentic/nextjs/CLAUDE-template.md CLAUDE.md
    ```
    Then open `CLAUDE.md` and replace every `[placeholder]`:
    - `[AppName]` — your project name (e.g. `Talenta`, `Expenzo`)
@@ -271,7 +271,7 @@ Generate or instruct the user to run the following in order:
 
 6. **Generate the seed files** — see the full manifest below.
 
-7. **Create `src/lib/safe-action.ts`** (full-stack only) — use template from `nextjs-arch/server-actions.md` Section 16.2
+7. **Create `src/lib/safe-action.ts`** (full-stack only) — use template from `reference/server-actions.md` Section 16.2
 
 ---
 
@@ -285,9 +285,9 @@ These are the files that must exist before any agent or skill can run correctly.
 
 | File | Mode | Template |
 |------|------|----------|
-| `container.server.ts` | `[both]` | `nextjs-arch/di.md` Section 7.1 |
-| `container.client.ts` | `[both]` | `nextjs-arch/di.md` Section 7.2 |
-| `DIContext.tsx` | `[both]` | `nextjs-arch/di.md` Section 7.2 |
+| `container.server.ts` | `[both]` | `reference/di.md` Section 7.1 |
+| `container.client.ts` | `[both]` | `reference/di.md` Section 7.2 |
+| `DIContext.tsx` | `[both]` | `reference/di.md` Section 7.2 |
 
 > Start with empty containers (no features wired yet). The pattern must be correct — `server-only` / `client-only` guards, factory vs singleton distinction. Every future `/wire-di` invocation adds to these files.
 
@@ -295,8 +295,8 @@ These are the files that must exist before any agent or skill can run correctly.
 
 | File | Mode | Template |
 |------|------|----------|
-| `DomainError.ts` | `[both]` | `nextjs-arch/domain.md` Section 3.5 |
-| `errorMessages.ts` | `[both]` | `nextjs-arch/error-handling.md` Section 8.3 |
+| `DomainError.ts` | `[both]` | `reference/domain.md` Section 3.5 |
+| `errorMessages.ts` | `[both]` | `reference/error-handling.md` Section 8.3 |
 
 > Every layer depends on `DomainError`. Generate this before anything else.
 
@@ -304,11 +304,11 @@ These are the files that must exist before any agent or skill can run correctly.
 
 | File | Mode | Template |
 |------|------|----------|
-| `HTTPClient.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.5 |
-| `NetworkError.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.5 |
-| `AxiosHTTPClient.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.5 |
-| `TokenProvider.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.5 |
-| `TokenRefreshService.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.5 |
+| `HTTPClient.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.5 |
+| `NetworkError.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.5 |
+| `AxiosHTTPClient.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.5 |
+| `TokenProvider.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.5 |
+| `TokenRefreshService.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.5 |
 
 > Skip this group if the project is full-stack only with no external API calls.
 
@@ -316,7 +316,7 @@ These are the files that must exist before any agent or skill can run correctly.
 
 | File | Mode | Template |
 |------|------|----------|
-| `ErrorMapper.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.2 |
+| `ErrorMapper.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.2 |
 
 > Required by every `RepositoryImpl`. Without it, `/scaffold-repository` will generate broken imports.
 
@@ -324,20 +324,20 @@ These are the files that must exist before any agent or skill can run correctly.
 
 | File | Mode | Template |
 |------|------|----------|
-| `APIResponse.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.1 |
-| `PaginatedDTO.ts` | `[fe]` `[both]` | `nextjs-arch/data.md` Section 4.1 |
+| `APIResponse.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.1 |
+| `PaginatedDTO.ts` | `[fe]` `[both]` | `reference/data.md` Section 4.1 |
 
 #### Shared Domain Entities — `src/domain/entities/`
 
 | File | Mode | Template |
 |------|------|----------|
-| `PaginatedResult.ts` | `[both]` | `nextjs-arch/domain.md` Section 3.1 |
+| `PaginatedResult.ts` | `[both]` | `reference/domain.md` Section 3.1 |
 
 #### Routing — `src/presentation/navigation/`
 
 | File | Mode | Template |
 |------|------|----------|
-| `routes.ts` | `[both]` | `nextjs-arch/navigation.md` Section 6.2 |
+| `routes.ts` | `[both]` | `reference/navigation.md` Section 6.2 |
 
 > Start with an empty `ROUTES` object. Features add to it as they are scaffolded.
 
@@ -345,22 +345,22 @@ These are the files that must exist before any agent or skill can run correctly.
 
 | File | Mode | Template |
 |------|------|----------|
-| `layout.tsx` | `[both]` | `nextjs-arch/di.md` Section 7.3 |
-| `error.tsx` | `[both]` | `nextjs-arch/error-handling.md` Section 8.2 |
+| `layout.tsx` | `[both]` | `reference/di.md` Section 7.3 |
+| `error.tsx` | `[both]` | `reference/error-handling.md` Section 8.2 |
 
 #### Full-Stack Only — `src/lib/`
 
 | File | Mode | Template |
 |------|------|----------|
-| `safe-action.ts` | `[fs]` | `nextjs-arch/server-actions.md` Section 16.2 |
-| `db.ts` | `[fs]` | `nextjs-arch/database.md` Section 17.7 |
+| `safe-action.ts` | `[fs]` | `reference/server-actions.md` Section 16.2 |
+| `db.ts` | `[fs]` | `reference/database.md` Section 17.7 |
 | `auth.ts` | `[fs]` | Depends on chosen auth provider — stub with `// TODO` if not yet decided |
 
 #### Full-Stack Only — DB Error Mapper — `src/data/mappers/db/`
 
 | File | Mode | Template |
 |------|------|----------|
-| `DbErrorMapper.ts` | `[fs]` | `nextjs-arch/database.md` Section 17.6 |
+| `DbErrorMapper.ts` | `[fs]` | `reference/database.md` Section 17.6 |
 
 #### Core Utilities (Seed) — `src/core/`
 
@@ -368,8 +368,8 @@ These two are needed from day one. Everything else in `utilities.md` is on-deman
 
 | File | Mode | Template |
 |------|------|----------|
-| `core/logger/Logger.ts` | `[both]` | `nextjs-arch/utilities.md` Section 9.4 |
-| `core/utils/nullSafety.ts` | `[both]` | `nextjs-arch/utilities.md` Section 9.3 |
+| `core/logger/Logger.ts` | `[both]` | `reference/utilities.md` Section 9.4 |
+| `core/utils/nullSafety.ts` | `[both]` | `reference/utilities.md` Section 9.3 |
 
 > `Logger` is already used by `AxiosHTTPClient` for dev-mode request/response logging — it must exist before the networking seed files are generated. `nullSafety` (`orZero`, `orEmpty`, `orEmptyArray`, etc.) is used in mappers and anywhere nullable values are handled.
 
@@ -379,8 +379,8 @@ Required by the DI containers. `container.server.ts` imports `ServerTokenStorage
 
 | File | Mode | Template |
 |------|------|----------|
-| `core/storage/ServerTokenStorage.ts` | `[both]` | `nextjs-arch/di.md` Section 7.1 |
-| `core/storage/LocalStorageTokenProvider.ts` | `[both]` | `nextjs-arch/di.md` Section 7.2 |
+| `core/storage/ServerTokenStorage.ts` | `[both]` | `reference/di.md` Section 7.1 |
+| `core/storage/LocalStorageTokenProvider.ts` | `[both]` | `reference/di.md` Section 7.2 |
 
 > Without these, the DI containers will have broken imports on creation. Generate them alongside the networking seed files.
 
@@ -390,11 +390,11 @@ These live in `utilities.md` but are **not** seed files. Generate them the first
 
 | File | Generate when... | Template |
 |------|-----------------|----------|
-| `core/storage/StorageService.ts` | First feature stores user preferences or app state | `nextjs-arch/utilities.md` Section 9.1 |
-| `core/date/DateService.ts` | First feature formats or compares dates | `nextjs-arch/utilities.md` Section 9.2 |
-| `core/network/NetworkMonitor.ts` | App needs to show offline/online state | `nextjs-arch/utilities.md` Section 9.5 |
-| `core/validation/Validator.ts` | Client-side form validation needed (frontend-only; full-stack uses Zod instead) | `nextjs-arch/utilities.md` Section 9.6 |
-| `core/image/ImageCache.ts` | Programmatic image prefetching needed | `nextjs-arch/utilities.md` Section 9.7 |
+| `core/storage/StorageService.ts` | First feature stores user preferences or app state | `reference/utilities.md` Section 9.1 |
+| `core/date/DateService.ts` | First feature formats or compares dates | `reference/utilities.md` Section 9.2 |
+| `core/network/NetworkMonitor.ts` | App needs to show offline/online state | `reference/utilities.md` Section 9.5 |
+| `core/validation/Validator.ts` | Client-side form validation needed (frontend-only; full-stack uses Zod instead) | `reference/utilities.md` Section 9.6 |
+| `core/image/ImageCache.ts` | Programmatic image prefetching needed | `reference/utilities.md` Section 9.7 |
 
 > Do not generate these upfront. Generating unused infrastructure adds dead code and creates false `// TODO` stubs.
 
@@ -402,7 +402,7 @@ These live in `utilities.md` but are **not** seed files. Generate them the first
 
 | File | Mode | Template |
 |------|------|----------|
-| `queryClientWrapper.tsx` | `[both]` | `nextjs-arch/testing.md` Section 10.3 |
+| `queryClientWrapper.tsx` | `[both]` | `reference/testing.md` Section 10.3 |
 
 > Required by every ViewModel hook test. Generate once, reuse everywhere.
 
@@ -422,7 +422,7 @@ These live in `utilities.md` but are **not** seed files. Generate them the first
 After setup, tell the user:
 
 - What was created and what still needs their input (e.g., `.env.local` values, ORM schema)
-- Which project-specific decisions were deferred (with a link to `nextjs-arch/project-setup.md`)
+- Which project-specific decisions were deferred (with a link to `reference/project-setup.md`)
 - The first command to scaffold a feature: `/new-feature` or `@backend-scaffolder`
 - Any `// TODO` stubs that need to be filled in before the app can run (e.g., `DbDataSourceImpl`, `lib/db.ts`, auth config)
 
@@ -430,12 +430,12 @@ After setup, tell the user:
 
 ## Updating the Starter Kit
 
-After the submodule is wired (Step 5 above), pull updates from the starter-kit repo at any time:
+After the submodule is wired (Step 5 above), pull updates from the web-agentic repo at any time:
 
 ```bash
-cd .claude/starter-kit && git pull && cd ../..
-git add .claude/starter-kit
-git commit -m "chore: bump nextjs-arch starter kit"
+cd .claude/web-agentic && git pull && cd ../..
+git add .claude/web-agentic
+git commit -m "chore: bump reference starter kit"
 ```
 
-This updates all 5 linked directories (agents, docs, hooks, nextjs-arch, skills) in one operation across every project that uses the submodule.
+This updates all 5 linked directories (agents, docs, hooks, reference, skills) in one operation across every project that uses the submodule.

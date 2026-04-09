@@ -1,6 +1,6 @@
 # /setup-nextjs-project
 
-Wire a freshly cloned Next.js project to consume the `nextjs-arch` starter kit as a git submodule, then guide the user through filling in project-specific details.
+Wire a freshly cloned Next.js project to consume the `reference` starter kit as a git submodule, then guide the user through filling in project-specific details.
 
 ---
 
@@ -8,7 +8,7 @@ Wire a freshly cloned Next.js project to consume the `nextjs-arch` starter kit a
 
 Invoke this skill when the user says:
 - "Set up this project with the starter kit"
-- "Wire the nextjs-arch submodule"
+- "Wire the reference submodule"
 - "Initialize `.claude/` for this project"
 - `/setup-nextjs-project`
 
@@ -19,38 +19,38 @@ Invoke this skill when the user says:
 ### 1 — Confirm the repo URL
 
 Ask the user (or use the default):
-> "Which starter-kit repo should I use? Default: `https://github.com/handharr-labs/nextjs-arch`"
+> "Which web-agentic repo should I use? Default: `https://github.com/handharr-labs/web-agentic`"
 
-If the user says "default" or provides no URL, use `https://github.com/handharr-labs/nextjs-arch`.
+If the user says "default" or provides no URL, use `https://github.com/handharr-labs/web-agentic`.
 
 ### 2 — Add submodule
 
 ```bash
-git submodule add <STARTER_KIT_URL> .claude/starter-kit
+git submodule add <STARTER_KIT_URL> .claude/web-agentic
 ```
 
 ### 3 — Create symlinks
 
 ```bash
 cd .claude
-ln -s starter-kit/agents     agents
-ln -s starter-kit/docs       docs
-ln -s starter-kit/hooks      hooks
-ln -s starter-kit/nextjs-arch nextjs-arch
-ln -s starter-kit/skills     skills
+ln -s web-agentic/agents     agents
+ln -s web-agentic/docs       docs
+ln -s web-agentic/hooks      hooks
+ln -s web-agentic/reference reference
+ln -s web-agentic/skills     skills
 cd ..
 ```
 
 ### 4 — Make hooks executable
 
 ```bash
-chmod +x .claude/starter-kit/hooks/*.sh
+chmod +x .claude/web-agentic/hooks/*.sh
 ```
 
 ### 5 — Copy and prompt for CLAUDE.md
 
 ```bash
-cp .claude/starter-kit/CLAUDE-template.md CLAUDE.md
+cp .claude/web-agentic/CLAUDE-template.md CLAUDE.md
 ```
 
 Tell the user:
@@ -67,7 +67,7 @@ Create `.claude/agents.local/arch-reviewer.local.md`:
 ```markdown
 # arch-reviewer — project-specific rules
 
-> Additive rules for this project. The baseline is in `.claude/starter-kit/agents/arch-reviewer.md`.
+> Additive rules for this project. The baseline is in `.claude/web-agentic/agents/arch-reviewer.md`.
 
 <!-- Add project-specific audit rules below -->
 ```
@@ -76,7 +76,7 @@ Also add to `CLAUDE.md` (before the closing line):
 
 ```markdown
 ## Project-specific agent rules
-`.claude/agents.local/` — additive rules on top of the shared starter-kit agents.
+`.claude/agents.local/` — additive rules on top of the shared web-agentic agents.
 ```
 
 ### 7 — Stage and summarize
@@ -86,8 +86,8 @@ git add .gitmodules .claude/ CLAUDE.md
 ```
 
 Tell the user what was done:
-- `.claude/starter-kit/` — submodule pointing to the starter kit repo
-- `.claude/{agents,docs,hooks,nextjs-arch,skills}` — symlinks into the submodule
+- `.claude/web-agentic/` — submodule pointing to the starter kit repo
+- `.claude/{agents,docs,hooks,reference,skills}` — symlinks into the submodule
 - `CLAUDE.md` — copied from template (needs placeholder fill-in)
 - `.claude/agents.local/arch-reviewer.local.md` — stub for project-specific arch rules
 
@@ -96,7 +96,7 @@ Tell the user what was done:
 ## Updating the starter kit later
 
 ```bash
-cd .claude/starter-kit && git pull && cd ../..
-git add .claude/starter-kit
-git commit -m "chore: bump nextjs-arch starter kit"
+cd .claude/web-agentic && git pull && cd ../..
+git add .claude/web-agentic
+git commit -m "chore: bump reference starter kit"
 ```
