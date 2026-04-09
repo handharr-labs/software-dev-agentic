@@ -231,23 +231,16 @@ Generate or instruct the user to run the following in order:
 
 4. **Create `.env.local`** with the template from `reference/project-setup.md` Section 4
 
-5. **Add the starter kit as a git submodule and create symlinks:**
+5. **Add the starter kit as a git submodule and run the setup script:**
    ```bash
    git submodule add https://github.com/handharr-labs/web-agentic .claude/web-agentic
-   cd .claude
-   ln -s web-agentic/agents     agents
-   ln -s web-agentic/docs       docs
-   ln -s web-agentic/hooks      hooks
-   ln -s web-agentic/reference reference
-   ln -s web-agentic/skills     skills
-   cd ..
-   chmod +x .claude/web-agentic/hooks/*.sh
-   cp .claude/web-agentic/settings-template.json .claude/settings.local.json
-   # Edit .claude/settings.local.json — replace PROJECT_ROOT with $(pwd)/.claude
+   .claude/web-agentic/scripts/setup-symlinks.sh
    ```
 
+   This creates `.claude/agents/` and `.claude/skills/` as symlink-only directories pointing into the submodule. Local overrides in `agents.local/` and `skills.local/` are respected — the script never overwrites existing files (`link_if_absent` guard).
+
    > **Why submodule + symlinks instead of copying?**
-   > Updates to agents, skills, and arch docs flow from a single place. Run `cd .claude/web-agentic && git pull` to get the latest — no manual re-copying across projects.
+   > Updates to agents, skills, and arch docs flow from a single place. Run `sync.sh` to get the latest — no manual re-copying across projects.
 
    > **Tip:** You can automate this entire step with the `/setup-nextjs-project` skill once the starter kit is wired.
 
@@ -430,12 +423,10 @@ After setup, tell the user:
 
 ## Updating the Starter Kit
 
-After the submodule is wired (Step 5 above), pull updates from the web-agentic repo at any time:
+After the submodule is wired, pull updates at any time with the sync script:
 
 ```bash
-cd .claude/web-agentic && git pull && cd ../..
-git add .claude/web-agentic
-git commit -m "chore: bump reference starter kit"
+.claude/web-agentic/scripts/sync.sh
 ```
 
-This updates all 5 linked directories (agents, docs, hooks, reference, skills) in one operation across every project that uses the submodule.
+This pulls the latest from the web-agentic repo, re-runs symlink setup (idempotent — local overrides are never touched), and reminds you to commit the updated submodule pointer.

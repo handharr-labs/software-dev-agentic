@@ -113,12 +113,10 @@ To override a shared agent entirely:
 ## Updating the Starter Kit
 
 ```bash
-cd .claude/web-agentic && git pull && cd ../..
-git add .claude/web-agentic
-git commit -m "chore: bump web-agentic starter kit"
+.claude/web-agentic/scripts/sync.sh
 ```
 
-This updates all 5 linked directories in one operation.
+Pulls latest, re-runs symlinks (local overrides are never touched), reminds you to commit the updated submodule pointer.
 
 ---
 

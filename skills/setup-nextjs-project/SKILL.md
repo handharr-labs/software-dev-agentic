@@ -33,23 +33,13 @@ If the user says "default" or provides no URL, use `https://github.com/handharr-
 git submodule add <STARTER_KIT_URL> .claude/web-agentic
 ```
 
-### 3 — Create symlinks
+### 3 — Run the setup script
 
 ```bash
-cd .claude
-ln -s web-agentic/agents     agents
-ln -s web-agentic/docs       docs
-ln -s web-agentic/hooks      hooks
-ln -s web-agentic/reference reference
-ln -s web-agentic/skills     skills
-cd ..
+.claude/web-agentic/scripts/setup-symlinks.sh
 ```
 
-### 4 — Make hooks executable
-
-```bash
-chmod +x .claude/web-agentic/hooks/*.sh
-```
+This creates `.claude/agents/` and `.claude/skills/` as symlink-only directories, makes hooks executable, and copies `settings-template.json` → `.claude/settings.local.json`. Re-running is safe (`link_if_absent` guard).
 
 ### 5 — Copy and prompt for CLAUDE.md
 
