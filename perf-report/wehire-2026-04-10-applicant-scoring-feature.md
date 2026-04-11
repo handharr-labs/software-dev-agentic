@@ -1,6 +1,7 @@
 # Agentic Performance Report — Issue #26
 
 > Date: 2026-04-10
+> Evaluated: 2026-04-11 — findings merged into journey/01-token-optimization.md; fixes applied in commits 735c376 and 691ae64
 > Session: ee9f752f-50f1-4594-96e0-8cb2219cbbaf
 > Branch: main (feature work on feat/issue-026-add-basic-rule-based-applicant-scoring)
 > Duration: ~15 hr 15 min (2026-04-10T16:24:44Z → 2026-04-11T07:39:37Z)
