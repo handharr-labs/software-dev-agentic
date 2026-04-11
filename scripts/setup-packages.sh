@@ -67,11 +67,11 @@ read_pkg() {
 # Resolve an agent name to its source path (platform takes priority over core)
 find_agent() {
   local name="$1"
-  if [ -f "$PLATFORM_DIR/agents/$name.md" ]; then
-    echo "$PLATFORM_DIR/agents/$name.md"
-  elif [ -f "$SUBMODULE/core/agents/$name.md" ]; then
-    echo "$SUBMODULE/core/agents/$name.md"
-  fi
+  local found
+  found="$(find "$PLATFORM_DIR/agents" -name "$name.md" -type f 2>/dev/null | head -1)"
+  if [ -n "$found" ]; then echo "$found"; return; fi
+  found="$(find "$SUBMODULE/core/agents" -name "$name.md" -type f 2>/dev/null | head -1)"
+  if [ -n "$found" ]; then echo "$found"; fi
 }
 
 find_skill() {
@@ -155,6 +155,49 @@ done
 # ── Core (always installed) ───────────────────────────────────────────────────
 
 install_pkg "$CORE_PACKAGES_DIR/core.pkg"
+
+# ── Core agent group selection ────────────────────────────────────────────────
+
+echo ""
+echo "$(bold "Core agent groups:")"
+echo ""
+
+core_groups=(builder detective auditor)
+core_group_pkgs=()
+for group in "${core_groups[@]}"; do
+  pkg_file="$CORE_PACKAGES_DIR/$group.pkg"
+  [ -f "$pkg_file" ] && core_group_pkgs+=("$pkg_file")
+done
+
+if [ ${#core_group_pkgs[@]} -gt 0 ]; then
+  i=1
+  for pkg_file in "${core_group_pkgs[@]}"; do
+    pkg_name="$(read_pkg "$pkg_file" name)"
+    pkg_desc="$(read_pkg "$pkg_file" description)"
+    printf "  $(cyan "[%d]") %-12s %s\n" "$i" "$pkg_name" "$pkg_desc"
+    i=$((i + 1))
+  done
+
+  echo ""
+  echo "  Enter group numbers (e.g. $(bold "1 2")), $(bold "all"), or $(bold "none"):"
+  printf "  > "
+  read -r core_selection
+  echo ""
+
+  if [ "$core_selection" = "none" ]; then
+    echo "  No core agent groups selected."
+  elif [ "$core_selection" = "all" ]; then
+    for pkg_file in "${core_group_pkgs[@]}"; do install_pkg "$pkg_file"; done
+  else
+    for num in $core_selection; do
+      if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le "${#core_group_pkgs[@]}" ]; then
+        install_pkg "${core_group_pkgs[$((num - 1))]}"
+      else
+        echo "  $(yellow "warn")  '$num' is not a valid option — skipping"
+      fi
+    done
+  fi
+fi
 
 # ── Platform package selection ────────────────────────────────────────────────
 

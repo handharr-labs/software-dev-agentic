@@ -1,0 +1,4 @@
+name=auditor
+description=Architecture review worker (future: security-review, perf-audit)
+agents=arch-review-worker
+skills=

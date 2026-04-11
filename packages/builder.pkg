@@ -1,0 +1,4 @@
+name=builder
+description=Feature builders — orchestrators, layer workers, and test writer
+agents=feature-orchestrator backend-orchestrator pres-orchestrator domain-worker data-worker presentation-worker ui-worker test-worker
+skills=
