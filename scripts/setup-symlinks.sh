@@ -82,11 +82,12 @@ link_agents() {
   local src_dir="$1"
   local rel_prefix="$2"
   [ -d "$src_dir" ] || return 0
-  for agent in "$src_dir"/*.md; do
+  while IFS= read -r agent; do
     [ -f "$agent" ] || continue
     name="$(basename "$agent")"
-    link_if_absent "$rel_prefix/$name" "$CLAUDE_DIR/agents/$name"
-  done
+    rel_path="${agent#$src_dir/}"
+    link_if_absent "$rel_prefix/$rel_path" "$CLAUDE_DIR/agents/$name"
+  done < <(find "$src_dir" -name "*.md" -type f)
 }
 
 link_skills() {
