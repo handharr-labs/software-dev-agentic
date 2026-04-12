@@ -28,6 +28,7 @@ For each `.md` agent file:
 - [ ] `## Extension Point` section present at end of file
 - [ ] No reference doc reads that say "Read ... completely"
 - [ ] All `Reference:` lines use Grep-first pattern
+- [ ] Any `Reference:` line that lists multiple files also mentions `reference/index.md` as the discovery fallback (Fix F)
 
 **Core agents** (files under `core/agents/`) — Platform-Agnosticism
 - [ ] Body contains no hardcoded platform-specific file paths — no `src/domain/`, `src/data/`, `src/presentation/`, `Talenta/Module/`, `lib/`, `app/`
@@ -57,6 +58,12 @@ For each `SKILL.md` skill file:
 - [ ] Any step reading a reference doc uses `Grep` for section keyword first
 - [ ] All referenced file paths match actual filenames in `platforms/<platform>/reference/` or `core/reference/`
 
+**Templates** (any `template.md` file inside a skill directory)
+- [ ] No explanatory/instructional comments that duplicate what `SKILL.md` already says (Fix G)
+- [ ] Comments that remain are code generation hints — they tell Claude *what value to put here*, not *how the skill works*
+
+How to check: `Read` the template file; flag any comment that explains the skill's purpose or usage rather than guiding value substitution.
+
 **Naming**
 - [ ] Skill directory name follows `<layer>-<action>-<target>` convention
 - [ ] Layer prefix matches the agent that calls it (`domain-`, `data-`, `pres-`, `test-`, `debug-`, `review-`)
@@ -64,7 +71,7 @@ For each `SKILL.md` skill file:
 ## Severity Levels
 
 - **Critical** — missing required frontmatter field, broken reference path, "Read completely" violation, orchestrator missing `isolation: worktree`, platform-specific content in a `core/agents/` file
-- **Warning** — wrong model for worker type, missing Search Rules, missing Extension Point
+- **Warning** — wrong model for worker type, missing Search Rules, missing Extension Point, missing `reference/index.md` discovery hint on multi-file Reference lines, explanatory comments in template files
 - **Info** — naming convention deviation, description could be more specific
 
 ## Output Format
