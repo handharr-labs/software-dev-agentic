@@ -5,7 +5,7 @@ description: |
 user-invocable: false
 ---
 
-Update an existing Mapper following `.claude/reference/data-layer.md §4.3`.
+Update an existing Mapper following `.claude/reference/data.md §4.3`.
 
 ## Steps
 

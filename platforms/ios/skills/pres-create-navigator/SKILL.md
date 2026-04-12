@@ -9,7 +9,7 @@ Create Navigator + Coordinator following `.claude/reference/navigation.md §6.1-
 
 ## Steps
 
-1. **Read** `.claude/reference/navigation.md §6.1-6.5` and `.claude/reference/di.md §7.2`
+1. **Grep** `.claude/reference/navigation.md` for `§6.1` and `.claude/reference/di.md` for `§7.2`; only **Read** a file in full if the section cannot be located
 2. **Locate** module path: `Talenta/Module/[Module]/Presentation/Coordinator/`
 3. **Create** `[Feature]Coordinator.swift` (contains both protocol and impl)
 4. **Wire** into the module's `DIContainer`

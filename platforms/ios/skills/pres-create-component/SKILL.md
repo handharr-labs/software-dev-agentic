@@ -9,7 +9,7 @@ Create a Cell following `.claude/reference/presentation.md §5.4` and UIModel Ad
 
 ## Steps
 
-1. **Read** `.claude/reference/presentation.md §5.4`
+1. **Grep** `.claude/reference/presentation.md` for `§5.4`; only **Read** the full file if the section cannot be located
 2. **Locate** module path: `Talenta/Module/[Module]/Presentation/View/Cell/`
 3. **Create** `[Feature]TableViewCell.swift` (or `CollectionViewCell`)
 

@@ -9,7 +9,7 @@ Create a ViewController following `.claude/reference/presentation.md §5.4` and 
 
 ## Steps
 
-1. **Read** `.claude/reference/presentation.md §5.4`
+1. **Grep** `.claude/reference/presentation.md` for `§5.4`; only **Read** the full file if the section cannot be located
 2. **Read** the ViewModel to understand State, Event, and Action — never guess
 3. **Locate** module path: `Talenta/Module/[Module]/Presentation/ViewController/`
 4. **Create** `[Feature]ViewController.swift`

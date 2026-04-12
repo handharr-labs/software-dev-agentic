@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a Mapper following `.claude/reference/data-layer.md §4.3` and error utilities in `.claude/reference/error-utilities.md §9.3`.
+Create a Mapper following `.claude/reference/data.md §4.3` and error utilities in `.claude/reference/error-utilities.md §9.3`.
 
 ## Steps
 
-1. **Read** `.claude/reference/data-layer.md §4.3` and `.claude/reference/error-utilities.md §9.3`
+1. **Grep** `.claude/reference/data.md` for `§4.3` and `.claude/reference/error-utilities.md` for `§9.3`; only **Read** a file in full if the section cannot be located
 2. **Read** the Response DTO and Entity to understand all fields
 3. **Locate** module path: `Talenta/Module/[Module]/Data/Mapper/`
 4. **Create** `[Feature]ModelMapper.swift`

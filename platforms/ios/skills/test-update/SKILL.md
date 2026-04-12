@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Update existing tests following patterns in `.claude/reference/testing-patterns.md`.
+Update existing tests following patterns in `.claude/reference/testing-patterns-advanced.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/testing-patterns.md`
+1. **Grep** `.claude/reference/testing-patterns-advanced.md` for the relevant pattern keyword; only **Read** the full file if the section cannot be located
 2. **Read** the updated ViewModel completely
 3. **Read** the existing test file completely
 4. **Generate analysis report** comparing ViewModel vs tests

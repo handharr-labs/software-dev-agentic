@@ -11,7 +11,7 @@ Create a StateHolder (ViewModel) following `.claude/reference/presentation.md §
 
 ## Steps
 
-1. **Read** `.claude/reference/presentation.md §5.1-5.3` and `.claude/reference/di.md §7.2`
+1. **Grep** `.claude/reference/presentation.md` for `§5.1` and `.claude/reference/di.md` for `§7.2`; only **Read** a file in full if the section cannot be located
 2. **Read** the relevant UseCase protocol signatures (never guess)
 3. **Locate** module path: `Talenta/Module/[Module]/Presentation/ViewModel/`
 4. **Create** `[Feature]ViewModel.swift`

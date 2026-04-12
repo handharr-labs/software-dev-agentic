@@ -5,12 +5,12 @@ description: |
 user-invocable: false
 ---
 
-Update an existing UseCase following `.claude/reference/domain-layer.md §3.3`.
+Update an existing UseCase following `.claude/reference/domain.md §3.3`.
 
 ## Steps
 
 1. **Read** the existing UseCase file completely
-2. **Read** `.claude/reference/domain-layer.md §3.3` for rules
+2. **Grep** `.claude/reference/domain.md` for `§3.3`; only **Read** the full file if the section cannot be located
 3. **Apply targeted changes only** — do not restructure unrelated code
 4. **Check** if `[Feature]RepositoryProtocol` signature needs updating
 5. **Check** if DI container usage needs updating

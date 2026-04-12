@@ -9,7 +9,7 @@ Review code against all rules in `.claude/reference/review-rules.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/review-rules.md` completely before reviewing
+1. **Grep** `.claude/reference/review-rules.md` for the relevant convention keyword; only **Read** the full file if a rule cannot be located
 2. **Get the diff**: read changed files or use `git diff` output provided by the caller
 3. **Check all 10 conventions** from the review rules
 4. **Produce the review output** in the standard format

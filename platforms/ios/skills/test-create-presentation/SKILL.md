@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a ViewModel test suite following `.claude/reference/testing.md §10.3-10.4` and patterns in `.claude/reference/testing-patterns.md`.
+Create a ViewModel test suite following `.claude/reference/testing.md §10.3-10.4` and patterns in `.claude/reference/testing-patterns-advanced.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/testing-patterns.md` completely
+1. **Grep** `.claude/reference/testing-patterns-advanced.md` for the relevant pattern keyword; only **Read** the full file if the section cannot be located
 2. **Read** the ViewModel file completely — map all Events, State fields, Actions
 3. **Read** existing mock files (UseCase, Repository, Navigator) if they exist
 4. **Locate** paths:

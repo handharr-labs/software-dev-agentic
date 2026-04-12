@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a Response DTO following `.claude/reference/data-layer.md §4.1` and naming conventions in `.claude/reference/project.md §13`.
+Create a Response DTO following `.claude/reference/data.md §4.1` and naming conventions in `.claude/reference/project.md §13`.
 
 ## Steps
 
-1. **Read** `.claude/reference/data-layer.md §4.1`
+1. **Grep** `.claude/reference/data.md` for `§4.1`; only **Read** the full file if the section cannot be located
 2. **Locate** module path: `Talenta/Module/[Module]/Data/Models/`
 3. **Create** `[Feature]Response.swift`
 

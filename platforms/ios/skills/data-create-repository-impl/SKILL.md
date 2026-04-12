@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a RepositoryImpl following `.claude/reference/data-layer.md §4.4`, DI rules in `.claude/reference/di.md §7.2`, and error utilities in `.claude/reference/error-utilities.md §8`.
+Create a RepositoryImpl following `.claude/reference/data.md §4.4`, DI rules in `.claude/reference/di.md §7.2`, and error utilities in `.claude/reference/error-utilities.md §8`.
 
 ## Steps
 
-1. **Read** `.claude/reference/data-layer.md §4.4`, `.claude/reference/di.md §7.2`, and `.claude/reference/error-utilities.md §8`
+1. **Grep** `.claude/reference/data.md` for `§4.4`, `.claude/reference/di.md` for `§7.2`, and `.claude/reference/error-utilities.md` for `§8`; only **Read** a file in full if the section cannot be located
 2. **Read** the Repository protocol, DataSource protocol, and Mapper protocol to understand signatures
 3. **Locate** module path: `Talenta/Module/[Module]/Data/Repository/`
 4. **Create** `[Feature]RepositoryImpl.swift`

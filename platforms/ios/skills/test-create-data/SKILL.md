@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create Data layer tests following `.claude/reference/testing.md §10.4` and patterns in `.claude/reference/testing-patterns.md`.
+Create Data layer tests following `.claude/reference/testing.md §10.4` and patterns in `.claude/reference/testing-patterns-advanced.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/testing-patterns.md` for patterns
+1. **Grep** `.claude/reference/testing-patterns-advanced.md` for the relevant pattern keyword; only **Read** the full file if the section cannot be located
 2. **Read** the Mapper/DataSource and corresponding Response/Entity files
 3. **Locate** test paths:
    - Tests: `TalentaTests/Module/[Module]/Data/`

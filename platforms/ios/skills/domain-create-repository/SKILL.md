@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a Repository protocol following `.claude/reference/domain-layer.md §3.2`.
+Create a Repository protocol following `.claude/reference/domain.md §3.2`.
 
 ## Steps
 
-1. **Read** `.claude/reference/domain-layer.md §3.2`
+1. **Grep** `.claude/reference/domain.md` for `§3.2`; only **Read** the full file if the section cannot be located
 2. **Locate** module path: `Talenta/Module/[Module]/Domain/Repository/`
 3. **Create** `[Feature]RepositoryProtocol.swift`
 
