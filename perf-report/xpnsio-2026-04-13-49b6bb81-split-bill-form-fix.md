@@ -4,6 +4,7 @@
 > Session: 49b6bb81-6ed6-46a7-9e0f-c6a1409d2b3d
 > Branch: feat/issue-073-split-bill-mvp
 > Duration: ~3 min (2026-04-13T08:50:19Z → 2026-04-13T08:53:14Z)
+> Evaluation: [04-delegation-guard-hook](../evaluation/04-delegation-guard-hook.md)
 
 ## Summary Scores
 
