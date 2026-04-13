@@ -82,14 +82,15 @@ if [[ -f "$FLAG_FILE" ]]; then
   # Stale flag (> 4h) — fall through to block
 fi
 
-# Block — ask Claude to present a choice to the user
+# Block — agent must stop and surface to user; must not resolve autonomously
 echo "BLOCKED: Feature directory edit on feat/* branch requires delegation."
 echo ""
 echo "  Branch : $BRANCH"
 echo "  File   : $FILE_PATH"
 echo "  Flag   : $FLAG_FILE (not found or stale > 4h)"
 echo ""
-echo "Ask the user how to proceed — present exactly these two options:"
-echo "  1. Inline  — create the delegation flag now and continue with the edit directly"
-echo "  2. Feature orchestrator — invoke feature-orchestrator to handle this properly (recommended for logic changes, new files, or multi-layer work)"
+echo "STOP. Do not proceed. Do not create the flag. Do not choose an option autonomously."
+echo "Tell the user this edit was blocked and ask them how to proceed:"
+echo "  - Inline: user must explicitly say to proceed inline"
+echo "  - Delegate: invoke feature-orchestrator (recommended)"
 exit 2
