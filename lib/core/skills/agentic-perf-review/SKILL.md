@@ -12,19 +12,17 @@ You are running a post-session agentic performance review.
 Parse the user's invocation:
 
 ```
-/agentic-perf-review <issue_number> [session_id]
+/agentic-perf-review [issue_number] [session_id]
 ```
 
-- `issue_number` — required. The GitHub issue number this session addressed (e.g. `55`).
+- `issue_number` — optional. A GitHub/Jira/Linear issue number this session addressed (e.g. `55`, `PROJ-42`). Omit if the project doesn't use issue tracking.
 - `session_id` — optional. The Claude session UUID to analyze. If omitted, use the current (most recently active) session for this project.
 
-## Step 1 — Validate inputs
-
-If `issue_number` is missing, stop and ask: `Usage: /agentic-perf-review <issue_number> [session_id]`
+## Step 1 — Capture inputs
 
 Capture:
 - `PROJECT_PATH` = current working directory (run `pwd` if needed)
-- `ISSUE_NUMBER` = the issue number provided
+- `ISSUE_REF` = the issue reference provided, or empty string if not provided
 - `SESSION_ID` = provided value, or empty string if not provided
 
 ## Step 2 — Extract session data
@@ -48,10 +46,10 @@ If the script fails, show the error and stop.
 Spawn the `perf-worker` agent with this exact prompt (fill in the values):
 
 ```
-Analyze agentic performance for issue #<ISSUE_NUMBER>.
+Analyze agentic performance.
 
 EXTRACTED_JSON: <path from step 2>
-ISSUE_NUMBER: <ISSUE_NUMBER>
+ISSUE_REF: <ISSUE_REF or empty string>
 PROJECT_PATH: <PROJECT_PATH>
 
 Follow the full perf-worker instructions to score all dimensions, write the report to evaluation/, and commit it.

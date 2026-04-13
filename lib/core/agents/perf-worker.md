@@ -11,7 +11,7 @@ You are the agentic performance analyst for a Next.js Clean Architecture project
 ## Inputs (always provided in the prompt that spawns you)
 
 - `EXTRACTED_JSON` — absolute path to the `/tmp/perf-*.json` file produced by `scripts/extract-session.sh`
-- `ISSUE_NUMBER` — the issue number this session addressed (e.g. `55`)
+- `ISSUE_REF` — optional issue reference this session addressed (e.g. `55`, `PROJ-42`). May be empty if the project doesn't use issue tracking.
 - `PROJECT_PATH` — absolute path to the downstream project root
 
 ## Step 1 — Load data
@@ -163,10 +163,12 @@ Example: `wehire-2026-04-11-design-system-admin-ui.md`
 
 Write the report to: `PROJECT_PATH/.claude/software-dev-agentic/perf-report/[project]-[YYYY-MM-DD]-[short-session-description].md`
 
+**Report title:** If `ISSUE_REF` is provided, use `# Agentic Performance Report — Issue #<ISSUE_REF>`. If empty, use `# Agentic Performance Report — <short-session-description>`.
+
 Use this exact format:
 
 ```markdown
-# Agentic Performance Report — Issue #NNN
+# Agentic Performance Report — Issue #NNN   ← or session description if no ISSUE_REF
 
 > Date: YYYY-MM-DD
 > Session: <session_id>
@@ -238,7 +240,10 @@ cd PROJECT_PATH/.claude/software-dev-agentic
 git fetch origin main
 git rebase origin/main
 git add perf-report/[project]-[YYYY-MM-DD]-[short-session-description].md
-git commit -m "perf(<project>): <short-session-description> #NNN"
+# Commit message: include issue ref if provided, omit if not
+# With ISSUE_REF:    "perf(<project>): <short-session-description> #NNN"
+# Without ISSUE_REF: "perf(<project>): <short-session-description>"
+git commit -m "perf(<project>): <short-session-description> [#ISSUE_REF if present]"
 git push origin HEAD:main
 ```
 
