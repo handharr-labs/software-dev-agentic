@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.4.5] — 2026-04-13
+
+### Changed
+- `lib/platforms/ios/CLAUDE-template.md`: add same delegation guard rule as web — if hook blocks an edit, ask the user inline vs `feature-orchestrator`, never resolve autonomously
+
+---
+
 ## [3.4.4] — 2026-04-13
 
 ### Changed
