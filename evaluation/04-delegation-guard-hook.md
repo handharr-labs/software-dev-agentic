@@ -108,6 +108,6 @@ The split-bill-form-fix report was revised:
 
 1. **Hook coverage for iOS** — the `require-feature-orchestrator.sh` is platform-agnostic and works for iOS too, but iOS has no `pres-orchestrator` path guard. Should the hook also check for `pres-orchestrator` on branches matching `feature/*` (Bitbucket convention)?
 
-2. **Flag cleanup on branch delete** — the `.delegated-<branch>` flag is only cleared by Phase 5. If a feature is abandoned mid-way, the flag lingers. Low risk (it's gitignored), but worth a periodic `git branch --merged | xargs ...` cleanup in `sync.sh`.
+2. ~~**Flag cleanup on branch delete** — the `.delegated-<branch>` flag is only cleared by Phase 5. If a feature is abandoned mid-way, the flag lingers. Low risk (it's gitignored), but worth a periodic `git branch --merged | xargs ...` cleanup in `sync.sh`.~~ **Resolved in Entry 05** — 4h TTL added; flag is now self-expiring.
 
 3. **Continuation session detection in perf scoring** — the scorer needs a heuristic: if the branch already has commits when the session starts, `issue-worker` is not required. Could check `git log --oneline origin/main..HEAD` at session start.
