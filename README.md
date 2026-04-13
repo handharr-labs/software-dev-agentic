@@ -42,13 +42,7 @@ git submodule add https://github.com/mekaripaper/software-dev-agentic .claude/so
 .claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
 ```
 
-Open Claude Code, then invoke the setup agent to scaffold your project:
-
-```
-setup-worker "my-app"
-```
-
-It will ask about your stack choices (DB, auth, UI library, test framework) and generate the seed files.
+Open Claude Code, then prompt `setup-worker` — the agent will guide you through stack choices (DB, auth, UI library, test framework) and generate the seed files.
 
 ---
 
@@ -63,14 +57,9 @@ git submodule add https://github.com/mekaripaper/software-dev-agentic .claude/so
 .claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
 ```
 
-Re-running the script is safe — existing files and local overrides are never overwritten.
+The script wires symlinks, copies `CLAUDE.md`, and sets up `settings.local.json`. Re-running is safe — existing files and local overrides are never overwritten.
 
-Then copy the CLAUDE.md template for your platform and fill in the placeholders:
-
-```bash
-cp .claude/software-dev-agentic/lib/platforms/web/CLAUDE-template.md CLAUDE.md
-# edit CLAUDE.md — replace [AppName], [Database], [Auth], [UI library], etc.
-```
+Then open Claude Code and prompt `setup-worker` — the agent will guide you through the rest.
 
 ---
 
