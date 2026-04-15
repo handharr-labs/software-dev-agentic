@@ -148,8 +148,8 @@ GITIGNORE="$PROJECT_ROOT/.gitignore"
 if grep -qs '\.delegated-\*' "$GITIGNORE" 2>/dev/null; then
   echo "skip  .gitignore (.delegated-* already present)"
 else
-  printf '\n# Claude Code — delegation flags\n.claude/.delegated-*\n' >> "$GITIGNORE"
-  echo "patch .gitignore (added .claude/.delegated-*)"
+  printf '\n# Claude Code — delegation flags and session state\n.claude/.delegated-*\n.claude/.session-id\n.claude/runs/\n' >> "$GITIGNORE"
+  echo "patch .gitignore (added .delegated-*, .session-id, runs/)"
 fi
 
 # ── Hooks ─────────────────────────────────────────────────────────────────────
