@@ -33,7 +33,26 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 
 Read a full file only when: (a) you need its complete structure to write a new matching file, or (b) Grep returned no results.
 
+**Read-once rule:** Once you have read a file, do not read it again. Form your complete edit plan from that single read, then apply all changes in one `Edit` call. Re-reading the same file is a token waste signal — if you feel the urge to re-read, it means your edit plan was incomplete. Start the plan over from your existing read output, not from a new read.
+
 - When spawned by an orchestrator: a path to the StateHolder contract file is provided — `Read` that file directly, do not re-read the source StateHolder file
+
+## Component Reuse Check — Always Run First
+
+Before creating any new component or screen, check whether an existing one already covers the need.
+
+**Step 1 — Find the platform's shared component paths:**
+Grep `reference/presentation.md` for the section heading `Shared Component Paths`. This section lists the exact directories and file patterns to search for this platform.
+
+**Step 2 — Search those paths:**
+For each path listed, run a Grep for keywords matching the component need (e.g. the component type, a key prop name, or a UI concept like "card", "list", "avatar"). Use the file pattern from the section (e.g. `*View.swift`, `*.tsx`, `*.dart`).
+
+**Step 3 — Decide:**
+- If a match exists and covers ≥80% of the needed behavior → **reuse it**. Document which component was selected and why.
+- If a partial match exists → **extend it** via `pres-update-screen` rather than creating a parallel component.
+- If no match exists → proceed to create a new one.
+
+Never skip this check. Creating a duplicate of an existing component is a worse outcome than a slightly imperfect reuse.
 
 ## Preconditions — Fail Fast
 
@@ -42,11 +61,12 @@ Read a full file only when: (a) you need its complete structure to write a new m
 
 ## Workflow
 
-1. Confirm the StateHolder contract (State fields, Event/Action cases, DI factory, navigator protocol)
-2. Check preconditions
-3. Style-match existing screens via `Glob` + `Grep`
-4. Execute skill procedures in order
-5. Return created/updated file paths
+1. Run the Component Reuse Check above
+2. Confirm the StateHolder contract (State fields, Event/Action cases, DI factory, navigator protocol)
+3. Check preconditions
+4. Style-match existing screens via `Glob` + `Grep`
+5. Execute skill procedures in order
+6. Return created/updated file paths
 
 ## Creation Order
 

@@ -36,6 +36,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 
 Read a full file only when: (a) you need its complete structure to write a new matching file, or (b) Grep returned no results.
 
+**Read-once rule:** Once you have read a file, do not read it again. Form your complete edit plan from that single read, then apply all changes in one `Edit` call. Re-reading the same file is a token waste signal — if you feel the urge to re-read, it means your edit plan was incomplete. Start the plan over from your existing read output, not from a new read.
+
 ## Preconditions — Fail Fast
 
 - `create-*`: target artifact must NOT exist — report and stop if it does

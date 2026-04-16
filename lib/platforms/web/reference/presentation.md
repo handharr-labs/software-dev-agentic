@@ -403,3 +403,17 @@ export function CareerPageView({ viewModel }: { viewModel: CareerPageViewModel }
 
 ---
 
+
+---
+
+## Shared Component Paths
+
+When running a Component Reuse Check, search these locations for existing reusable components:
+
+| Atomic level | Path | File pattern |
+|---|---|---|
+| Atoms (primitive, no business logic) | `shared/presentation/common/atoms/` | `*.tsx` |
+| Molecules (small groups of atoms) | `shared/presentation/common/molecules/` | `*.tsx` |
+| Organisms (feature-aware, accepts domain entities) | `features/*/presentation/organisms/` | `*.tsx` |
+
+**Search strategy:** Grep for the component concept (e.g. `"Card"`, `"Banner"`, `"Avatar"`, `"EmptyState"`) across atoms and molecules first — these are cross-feature safe. Only search organisms within the same feature. A component found at atom or molecule level should always be preferred over creating a new one.

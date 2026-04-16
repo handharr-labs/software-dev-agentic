@@ -387,3 +387,17 @@ final isLoading = context.select<EmployeeBloc, bool>(
   (bloc) => bloc.state.employeeState.isLoading,
 );
 ```
+
+---
+
+## Shared Component Paths
+
+When running a Component Reuse Check, search these locations for existing reusable widgets:
+
+| Scope | Path | File pattern |
+|---|---|---|
+| Shared core widgets (cross-feature) | `talenta/lib/src/shared/core/` | `*.dart` |
+| Feature screens | `talenta/lib/src/features/*/presentation/screens/` | `*_screen.dart` |
+| Feature widgets | `talenta/lib/src/features/*/presentation/widgets/` | `*_widget.dart` |
+
+**Search strategy:** Grep for the widget concept (e.g. `"Card"`, `"Avatar"`, `"EmptyState"`, `"ListItem"`) across `shared/core/` first — widgets there are safe to reuse cross-feature. Only look inside a feature's own `widgets/` folder for local reuse within the same feature. Prefer a `StatelessWidget` found in shared over creating a new one.

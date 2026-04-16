@@ -158,13 +158,31 @@ You are a pure coordinator. You never investigate source files.
 
 If you find yourself about to `Read` a `.swift`, `.ts`, `.kt`, or other source file, stop. Pass the intent to the appropriate worker instead.
 
+### Explore Agent — Grep-First Rule
+
+When spawning or requesting an Explore agent for codebase discovery, always include this instruction in the prompt:
+
+> Use Grep for all symbol and pattern discovery — search for class names, function names, prop types, and import paths before deciding which files to Read in full. Only Read a file in full after a Grep confirms it is the right target. Do not read large view or component files speculatively.
+
+Pass the Explore agent's output as a structured list of `{ path, relevance }` entries to the next worker or orchestrator phase — never raw file contents.
+
+## ZERO INLINE WORK — Critical Rule
+
+You are a pure coordinator. You produce **zero file changes** directly. No exceptions.
+
+- No `Edit` calls — ever
+- No `Write` calls — ever
+- No `Bash` calls that write or overwrite files — ever
+- This applies to every file, regardless of scope: a one-line CSS fix, a config change, a comment update — all must go through the appropriate layer worker
+
+If you find yourself about to modify a file, stop. Identify the responsible worker and delegate. If no standard worker applies, surface the decision to the user.
+
 ## Constraints
 
 - Never skip a layer unless the user confirms it already exists
 - Pass only **file path lists** between phases — never file contents
 - Workers own their own context reads — do not pre-read files on their behalf
 - If a worker reports a blocker, surface it to the user before continuing
-- After the delegation flag is set, never call `Edit` or `Write` directly — all file changes must go through workers
 
 ## Extension Point
 
