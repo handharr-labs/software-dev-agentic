@@ -77,7 +77,9 @@ copy_agents() {
   while IFS= read -r agent; do
     [ -f "$agent" ] || continue
     name="$(basename "$agent")"
-    cp -f "$agent" "$CLAUDE_DIR/agents/$name"
+    dest="$CLAUDE_DIR/agents/$name"
+    [ -L "$dest" ] && rm -f "$dest"  # replace symlinks (broken or stale) with real file
+    cp -f "$agent" "$dest"
     echo "  copy  $name"
   done < <(find "$src_dir" -name "*.md" -type f)
 }
@@ -88,7 +90,9 @@ copy_skills() {
   for skill_dir in "$src_dir"/*/; do
     [ -d "$skill_dir" ] || continue
     name="$(basename "$skill_dir")"
-    cp -rf "$skill_dir" "$CLAUDE_DIR/skills/$name"
+    dest="$CLAUDE_DIR/skills/$name"
+    [ -L "$dest" ] && rm -f "$dest"  # replace symlinks (broken or stale) with real file
+    cp -rf "$skill_dir" "$dest"
     echo "  copy  $name"
   done
 }
@@ -99,7 +103,9 @@ copy_reference() {
   for ref in "$src_dir"/*.md; do
     [ -f "$ref" ] || continue
     name="$(basename "$ref")"
-    cp -f "$ref" "$CLAUDE_DIR/reference/$name"
+    dest="$CLAUDE_DIR/reference/$name"
+    [ -L "$dest" ] && rm -f "$dest"  # replace symlinks (broken or stale) with real file
+    cp -f "$ref" "$dest"
     echo "  copy  $name"
   done
 }
@@ -195,49 +201,9 @@ EOF
   fi
 fi
 
-# ── CLAUDE.md ─────────────────────────────────────────────────────────────────
-
-TEMPLATE="$PLATFORM_DIR/CLAUDE-template.md"
-BEGIN_MARKER="<!-- BEGIN software-dev-agentic:$PLATFORM -->"
-END_MARKER="<!-- END software-dev-agentic:$PLATFORM -->"
-
-echo ""
-if [ ! -f "$CLAUDE_MD" ]; then
-  if [ -f "$TEMPLATE" ]; then
-    cp "$TEMPLATE" "$CLAUDE_MD"
-    echo "copy  CLAUDE.md (from $PLATFORM CLAUDE-template.md)"
-    if grep -q '\[AppName\]' "$CLAUDE_MD"; then
-      APP_NAME=""
-      printf "  App name (replaces [AppName] in CLAUDE.md): "
-      read -r APP_NAME
-      if [ -n "$APP_NAME" ]; then
-        sed -i.bak "s/\[AppName\]/$APP_NAME/g" "$CLAUDE_MD" && rm "$CLAUDE_MD.bak"
-        echo "  ✓  Replaced [AppName] with '$APP_NAME'"
-      else
-        echo "  ⚠  Fill in [AppName] placeholders in CLAUDE.md"
-      fi
-    fi
-  fi
-elif ! grep -qF "$BEGIN_MARKER" "$CLAUDE_MD"; then
-  echo "skip  CLAUDE.md sync (no managed section markers found)"
-  echo "      Add: $BEGIN_MARKER ... $END_MARKER"
-elif [ ! -f "$TEMPLATE" ]; then
-  echo "skip  CLAUDE.md sync (no CLAUDE-template.md for platform $PLATFORM)"
-else
-  managed_tmp="$(mktemp)"
-  awk "/^${BEGIN_MARKER}$/{found=1} found{print} /^${END_MARKER}$/{found=0}" "$TEMPLATE" > "$managed_tmp"
-
-  awk -v begin="$BEGIN_MARKER" -v end="$END_MARKER" -v src="$managed_tmp" '
-    $0 == begin { while ((getline line < src) > 0) print line; skip=1; next }
-    $0 == end   { skip=0; next }
-    !skip        { print }
-  ' "$CLAUDE_MD" > "$CLAUDE_MD.tmp" && mv "$CLAUDE_MD.tmp" "$CLAUDE_MD"
-
-  rm -f "$managed_tmp"
-  echo "sync  CLAUDE.md (managed section updated)"
-fi
-
 # ── .claude/feature-dirs ──────────────────────────────────────────────────────
+# Must run before CLAUDE.md sync — the sync step removes ## Feature Directories
+# from the managed block, so migration must read CLAUDE.md while it still exists.
 
 echo ""
 FEATURE_DIRS_FILE="$CLAUDE_DIR/feature-dirs"
@@ -280,6 +246,48 @@ if m:
   if grep -q '\[AppName\]' "$FEATURE_DIRS_FILE" 2>/dev/null; then
     echo "  ⚠  Replace [AppName] in .claude/feature-dirs with your app target name"
   fi
+fi
+
+# ── CLAUDE.md ─────────────────────────────────────────────────────────────────
+
+TEMPLATE="$PLATFORM_DIR/CLAUDE-template.md"
+BEGIN_MARKER="<!-- BEGIN software-dev-agentic:$PLATFORM -->"
+END_MARKER="<!-- END software-dev-agentic:$PLATFORM -->"
+
+echo ""
+if [ ! -f "$CLAUDE_MD" ]; then
+  if [ -f "$TEMPLATE" ]; then
+    cp "$TEMPLATE" "$CLAUDE_MD"
+    echo "copy  CLAUDE.md (from $PLATFORM CLAUDE-template.md)"
+    if grep -q '\[AppName\]' "$CLAUDE_MD"; then
+      APP_NAME=""
+      printf "  App name (replaces [AppName] in CLAUDE.md): "
+      read -r APP_NAME
+      if [ -n "$APP_NAME" ]; then
+        sed -i.bak "s/\[AppName\]/$APP_NAME/g" "$CLAUDE_MD" && rm "$CLAUDE_MD.bak"
+        echo "  ✓  Replaced [AppName] with '$APP_NAME'"
+      else
+        echo "  ⚠  Fill in [AppName] placeholders in CLAUDE.md"
+      fi
+    fi
+  fi
+elif ! grep -qF "$BEGIN_MARKER" "$CLAUDE_MD"; then
+  echo "skip  CLAUDE.md sync (no managed section markers found)"
+  echo "      Add: $BEGIN_MARKER ... $END_MARKER"
+elif [ ! -f "$TEMPLATE" ]; then
+  echo "skip  CLAUDE.md sync (no CLAUDE-template.md for platform $PLATFORM)"
+else
+  managed_tmp="$(mktemp)"
+  awk "/^${BEGIN_MARKER}$/{found=1} found{print} /^${END_MARKER}$/{found=0}" "$TEMPLATE" > "$managed_tmp"
+
+  awk -v begin="$BEGIN_MARKER" -v end="$END_MARKER" -v src="$managed_tmp" '
+    $0 == begin { while ((getline line < src) > 0) print line; skip=1; next }
+    $0 == end   { skip=0; next }
+    !skip        { print }
+  ' "$CLAUDE_MD" > "$CLAUDE_MD.tmp" && mv "$CLAUDE_MD.tmp" "$CLAUDE_MD"
+
+  rm -f "$managed_tmp"
+  echo "sync  CLAUDE.md (managed section updated)"
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────
