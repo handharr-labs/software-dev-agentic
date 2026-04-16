@@ -19,13 +19,3 @@ Agents: `feature-orchestrator` · `backend-orchestrator` · `pres-orchestrator` 
 
 **If the delegation guard hook blocks an edit → always stop and ask the user: inline or `feature-orchestrator`? Never resolve it autonomously.**
 <!-- END software-dev-agentic:ios -->
-
-## Feature Directories
-
-```
-# Replace [AppName] with your app target name (e.g. Talenta)
-[AppName]/Module
-[AppName]/Shared
-[AppName]Tests/Module
-[AppName]Tests/Shared
-```

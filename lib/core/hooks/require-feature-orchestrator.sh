@@ -3,7 +3,7 @@
 # Event: PreToolUse on Write|Edit
 # Input: JSON on stdin with keys: session_id, tool_name, tool_input
 #
-# Config: CLAUDE.md ## Feature Directories section (fenced code block) in project root.
+# Config: .claude/feature-dirs — one path fragment per line, # comments ignored.
 # Flag:   .claude/agentic-state/delegation.json — written by feature-orchestrator at session start,
 #         cleared at end. Session-scoped: a new session_id wipes all stale entries automatically.
 # Session: .claude/agentic-state/.session-id — tracks the active session; updated on session boundary.
@@ -54,26 +54,15 @@ if [[ -z "$FILE_PATH" ]]; then
   exit 0
 fi
 
-# Parse feature directories from CLAUDE.md ## Feature Directories section
+# Parse feature directories from .claude/feature-dirs
 PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || true)
-CLAUDE_MD="$PROJECT_ROOT/CLAUDE.md"
+FEATURE_DIRS_FILE="$PROJECT_ROOT/.claude/feature-dirs"
 
-if [[ ! -f "$CLAUDE_MD" ]]; then
+if [[ ! -f "$FEATURE_DIRS_FILE" ]]; then
   exit 0
 fi
 
-FEATURE_DIRS=$(python3 - "$CLAUDE_MD" <<'EOF'
-import sys, re
-
-content = open(sys.argv[1]).read()
-match = re.search(r'## Feature Directories\s+```\s*(.*?)\s*```', content, re.DOTALL)
-if match:
-    for line in match.group(1).splitlines():
-        line = line.strip()
-        if line and not line.startswith('#'):
-            print(line)
-EOF
-)
+FEATURE_DIRS=$(grep -v '^\s*#' "$FEATURE_DIRS_FILE" | grep -v '^\s*$' 2>/dev/null || true)
 
 if [[ -z "$FEATURE_DIRS" ]]; then
   exit 0
