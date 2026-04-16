@@ -111,32 +111,17 @@ EOF
   fi
 fi
 
-# ── CLAUDE.md — Feature Directories (iOS — outside managed block) ─────────────
+# ── .claude/feature-dirs ──────────────────────────────────────────────────────
+# setup-symlinks.sh (called above) handles creation and migration.
+# This check just confirms the file is present after setup.
 
 echo ""
-PLATFORM_TEMPLATE="$SUBMODULE/lib/platforms/$PLATFORM/CLAUDE-template.md"
-if [ -f "$CLAUDE_MD" ] && [ -f "$PLATFORM_TEMPLATE" ] && ! grep -q '## Feature Directories' "$CLAUDE_MD"; then
-  FEAT_DIRS=$(python3 -c "
-import sys, re
-content = open('$PLATFORM_TEMPLATE').read()
-m = re.search(r'## Feature Directories\s+\x60\x60\x60\s*(.*?)\s*\x60\x60\x60', content, re.DOTALL)
-print(m.group(1).strip() if m else '')
-")
-  if [ -n "$FEAT_DIRS" ]; then
-    printf '\n## Feature Directories\n\n```\n%s\n```\n' "$FEAT_DIRS" >> "$CLAUDE_MD"
-    echo "patch CLAUDE.md (added ## Feature Directories)"
-    if echo "$FEAT_DIRS" | grep -q '\[AppName\]'; then
-      APP_NAME=""
-      printf "  App name (replaces [AppName]): "
-      read -r APP_NAME
-      if [ -n "$APP_NAME" ]; then
-        sed -i.bak "s/\[AppName\]/$APP_NAME/g" "$CLAUDE_MD" && rm "$CLAUDE_MD.bak"
-        echo "  ✓  Replaced [AppName] with '$APP_NAME'"
-      fi
-    fi
-  fi
+FEATURE_DIRS_FILE="$PROJECT_ROOT/.claude/feature-dirs"
+if [ -f "$FEATURE_DIRS_FILE" ]; then
+  echo "skip  .claude/feature-dirs (already exists)"
 else
-  echo "skip  CLAUDE.md Feature Directories (already present or template not found)"
+  echo "warn  .claude/feature-dirs — not found after setup, delegation hook will not guard any directories"
+  echo "      Run: .claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=$PLATFORM"
 fi
 
 echo ""

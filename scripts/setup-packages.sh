@@ -345,6 +345,54 @@ elif [ -f "$PLATFORM_DIR/CLAUDE-template.md" ]; then
   fi
 fi
 
+# ── .claude/feature-dirs ──────────────────────────────────────────────────────
+
+echo ""
+FEATURE_DIRS_FILE="$CLAUDE_DIR/feature-dirs"
+if [ -f "$FEATURE_DIRS_FILE" ]; then
+  echo "skip  .claude/feature-dirs (already exists)"
+else
+  # Migrate from CLAUDE.md ## Feature Directories if present
+  MIGRATED_DIRS=""
+  if [ -f "$PROJECT_ROOT/CLAUDE.md" ] && grep -q '## Feature Directories' "$PROJECT_ROOT/CLAUDE.md" 2>/dev/null; then
+    MIGRATED_DIRS=$(python3 -c "
+import sys, re
+content = open('$PROJECT_ROOT/CLAUDE.md').read()
+m = re.search(r'## Feature Directories\s+\x60\x60\x60\s*(.*?)\s*\x60\x60\x60', content, re.DOTALL)
+if m:
+    for line in m.group(1).splitlines():
+        line = line.strip()
+        if line and not line.startswith('#'):
+            print(line)
+" 2>/dev/null || true)
+  fi
+
+  if [ -n "$MIGRATED_DIRS" ]; then
+    printf '# Path fragments guarded by the delegation hook (one per line)\n%s\n' "$MIGRATED_DIRS" > "$FEATURE_DIRS_FILE"
+    echo "migrate .claude/feature-dirs (from CLAUDE.md ## Feature Directories)"
+  else
+    case "$PLATFORM" in
+      web)
+        printf '# Path fragments guarded by the delegation hook (one per line)\nsrc\n' > "$FEATURE_DIRS_FILE"
+        ;;
+      ios)
+        printf '# Path fragments guarded by the delegation hook (one per line)\n[AppName]/Module\n[AppName]/Shared\n[AppName]Tests/Module\n[AppName]Tests/Shared\n' > "$FEATURE_DIRS_FILE"
+        if [ -n "$APP_NAME" ]; then
+          sed -i.bak "s/\[AppName\]/$APP_NAME/g" "$FEATURE_DIRS_FILE" && rm "$FEATURE_DIRS_FILE.bak"
+        fi
+        ;;
+      *)
+        printf '# Path fragments guarded by the delegation hook (one per line)\n' > "$FEATURE_DIRS_FILE"
+        ;;
+    esac
+    echo "create .claude/feature-dirs"
+  fi
+
+  if grep -q '\[AppName\]' "$FEATURE_DIRS_FILE" 2>/dev/null; then
+    echo "  $(yellow "⚠")  Replace [AppName] in .claude/feature-dirs with your app target name"
+  fi
+fi
+
 # ── Done ──────────────────────────────────────────────────────────────────────
 
 echo ""
