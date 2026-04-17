@@ -1,11 +1,11 @@
 ---
 name: release
-description: Cut a new version of the software-dev-agentic starter kit — bumps VERSION, updates CHANGELOG, and creates a git tag.
+description: Cut a new release of this project — bumps VERSION, prepends a CHANGELOG entry, commits, and creates a git tag.
 context: fork
 allowed-tools: Read, Write, Edit, Bash
 ---
 
-You are cutting a new release of the software-dev-agentic starter kit.
+You are cutting a new release of the project.
 
 ## Step 1 — Read current state
 

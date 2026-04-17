@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-04-08
-> Updated: 2026-04-17 — v31: prompt-debug-worker added to detective persona; Prompt Clarity Check added to arch-check-conventions (P15); Agent Count updated (detective workers 1→2)
+> Updated: 2026-04-17 — v34: pres-orchestrator promoted to sub-orchestrator of feature-orchestrator; orchestrator hierarchy example added to Taxonomy Taxonomy gaps closed — Type U (Utility) skill added; Repo skill scope added; Type × Scope intersection matrix added; Toolkit skill scope clarified as downstream-facing
 > Synced with: software-dev-agentic v3.14.0
 > Related: Shared Agentic Submodule Architecture — Cross-Platform Scaling
 
@@ -173,7 +173,7 @@ Agents have a second axis — where they live and what they know.
 
 | | Orchestrator | Worker |
 |---|---|---|
-| **Core** | `feature-orchestrator`, `pres-orchestrator`, `debug-orchestrator` | `domain-worker`, `data-worker`, `presentation-worker`, `ui-worker`, `test-worker`, `debug-worker`, `prompt-debug-worker`, `arch-review-worker`, `issue-worker`, `setup-worker`, `perf-worker` |
+| **Core** | `feature-orchestrator` → `pres-orchestrator`, `debug-orchestrator`, `backend-orchestrator` | `domain-worker`, `data-worker`, `presentation-worker`, `ui-worker`, `test-worker`, `debug-worker`, `prompt-debug-worker`, `arch-review-worker`, `issue-worker`, `setup-worker`, `perf-worker` |
 | **Platform** | iOS `test-orchestrator` | iOS `pr-review-worker` |
 
 ---
@@ -299,12 +299,81 @@ The agentic system enforces its own conventions through automated review — the
 
 ---
 
-## Agent & Skill Hierarchy
+## Taxonomy
 
-| Type | Role | Has `agents` field? | Has `skills` field? | Can spawn workers? |
+### Agents — By Role
+
+| Role | Subordinates | Can write files? | Has `agents` field? | Has `skills` field? |
 |---|---|---|---|---|
-| Orchestrator | Coordinates multiple workers | Yes | Typically no | Yes — via `agents` field |
-| Worker | Specialist that executes procedures | No | Yes — skills injected at startup | No — leaf node |
+| Orchestrator | Other orchestrators or workers | No — delegates all writes to workers | Yes | Typically no |
+| Worker | Skills via `related_skills` | Yes | No | Yes — skills injected at startup |
+
+> Orchestrators may spawn other orchestrators when the inner orchestrator represents a fully bounded sub-workflow. The outer orchestrator owns the top-level state file and final report. Example: `feature-orchestrator` spawns `pres-orchestrator` for the presentation+UI phase — `pres-orchestrator` skips state file writes when called as a sub-orchestrator.
+
+### Agents — By Scope
+
+| Scope | Location | Ships downstream? |
+|---|---|---|
+| **Persona agent** | `lib/core/agents/<persona>/` | Yes — all platforms |
+| **Platform agent** | `lib/platforms/<platform>/agents/` | Yes — matching platform only |
+| **Project agent** | `.claude/agents.local/` | No — project-owned, not in this repo |
+
+> Persona agents must be platform-agnostic — no platform paths, framework references, or language syntax in the body (Critical per P15).
+
+### Persona
+
+A named group of related agents serving a coherent workflow.
+
+Requirements:
+- Lives in `lib/core/agents/<persona>/`
+- Has at least one worker or orchestrator
+- Agents within the group relate to and can depend on each other
+- Requires a `.pkg` file for selective installation
+
+Shared to all downstream projects via symlink. Current personas: `builder`, `detective`, `tracker`, `auditor`, `installer`.
+
+> A persona is not just a folder. It represents a coherent workflow. Do not group unrelated agents into a persona subdirectory.
+
+### Skills — By Invocation Type
+
+| Type | Config | Who triggers | Use for |
+|---|---|---|---|
+| **A — Regular** | `user-invocable: false` | Worker (agent) only | Standard build/update procedures |
+| **B — Destructive** | `disable-model-invocation: true` | User only | Destructive or side-effect operations |
+| **T — Trigger** | `user-invocable: true` + uses `Agent` tool | User only | Entry point that spawns an agent workflow |
+| **U — Utility** | `user-invocable: true`, no `Agent` tool | User only | Self-contained interactive tool — runs with model, does not spawn agents |
+
+> **Type T vs Type U:** Both are user-invocable and model-run. Type T spawns an agent workflow (`agentic-perf-review` → `perf-worker`). Type U does its own work directly (`doctor`, `clear-runs`, `release`).
+>
+> **Type B vs Type U:** Both are user-only. Type B disables model invocation entirely (pure bash, no reasoning). Type U runs with model invocation for interactive behaviour.
+
+**Why no Type C (default — both user and agent):** Every default skill's description loads into the main session context on every turn. Types A, B, T, and U all eliminate this overhead.
+
+### Skills — By Scope
+
+| Scope | Location | Ships downstream? |
+|---|---|---|
+| **Toolkit skill** | `lib/core/skills/` | Yes — all platforms. Platform-agnostic, intended for use in downstream projects. |
+| **Platform-contract skill** | `lib/platforms/<platform>/skills/` | Yes — matching platform. Same name across all platforms; each implements for its syntax — called by persona workers. |
+| **Platform-only skill** | `lib/platforms/<platform>/skills/` | Yes — matching platform only. Called by platform agents. |
+| **Project skill** | `.claude/skills.local/` | No — project-owned, not in this repo. |
+| **Repo skill** | `skills/` (root) | No — internal tooling only. Used by this repo's internal agents; never symlinked to downstream projects. |
+
+> "Core-dependency skill" used in earlier sections of this doc refers to platform-contract skills — skills all platforms must implement under the same name (`domain-create-entity`, `data-create-mapper`, etc.).
+
+### Skills — Valid Type × Scope Combinations
+
+Not all combinations are meaningful. Use this as the decision gate when adding a new skill:
+
+| Scope | A — Regular | B — Destructive | T — Trigger | U — Utility |
+|---|---|---|---|---|
+| Toolkit | — | — | ✓ | ✓ |
+| Platform-contract | ✓ | — | — | — |
+| Platform-only | ✓ | ✓ | — | — |
+| Project | ✓ | ✓ | ✓ | ✓ |
+| Repo | ✓ | — | ✓ | ✓ |
+
+> Toolkit skills are always user-facing (Type T or U) — agents don't call them, workers call platform-contract skills instead. Platform-contract skills are always Type A — they're called by workers programmatically, never by users directly.
 
 ---
 
@@ -314,7 +383,7 @@ The agentic system enforces its own conventions through automated review — the
 |---|---|
 | New CLEAN-layer behaviour, same on all platforms | Core worker |
 | New orchestration flow, same on all platforms | Core orchestrator |
-| New code generation pattern for one platform | Platform skill (core-dependency) |
+| New code generation pattern for one platform | Platform-contract skill (same name, platform implements) |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill |
 | Architecture reference knowledge | `lib/platforms/<platform>/reference/` |
 
@@ -460,6 +529,27 @@ prompt-debug-worker ← reads perf-report + domain-worker.md
 ---
 
 ## Changelog
+
+**v34 — 2026-04-17 · software-dev-agentic v3.15.0**
+- `pres-orchestrator` promoted to sub-orchestrator of `feature-orchestrator` — `feature-orchestrator` now delegates Phase 3 entirely to `pres-orchestrator` instead of spawning `presentation-worker`/`ui-worker` directly
+- `feature-orchestrator`: `agents:` field updated (removed `presentation-worker`, `ui-worker`; added `pres-orchestrator`); Phase 3 rewritten; Phase 4 (UI) removed; Phase 5 renumbered to Phase 4
+- `pres-orchestrator`: dual-mode added — standalone (full gather + state file) vs sub-orchestrator (Grep provided paths, skip state file); P8 Combined Matrix updated to show `feature-orchestrator → pres-orchestrator` hierarchy
+- Taxonomy: orchestrator-of-orchestrators note updated with concrete example
+
+**v33 — 2026-04-17 · software-dev-agentic v3.15.0**
+- Taxonomy gaps closed: Type U (Utility) skill added — user-invocable, model-run, self-contained, no agent spawning; `doctor`, `clear-runs`, `release` classified as Type U
+- Repo skill scope added — root `skills/` internal tooling, never ships downstream; `arch-check-conventions`, `arch-generate-report`, `docs-identify-changes` classified here
+- Skill Type × Scope intersection matrix added — decision gate for valid combinations when adding new skills
+- Toolkit skill scope clarified: ships downstream, intended for use in downstream projects (not this repo's internal operations)
+- `release` skill description fixed: was "software-dev-agentic starter kit" specific, now generic downstream-project release tool
+
+**v32 — 2026-04-17 · software-dev-agentic v3.15.0**
+- Taxonomy section added — replaces the minimal "Agent & Skill Hierarchy" table with full formal definitions
+- Agents by Role: Orchestrator / Worker with subordinate clarification; orchestrator-of-orchestrators constraint added
+- Agents by Scope: Persona agent / Platform agent / Project agent formally named
+- Persona: formal definition — coherent workflow requirement, `.pkg` file requirement, minimum one worker/orchestrator
+- Skills by Invocation Type: Type T (Trigger) formalized — `user-invocable: true` + `Agent` tool, distinct from Type B; `agentic-perf-review` cited as canonical example
+- Skills by Scope: Toolkit skill / Platform-contract skill / Platform-only skill / Project skill named; "core-dependency skill" cross-referenced as alias for platform-contract skill
 
 **v31 — 2026-04-17 · software-dev-agentic v3.14.0**
 - `prompt-debug-worker` added to `lib/core/agents/detective/` — diagnoses why an agent underperformed by analyzing its system prompt against the trajectory from a perf-worker report; surfaces ambiguous instructions, missing context, and contradicting rules
