@@ -36,6 +36,21 @@ If the user picks **Resume**:
 If the user picks **Start new feature** (or no runs found):
 - Proceed normally to the next pre-flight step below
 
+## Pre-flight — Approved Plan Check
+
+After the resume check, look for an approved plan from `feature-planner`:
+
+```bash
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs" -name "plan.md" 2>/dev/null
+```
+
+For each found `plan.md`, Grep for `status: approved`. If an approved plan exists:
+- Extract `feature`, `operations`, and `separate-ui-layer` from its frontmatter
+- Skip Phase 0 entirely — intent is already known
+- Inform the user: "Found approved plan for `<feature>` — skipping intent gathering"
+
+If no approved plan is found: proceed to Phase 0 normally.
+
 ## Pre-flight — Set Delegation Flag
 
 Before anything else, run:
