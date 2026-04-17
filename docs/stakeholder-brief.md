@@ -34,13 +34,13 @@ Think of it as a small engineering team, permanently on call.
 ```
 You describe the feature
         ↓
-  Project Manager AI        ← understands the full picture, delegates the work
-  ┌─────────────────────────────────────────────┐
-  │  Backend Engineer AI    ← domain logic       │
-  │  Data Engineer AI       ← APIs and databases │
-  │  Frontend Engineer AI   ← state management   │
-  │  UI Engineer AI         ← screens and views  │
-  └─────────────────────────────────────────────┘
+  Tech Lead            ← understands the full picture, delegates the work
+  ┌──────────────────────────────────────────────────┐
+  │  Domain Engineer    ← business logic, use cases  │
+  │  Data Engineer      ← APIs, database, mappers    │
+  │  State Engineer     ← state management           │
+  │  UI Engineer        ← screens and components     │
+  └──────────────────────────────────────────────────┘
         ↓
   Complete feature, across all layers, ready for review
 ```
@@ -59,13 +59,13 @@ Here is what building the **Leave Request** feature looks like with this system.
 
 To keep this readable, here is how the AI specialists map to plain English roles:
 
-| Plain English | What it actually is | What it owns |
+| Role | Agent | What it owns |
 |---|---|---|
-| Project Manager AI | `feature-orchestrator` | Coordinates the team, decides the order, opens the PR |
-| Backend Engineer AI | `domain-worker` | Business logic — entities, rules, use cases |
-| Data Engineer AI | `data-worker` | Data layer — API calls, database, mappers |
-| Frontend Engineer AI | `presentation-worker` | State management — what the UI shows and responds to |
-| UI Engineer AI | `ui-worker` | The actual screens and components the user sees |
+| Tech Lead | `feature-orchestrator` | Coordinates the team, enforces layer order, opens the PR |
+| Domain Engineer | `domain-worker` | Business logic — entities, rules, use cases. Zero framework dependencies. |
+| Data Engineer | `data-worker` | Data layer — API integration, database, mappers |
+| State Engineer | `presentation-worker` | State management — ViewModel / BLoC / StateHolder |
+| UI Engineer | `ui-worker` | Screens and components, bound to the state contract |
 
 ### What the engineer types
 
@@ -78,32 +78,32 @@ That is the entire input. One sentence of intent.
 The Project Manager AI takes over. It asks three short clarifying questions — what data operations are needed, whether this is a new feature or an update, and whether the platform has a separate UI layer. Then it gets to work.
 
 ```
-Project Manager AI
+Tech Lead
 │
-├── 1. Hands off to Backend Engineer AI
-│      → Creates the LeaveRequest entity (the data model)
-│      → Creates the repository interface (how data is stored and retrieved)
+├── 1. Hands off to Domain Engineer
+│      → Creates the LeaveRequest entity (pure business model, no framework)
+│      → Creates the repository interface (defines data contract, no implementation)
 │      → Creates three use cases:
 │           SubmitLeaveRequestUseCase
 │           ApproveLeaveRequestUseCase
 │           RejectLeaveRequestUseCase
 │      ✓ Done. Returns file paths.
 │
-├── 2. Hands off to Data Engineer AI
-│      → Creates the API response model (what the server sends back)
-│      → Creates the mapper (translates API data into our domain model)
+├── 2. Hands off to Data Engineer
+│      → Creates the API response model (mirrors the server payload)
+│      → Creates the mapper (translates API data into domain model)
 │      → Creates the data source (the actual API call)
-│      → Creates the repository implementation (wires everything together)
+│      → Creates the repository implementation (fulfils the domain contract)
 │      ✓ Done. Returns file paths.
 │
-├── 3. Hands off to Presentation Team
-│      Frontend Engineer AI → Creates the StateHolder
-│                              (manages what the UI shows and responds to)
-│      UI Engineer AI       → Creates the screen
-│                              (the actual interface the user sees)
+├── 3. Hands off to State Engineer + UI Engineer
+│      State Engineer → Creates the StateHolder
+│                        (owns UI state, wires use cases, handles events)
+│      UI Engineer    → Creates the screen
+│                        (observes state, dispatches events, handles navigation)
 │      ✓ Done. Returns file paths.
 │
-└── Project Manager AI compiles the result, opens a pull request.
+└── Tech Lead compiles the result, opens a pull request.
 ```
 
 ### What comes out
@@ -112,16 +112,16 @@ A complete, production-ready feature across all layers — ready for the enginee
 
 | What was created | Who created it |
 |---|---|
-| `LeaveRequest` entity | Backend Engineer AI |
-| `LeaveRequestRepository` interface | Backend Engineer AI |
-| `SubmitLeaveRequestUseCase` | Backend Engineer AI |
-| `ApproveLeaveRequestUseCase` | Backend Engineer AI |
-| `RejectLeaveRequestUseCase` | Backend Engineer AI |
-| API response model + mapper | Data Engineer AI |
-| Data source + repository implementation | Data Engineer AI |
-| `LeaveRequestViewModel` | Frontend Engineer AI |
-| Leave request screen + navigation | UI Engineer AI |
-| Pull request opened, linked to ticket | Project Manager AI |
+| `LeaveRequest` entity | Domain Engineer |
+| `LeaveRequestRepository` interface | Domain Engineer |
+| `SubmitLeaveRequestUseCase` | Domain Engineer |
+| `ApproveLeaveRequestUseCase` | Domain Engineer |
+| `RejectLeaveRequestUseCase` | Domain Engineer |
+| API response model + mapper | Data Engineer |
+| Data source + repository implementation | Data Engineer |
+| `LeaveRequestStateHolder` | State Engineer |
+| Leave request screen + navigation | UI Engineer |
+| Pull request opened, linked to ticket | Tech Lead |
 
 Every file follows our architecture standards. Every layer only knows what it's supposed to know. No shortcuts, no drift.
 
