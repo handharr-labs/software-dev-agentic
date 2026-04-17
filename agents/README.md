@@ -1,64 +1,44 @@
-# Agents
+# Internal Agents
 
-Subagents following the Core Design Principles — orchestrators coordinate workers, workers execute procedures.
+Internal tooling for maintaining this repo — convention review, doc sync, and component scaffolding. **Not symlinked to downstream projects.**
 
-Agents are split by scope:
-- `lib/core/agents/` — platform-agnostic (orchestrators, utility workers)
-- `lib/platforms/<platform>/agents/` — platform worker implementations + platform-exclusive agents
+| Agent | Purpose |
+|---|---|
+| `arch-review-orchestrator` | Audit all agents and skills in this repo against the convention checklist |
+| `arch-review-worker` | Review a specific scope (agent file, skill dir) for convention violations |
+| `docs-sync-worker` | Sync design docs after sessions that change structure or conventions |
+| `scaffold-worker` | Consult on and scaffold new agents, skills, or personas for this repo |
 
-## Core Agents (platform-agnostic)
+---
 
-### Orchestrators
-
-Coordinate workers for multi-layer tasks. Gather intent, delegate in order, never write code directly.
-
-| Agent | When to invoke |
-|-------|----------------|
-| `feature-orchestrator` | Build a complete feature end-to-end — domain → data → presentation |
-| `backend-orchestrator` | Scaffold a backend feature — domain → data layer only |
-| `pres-orchestrator` | Build presentation layer when domain is done — StateHolder → UI (mobile platforms) |
-
-### Utility Workers
-
-| Agent | When to invoke |
-|-------|----------------|
-| `issue-worker` | Create or pick up a GitHub Issue — opens issue, creates branch, updates backlog |
-| `perf-worker` | Analyse agentic session performance from Claude Code transcript |
-| `debug-worker` | Trace runtime errors through the layers to root cause |
-| `arch-review-worker` | Audit code for Clean Architecture violations |
-
-## Platform Workers
-
-Each platform implements this standard worker set:
-
-| Worker | Layer | Responsibility |
-|--------|-------|----------------|
-| `domain-worker` | Domain | Entities, repository interfaces, use cases, domain services |
-| `data-worker` | Data | DTOs/Responses, mappers, data sources, repository impls |
-| `presentation-worker` | Presentation | StateHolder (ViewModel/BLoC) — or full UI for web |
-| `test-worker` | Testing | Unit + integration tests for any layer |
-| `ui-worker` | UI | UI layer bound to StateHolder contract (mobile platforms only) |
-
-Platform-exclusive agents live alongside — e.g. iOS adds `pres-orchestrator` override, `test-orchestrator`, `ui-worker`, `pr-review-worker`.
-
-## Orchestration Model
+## Orchestration Model (current)
 
 ```
-feature-orchestrator (core)
-  → domain-worker    (platform implementation)
-  → data-worker      (platform implementation)
-  → presentation-worker (platform implementation)
-     — or for mobile —
-  pres-orchestrator (core)
-    → presentation-worker  (StateHolder)
-    → ui-worker            (UI binding)
+feature-orchestrator          ← top-level, full-stack entry point
+  ├── domain-worker           Phase 1 — Domain layer
+  ├── data-worker             Phase 2 — Data layer
+  └── pres-orchestrator       Phase 3 — Presentation + UI (sub-orchestrator)
+        ├── presentation-worker   StateHolder
+        └── ui-worker             UI binding
+
+backend-orchestrator          ← backend-only entry point
+  ├── domain-worker
+  └── data-worker
+
+pres-orchestrator             ← standalone entry point (when backend already exists)
+  ├── presentation-worker
+  └── ui-worker
+
+debug-orchestrator            ← debug entry point
+  └── debug-worker
 ```
 
-Workers are resolved by name at runtime from `.claude/agents/`. The correct platform implementation
-is wired by `setup-symlinks.sh --platform=<p>` at project setup time.
+Workers are resolved by name at runtime from `.claude/agents/`. The correct platform implementation is wired by `setup-symlinks.sh --platform=<platform>` at project setup time.
+
+---
 
 ## Extension
 
 Add project-specific logic without touching shared files:
-- Create `.claude/agents.local/extensions/{agent-name}.md` (delta only)
+- Create `.claude/agents.local/extensions/<agent-name>.md` (delta only)
 - Each agent ends with an extension hook that reads this file if present
