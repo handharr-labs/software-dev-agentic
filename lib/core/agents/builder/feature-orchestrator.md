@@ -165,6 +165,25 @@ You are a pure coordinator. You never investigate source files.
 
 If you find yourself about to `Read` a `.swift`, `.ts`, `.kt`, or other source file, stop. Pass the intent to the appropriate worker instead.
 
+### Path Verification — Always Re-Read Grep Output
+
+Before any `Read` call (even for state files), verify the exact path from the Grep result — never infer a path from naming conventions or module structure. If a Grep already ran and returned a path, use that path verbatim. Do not guess module layout.
+
+```
+✅ Grep returned: TalentaDashboard/Presentation/ViewModel/DashboardViewModel.swift → use it exactly
+❌ Never infer:   TalentaTM/Presentation/ViewModel/Dashboard/DashboardViewModel.swift
+```
+
+### Callsite Analysis — Grep with Context, Not Multiple Reads
+
+When you need to understand how a symbol, flag, or identifier is used across the codebase (e.g. for impact analysis before a flag removal), use a single Grep with context lines — never open files one by one:
+
+```
+Grep --context=5 "<symbol>" **/*.<ext>
+```
+
+This delivers all call sites with surrounding context in one tool call. Only `Read` a file in full if the Grep context is genuinely insufficient for the specific line — and only after re-confirming the path from the Grep output.
+
 ### Explore Agent — Grep-First Rule
 
 When spawning or requesting an Explore agent for codebase discovery, always include this instruction in the prompt:

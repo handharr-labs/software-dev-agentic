@@ -192,15 +192,20 @@ Start at 10 and deduct:
 
 *Were the project's CLAUDE.md rules followed?*
 
-Read the project's CLAUDE.md. Check the session data against these common rules:
+Read the project's CLAUDE.md. Determine which rules apply before scoring:
 
-- `issue-worker` / `pickup-issue` / `create-issue` called early → ✓
+**Always required:**
 - Work done on a feature branch (not `main`) → ✓
 - `git add` with specific files (not `-A` or `.`) → check `bash_commands`
-- PR includes `Closes #N` → check `bash_commands` for `gh pr create`
 - No `--no-verify` skipping hooks → check `bash_commands`
 
-Score based on how many rules were followed.
+**Conditional — only apply if the project's CLAUDE.md references issue tracking (e.g. mentions `issue-worker`, `pickup-issue`, a Jira/GitHub/Linear workflow):**
+- `issue-worker` / `pickup-issue` / `create-issue` called early → ✓
+- PR includes `Closes #N` → check `bash_commands` for `gh pr create`
+
+If the project's CLAUDE.md has no mention of issue tracking or PR workflow, skip both conditional checks entirely — do not penalise the session for omitting them.
+
+Score based on how many applicable rules were followed.
 
 ### D7 — One-Shot Rate
 
@@ -367,7 +372,7 @@ Read:Grep ratio: N (target < 3 — high ratio signals full-file reads over targe
 
 ### Issues found
 - **[D4]** `read_grep_ratio` of N — <specific files that should have been Grepped>
-- **[D6]** <rule violation + evidence>
+- **[D6]** <rule violation + evidence> *(only flag issue/PR rules if project CLAUDE.md references issue tracking)*
 - ...
 
 ## Recommendations

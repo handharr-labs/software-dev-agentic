@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.19.0] — 2026-04-18
+
+### Fixed
+- `lib/core/agents/perf-worker.md` D6: split rules into always-required and conditional — issue tracking and PR creation checks are only applied when the project's CLAUDE.md references an issue workflow; projects without issue tracking are not penalised
+- `lib/core/agents/builder/feature-orchestrator.md`: added Path Verification rule — paths must be taken verbatim from Grep output, never inferred from naming conventions
+- `lib/core/agents/builder/feature-orchestrator.md`: added Callsite Analysis rule — use `Grep --context=5` for symbol/flag impact discovery instead of per-file Read calls; reduces read:grep ratio and token overhead
+
+---
+
 ## [3.18.0] — 2026-04-17
 
 ### Fixed
