@@ -26,6 +26,6 @@ Wire a new use case and its dependencies into the DI containers.
 - Add `import 'server-only'` guard check in server container (it must already be there)
 - Never add React imports or `client-only` to server container
 
-**Pattern:** `reference/di.md` § 7.1, § 7.2
+**Pattern:** `reference/contract/di.md` § 7.1, § 7.2
 
 **Return:** which container(s) were updated and what was added.

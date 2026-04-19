@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create Navigator + Coordinator following `.claude/reference/navigation.md §6.1-6.5` and DI rules in `.claude/reference/di.md §7.2`.
+Create Navigator + Coordinator following `.claude/reference/contract/navigation.md §6.1-6.5` and DI rules in `.claude/reference/contract/di.md §7.2`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/navigation.md` for `§6.1` and `.claude/reference/di.md` for `§7.2`; only **Read** a file in full if the section cannot be located
+1. **Grep** `.claude/reference/contract/navigation.md` for `§6.1` and `.claude/reference/contract/di.md` for `§7.2`; only **Read** a file in full if the section cannot be located
 2. **Locate** module path: `Talenta/Module/[Module]/Presentation/Coordinator/`
 3. **Create** `[Feature]Coordinator.swift` (contains both protocol and impl)
 4. **Wire** into the module's `DIContainer`

@@ -409,7 +409,7 @@ Both scripts are idempotent — re-running never overwrites existing files (`lin
 | 1 | Migration: talenta-ios | Agents/skills/reference content copied to `lib/platforms/ios/`. talenta-ios still uses its own copy. Full submodule wiring = separate session. |
 | 2 | Versioning | ✅ Resolved — semantic versioning established: v2.0.0 tagged. Confluence pages track `Synced with: software-dev-agentic vX.Y.Z` in header. |
 | 3 | Naming alignment | Flutter/Android adopt `-orchestrator` / `-worker` suffix convention — Required before migration |
-| 4 | Reference doc splitting | Structural split of `lib/platforms/web/reference/data.md` and `lib/platforms/web/reference/utilities.md` by operation type |
+| 4 | Reference doc splitting | Structural split of `lib/platforms/web/reference/contract/data.md` and `lib/platforms/web/reference/utilities.md` by operation type |
 | 5 | Flutter implementation | `lib/platforms/flutter/` is a stub — needs agents, skills, reference docs |
 
 ---
