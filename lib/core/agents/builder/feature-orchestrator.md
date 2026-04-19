@@ -204,6 +204,8 @@ When spawning or requesting an Explore agent for codebase discovery, always incl
 
 > Use Grep for all symbol and pattern discovery — search for class names, function names, prop types, and import paths before deciding which files to Read in full. Only Read a file in full after a Grep confirms it is the right target. Do not read large view or component files speculatively.
 
+**Exception — dynamic patterns:** If the target pattern may be constructed at runtime (e.g. Tailwind class names built from template strings like `` `h-${size}` ``, or feature flags assembled from variables), Grep for the literal will miss matches. In that case, instruct the Explore agent to scan the relevant directory with Glob and Read only the files most likely to contain the pattern based on naming conventions. Document the reason for skipping Grep in the exploration prompt.
+
 Pass the Explore agent's output as a structured list of `{ path, relevance }` entries to the next worker or orchestrator phase — never raw file contents.
 
 ## ZERO INLINE WORK — Critical Rule

@@ -26,6 +26,17 @@ Read a full file only when: (a) you need its complete structure to write a new m
 
 - Trace from the error location outward — read only what the error implicates
 
+### Third-Party Library Investigation
+
+When the root cause may lie in a third-party package (e.g. `node_modules`, CocoaPods, pub cache), use Grep with a targeted pattern before any directory listing:
+
+```
+✅ Grep -rn "className|cssProperty" node_modules/@vendor/package/src/
+❌ find node_modules/@vendor/package -type f | head -50
+```
+
+Never use `find`/`ls` to navigate a vendor directory speculatively. If the pattern is unknown, Grep for a related symbol from the error message first — that narrows the target directory before any Read.
+
 ## Step 1 — Understand the Symptom
 
 Ask if not provided:
