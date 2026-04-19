@@ -107,7 +107,7 @@ fi
 # No entry or stale (> 4h) — fall through to block
 
 # Block — agent must stop and surface to user; must not resolve autonomously
-cat <<'EOF'
+cat >&2 <<'EOF'
 BLOCKED: Feature directory edit requires delegation.
 
 You MUST call the AskUserQuestion tool RIGHT NOW — do not respond in plain text, do not describe the options, do not ask anything in prose. Invoke AskUserQuestion immediately with exactly this input:
@@ -141,7 +141,6 @@ After the user selects an option, dispatch as follows:
   - "Delegate now (feature-orchestrator)" → invoke the feature-orchestrator agent immediately.
   - "Proceed inline (bypass)"             → write the delegation entry (update delegation.json for this branch) then continue with the original edit.
 EOF
-echo ""
-echo "  Branch : $BRANCH"
-echo "  File   : $FILE_PATH"
+echo "  Branch : $BRANCH" >&2
+echo "  File   : $FILE_PATH" >&2
 exit 2

@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.25.1] — 2026-04-19
+
+### Fixed
+- `lib/core/hooks/require-feature-orchestrator.sh`: redirect all block output to stderr (`>&2`) — Claude Code reads stderr for hook messages; stdout is silently discarded, which caused "No stderr output" and Claude falling back to plain-text instead of invoking `AskUserQuestion`
+
+---
+
 ## [3.25.0] — 2026-04-19
 
 ### Fixed
