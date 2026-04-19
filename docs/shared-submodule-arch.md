@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-04-09
-> Updated: 2026-04-19 — v17: Normalized heading structure across all 24 contract reference files — `#` title, `##` canonical sections, `###` subsections; added error-handling.md and utilities.md to the 8-file contract; removed legacy §N section numbering from all reference files and skills
+> Updated: 2026-04-19 — v18: Decision 4 updated — `clean-arch/` now holds layer canonical templates in addition to universal theory; Decision 6 symlink table updated — `clean-arch/` preserved downstream; `link_reference`/`copy_reference` made generic (all subdirs preserved)
 > Synced with: software-dev-agentic v3.21.0
 > Related: Agentic Coding Assistant — Core Design Principles
 
@@ -121,17 +121,19 @@ Three-pass linking priority: `agents.local` > platform > core (first link wins)
 
 ### 4. Reference Docs Split by Scope
 
-**Decision:** Reference docs live in three locations within the submodule:
+**Decision:** Reference docs live in four locations within the submodule:
 - `lib/core/reference/README.md` — taxonomy doc: placement rules for reference vs agent body vs skills (agentic use)
-- `lib/core/reference/clean-arch/` — conceptual, language-agnostic CLEAN Architecture principles (DI containers, domain purity, layer contracts)
-- `lib/platforms/<platform>/reference/contract/` — cross-platform standard patterns with code examples. Same eight filenames on every platform: `domain.md`, `data.md`, `presentation.md`, `navigation.md`, `di.md`, `testing.md`, `error-handling.md`, `utilities.md`. This makes the mandatory same-name-across-platforms contract explicit in the folder structure.
-- `lib/platforms/<platform>/reference/` (flat) — platform-specific patterns unique to that platform (e.g. `ssr.md`, `server-actions.md` for web).
+- `lib/core/reference/clean-arch/` — two kinds of files, both preserved as `clean-arch/` subdir downstream (`.claude/reference/clean-arch/<name>.md`):
+  - **Universal theory** (`layer-contracts.md`, `domain-purity.md`, `di-containers.md`, `contract-schema.md`) — cross-cutting CLEAN Architecture principles shared across all layers.
+  - **Layer canonical templates** (`domain.md`, and `data.md`, `presentation.md` in progress) — platform-agnostic concept definitions per CLEAN layer. Defines what each artifact IS, its invariants, and when to use it. Workers reference these for concepts; platform `contract/` files implement the same headings in platform syntax.
+- `lib/platforms/<platform>/reference/contract/` — cross-platform standard patterns with code examples. Same eight filenames on every platform. Preserved as `contract/` subdir downstream (`.claude/reference/contract/<name>.md`). Syntax and platform-specific patterns only — conceptual definitions belong in the corresponding `lib/core/reference/clean-arch/<layer>.md` template.
+- `lib/platforms/<platform>/reference/` (flat) — platform-specific patterns unique to that platform (e.g. `ssr.md`, `server-actions.md` for web). Lands flat as `.claude/reference/<name>.md`.
 
-**Rationale:** Within a platform's reference directory, some docs describe concepts mandatory on all platforms (the CLEAN layer contracts) while others are platform-unique. The `contract/` subfolder makes the cross-platform mandate visible — adding a new platform means the engineer must provide all eight files under `contract/`. Platform-only refs remain flat.
+**Rationale:** The split between `clean-arch/` (what X is) and `contract/` (how X looks in this platform) mirrors the DI pattern applied at the knowledge level: workers know the concept from the canonical template; platform contract files provide the implementation. Universal theory files handle cross-cutting principles that no single layer owns.
 
-Every contract file follows a strict heading structure: `#` platform+topic title, `##` canonical sections (agent-greppable keywords), `###` subsections. This makes `grep "^## Keyword"` deterministic across all platforms — agents never need to search at `###` depth or deeper.
+**Reference subdir rule:** All subdirectories under a reference source dir are preserved downstream. `contract/` and `clean-arch/` both land as-is. Unlike agents and skills (always flat), reference docs maintain their subdir structure because agents reference them by path (e.g. `reference/clean-arch/domain.md`, `reference/contract/domain.md`). Any new subdir added under `lib/core/reference/` or `lib/platforms/<platform>/reference/` is automatically preserved.
 
-**Downstream behavior (different from skills):** The `contract/` subdir is **preserved** in downstream projects — skills and workers reference these files as `.claude/reference/contract/<name>.md`. This is intentional: skills contain hard-coded paths like `reference/contract/presentation.md`; flattening would break them. Platform-specific reference docs land as `.claude/reference/<name>.md` (flat).
+Every contract file follows a strict heading structure: `#` platform+topic title, `##` canonical sections (agent-greppable keywords), `###` subsections. This makes `grep "^## Keyword"` deterministic across all platforms.
 
 **Grep-first rule (P7 enforcement):** Workers Grep reference files by section keyword before reading in full. If uncertain which file covers a topic, check `reference/index.md` first.
 
@@ -157,6 +159,7 @@ Every contract file follows a strict heading structure: `#` platform+topic title
 |---|---|---|
 | `lib/platforms/<platform>/skills/contract/<name>/` | `.claude/skills/<name>/` | No — lands flat |
 | `lib/platforms/<platform>/skills/<name>/` | `.claude/skills/<name>/` | No — already flat |
+| `lib/core/reference/clean-arch/<name>.md` | `.claude/reference/clean-arch/<name>.md` | **Yes** — `clean-arch/` preserved |
 | `lib/platforms/<platform>/reference/contract/<name>.md` | `.claude/reference/contract/<name>.md` | **Yes** — `contract/` preserved |
 | `lib/platforms/<platform>/reference/<name>.md` | `.claude/reference/<name>.md` | No — already flat |
 
@@ -439,6 +442,12 @@ Both scripts are idempotent — re-running never overwrites existing files (`lin
 ---
 
 ## Changelog
+
+**v18 — 2026-04-19 · software-dev-agentic v3.21.0**
+- Decision 4: `lib/core/reference/clean-arch/` now holds two kinds of files — universal theory (existing) and per-layer canonical templates (new, starting with `domain.md`). Both preserved as `clean-arch/` subdir downstream. Platform `contract/` files retain syntax only; conceptual definitions moved to core templates.
+- Decision 4: "Reference subdir rule" added — all reference source subdirs preserved downstream; any new subdir automatically preserved; agents use downstream paths (`reference/clean-arch/`, `reference/contract/`)
+- Decision 6: Symlink table updated — new row for `lib/core/reference/clean-arch/<name>.md` → `.claude/reference/clean-arch/<name>.md` (preserved); note added explaining why reference preserves subdirs while agents/skills do not
+- Setup scripts: `link_reference` / `copy_reference` generalized — loop all subdirs (previously hardcoded `contract/` only); core call changed from `lib/core/reference/clean-arch` to `lib/core/reference` so `clean-arch/` is treated as a preserved subdir
 
 **v16 — 2026-04-19 · software-dev-agentic v3.21.0**
 - Decision 1: Core-dependency skills now in `lib/platforms/<platform>/skills/contract/` subfolder — makes the mandatory cross-platform contract explicit; platform-only skills remain flat; setup scripts handle both transparently
