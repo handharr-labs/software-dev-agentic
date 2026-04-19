@@ -40,6 +40,11 @@ done
 
 ## Adding a new platform
 
+These 8 reference contract files are a **prerequisite for the builder and auditor personas to function** on any platform:
+
+- **Builder** workers (`domain-worker`, `data-worker`, `presentation-worker`, etc.) grep canonical keywords from these files as their reference targets — missing headings mean workers can't find the patterns they need
+- **Auditor** (`arch-check-conventions`) enforces keyword presence — a platform without these files will fail every convention check
+
 When adding a 4th platform:
 1. Create `lib/platforms/<platform>/reference/contract/` with all 8 files
 2. Each file must contain the required keywords defined in `builder-auditor-schema.md`
