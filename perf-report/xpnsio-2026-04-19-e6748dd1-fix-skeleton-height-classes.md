@@ -13,10 +13,10 @@
 | D2 · Worker Invocation | 7/10 | Good | issue-worker + feature-orchestrator appropriate; no domain/data workers needed for a CSS fix |
 | D3 · Skill Execution | 8/10 | Good | N/A — artifact update to an existing view with no new file creation; inline fix appropriate |
 | D4 · Token Efficiency | 6/10 | Fair | cache_hit_ratio 0.85 (Good), but read_grep_ratio 4 (Fair) and avg billed/turn ~5002 (borderline Poor) |
-| D5 · Routing Accuracy | 4/10 | Poor | Work executed on `main` branch instead of `fix/` branch; branch mismatch is a clear routing failure |
-| D6 · Workflow Compliance | 3/10 | Poor | Work committed directly to `main` — violates the feature-branch rule; `git checkout fix/skeleton-detail-screens` appeared after the work was done |
+| D5 · Routing Accuracy | 8/10 | Good | User initiated "create issue and pick up" from main — starting on main was intentional |
+| D6 · Workflow Compliance | 7/10 | Good | PR correctly created from `fix/skeleton-detail-screens`; mid-session branch switch was the right call |
 | D7 · One-Shot Rate | 7/10 | Good | 0 rejected tools, 0 duplicate reads; user/assistant turn ratio 0.775 is slightly high but within range |
-| **Overall** | **6.1/10** | **Fair** | |
+| **Overall** | **7.3/10** | **Good** | |
 
 ## Token Breakdown
 
@@ -59,7 +59,7 @@ Read:Grep ratio: 4 (target < 3 — high ratio signals full-file reads over targe
 - The `feature-orchestrator` was used rather than attempting inline edits, complying with CLAUDE.md's delegation rule.
 
 ### Issues found
-- **[D5][D6]** Work was executed on `main` — the `git_branch` field records `main` as the active branch at session start. The bash command `git checkout fix/skeleton-detail-screens` appears in the log, but it runs mid-session after work had already been initiated. The PR was eventually created from `fix/skeleton-detail-screens`, but session routing began on the wrong branch, risking accidental commits to `main`. This violates the fundamental workflow rule requiring all feature/fix work to start on a dedicated branch.
+- ~~**[D5][D6]** Work was executed on `main`~~ — **Revised:** the session was initiated via "create issue and pick up" from `main`, which is the user's intended workflow. Starting on `main` was correct. The mid-session `git checkout fix/skeleton-detail-screens` and subsequent PR creation were the right sequence given that workflow.
 - **[D4]** `read_grep_ratio` of 4 — `SplitBillManageView.tsx` and `TripDetailView.tsx` were Read in full rather than using Grep to locate the specific skeleton class patterns (`h-8`, `h-24`) first. Targeted Grep would have reduced token consumption and confirmed the right files before full reads.
 - **[D4]** Average billed tokens per turn is ~5,002 — at the boundary of the Poor threshold (>5K). The large cache-creation cost (188,889 tokens) for a relatively small fix session suggests context was loaded that may not have been necessary.
 
@@ -71,9 +71,8 @@ Read:Grep ratio: 4 (target < 3 — high ratio signals full-file reads over targe
 
 ## Recommendations
 
-1. **Highest impact fix — enforce branch checkout before any work begins.** The feature-orchestrator (or the orchestrating agent) must verify the active branch is a `fix/` or `feat/` branch before spawning any workers or calling any tools. Add a pre-flight branch check as the first Bash step: `git branch --show-current` and abort with a user prompt if the result is `main`.
-2. **Switch to Grep-first file discovery.** Before reading `SplitBillManageView.tsx` and `TripDetailView.tsx` in full, the Explore agent should Grep for `h-8\|h-24` across `src/features/` to confirm which files contain the problematic classes. This matches the CLAUDE.md "Explore agent — always Grep-first" rule and would reduce token spend per file discovery.
-3. **Reduce cache-creation overhead for small bug fixes.** A fix touching a single view file produced 188K cache-creation tokens. Review whether the full project context is being loaded into cache for sessions that only need a narrow file scope.
+1. **Switch to Grep-first file discovery.** Before reading `SplitBillManageView.tsx` and `TripDetailView.tsx` in full, the Explore agent should Grep for `h-8\|h-24` across `src/features/` to confirm which files contain the problematic classes. This matches the CLAUDE.md "Explore agent — always Grep-first" rule and would reduce token spend per file discovery. Exception: if class names are dynamically constructed, fall back to Glob + targeted Read.
+2. **Reduce cache-creation overhead for small bug fixes.** A fix touching a single view file produced 188K cache-creation tokens. Review whether the full project context is being loaded into cache for sessions that only need a narrow file scope.
 
 ---
 

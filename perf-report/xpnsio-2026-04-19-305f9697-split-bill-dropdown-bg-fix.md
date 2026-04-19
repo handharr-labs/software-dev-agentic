@@ -13,10 +13,10 @@
 | D2 · Worker Invocation | 9/10 | Excellent | issue-worker → debug-worker → feature-orchestrator in correct sequence |
 | D3 · Skill Execution | 8/10 | Good | CSS-only fix; no domain/data/presentation artifacts — skill calls not required |
 | D4 · Token Efficiency | 5/10 | Fair | read_grep_ratio 8.0 (target < 3); globals.css read 3× |
-| D5 · Routing Accuracy | 6/10 | Fair | Bug fix performed directly on main instead of a fix/ branch |
-| D6 · Workflow Compliance | 4/10 | Poor | Work landed on main with no feature branch and no PR created |
+| D5 · Routing Accuracy | 8/10 | Good | User initiated "create issue and pick up" from main — branch routing was intentional |
+| D6 · Workflow Compliance | 5/10 | Fair | No PR created after fix landed; `gh pr create` absent from bash_commands |
 | D7 · One-Shot Rate | 7/10 | Good | 0 rejected tools; minor re-reads on globals.css; node_modules explore was trial-and-error |
-| **Overall** | **6.7/10** | **Fair** | |
+| **Overall** | **7.1/10** | **Good** | |
 
 ## Token Breakdown
 
@@ -65,9 +65,7 @@ Read:Grep ratio: 8.0 (target < 3 — high ratio signals full-file reads over tar
 
 ### Issues found
 
-- **[D5/D6]** Work performed directly on `main` branch. A bug fix of any scope should land on a `fix/` branch (e.g. `fix/split-bill-dropdown-bg`) and be merged via PR. `git checkout main && git pull` in bash_commands confirms the session committed directly to main. This skips code review and violates branch hygiene.
-
-- **[D6]** No PR was created (`gh pr create` absent from bash_commands). Even for a one-file CSS change, a PR with `Closes #99` is the expected delivery mechanism.
+- **[D6]** No PR was created (`gh pr create` absent from bash_commands). The user initiated this session via "create issue and pick up" from `main` — working on `main` directly was intentional. However, a PR with `Closes #99` is still the expected delivery mechanism for any fix, regardless of branching strategy.
 
 - **[D4]** `read_grep_ratio` of 8.0 — the debug phase used 15 Bash `find`/`ls` commands to navigate node_modules (`@base-ui/react`) instead of using Grep to locate the specific symbol or CSS class. The correct approach: `Grep -r "background" node_modules/@base-ui/react/select/` narrows the target before any Read. Full directory listings of node_modules are expensive and often unnecessary.
 
@@ -83,9 +81,7 @@ Read:Grep ratio: 8.0 (target < 3 — high ratio signals full-file reads over tar
 
 ## Recommendations
 
-1. **Highest impact fix — enforce fix/ branch creation in debug-worker** — debug-worker should create a `fix/<slug>` branch before handing off to feature-orchestrator. Currently nothing in the flow enforces branching for bug fixes. Adding a `git checkout -b fix/...` step to debug-worker's handoff block would prevent direct-main commits.
-
-2. **Add a mandatory PR step in feature-orchestrator** — for any session that begins with an issue-worker spawn, feature-orchestrator should end with a `gh pr create --body "Closes #NNN"` call. The issue reference is already available from the issue-worker output.
+1. **Add a mandatory PR step in feature-orchestrator** — for any session that begins with an issue-worker spawn, feature-orchestrator should end with a `gh pr create --body "Closes #NNN"` call. The issue reference is already available from the issue-worker output. This applies even when working on `main` directly.
 
 3. **Constrain node_modules exploration in debug-worker** — the debug-worker prompt should instruct agents to use targeted Grep patterns when diagnosing third-party library behavior rather than recursive `find`/`ls`. Example instruction: "Use `Grep -n 'pattern' path/` before listing directories in node_modules."
 
