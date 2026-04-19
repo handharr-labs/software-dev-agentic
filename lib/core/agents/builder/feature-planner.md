@@ -17,10 +17,14 @@ find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs" -name "plan.m
 
 If one or more `plan.md` files are found:
 - Read each file and extract the `feature` and `status` fields from the frontmatter
-- Build a choice list:
-  - One entry per found plan: `"Resume: <feature> (status: <status>)"`
-  - Always include: `"Start new plan"`
-- Present the list using `AskUserQuestion`
+- Call `AskUserQuestion` with:
+  ```
+  question : "Which plan would you like to work on?"
+  header   : "Plan"
+  multiSelect: false
+  options  : one entry per found plan — label: "Resume: <feature>", description: "status: <status>"
+             plus always: label: "Start new plan", description: "Begin fresh for a new feature"
+  ```
 
 If the user picks **Resume**: read the existing `plan.md`, present it, and ask: "Edit, approve, or discard?"
 If the user picks **Start new plan**: proceed to Phase 0.
@@ -135,10 +139,16 @@ After writing `plan.md`:
 
 1. Display the full plan inline so the engineer can read it without opening the file
 2. State the path: `.claude/agentic-state/runs/<feature>/plan.md`
-3. Ask using `AskUserQuestion`:
-   - `"Approve — run feature-orchestrator to execute this plan"`
-   - `"Edit — I will modify plan.md then run feature-orchestrator manually"`
-   - `"Discard — cancel this plan"`
+3. Call `AskUserQuestion` with:
+   ```
+   question : "What would you like to do with this plan?"
+   header   : "Plan"
+   multiSelect: false
+   options  :
+     - label: "Approve", description: "Run feature-orchestrator to execute this plan"
+     - label: "Edit",    description: "I will modify plan.md then run feature-orchestrator manually"
+     - label: "Discard", description: "Cancel and delete this plan"
+   ```
 
 If the user selects **Approve**: update `status` in `plan.md` frontmatter to `approved`, then instruct the user to run `feature-orchestrator` — do not invoke it yourself.
 

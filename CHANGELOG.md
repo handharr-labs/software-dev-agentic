@@ -7,6 +7,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.25.0] — 2026-04-19
+
+### Fixed
+- `lib/core/hooks/require-feature-orchestrator.sh`: replaced fragmented `echo` block with a `cat <<'EOF'` heredoc that opens with an imperative mandate ("You MUST call the AskUserQuestion tool RIGHT NOW — do not respond in plain text") followed by the exact JSON input; previous format caused Claude to paraphrase the options as prose instead of invoking the tool
+
+### Changed
+- `lib/core/agents/builder/feature-planner.md`: both `AskUserQuestion` call sites (pre-flight resume check and Phase 5 confirm) now specify the full call structure — `question`, `header`, `multiSelect`, `options[].label`, `options[].description` — instead of vague "Present using AskUserQuestion" prose
+- `lib/core/agents/builder/feature-orchestrator.md`: pre-flight resume check `AskUserQuestion` call now specifies full call structure consistently with feature-planner
+
+---
+
 ## [3.24.2] — 2026-04-19
 
 ### Added

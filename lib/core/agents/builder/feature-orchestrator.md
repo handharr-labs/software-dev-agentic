@@ -23,10 +23,14 @@ find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs" -name "state.
 
 If one or more `state.json` files are found:
 - Read each file and extract `feature` and `next_phase`
-- Build a choice list:
-  - One entry per found run: `"Resume: <feature> (next: <next_phase>)"`
-  - Always include: `"Start new feature"`
-- Present the list using `AskUserQuestion`
+- Call `AskUserQuestion` with:
+  ```
+  question : "Which feature would you like to work on?"
+  header   : "Feature"
+  multiSelect: false
+  options  : one entry per found run — label: "Resume: <feature>", description: "next: <next_phase>"
+             plus always: label: "Start new feature", description: "Begin a new feature from scratch"
+  ```
 
 If the user picks **Resume**:
 - Load the chosen `state.json` — use `artifacts` paths already recorded

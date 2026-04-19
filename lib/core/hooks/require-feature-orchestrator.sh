@@ -107,40 +107,41 @@ fi
 # No entry or stale (> 4h) — fall through to block
 
 # Block — agent must stop and surface to user; must not resolve autonomously
-echo "BLOCKED: Feature directory edit on feat/* or feature/* branch requires delegation."
+cat <<'EOF'
+BLOCKED: Feature directory edit requires delegation.
+
+You MUST call the AskUserQuestion tool RIGHT NOW — do not respond in plain text, do not describe the options, do not ask anything in prose. Invoke AskUserQuestion immediately with exactly this input:
+
+{
+  "questions": [
+    {
+      "question": "How should this feature edit be handled?",
+      "header": "Delegation",
+      "multiSelect": false,
+      "options": [
+        {
+          "label": "Plan first (feature-planner)",
+          "description": "Produce a reviewable plan.md before any code is written. No files modified until you approve."
+        },
+        {
+          "label": "Delegate now (feature-orchestrator)",
+          "description": "Invoke feature-orchestrator to coordinate this feature build across all layers immediately."
+        },
+        {
+          "label": "Proceed inline (bypass)",
+          "description": "Continue without orchestrator delegation. Only choose if you explicitly want to skip the workflow."
+        }
+      ]
+    }
+  ]
+}
+
+After the user selects an option, dispatch as follows:
+  - "Plan first (feature-planner)"        → invoke the feature-planner agent. Do not write any files.
+  - "Delegate now (feature-orchestrator)" → invoke the feature-orchestrator agent immediately.
+  - "Proceed inline (bypass)"             → write the delegation entry (update delegation.json for this branch) then continue with the original edit.
+EOF
 echo ""
 echo "  Branch : $BRANCH"
 echo "  File   : $FILE_PATH"
-echo "  Reason : No active delegation for this branch (missing or stale > 4h)"
-echo ""
-echo "STOP. Do not proceed. Do not write the delegation entry yourself."
-echo ""
-echo "Call the AskUserQuestion tool now with this exact structure:"
-echo ""
-echo '  questions: ['
-echo '    {'
-echo '      question: "How should this feature edit be handled?",'
-echo '      header: "Delegation",'
-echo '      multiSelect: false,'
-echo '      options: ['
-echo '        {'
-echo '          label: "Plan first (feature-planner)",'
-echo '          description: "Produce a reviewable plan.md before any code is written. No files modified until you approve."'
-echo '        },'
-echo '        {'
-echo '          label: "Delegate now (feature-orchestrator)",'
-echo '          description: "Invoke feature-orchestrator to coordinate this feature build across all layers immediately."'
-echo '        },'
-echo '        {'
-echo '          label: "Proceed inline (bypass)",'
-echo '          description: "Continue without orchestrator delegation. Only choose if you explicitly want to skip the workflow."'
-echo '        }'
-echo '      ]'
-echo '    }'
-echo '  ]'
-echo ""
-echo "Once the user responds, dispatch as follows:"
-echo "  - 'Plan first (feature-planner)'    → invoke the feature-planner agent immediately. Do not write any files."
-echo "  - 'Delegate now (feature-orchestrator)' → invoke the feature-orchestrator agent immediately."
-echo "  - 'Proceed inline (bypass)'         → write the delegation entry yourself (update delegation.json for this branch) then continue with the original edit."
 exit 2
