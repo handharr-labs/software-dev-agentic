@@ -101,6 +101,7 @@ copy_skills() {
   for skill_dir in "$src_dir"/*/; do
     [ -d "$skill_dir" ] || continue
     name="$(basename "$skill_dir")"
+    [ "$name" = "contract" ] && continue
     if [ -e "$CLAUDE_DIR/skills/$name" ]; then
       echo "  skip  $name"
     else
@@ -108,6 +109,18 @@ copy_skills() {
       echo "  copy  $name"
     fi
   done
+  if [ -d "$src_dir/contract" ]; then
+    for skill_dir in "$src_dir/contract"/*/; do
+      [ -d "$skill_dir" ] || continue
+      name="$(basename "$skill_dir")"
+      if [ -e "$CLAUDE_DIR/skills/$name" ]; then
+        echo "  skip  $name"
+      else
+        cp -rf "$skill_dir" "$CLAUDE_DIR/skills/$name"
+        echo "  copy  $name"
+      fi
+    done
+  fi
 }
 
 copy_reference() {
@@ -118,6 +131,14 @@ copy_reference() {
     name="$(basename "$ref")"
     copy_if_absent "$ref" "$CLAUDE_DIR/reference/$name"
   done
+  if [ -d "$src_dir/contract" ]; then
+    mkdir -p "$CLAUDE_DIR/reference/contract"
+    for ref in "$src_dir/contract"/*.md; do
+      [ -f "$ref" ] || continue
+      name="$(basename "$ref")"
+      copy_if_absent "$ref" "$CLAUDE_DIR/reference/contract/$name"
+    done
+  fi
 }
 
 copy_hooks() {

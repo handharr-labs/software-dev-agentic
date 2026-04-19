@@ -91,11 +91,22 @@ copy_skills() {
   for skill_dir in "$src_dir"/*/; do
     [ -d "$skill_dir" ] || continue
     name="$(basename "$skill_dir")"
+    [ "$name" = "contract" ] && continue
     dest="$CLAUDE_DIR/skills/$name"
     [ -L "$dest" ] && rm -f "$dest"  # replace symlinks (broken or stale) with real file
     cp -rf "$skill_dir" "$dest"
     echo "  copy  $name"
   done
+  if [ -d "$src_dir/contract" ]; then
+    for skill_dir in "$src_dir/contract"/*/; do
+      [ -d "$skill_dir" ] || continue
+      name="$(basename "$skill_dir")"
+      dest="$CLAUDE_DIR/skills/$name"
+      [ -L "$dest" ] && rm -f "$dest"
+      cp -rf "$skill_dir" "$dest"
+      echo "  copy  $name"
+    done
+  fi
 }
 
 copy_reference() {
@@ -109,6 +120,17 @@ copy_reference() {
     cp -f "$ref" "$dest"
     echo "  copy  $name"
   done
+  if [ -d "$src_dir/contract" ]; then
+    mkdir -p "$CLAUDE_DIR/reference/contract"
+    for ref in "$src_dir/contract"/*.md; do
+      [ -f "$ref" ] || continue
+      name="$(basename "$ref")"
+      dest="$CLAUDE_DIR/reference/contract/$name"
+      [ -L "$dest" ] && rm -f "$dest"
+      cp -f "$ref" "$dest"
+      echo "  copy  contract/$name"
+    done
+  fi
 }
 
 # ── 1. Core agents/skills/reference ──────────────────────────────────────────

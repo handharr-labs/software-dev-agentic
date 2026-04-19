@@ -78,7 +78,9 @@ find_agent() {
 
 find_skill() {
   local name="$1"
-  if [ -d "$PLATFORM_DIR/skills/$name" ]; then
+  if [ -d "$PLATFORM_DIR/skills/contract/$name" ]; then
+    echo "$PLATFORM_DIR/skills/contract/$name"
+  elif [ -d "$PLATFORM_DIR/skills/$name" ]; then
     echo "$PLATFORM_DIR/skills/$name"
   elif [ -d "$SUBMODULE/lib/core/skills/$name" ]; then
     echo "$SUBMODULE/lib/core/skills/$name"

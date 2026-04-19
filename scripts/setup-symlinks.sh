@@ -101,8 +101,16 @@ link_skills() {
   for skill_dir in "$src_dir"/*/; do
     [ -d "$skill_dir" ] || continue
     name="$(basename "$skill_dir")"
+    [ "$name" = "contract" ] && continue
     link_if_absent "$rel_prefix/$name" "$CLAUDE_DIR/skills/$name"
   done
+  if [ -d "$src_dir/contract" ]; then
+    for skill_dir in "$src_dir/contract"/*/; do
+      [ -d "$skill_dir" ] || continue
+      name="$(basename "$skill_dir")"
+      link_if_absent "$rel_prefix/contract/$name" "$CLAUDE_DIR/skills/$name"
+    done
+  fi
 }
 
 link_reference() {
@@ -114,6 +122,14 @@ link_reference() {
     name="$(basename "$ref")"
     link_if_absent "$rel_prefix/$name" "$CLAUDE_DIR/reference/$name"
   done
+  if [ -d "$src_dir/contract" ]; then
+    mkdir -p "$CLAUDE_DIR/reference/contract"
+    for ref in "$src_dir/contract"/*.md; do
+      [ -f "$ref" ] || continue
+      name="$(basename "$ref")"
+      link_if_absent "$rel_prefix/contract/$name" "$CLAUDE_DIR/reference/contract/$name"
+    done
+  fi
 }
 
 # Relative paths from .claude/agents/ or .claude/skills/ to submodule
