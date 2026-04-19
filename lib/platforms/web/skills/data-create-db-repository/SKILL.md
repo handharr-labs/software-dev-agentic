@@ -30,6 +30,6 @@ Also create `src/data/mappers/db/DbErrorMapper.ts` if it does not exist.
 - Maps ORM-specific errors to `DomainError`
 - Add `// TODO: add ORM-specific error code checks when ORM is chosen` comments
 
-**Pattern:** `reference/database.md` § 17.4, § 17.5, § 17.6
+**Pattern:** `reference/database.md` — Grep `## DB Mapper`, `## DB Repository Implementation`, `## DB Error Mapper`
 
 **Return:** all created file paths. Suggest next step: `pres-wire-di`.

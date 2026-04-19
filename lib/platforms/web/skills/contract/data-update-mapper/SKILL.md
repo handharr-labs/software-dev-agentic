@@ -5,7 +5,7 @@ user-invocable: false
 tools: Read, Edit, Glob
 ---
 
-Update an existing Mapper following `reference/contract/data.md § 4.2`.
+Update an existing Mapper following `reference/contract/data.md` — Grep `## Mappers`.
 
 ## Steps
 

@@ -44,7 +44,7 @@ Update existing tests following `reference/contract/testing.md`.
 - Never modify production StateHolder code to make tests pass
 - After removing a query/mutation, delete its tests + update mocks
 
-**Pattern:** `reference/contract/testing.md` § 10.3
+**Pattern:** `reference/contract/testing.md` — Grep `## ViewModel Hook Tests`
 
 ## Output
 

@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.23.1] — 2026-04-19
+
+### Fixed
+- `lib/platforms/web/skills/contract/data-create-mapper`, `data-create-datasource`, `data-create-repository-impl`, `data-update-mapper`: replaced legacy `§ N.N` section references with canonical `## Heading` Grep pointers
+- `lib/platforms/web/skills/contract/pres-create-stateholder`, `pres-create-screen`: replaced `§ 5.x` and `§ 6.2`, `§ 15.6` with canonical `## Heading` Grep pointers across `presentation.md`, `navigation.md`, and `ssr.md`
+- `lib/platforms/web/skills/contract/test-create-domain`, `test-create-data`, `test-create-presentation`, `test-update`: replaced `§ 10.x` references with canonical `## Heading` Grep pointers
+- `lib/platforms/web/skills/test-create-mock`, `pres-wire-di`, `pres-create-server-action`, `data-create-db-datasource`, `data-create-db-repository`: replaced `§ N.N` references across `testing.md`, `di.md`, `server-actions.md`, and `database.md`
+
+Zero `§` section references remain anywhere in `lib/` — all 29 web skills now use canonical `## Heading` Grep pointers, consistent with iOS and Flutter (fixed in v3.21.0)
+
+---
+
 ## [3.23.0] — 2026-04-19
 
 ### Added

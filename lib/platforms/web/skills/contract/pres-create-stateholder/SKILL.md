@@ -27,6 +27,6 @@ Create a ViewModel for a feature. First determine which pattern applies:
 - Return / output only serializable plain objects — no class instances
 - Pattern B: zero hooks, zero async, zero side effects — pure input → output
 
-**Pattern:** `reference/contract/presentation.md` § 5.2 (hook), § 5.7 (pure function)
+**Pattern:** `reference/contract/presentation.md` — Grep `## ViewModel Hook` (hook), `## Server-Side ViewModel (Pure Function)` (pure function)
 
 **Return:** created file path and which pattern was used. Suggest next step: `pres-create-screen`.

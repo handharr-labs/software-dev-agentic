@@ -19,6 +19,6 @@ Create `src/presentation/features/[feature]/actions/[verb][Feature]Action.ts`.
 - Call use case from `src/di/container.server.ts` — never instantiate repos directly
 - Call `revalidatePath()` on mutations that affect cached Server Component data
 
-**Pattern:** `reference/server-actions.md` § 16.1, § 16.2
+**Pattern:** `reference/server-actions.md` — Grep `## Action File Pattern`, `## Client-Side Consumption`
 
 **Return:** created file path. Suggest next step: `pres-wire-di`.

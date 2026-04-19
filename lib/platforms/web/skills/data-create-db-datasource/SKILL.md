@@ -20,6 +20,6 @@ Create three files for a DB-backed data source:
 - DB DataSourceImpl is an **ORM-agnostic stub** — never generate ORM-specific code unless the ORM is explicitly named. Add commented Prisma + Drizzle examples and `throw new Error('Not implemented')` until ORM is chosen.
 - `DbClient` type aliased as `unknown` until ORM is chosen
 
-**Pattern:** `reference/database.md` § 17.2, § 17.3
+**Pattern:** `reference/database.md` — Grep `## DB DataSource`
 
 **Return:** all three file paths. Suggest next step: `data-create-db-repository`.

@@ -24,6 +24,6 @@ Create two files for a new entity's data representation:
 - Handle null/undefined optional fields explicitly (`.orEmpty()`, `.orZero()`, etc.)
 - Map API field names to domain property names
 
-**Pattern:** `reference/contract/data.md` § 4.1, § 4.2
+**Pattern:** `reference/contract/data.md` — Grep `## DTOs`, `## Mappers`
 
 **Return:** both created file paths. Suggest next step: `data-create-datasource`.

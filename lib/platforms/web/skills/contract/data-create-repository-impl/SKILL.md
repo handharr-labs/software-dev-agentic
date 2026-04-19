@@ -19,6 +19,6 @@ Create `src/data/repositories/[Feature]RepositoryImpl.ts`.
 - Calls mapper to convert DTOs to entities — never returns raw DTOs
 - Constructor injects: `dataSource`, `mapper`, `errorMapper`
 
-**Pattern:** `reference/contract/data.md` § 4.4
+**Pattern:** `reference/contract/data.md` — Grep `## Repository Implementation`
 
 **Return:** created file path. Suggest next step: `pres-wire-di`.
