@@ -117,19 +117,23 @@ link_reference() {
   local src_dir="$1"
   local rel_prefix="$2"
   [ -d "$src_dir" ] || return 0
+  # Flat .md files
   for ref in "$src_dir"/*.md; do
     [ -f "$ref" ] || continue
     name="$(basename "$ref")"
     link_if_absent "$rel_prefix/$name" "$CLAUDE_DIR/reference/$name"
   done
-  if [ -d "$src_dir/contract" ]; then
-    mkdir -p "$CLAUDE_DIR/reference/contract"
-    for ref in "$src_dir/contract"/*.md; do
+  # Subdirectories — each preserved as a subdir in .claude/reference/
+  for subdir in "$src_dir"/*/; do
+    [ -d "$subdir" ] || continue
+    subname="$(basename "$subdir")"
+    mkdir -p "$CLAUDE_DIR/reference/$subname"
+    for ref in "$subdir"*.md; do
       [ -f "$ref" ] || continue
       name="$(basename "$ref")"
-      link_if_absent "$rel_prefix/contract/$name" "$CLAUDE_DIR/reference/contract/$name"
+      link_if_absent "$rel_prefix/$subname/$name" "$CLAUDE_DIR/reference/$subname/$name"
     done
-  fi
+  done
 }
 
 # Relative paths from .claude/agents/ or .claude/skills/ to submodule
@@ -157,7 +161,7 @@ echo ""
 echo "3/3 Linking core..."
 link_agents "$SUBMODULE/lib/core/agents" "$REL_CORE/agents"
 link_skills "$SUBMODULE/lib/core/skills" "$REL_CORE/skills"
-link_reference "$SUBMODULE/lib/core/reference/clean-arch" "$REL_CORE/reference/clean-arch"
+link_reference "$SUBMODULE/lib/core/reference" "$REL_CORE/reference"
 
 # ── .gitignore ────────────────────────────────────────────────────────────────
 

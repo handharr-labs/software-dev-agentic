@@ -126,19 +126,23 @@ copy_skills() {
 copy_reference() {
   local src_dir="$1"
   [ -d "$src_dir" ] || return 0
+  # Flat .md files
   for ref in "$src_dir"/*.md; do
     [ -f "$ref" ] || continue
     name="$(basename "$ref")"
     copy_if_absent "$ref" "$CLAUDE_DIR/reference/$name"
   done
-  if [ -d "$src_dir/contract" ]; then
-    mkdir -p "$CLAUDE_DIR/reference/contract"
-    for ref in "$src_dir/contract"/*.md; do
+  # Subdirectories — each preserved as a subdir in .claude/reference/
+  for subdir in "$src_dir"/*/; do
+    [ -d "$subdir" ] || continue
+    subname="$(basename "$subdir")"
+    mkdir -p "$CLAUDE_DIR/reference/$subname"
+    for ref in "$subdir"*.md; do
       [ -f "$ref" ] || continue
       name="$(basename "$ref")"
-      copy_if_absent "$ref" "$CLAUDE_DIR/reference/contract/$name"
+      copy_if_absent "$ref" "$CLAUDE_DIR/reference/$subname/$name"
     done
-  fi
+  done
 }
 
 copy_hooks() {
@@ -173,7 +177,7 @@ echo ""
 echo "3/3 Copying core..."
 copy_agents "$SUBMODULE/lib/core/agents"
 copy_skills "$SUBMODULE/lib/core/skills"
-copy_reference "$SUBMODULE/lib/core/reference/clean-arch"
+copy_reference "$SUBMODULE/lib/core/reference"
 
 # ── .gitignore ────────────────────────────────────────────────────────────────
 
