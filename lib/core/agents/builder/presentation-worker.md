@@ -49,7 +49,7 @@ The StateHolder consumes use cases. It never touches repositories or data source
 
 ## Presentation Layer Rules — Never Violate
 
-Reference: `lib/core/reference/clean-arch/layer-contracts.md` § Presentation Layer — all artifact types, StateHolder contract shape, and invariants are defined there.
+Reference: `reference/clean-arch/layer-contracts.md` § Presentation Layer — all artifact types, StateHolder contract shape, and invariants are defined there.
 
 ## Search Protocol — Never Violate
 

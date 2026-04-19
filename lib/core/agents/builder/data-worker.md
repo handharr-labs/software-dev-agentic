@@ -38,7 +38,7 @@ If you find yourself about to write a file outside the data layer, STOP — tell
 
 ## Data Layer Rules — Never Violate
 
-Reference: `lib/core/reference/clean-arch/layer-contracts.md` § Data Layer — all artifact types, creation order, and invariants are defined there.
+Reference: `reference/clean-arch/layer-contracts.md` § Data Layer — all artifact types, creation order, and invariants are defined there.
 
 ## Search Protocol — Never Violate
 
