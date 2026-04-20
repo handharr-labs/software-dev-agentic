@@ -33,7 +33,12 @@ BEGIN_MARKER="<!-- BEGIN software-dev-agentic:$PLATFORM -->"
 END_MARKER="<!-- END software-dev-agentic:$PLATFORM -->"
 
 echo "Pulling latest software-dev-agentic..."
-git -C "$PROJECT_ROOT" submodule update --remote .claude/software-dev-agentic
+if grep -qsF 'software-dev-agentic' "$PROJECT_ROOT/.gitmodules" 2>/dev/null; then
+  git -C "$PROJECT_ROOT" submodule update --remote .claude/software-dev-agentic
+else
+  echo "  (plain clone detected — using git pull)"
+  git -C "$SUBMODULE" pull
+fi
 
 echo ""
 echo "Re-running symlink setup..."
@@ -125,6 +130,10 @@ else
 fi
 
 echo ""
-echo "Submodule updated. To lock in this version:"
-echo "  git add .claude/software-dev-agentic"
-echo "  git commit -m 'chore: bump software-dev-agentic to $(git -C "$SUBMODULE" rev-parse --short HEAD)'"
+if grep -qsF 'software-dev-agentic' "$PROJECT_ROOT/.gitmodules" 2>/dev/null; then
+  echo "Submodule updated. To lock in this version:"
+  echo "  git add .claude/software-dev-agentic"
+  echo "  git commit -m 'chore: bump software-dev-agentic to $(git -C "$SUBMODULE" rev-parse --short HEAD)'"
+else
+  echo "Updated to $(git -C "$SUBMODULE" rev-parse --short HEAD)."
+fi
