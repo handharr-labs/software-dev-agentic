@@ -96,7 +96,7 @@ Location: `lib/core/agents/builder/`
 → `domain-worker` spawned directly, assesses preconditions, sequences skills
 
 **Multi-layer task** — "Build the leave request feature"
-→ `feature-orchestrator` coordinates 4 workers with `isolation: worktree`; passes file paths only; writes state file after each phase
+→ `feature-orchestrator` coordinates 4 workers; passes file paths only; writes state file after each phase
 
 **Intelligent selection** — "Create StateHolder, the UseCase already exists"
 → orchestrator spawns only `presentation-worker`
@@ -147,7 +147,7 @@ prompt-debug-worker   ← reads perf-report + domain-worker.md
 ```
 
 **Convention audit** *(auditor)* — "Run arch-review-orchestrator for lib/core"
-→ spawns workers per scope with `isolation: worktree`; `arch-generate-report` formats findings
+→ spawns workers per scope; `arch-generate-report` formats findings
 
 **Doc sync** *(internal)* — "Sync the docs — we added X and Y this session"
 → `docs-sync-worker` fetches current pages, runs `docs-identify-changes`, applies targeted updates

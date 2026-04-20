@@ -10,6 +10,33 @@ A coding assistant where Claude autonomously routes, decides, and executes based
 
 ---
 
+## Design Goals
+
+1. **Consistent agentics across platforms** — same agents, same principles, one source of truth
+2. **Easy to maintain** — update once, all projects get it
+3. **Open contribution model** — all engineers can explore, create, and PR new agents/skills
+4. **Context efficiency** — no wasted tokens on irrelevant content
+5. **Encouraging initiatives** — low barrier to propose new "personas" (orchestrators)
+
+---
+
+## Delivery Mechanism — Shared Submodule
+
+`software-dev-agentic` is consumed as a git submodule inside each project's `.claude/` directory:
+
+```
+/
+  .claude/
+    software-dev-agentic/    ← submodule
+    agents/                  ← symlinks only (core + platform)
+    skills/                  ← symlinks only (platform)
+    reference/               ← symlinks only (clean-arch + platform)
+```
+
+All principles in this doc apply through this delivery mechanism. The submodule is the single source of truth — downstream projects get agents, skills, and reference docs via symlinks. For the full symlink architecture and folder layout, see [submodule-repo-structure.md](submodule-repo-structure.md).
+
+---
+
 ## Core Design Principles
 
 ### 1. Natural Language as the Entry Point
@@ -43,7 +70,7 @@ Orchestrators coordinate multiple worker agents using the `agents` field in fron
 
 - Spawn only relevant workers — never all of them
 - Pass file paths between phases, never file contents
-- Use `isolation: worktree` unless phases share uncommitted files
+
 - Validate each worker's `## Output` before proceeding — STOP if missing or paths don't exist
 - Never read the codebase directly — workers own their own context reads
 
@@ -55,6 +82,27 @@ Agents have a second axis — where they live and what they know.
 - **Platform-specific** (`lib/platforms/<platform>/agents/`) — exist only when the workflow diverges enough from core to need its own agent. Examples: iOS `test-orchestrator` (knows `xcodebuild`), iOS `pr-review-worker` (knows Swift/UIKit conventions). Do not add a platform agent unless a core agent + platform skills cannot handle it.
 
 > For the full agent roster, see [persona-builder.md](persona-builder.md).
+
+**DI at Skill Level:**
+
+Workers are platform-agnostic protocol-definers. Skills are the platform-specific implementations of that protocol. A `domain-worker` calls `domain-create-entity` by name — on iOS that creates a Swift struct, on web a TypeScript interface. The worker never knows which platform it's on and doesn't need to.
+
+| Role | Protocol analogy | Platform-aware? |
+|---|---|---|
+| Orchestrators | Interface contract | No |
+| Workers | Use-case logic | No |
+| Skills | Concrete implementation | Yes |
+
+**Layer Isolation — Bounded Knowledge and Authority:**
+
+Each worker's knowledge and write authority is strictly bounded to its own CLEAN layer.
+
+- A worker knows only the rules, patterns, and conventions of its layer
+- A worker writes only to its layer's files — it never reads or modifies files owned by another layer
+- Cross-layer knowledge (shared contracts, interfaces) lives in reference docs and skills, not in worker bodies
+- If a task requires cross-layer work, the orchestrator coordinates multiple workers — it never asks one worker to reach into another layer
+
+This keeps each worker's context small and its reasoning correct for its scope. When a worker receives out-of-scope work, it stops and names the correct worker instead of proceeding.
 
 **Agent Memory Governance:**
 
@@ -98,15 +146,19 @@ Agents load their procedure skills at startup via the `skills` field — full sk
 - Load on demand (via `Read`) skills needed rarely or only in edge cases
 - Monitor total preloaded size — if it exceeds ~500 lines, split the agent or move low-frequency skills to on-demand
 
-**Invocation types:**
+**Three consumer modes:**
 
-| Type | Config | Who triggers | Context cost | Use for |
-|---|---|---|---|---|
-| A — Internal procedure | `user-invocable: false` | Agent only | Zero | Standard build/update workflows |
-| B — User-controlled | `disable-model-invocation: true` | User only | Zero | Destructive or side-effect operations |
-| C — Default | *(no config)* | Both | Description always loaded | Intentionally avoided |
+Downstream projects interact with shared agents and skills in one of three modes:
 
-**Why no Type C:** Every default skill's description loads into the main session context. Type A and B both eliminate this overhead.
+| Mode | Mechanism | When to use |
+|---|---|---|
+| **Use** | Shared symlink → submodule file | Works as-is — standard workflow |
+| **Extend** | Shared symlink + `*.local/extensions/<name>.md` | Add behavior without losing submodule updates |
+| **Override** | Real file in `*.local/` | Fundamentally different behavior needed |
+
+Extension files contain only the delta — not a full copy. Updates to the submodule are inherited automatically.
+
+> Skills have four invocation types (A, B, T, U) — see [Taxonomy §Skills — By Invocation Type](#skills--by-invocation-type) for the full breakdown and decision rules.
 
 ---
 
@@ -198,6 +250,18 @@ From the official docs:
 
 When a worker reads reference docs, scans existing files, and writes code — none of that touches your main session context. The main session only sees the result.
 
+**Context cost by component:**
+
+| Component | Context cost | Mechanism |
+|---|---|---|
+| Core agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
+| Platform-specific agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
+| Preloaded skills | Loaded at worker startup only | `skills` field |
+| Reference docs | 1 Grep call per section needed | Grep-first in worker body |
+| `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
+| Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
+| Orchestrator context accumulation | Minimal — file paths only | Workers return paths, not content; state file prevents re-reads |
+
 ---
 
 ### 6. Knowledge Architecture
@@ -210,7 +274,7 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | 2 | Agent body | Decision logic for that agent only — what to do, when to do it |
 | 3 | `.claude/reference/` | Shared deep reference — patterns, examples, conventions. Loaded on demand via Grep-first |
 
-> Folder structure for reference docs: see [shared-submodule-arch.md](shared-submodule-arch.md).
+> Folder structure for reference docs: see [submodule-repo-structure.md](submodule-repo-structure.md).
 
 **Placement decision rule — reference vs agent body:**
 
@@ -287,47 +351,9 @@ Known undocumented but functional fields: `agents` field — empirically verifie
 
 ### 9. Convention Enforcement — Self-Auditing Architecture
 
-The agentic system enforces its own conventions through automated review — the same principle applied recursively.
+The agentic system enforces its own conventions through automated review — the same principle applied recursively. `arch-review-orchestrator` + `arch-review-worker` (root `agents/` — internal tooling) audits all agent and skill files in this repo. This is distinct from `lib/core/agents/auditor/arch-review-worker.md`, which reviews application code in downstream projects.
 
-**The internal convention system** (root `agents/` and `skills/` — NOT symlinked to downstream projects):
-
-**What `arch-check-conventions` enforces:**
-
-| Category | Rule | Severity |
-|---|---|---|
-| Frontmatter | `name`, `description`, `model`, `tools` required | Critical |
-| Model assignment | `sonnet` for all workers; `haiku` only for truly mechanical leaf tasks with no architectural judgment | Warning |
-| Orchestrators | `isolation: worktree` inline with each Spawn directive — omit only when phases share uncommitted files (e.g. `pres-orchestrator` contract handoff) | Critical |
-| Orchestrators | File paths only between phases | Critical |
-| Orchestrators | Writes state file after each phase | Warning |
-| Orchestrators | No Phase 2 codebase reads | Critical |
-| Orchestrators | After delegation flag set, no direct Edit or Write — all file changes through workers | Critical |
-| Orchestrators | Explicit output validation after each worker spawn — STOP if `## Output` missing or paths don't exist on disk | Critical |
-| Workers | `## Input` section — required params table + `MISSING INPUT` STOP condition | Critical |
-| Workers | `## Scope Boundary` section — owned layer + delegation table for out-of-scope tasks | Warning |
-| Workers | `## Task Assessment` section — skill vs direct edit decision gate | Warning |
-| Workers | `## Skill Execution` section — platform path resolution + Read SKILL.md + follow | Critical |
-| Workers | `## Search Protocol` section with decision gate table | Warning |
-| Workers | `## Output` section — Glob + Grep verification before listing paths | Critical |
-| Workers | `## Extension Point` section at end | Warning |
-| Workers | No "Read ... completely" | Critical |
-| Core agent platform-agnosticism | No hardcoded platform paths, framework refs, or language syntax in `lib/core/agents/` body | Critical |
-| Fix F | Multi-file `Reference:` lines mention `reference/index.md` | Warning |
-| Fix G | Template files: code hints only, no explanatory comments | Warning |
-| Naming | `-orchestrator`/`-worker.md`; skill dirs `<layer>-<action>-<target>` | Info |
-| Prompt Clarity | No ambiguous scope ("create the X" without specifying interface vs implementation); no instructions spanning two CLEAN layers without a stop condition; no contradicting rules; failure paths specified. Run `prompt-debug-worker` for deeper runtime reasoning analysis. | Warning |
-
-**Platform-agnosticism rule:**
-> `lib/core/` agents are consumed by ALL platforms via symlink. Platform-specific rules embedded in a core worker silently mislead workers on other platforms. Any match of platform paths, framework names, or language syntax in a `lib/core/agents/` body is a Critical violation.
-
-**The two distinct reviewers:**
-
-| Reviewer | Reviews | Location |
-|---|---|---|
-| `agents/arch-review-worker.md` | Agent/skill files in *this repo* for convention compliance | Root `agents/` — internal only |
-| `lib/core/agents/auditor/arch-review-worker.md` | Application code in *downstream projects* for CLEAN violations | Symlinked to all platforms |
-
-**Doc sync system:** Design docs are synced manually after sessions that change structure or conventions. `docs-sync-worker` accepts a session delta description, verifies repo state, and applies targeted section updates. `docs-identify-changes` maps delta topics to stale sections. This enforces the principle: fix implementation first, then sync design docs.
+For the full convention checklist, severity levels, and doc sync system, see [submodule-repo-structure.md — Convention Compliance System](submodule-repo-structure.md#convention-compliance-system).
 
 ---
 

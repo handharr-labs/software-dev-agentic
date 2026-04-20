@@ -1,0 +1,307 @@
+> Author: Puras Handharmahua · 2026-04-09
+> Updated: 2026-04-19 — v18: Decision 4 updated — `clean-arch/` now holds layer canonical templates in addition to universal theory; Decision 6 symlink table updated — `clean-arch/` preserved downstream; `link_reference`/`copy_reference` made generic (all subdirs preserved)
+> Synced with: software-dev-agentic v3.21.0
+> Related: Agentic Coding Assistant — Core Design Principles
+
+## Key Design Decisions
+
+### 1. DI at Skill Level — All Workers in Core, Platform Knowledge in Skills
+
+**Decision:** All core workers live in `lib/core/agents/` — fully platform-agnostic. Platform knowledge lives exclusively in skills (`lib/platforms/<platform>/skills/`). Platform-specific agents live in `lib/platforms/<platform>/agents/` only when the agent itself is inherently platform-specific.
+
+> For the DI at Skill Level principle, see [core-design-principles.md — P2](core-design-principles.md#2-agents--brain-decision-maker).
+
+**Core-dependency skills** — called by core workers. Must be implemented by every platform that wants core agent support. Same name across platforms, different syntax per platform. Located in `lib/platforms/<platform>/skills/contract/` — at setup time the `contract/` group is transparent and skills land flat in `.claude/skills/<name>/` downstream.
+
+Naming pattern: `<layer>-<action>-<artifact>` (e.g. `<layer>-create-<artifact>`, `<layer>-update-<artifact>`). One skill per layer worker, covering each artifact the worker creates or updates. Every platform must implement the full set under the same names.
+
+**Platform-specific skills** — called by platform agents only. Implemented only by the platform that owns the calling agent.
+
+> **New platform extensibility:** Adding a 4th platform (e.g., React Native, KMP) requires only `lib/platforms/<platform>/skills/` + `lib/platforms/<platform>/reference/` directories. No changes to any agents in `lib/core/agents/`.
+
+---
+
+### 2. Persona Grouping in `lib/core/agents/`
+
+**Decision:** Agents in `lib/core/agents/` are grouped into persona subdirectories. Each persona represents a coherent workflow — agents within a group relate to and can depend on each other. Ungrouped agents (no peers yet) remain flat at `lib/core/agents/`.
+
+Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/orchestrators, create `packages/<persona>.pkg`. The installer picks it up automatically — no script changes needed.
+
+**Rationale:** Grouping by persona makes the directory self-documenting and enables selective installation. Engineers understand which agents serve their workflow before opening a single file.
+
+---
+
+### 3. Setup-Time Platform Resolution — No `.claude/platform` File
+
+**Decision:** The correct platform skill files are linked at project setup time via the `--platform=` flag. There is no `.claude/platform` file — platform identity is baked into the symlinks themselves. At runtime, orchestrators also pass `platform` explicitly in every worker spawn prompt so workers can resolve skill paths without relying solely on symlink structure.
+
+**Rationale:** With workers being platform-agnostic files in `lib/core/agents/`, and skills being the platform-specific layer, setup-time symlinks wire the right skill implementations into `.claude/skills/`. Workers resolve skills via the symlinked path `.claude/skills/<name>/SKILL.md` — no runtime platform path construction needed. The runtime platform parameter (`web`/`ios`/`flutter`) is still passed in every spawn prompt for workers that need to reference platform-specific conventions, but skill execution always goes through the downstream symlink.
+
+Three-pass linking priority: `agents.local` > platform > core (first link wins)
+
+**Result:** `.claude/skills/<skill-name>/` points to the correct platform skill implementation (from `lib/platforms/<platform>/skills/contract/<skill-name>/`). `.claude/agents/<worker-name>.md` points to the single shared core worker. The worker calls the skill by name and gets the right platform implementation automatically.
+
+---
+
+### 4. Reference Docs Split by Scope
+
+**Decision:** Reference docs live in four locations within the submodule:
+- `lib/core/reference/README.md` — taxonomy doc: placement rules for reference vs agent body vs skills (agentic use)
+- `lib/core/reference/clean-arch/` — two kinds of files, both preserved as `clean-arch/` subdir downstream (`.claude/reference/clean-arch/<name>.md`):
+  - **Universal theory** (`layer-contracts.md`, `domain-purity.md`, `di-containers.md`) — cross-cutting CLEAN Architecture principles shared across all layers.
+  - **Layer canonical templates** (`domain.md`, and `data.md`, `presentation.md` in progress) — platform-agnostic concept definitions per CLEAN layer. Defines what each artifact IS, its invariants, and when to use it. Workers reference these for concepts; platform `contract/` files implement the same headings in platform syntax.
+- `lib/platforms/<platform>/reference/contract/` — cross-platform standard patterns with code examples. Same eight filenames on every platform. Preserved as `contract/` subdir downstream (`.claude/reference/contract/<name>.md`). Syntax and platform-specific patterns only — conceptual definitions belong in the corresponding `lib/core/reference/clean-arch/<layer>.md` template.
+- `lib/platforms/<platform>/reference/` (flat) — platform-specific patterns unique to that platform (e.g. `ssr.md`, `server-actions.md` for web). Lands flat as `.claude/reference/<name>.md`.
+
+**Rationale:** The split between `clean-arch/` (what X is) and `contract/` (how X looks in this platform) mirrors the DI pattern applied at the knowledge level: workers know the concept from the canonical template; platform contract files provide the implementation. Universal theory files handle cross-cutting principles that no single layer owns.
+
+**Reference subdir rule:** All subdirectories under a reference source dir are preserved downstream. `contract/` and `clean-arch/` both land as-is. Unlike agents and skills (always flat), reference docs maintain their subdir structure because agents reference them by path (e.g. `reference/clean-arch/domain.md`, `reference/contract/domain.md`). Any new subdir added under `lib/core/reference/` or `lib/platforms/<platform>/reference/` is automatically preserved.
+
+Every contract file follows a strict heading structure: `#` platform+topic title, `##` canonical sections (agent-greppable keywords), `###` subsections. This makes `grep "^## Keyword"` deterministic across all platforms.
+
+**Grep-first rule (P6 enforcement):** Workers Grep reference files by section keyword before reading in full. If uncertain which file covers a topic, check `reference/index.md` first.
+
+---
+
+### 5. `lib/` Boundary — Distributable vs Internal Content
+
+**Decision:** All content that gets symlinked into downstream projects lives under `lib/`. Internal tooling stays at the repo root.
+
+**Rationale:** The boundary is explicit and self-documenting. `lib/` = the library surface. Everything outside `lib/` is build/repo tooling. Engineers contributing a new agent know exactly which folder it belongs in without needing to know the implicit contract.
+
+---
+
+### 6. Symlink Architecture
+
+**Decision:** `.claude/agents/` and `.claude/skills/` contain only symlinks — never real files. Real files live in `agents.local/` and `skills.local/`.
+
+> The setup scripts recurse into persona subdirectories when linking agents — all agents land flat in `.claude/agents/` regardless of their subdir in the submodule.
+
+**Skills vs References — different downstream behavior:**
+
+| Source location | Downstream path | Subdir preserved? |
+|---|---|---|
+| `lib/platforms/<platform>/skills/contract/<name>/` | `.claude/skills/<name>/` | No — lands flat |
+| `lib/platforms/<platform>/skills/<name>/` | `.claude/skills/<name>/` | No — already flat |
+| `lib/core/reference/clean-arch/<name>.md` | `.claude/reference/clean-arch/<name>.md` | **Yes** — `clean-arch/` preserved |
+| `lib/platforms/<platform>/reference/contract/<name>.md` | `.claude/reference/contract/<name>.md` | **Yes** — `contract/` preserved |
+| `lib/platforms/<platform>/reference/<name>.md` | `.claude/reference/<name>.md` | No — already flat |
+
+Skills land flat because workers resolve via `.claude/skills/<name>/SKILL.md` — the `contract/` grouping is a source-level convention only. References preserve `contract/` because skill files contain hard-coded paths like `reference/contract/presentation.md`.
+
+---
+
+### 7. Three Modes: Use, Extend, Override
+
+> For the principle, see [core-design-principles.md — P3](core-design-principles.md#3-skills--hands-thin-procedures).
+
+**Agent extension pattern** — every shared agent ends with a standard hook:
+
+```
+After completing, check for `.claude/agents.local/extensions/<name>.md` — if it exists, read and follow its additional instructions.
+```
+
+Extension files contain only the delta — not a full copy. Updates to the submodule are inherited automatically; extensions just layer on top.
+
+**Override** — create a real file in `agents.local/` (or `skills.local/`) with the same name as a shared agent/skill. The setup script's `link_if_absent` guard skips symlinking the shared version.
+
+---
+
+### 8. Token Efficiency — Mechanical Worker Model, Isolation, and File Path Passing
+
+**8a. Workers use `model: sonnet` by default**
+All core workers now use `model: sonnet`. Skill execution requires reading SKILL.md, following multi-step platform-specific instructions, verifying output artifacts, and enforcing layer boundaries — none of which is purely mechanical. `model: haiku` is reserved only for truly mechanical leaf tasks with no architectural judgment. Orchestrators remain on `sonnet`.
+
+**8b. Orchestrators pass only file paths, never file contents**
+Between worker phases, orchestrators receive and forward only the list of created file paths — never file contents. This prevents orchestrator context from accumulating previous workers' outputs across phases.
+
+Orchestrators also write a state file (`.claude/runs/<run-id>/state.json`) after each phase — if a long session loses context mid-run, the orchestrator reads the state file rather than re-reading source artifacts. This was validated by the xpnsio split-bill session (Issue #73) where a missing state file caused a PRD re-read in a 12-hour session.
+
+For cross-worker contract handoffs: the producing worker writes the contract file to `.claude/runs/<run-id>/`. The orchestrator passes only this path to the consuming worker — never the contract content. The consuming worker reads the file directly.
+
+**8d. Workers own their own context reads — no Phase 2 in orchestrators**
+Orchestrators no longer perform Phase 2 codebase reads (style matching, DI pattern discovery, route structure). Workers do their own targeted reads as part of their workflow. Orchestrators pass only intent (feature name, fields, operations).
+
+---
+
+## Convention Compliance System
+
+software-dev-agentic enforces its own conventions through an automated internal review system. This is separate from the downstream code reviewer (`lib/core/agents/auditor/arch-review-worker.md`) — the internal system reviews *agent and skill files in this repo*, not *application code in downstream projects*.
+
+**Two Distinct Reviewers**
+
+| Reviewer | Location | Audits |
+|---|---|---|
+| `arch-review-orchestrator` + `arch-review-worker` | `agents/` (repo root) | Agent `.md` files and `SKILL.md` files in this repo — convention compliance |
+| `arch-review-worker` | `lib/core/agents/auditor/` | Application code in downstream projects — CLEAN Architecture violations |
+
+> Why separate locations? Root `agents/` and `skills/` are this repo's internal tooling — they are NOT symlinked into downstream projects. `lib/core/agents/` and `lib/core/skills/` ARE symlinked. The distinction prevents internal review tooling from polluting downstream project contexts.
+
+**What `arch-check-conventions` enforces:**
+
+| Category | Rules | Severity |
+|---|---|---|
+| Frontmatter | `name`, `description`, `model`, `tools` required; `model: sonnet` for all workers (haiku only for truly mechanical leaf tasks) | 🔴 Critical / 🟡 Warning |
+| Orchestrators | `agents:` lists only spawned workers; body passes only file paths between phases; writes state file after each phase; no Phase 2 codebase reads; after delegation flag is set, no direct Edit or Write — file changes through workers only; explicit output validation after each spawn — STOP if `## Output` missing or paths don't exist | 🔴 Critical |
+| Workers | `## Input` section with required params table and `MISSING INPUT` STOP condition; `## Scope Boundary` section with owned-layer declaration and delegation table; `## Task Assessment` section — skill vs direct edit gate; `## Skill Execution` section — platform path resolution, Read SKILL.md, follow; `## Search Protocol` with decision gate table; `## Output` section with Glob + Grep verification before listing paths; `## Extension Point` at end; no "Read ... completely" on reference docs | 🔴 Critical / 🟡 Warning |
+| Core agent platform-agnosticism | No hardcoded platform paths (`src/domain/`, `Talenta/Module/`, `lib/`, `app/`); no platform framework references as rules (`React`, `Next.js`, `RxSwift`, `UIKit`, `BLoC`, `axios`); no platform language syntax as rules (`'use client'`, `readonly`, `BehaviorRelay`); platform knowledge delegated to a skill | 🔴 Critical |
+| Skill frontmatter | `name`, `description`, `user-invocable: false` present | 🔴 Critical |
+| Reference reads in skills | Grep-first; no "Read completely"; all referenced paths match actual filenames | 🔴 Critical |
+| Fix G | Template files contain only code generation hints — no explanatory/instructional comments | 🟡 Warning |
+| Naming | `-orchestrator.md` / `-worker.md`; skill dirs follow `<layer>-<action>-<target>`; persona assignment correct | 🟢 Info |
+| Prompt Clarity | No ambiguous scope ("create the X" without specifying interface vs implementation); no instructions spanning two CLEAN layers without a stop condition; no contradicting rules; failure paths specified. For deeper runtime reasoning analysis, run `prompt-debug-worker`. | 🟡 Warning |
+
+**Severity levels:**
+- 🔴 Critical — missing required frontmatter, broken reference path, "Read completely" violation, platform-specific content in a `lib/core/agents/` file
+- 🟡 Warning — wrong model, missing Search Protocol/Output/Extension Point, missing `reference/index.md` hint, explanatory template comments, prompt clarity issues
+- 🟢 Info — naming deviation, description could be more specific
+
+**Platform-Agnosticism Rule for `lib/core/agents/`**
+
+> Any `lib/core/agents/` file body that contains hardcoded platform paths, framework references (as rules), or language-specific syntax is a Critical violation. Platform knowledge must be delegated to a skill in `related_skills`.
+
+**Doc Sync System**
+
+After sessions that change structure, conventions, or design decisions, the design docs are synced manually using:
+
+```
+"Sync the docs — we added X and Y this session"
+```
+
+Flow:
+1. Engineer describes what changed in the session
+2. `docs-sync-worker` fetches current Confluence pages, verifies repo state via Glob/Grep
+3. `docs-identify-changes` maps the delta to specific stale sections
+4. Worker applies targeted updates — no full rewrites
+5. Version bumped, changelog entry prepended
+
+> Why manual trigger? Doc sync requires judgment about what changed and why. The pattern isn't yet repetitive enough to automate. When it is, `docs-sync-worker` already has the structure to be hooked into `/release`.
+
+---
+
+## "What Goes Where" Decision Rule
+
+| Content | Location | Reason |
+|---|---|---|
+| Core orchestrators | `software-dev-agentic/lib/core/agents/<persona>/` | Platform-agnostic coordination protocol, grouped by persona |
+| Core workers | `software-dev-agentic/lib/core/agents/<persona>/` | Platform-agnostic CLEAN layer brains, grouped by persona |
+| Tracker agents | `software-dev-agentic/lib/core/agents/tracker/` | Issue lifecycle management |
+| Auditor agents | `software-dev-agentic/lib/core/agents/auditor/` | Architecture review — platform-agnostic CLEAN checker; delegates platform rules to skills |
+| Installer agents | `software-dev-agentic/lib/core/agents/installer/` | Platform-agnostic project setup + onboarding; delegates mechanical steps to platform setup skills |
+| Meta/observability agents | `software-dev-agentic/lib/core/agents/detective/` | Performance analysis + agent prompt debugging |
+| Internal repo tooling | `software-dev-agentic/agents/` | Convention reviewer + doc sync worker — NOT symlinked to downstream projects |
+| Platform-specific agents (`test-orchestrator`, `pr-review-worker`) | `software-dev-agentic/lib/platforms/<platform>/agents/` | Agent itself is inherently platform-specific |
+| Core skills | `software-dev-agentic/lib/core/skills/` | Identical across platforms |
+| Platform-contract skills | `software-dev-agentic/lib/platforms/<platform>/skills/contract/` | Same name on all platforms, platform-specific implementation; lands flat in `.claude/skills/<name>/` downstream |
+| Platform-only skills | `software-dev-agentic/lib/platforms/<platform>/skills/` (flat) | Called by platform agents only |
+| Internal repo skills | `software-dev-agentic/skills/` | Convention checker, report formatter, doc sync skills — NOT symlinked to downstream projects |
+| Universal reference docs | `software-dev-agentic/lib/core/reference/clean-arch/` | Language-agnostic CLEAN theory |
+| Cross-platform contract reference docs | `software-dev-agentic/lib/platforms/<platform>/reference/contract/` | Same six files on all platforms; preserved as `contract/` subdir downstream |
+| Platform-specific reference docs | `software-dev-agentic/lib/platforms/<platform>/reference/` (flat) | Platform-unique patterns; lands flat in `.claude/reference/<name>.md` downstream |
+| Project-specific agents | `.claude/agents.local/` | Only relevant to one project |
+| Agent/skill extensions | `.claude/*/extensions/` | Additive delta, project-scoped |
+| Agent memory | `.claude/agent-memory/` | Project-scoped institutional knowledge |
+| `CLAUDE.md` | project root | Project-specific universal rules |
+| `settings.json` | `.claude/` | Project-specific Claude config |
+
+> Rule of thumb: if it describes CLEAN architecture theory → `lib/core/`. If it's platform implementation details → `lib/platforms/<platform>/skills/`. If it's project-specific quirks → `.claude/agents.local/`. If it only applies to reviewing or maintaining this repo's own files → root `agents/` or `skills/`.
+
+---
+
+## Setup & Installation
+
+**Recommended: Interactive Package Installer**
+
+```bash
+.claude/software-dev-agentic/scripts/setup-packages.sh --platform=web
+.claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
+```
+
+The interactive installer runs in three steps:
+- **Step 1 — Always installed (core package):** `issue-worker`, `perf-worker`, `setup-worker`, core skills: `doctor`, `release`, `agentic-perf-review`
+- **Step 2 — Core agent groups (your choice):** persona group selection menu
+- **Step 3 — Platform packages (your choice):** platform-specific optional packages
+
+**Alternative: Install Everything (no prompts)**
+
+```bash
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
+```
+
+Both scripts are idempotent — re-running never overwrites existing files (`link_if_absent` guard). `setup-symlinks.sh` links all core agents (all persona groups) without asking.
+
+**What the setup scripts do:**
+1. Convert any old-style directory symlinks to real directories
+2. Create `.claude/agents/`, `.claude/skills/`, `.claude/reference/`, `.claude/agents.local/extensions/`, `.claude/skills.local/extensions/`
+3. Pass 1: Link local overrides from `agents.local/` and `skills.local/`
+4. Pass 2: Link platform agents, skills, and reference from `lib/platforms/<platform>/`
+5. Pass 3: Link core agents, skills, and reference from `lib/core/` (recurse into persona subdirs; skip if name already linked)
+6. Make hooks executable
+7. Copy `settings-template.json` → `.claude/settings.local.json` if not present
+8. Copy `CLAUDE-template.md` → `CLAUDE.md` if not present
+
+> Note: Root `agents/` and `skills/` (internal tooling) are NOT linked to downstream projects. Only content under `lib/` is symlinked.
+
+**Adopting Updates (`sync.sh`)**
+
+```bash
+.claude/software-dev-agentic/scripts/sync.sh --platform=<platform>
+```
+
+1. `git pull` inside the submodule
+2. Re-runs `setup-symlinks.sh` (idempotent — new agents/skills get linked, existing overrides preserved)
+3. Syncs the managed section in `CLAUDE.md`
+4. Prints the commit command to lock in the updated submodule pointer
+
+**Post-setup checklist:**
+1. Edit `CLAUDE.md` — fill in `[AppName]` and stack placeholders
+2. Edit `.claude/settings.local.json` — replace `PROJECT_ROOT` with your project's `.claude/` absolute path
+3. `git add .claude/ && git commit -m "chore: wire software-dev-agentic (<version>)"`
+
+---
+
+## Repository Structure
+
+**Per-Project Layout (after `setup-packages.sh --platform=ios`)**
+
+```
+/
+  .claude/
+    software-dev-agentic/    ← submodule
+    agents/                  ← symlinks: core + ios platform agents
+    skills/                  ← symlinks: ios platform skills
+    reference/               ← symlinks: clean-arch + ios reference
+    agents.local/
+      extensions/
+    skills.local/
+      extensions/
+    settings.local.json
+    CLAUDE.md
+```
+
+> Root `agents/` and `skills/` (internal tooling) are never symlinked here. Only content under `lib/` reaches downstream projects.
+
+---
+
+## Contribution Workflow
+
+1. Engineer identifies a new agent/skill or improvement
+2. PR to `software-dev-agentic` with the new/updated file (under `lib/core/` or `lib/platforms/<platform>/`)
+3. Review by peers (same process as any code PR)
+4. Merge to main
+5. Each project adopts: `./scripts/sync.sh --platform=<platform>`
+6. Commit the updated submodule pointer: `git add .claude/software-dev-agentic && git commit -m "chore: update agentic submodule"`
+
+---
+
+## Related Links
+
+- [Agentic Coding Assistant — Core Design Principles](https://jurnal.atlassian.net/wiki/spaces/~611df3da650a26006e44928d/pages/51126370416)
+- software-dev-agentic repository
+
+---
+
+
+## Changelog
+
+See [changelog-submodule-repo-structure.md](changelog-submodule-repo-structure.md).
