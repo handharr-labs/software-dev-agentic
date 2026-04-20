@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.27.0] — 2026-04-20
+
+### Changed
+- `docs/core-design-principles.md`: restructured for clarity — down from 652 to ~420 lines, 16 principles consolidated to 9; taxonomy promoted to P4 with `####` subsections; orchestrators/memory/naming folded into P2; skills preloading/types folded into P3; delegation rule folded into P1; trigger skill added as second valid entry point; P2 orchestrator section trimmed from 10-step spec to 5 rules; P6 folder structure details moved to arch doc
+- `docs/shared-submodule-arch.md`: removed Examples and Open Items sections; principle reference table synced with renumbering
+
+### Added
+- `docs/changelog-core-design-principles.md`: version history extracted from core-design-principles.md
+- `docs/changelog-shared-submodule-arch.md`: version history extracted from shared-submodule-arch.md
+- `docs/persona-builder.md`: new doc consolidating all builder-specific content — agent/skill rosters, layer mapping, execution examples, CLEAN/SOLID/DRY, delegation threshold, implementation reference, open items
+
+---
+
 ## [3.26.0] — 2026-04-20
 
 ### Fixed
