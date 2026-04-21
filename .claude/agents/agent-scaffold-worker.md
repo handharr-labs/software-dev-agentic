@@ -1,0 +1,1 @@
+../../agents/agent-scaffold-worker.md
