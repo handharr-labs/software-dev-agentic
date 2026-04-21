@@ -162,21 +162,6 @@ software-dev-agentic enforces its own conventions through an automated internal 
 
 **Doc Sync System**
 
-After sessions that change structure, conventions, or design decisions, the design docs are synced manually using:
-
-```
-"Sync the docs — we added X and Y this session"
-```
-
-Flow:
-1. Engineer describes what changed in the session
-2. `docs-sync-worker` fetches current Confluence pages, verifies repo state via Glob/Grep
-3. `docs-identify-changes` maps the delta to specific stale sections
-4. Worker applies targeted updates — no full rewrites
-5. Version bumped, changelog entry prepended
-
-> Why manual trigger? Doc sync requires judgment about what changed and why. The pattern isn't yet repetitive enough to automate. When it is, `docs-sync-worker` already has the structure to be hooked into `/release`.
-
 ---
 
 ## "What Goes Where" Decision Rule

@@ -1,12 +1,11 @@
 # Internal Agents
 
-Internal tooling for maintaining this repo — convention review, doc sync, and component scaffolding. **Not symlinked to downstream projects.**
+Internal tooling for maintaining this repo — convention review and component scaffolding. **Not symlinked to downstream projects.**
 
 | Agent | Purpose |
 |---|---|
 | `arch-review-orchestrator` | Audit all agents and skills in this repo against the convention checklist |
 | `arch-review-worker` | Review a specific scope (agent file, skill dir) for convention violations |
-| `docs-sync-worker` | Sync design docs after sessions that change structure or conventions |
 | `scaffold-worker` | Consult on and scaffold new agents, skills, or personas for this repo |
 
 ---

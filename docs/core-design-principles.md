@@ -383,7 +383,6 @@ For the full convention checklist, severity levels, and doc sync system, see [su
 | Root `agents/` and `skills/` | Internal tooling — not downstream API surface |
 | `lib/` boundary | Explicit distributable surface — everything under `lib/` ships, everything outside is tooling |
 | `arch-review-worker` platform-agnostic (P6) | Core workers must not embed platform knowledge |
-| `docs-sync-worker` in root `agents/` | Maintains this repo's design docs — not relevant to downstream consumers |
 | `setup-worker` in `lib/core/agents/installer/` | Platform-agnostic setup logic; delegates mechanical steps to platform skills |
 
 ---
@@ -401,7 +400,6 @@ For the full convention checklist, severity levels, and doc sync system, see [su
 | Multi-platform scalability | Add `lib/platforms/<platform>/skills/` — no agent changes |
 | Selective installation | Persona `.pkg` files |
 | Self-enforcing conventions | Internal arch-reviewer catches violations before downstream consumers |
-| Design doc fidelity | `docs-sync-worker` keeps Confluence in sync after every structural session |
 | Clear distributable boundary | `lib/` = ships downstream; everything outside = internal tooling |
 | Agent prompt quality | `prompt-debug-worker` surfaces ambiguous instructions when perf scores flag low D1–D7 |
 

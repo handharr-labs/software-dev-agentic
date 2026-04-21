@@ -39,8 +39,8 @@ Location: `lib/core/agents/builder/`
 
 | Component | Location | Purpose |
 |---|---|---|
-| `arch-review-orchestrator`, `arch-review-worker`, `docs-sync-worker` | `agents/` (root) | Convention review + design doc sync |
-| `arch-check-conventions`, `arch-generate-report`, `docs-identify-changes` | `skills/` (root) | Convention checklist, report formatter, delta mapper |
+| `arch-review-orchestrator`, `arch-review-worker` | `agents/` (root) | Convention review |
+| `arch-check-conventions`, `arch-generate-report` | `skills/` (root) | Convention checklist, report formatter |
 
 ---
 
@@ -148,9 +148,6 @@ prompt-debug-worker   ← reads perf-report + domain-worker.md
 
 **Convention audit** *(auditor)* — "Run arch-review-orchestrator for lib/core"
 → spawns workers per scope; `arch-generate-report` formats findings
-
-**Doc sync** *(internal)* — "Sync the docs — we added X and Y this session"
-→ `docs-sync-worker` fetches current pages, runs `docs-identify-changes`, applies targeted updates
 
 **Project setup** *(installer)* — "Set up this project with the starter kit"
 → `setup-worker` detects platform, runs `setup-nextjs-project` or `setup-ios-project` skill, provides orientation
