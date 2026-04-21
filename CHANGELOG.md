@@ -7,6 +7,31 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.31.0] — 2026-04-22
+
+### Added
+- `agents/agent-audit-worker.md`: new worker audits structural integrity of a persona, agent, or skill — verifies `related_skills`, orchestrator `agents:` field, `.pkg` agent lists, hook scripts, and reference doc paths resolve to real files on disk
+- `agents/agent-migrate-worker.md`: new worker migrates an existing agent or skill file to convention compliance — audits against `reference/agent-conventions.md`, confirms fix plan with user, applies in a single pass, verifies each fix
+- `agents/agent-scaffold-worker.md`: new worker (renamed from `scaffold-worker`) for designing and scaffolding new agentic components; gathers four signals before classifying
+- `reference/agent-conventions.md`: new internal greppable convention reference — component types, skill types/scopes, valid type×scope combinations, required frontmatter, required sections, model selection, naming, platform-agnosticism rules, Extension Point standard
+- `skills/audit/SKILL.md`: `/audit` Type T trigger skill — routes to `arch-review-orchestrator` with `audit` intent
+- `skills/migrate/SKILL.md`: `/migrate` Type T trigger skill — routes to `arch-review-orchestrator` with `migrate` intent
+- `skills/scaffold/SKILL.md`: `/scaffold` Type T trigger skill — routes to `arch-review-orchestrator` with `scaffold` intent
+
+### Changed
+- `agents/arch-review-orchestrator.md`: expanded to coordinate all four specialist workers (`agent-audit-worker`, `arch-review-worker`, `agent-migrate-worker`, `agent-scaffold-worker`) with intent-based routing — spawns only workers the intent requires; adds verification pass after migrate/scaffold scoped to the affected file only
+- `agents/agent-scaffold-worker.md`: Step 2 (Classify) now Greps `reference/agent-conventions.md` instead of embedding the decision tree inline; added `user-invocable: false`, `## Search Rules` section, and output verification in Step 7
+- `agents/arch-review-worker.md`: added `user-invocable: false`, normalized `## Search Rules` heading, fixed Extension Point path (removed `.claude/` prefix for repo agent)
+- `docs/core-design-principles.md`: removed Delivery Mechanism and Folder Design Rationale sections (repo structure content, moved to submodule-repo-structure.md)
+- `docs/submodule-repo-structure.md`: added Delivery Mechanism section and Folder Design Rationale (moved from principles); removed D8 Token Efficiency (agent design principle, covered in principles P5); removed dangling Doc Sync System heading; updated stale What Goes Where table rows
+- `docs/evaluation/` and `docs/perf-report/`: consolidated from root-level `evaluation/` and `perf-report/` into `docs/` — all active pointers updated across agents, skills, and lib files
+
+### Removed
+- `agents/docs-sync-worker.md`: Confluence sync no longer needed as a dedicated internal agent
+- `skills/docs-identify-changes/SKILL.md`: companion skill to docs-sync-worker; removed as orphaned
+
+---
+
 ## [3.30.0] — 2026-04-21
 
 ### Added
