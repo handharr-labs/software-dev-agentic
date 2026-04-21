@@ -118,16 +118,68 @@ link_skill() {
   link_if_absent "$rel" "$link"
 }
 
+register_hook() {
+  local hook_name="$1"
+  local hook_cmd=".claude/hooks/${hook_name}.sh"
+  if [ ! -f "$SHARED_SETTINGS" ]; then
+    cat > "$SHARED_SETTINGS" <<EOF
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Write|Edit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "$hook_cmd"
+                    }
+                ]
+            }
+        ]
+    }
+}
+EOF
+    echo "  $(green "hook")  $hook_name → settings.json (created)"
+  elif grep -q "$hook_name" "$SHARED_SETTINGS"; then
+    echo "  skip  $hook_name (already in settings.json)"
+  else
+    RESULT=$(python3 - "$SHARED_SETTINGS" "$hook_cmd" <<'PYEOF'
+import sys, re
+settings_file, hook_cmd = sys.argv[1], sys.argv[2]
+content = open(settings_file).read()
+pattern = r'("matcher"\s*:\s*"Write\|Edit"(?:[^[]*?)"hooks"\s*:\s*\[)'
+match = re.search(pattern, content, re.DOTALL)
+if not match:
+    print("warn")
+    sys.exit(0)
+indent_match = re.match(r'\n(\s*)', content[match.end():])
+indent = indent_match.group(1) if indent_match else "          "
+new_hook = f'\n{indent}{{"type": "command", "command": "{hook_cmd}"}},'
+open(settings_file, "w").write(content[:match.end()] + new_hook + content[match.end():])
+print("patched")
+PYEOF
+    )
+    if [ "$RESULT" = "patched" ]; then
+      echo "  $(green "hook")  $hook_name → settings.json"
+    else
+      echo "  $(yellow "warn")  $hook_name — could not auto-patch settings.json, add manually:"
+      echo "        { \"type\": \"command\", \"command\": \"$hook_cmd\" }"
+    fi
+  fi
+}
+
 install_pkg() {
   local pkg_file="$1"
-  local pkg_name agents skills
+  local pkg_name agents skills hooks
   pkg_name="$(read_pkg "$pkg_file" name)"
   echo ""
   echo "  Installing $(bold "$pkg_name")..."
   agents="$(read_pkg "$pkg_file" agents)"
   skills="$(read_pkg "$pkg_file" skills)"
+  hooks="$(read_pkg "$pkg_file" hooks)"
   for agent in $agents; do link_agent "$agent"; done
   for skill in $skills; do link_skill "$skill"; done
+  for hook in $hooks; do register_hook "$hook"; done
 }
 
 # ── Directory setup ───────────────────────────────────────────────────────────
@@ -147,6 +199,8 @@ mkdir -p \
   "$CLAUDE_DIR/config" \
   "$CLAUDE_DIR/agents.local/extensions" "$CLAUDE_DIR/skills.local/extensions" \
   "$CLAUDE_DIR/agentic-state/runs"
+
+SHARED_SETTINGS="$CLAUDE_DIR/settings.json"
 
 # ── Local overrides ───────────────────────────────────────────────────────────
 
@@ -294,42 +348,10 @@ done
 # ── Settings ─────────────────────────────────────────────────────────────────
 
 echo ""
-SETTINGS_FILE="$CLAUDE_DIR/settings.local.json"
-if [ ! -f "$SETTINGS_FILE" ]; then
-  if [ -f "$PLATFORM_DIR/settings-template.json" ]; then
-    cp "$PLATFORM_DIR/settings-template.json" "$SETTINGS_FILE"
-    echo "copy  settings.local.json"
-    echo "  $(yellow "⚠")  Replace PROJECT_ROOT in settings.local.json with: $CLAUDE_DIR"
-  fi
-elif grep -q 'require-feature-orchestrator' "$SETTINGS_FILE"; then
-  echo "skip  settings.local.json (require-feature-orchestrator already present)"
-else
-  RESULT=$(python3 - "$SETTINGS_FILE" "$CLAUDE_DIR" <<'EOF'
-import sys, re
-
-settings_file, claude_dir = sys.argv[1], sys.argv[2]
-hook_cmd = claude_dir + "/hooks/require-feature-orchestrator.sh"
-content = open(settings_file).read()
-
-pattern = r'("matcher"\s*:\s*"Write\|Edit"(?:[^[]*?)"hooks"\s*:\s*\[)'
-match = re.search(pattern, content, re.DOTALL)
-if not match:
-    print("warn")
-    sys.exit(0)
-
-indent_match = re.match(r'\n(\s*)', content[match.end():])
-indent = indent_match.group(1) if indent_match else "          "
-new_hook = f'\n{indent}{{"type": "command", "command": "{hook_cmd}"}},'
-open(settings_file, "w").write(content[:match.end()] + new_hook + content[match.end():])
-print("patched")
-EOF
-  )
-  if [ "$RESULT" = "patched" ]; then
-    echo "patch settings.local.json (added require-feature-orchestrator hook)"
-  else
-    echo "warn  settings.local.json — could not auto-patch, add manually:"
-    echo "      { \"type\": \"command\", \"command\": \"$CLAUDE_DIR/hooks/require-feature-orchestrator.sh\" }"
-  fi
+LOCAL_SETTINGS="$CLAUDE_DIR/settings.local.json"
+if [ ! -f "$LOCAL_SETTINGS" ] && [ -f "$PLATFORM_DIR/settings-template.jsonc" ]; then
+  cp "$PLATFORM_DIR/settings-template.jsonc" "$LOCAL_SETTINGS"
+  echo "copy  settings.local.json"
 fi
 
 # ── CLAUDE.md ─────────────────────────────────────────────────────────────────
@@ -427,5 +449,4 @@ echo "$(green "Done.") software-dev-agentic ($PLATFORM) packages installed."
 echo ""
 echo "Next steps:"
 echo "  1. Fill in CLAUDE.md placeholders"
-echo "  2. Edit .claude/settings.local.json — replace PROJECT_ROOT"
-echo "  3. git add .claude/ && git commit -m 'chore: wire software-dev-agentic ($PLATFORM)'"
+echo "  2. git add .claude/ && git commit -m 'chore: wire software-dev-agentic ($PLATFORM)'"

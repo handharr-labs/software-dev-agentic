@@ -79,20 +79,20 @@ else
   echo "patch .gitignore (added agentic-state/)"
 fi
 
-# ── settings.local.json ───────────────────────────────────────────────────────
+# ── settings.json ─────────────────────────────────────────────────────────────
 
 echo ""
-SETTINGS_FILE="$PROJECT_ROOT/.claude/settings.local.json"
-if [ ! -f "$SETTINGS_FILE" ]; then
-  echo "skip  settings.local.json (not found)"
-elif grep -q 'require-feature-orchestrator' "$SETTINGS_FILE"; then
-  echo "skip  settings.local.json (require-feature-orchestrator already present)"
+HOOK_CMD=".claude/hooks/require-feature-orchestrator.sh"
+SHARED_SETTINGS="$PROJECT_ROOT/.claude/settings.json"
+if [ ! -f "$SHARED_SETTINGS" ]; then
+  echo "skip  settings.json (not found)"
+elif grep -q 'require-feature-orchestrator' "$SHARED_SETTINGS"; then
+  echo "skip  settings.json (require-feature-orchestrator already present)"
 else
-  RESULT=$(python3 - "$SETTINGS_FILE" "$PROJECT_ROOT/.claude" <<'EOF'
+  RESULT=$(python3 - "$SHARED_SETTINGS" "$HOOK_CMD" <<'EOF'
 import sys, re
 
-settings_file, claude_dir = sys.argv[1], sys.argv[2]
-hook_cmd = claude_dir + "/hooks/require-feature-orchestrator.sh"
+settings_file, hook_cmd = sys.argv[1], sys.argv[2]
 content = open(settings_file).read()
 
 pattern = r'("matcher"\s*:\s*"Write\|Edit"(?:[^[]*?)"hooks"\s*:\s*\[)'
@@ -109,10 +109,10 @@ print("patched")
 EOF
   )
   if [ "$RESULT" = "patched" ]; then
-    echo "patch settings.local.json (added require-feature-orchestrator hook)"
+    echo "patch settings.json (added require-feature-orchestrator hook)"
   else
-    echo "warn  settings.local.json — could not auto-patch, add manually:"
-    echo "      { \"type\": \"command\", \"command\": \"$PROJECT_ROOT/.claude/hooks/require-feature-orchestrator.sh\" }"
+    echo "warn  settings.json — could not auto-patch, add manually:"
+    echo "      { \"type\": \"command\", \"command\": \"$HOOK_CMD\" }"
   fi
 fi
 

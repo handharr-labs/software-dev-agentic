@@ -202,22 +202,34 @@ fi
 # ── Settings ──────────────────────────────────────────────────────────────────
 
 echo ""
-SETTINGS_FILE="$CLAUDE_DIR/settings.local.json"
-if [ ! -f "$SETTINGS_FILE" ]; then
-  if [ -f "$PLATFORM_DIR/settings-template.json" ]; then
-    cp "$PLATFORM_DIR/settings-template.json" "$SETTINGS_FILE"
-    echo "copy  .claude/settings.local.json"
-    echo ""
-    echo "  ⚠  Edit .claude/settings.local.json — replace PROJECT_ROOT with your .claude path"
-  fi
-elif grep -q 'require-feature-orchestrator' "$SETTINGS_FILE"; then
-  echo "skip  settings.local.json (require-feature-orchestrator already present)"
+HOOK_CMD=".claude/hooks/require-feature-orchestrator.sh"
+SHARED_SETTINGS="$CLAUDE_DIR/settings.json"
+if [ ! -f "$SHARED_SETTINGS" ]; then
+  cat > "$SHARED_SETTINGS" <<EOF
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Write|Edit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "$HOOK_CMD"
+                    }
+                ]
+            }
+        ]
+    }
+}
+EOF
+  echo "create settings.json (with require-feature-orchestrator hook)"
+elif grep -q 'require-feature-orchestrator' "$SHARED_SETTINGS"; then
+  echo "skip  settings.json (require-feature-orchestrator already present)"
 else
-  RESULT=$(python3 - "$SETTINGS_FILE" "$CLAUDE_DIR" <<'EOF'
+  RESULT=$(python3 - "$SHARED_SETTINGS" "$HOOK_CMD" <<'EOF'
 import sys, re
 
-settings_file, claude_dir = sys.argv[1], sys.argv[2]
-hook_cmd = claude_dir + "/hooks/require-feature-orchestrator.sh"
+settings_file, hook_cmd = sys.argv[1], sys.argv[2]
 content = open(settings_file).read()
 
 pattern = r'("matcher"\s*:\s*"Write\|Edit"(?:[^[]*?)"hooks"\s*:\s*\[)'
@@ -234,11 +246,17 @@ print("patched")
 EOF
   )
   if [ "$RESULT" = "patched" ]; then
-    echo "patch settings.local.json (added require-feature-orchestrator hook)"
+    echo "patch settings.json (added require-feature-orchestrator hook)"
   else
-    echo "warn  settings.local.json — could not auto-patch, add manually:"
-    echo "      { \"type\": \"command\", \"command\": \"$CLAUDE_DIR/hooks/require-feature-orchestrator.sh\" }"
+    echo "warn  settings.json — could not auto-patch, add manually:"
+    echo "      { \"type\": \"command\", \"command\": \"$HOOK_CMD\" }"
   fi
+fi
+
+LOCAL_SETTINGS="$CLAUDE_DIR/settings.local.json"
+if [ ! -f "$LOCAL_SETTINGS" ] && [ -f "$PLATFORM_DIR/settings-template.jsonc" ]; then
+  cp "$PLATFORM_DIR/settings-template.jsonc" "$LOCAL_SETTINGS"
+  echo "copy  .claude/settings.local.json"
 fi
 
 # ── CLAUDE.md ─────────────────────────────────────────────────────────────────
@@ -335,5 +353,4 @@ echo "Done. software-dev-agentic ($PLATFORM) is wired."
 echo ""
 echo "Next steps:"
 echo "  1. Fill in CLAUDE.md placeholders"
-echo "  2. Edit .claude/settings.local.json — replace PROJECT_ROOT"
-echo "  3. git add .claude/ && git commit -m 'chore: wire software-dev-agentic ($PLATFORM)'"
+echo "  2. git add .claude/ && git commit -m 'chore: wire software-dev-agentic ($PLATFORM)'"
