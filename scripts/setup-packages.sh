@@ -168,6 +168,8 @@ PYEOF
   fi
 }
 
+INSTALLED_PKGS=()
+
 install_pkg() {
   local pkg_file="$1"
   local pkg_name agents skills hooks
@@ -180,6 +182,7 @@ install_pkg() {
   for agent in $agents; do link_agent "$agent"; done
   for skill in $skills; do link_skill "$skill"; done
   for hook in $hooks; do register_hook "$hook"; done
+  INSTALLED_PKGS+=("$pkg_name")
 }
 
 # ── Directory setup ───────────────────────────────────────────────────────────
@@ -440,6 +443,19 @@ if m:
     echo "  $(yellow "⚠")  Replace [AppName] in .claude/config/feature-dirs with your app target name"
   fi
 fi
+
+# ── Lockfile ──────────────────────────────────────────────────────────────────
+
+LOCKFILE="$CLAUDE_DIR/config/installed-packages"
+{
+  echo "# Managed by setup-packages.sh — do not edit manually"
+  echo "platform=$PLATFORM"
+  for pkg_name in "${INSTALLED_PKGS[@]}"; do
+    echo "pkg=$pkg_name"
+  done
+} > "$LOCKFILE"
+echo ""
+echo "write .claude/config/installed-packages (${#INSTALLED_PKGS[@]} packages)"
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 

@@ -40,9 +40,126 @@ else
   git -C "$SUBMODULE" pull
 fi
 
+LOCKFILE="$PROJECT_ROOT/.claude/config/installed-packages"
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+read_pkg() { grep "^${2}=" "$1" 2>/dev/null | cut -d= -f2-; }
+
+link_if_absent() {
+  local target="$1" link="$2"
+  if [ -e "$link" ] || [ -L "$link" ]; then
+    echo "  skip  $(basename "$link")"
+  else
+    ln -s "$target" "$link"
+    echo "  link  $(basename "$link")"
+  fi
+}
+
+find_agent() {
+  local name="$1" found
+  found="$(find "$SUBMODULE/lib/platforms/$PLATFORM/agents" -name "$name.md" -type f 2>/dev/null | head -1)"
+  [ -n "$found" ] && { echo "$found"; return; }
+  find "$SUBMODULE/lib/core/agents" -name "$name.md" -type f 2>/dev/null | head -1
+}
+
+find_skill() {
+  local name="$1"
+  if [ -d "$SUBMODULE/lib/platforms/$PLATFORM/skills/contract/$name" ]; then
+    echo "$SUBMODULE/lib/platforms/$PLATFORM/skills/contract/$name"
+  elif [ -d "$SUBMODULE/lib/platforms/$PLATFORM/skills/$name" ]; then
+    echo "$SUBMODULE/lib/platforms/$PLATFORM/skills/$name"
+  elif [ -d "$SUBMODULE/lib/core/skills/$name" ]; then
+    echo "$SUBMODULE/lib/core/skills/$name"
+  fi
+}
+
+link_agent() {
+  local name="$1" src link rel
+  src="$(find_agent "$name")"
+  [ -z "$src" ] && { echo "  warn  agent '$name' not found — skipping"; return; }
+  link="$PROJECT_ROOT/.claude/agents/$name.md"
+  rel="$(python3 -c "import os; print(os.path.relpath('$src', '$(dirname "$link")'))" 2>/dev/null || echo "$src")"
+  link_if_absent "$rel" "$link"
+}
+
+link_skill() {
+  local name="$1" src link rel
+  src="$(find_skill "$name")"
+  [ -z "$src" ] && { echo "  warn  skill '$name' not found — skipping"; return; }
+  link="$PROJECT_ROOT/.claude/skills/$name"
+  rel="$(python3 -c "import os; print(os.path.relpath('$src', '$(dirname "$link")'))" 2>/dev/null || echo "$src")"
+  link_if_absent "$rel" "$link"
+}
+
+# ── Package-aware sync ────────────────────────────────────────────────────────
+
 echo ""
-echo "Re-running symlink setup..."
-"$SUBMODULE/scripts/setup-symlinks.sh" --platform="$PLATFORM"
+if [ ! -f "$LOCKFILE" ]; then
+  echo "No installed-packages lockfile found — falling back to setup-symlinks.sh"
+  echo "(Run setup-packages.sh first to enable package-aware sync)"
+  "$SUBMODULE/scripts/setup-symlinks.sh" --platform="$PLATFORM"
+else
+  echo "Re-syncing installed packages..."
+  echo ""
+
+  # Collect expected agent and skill names from installed packages
+  expected_agents=()
+  expected_skills=()
+
+  while IFS= read -r line; do
+    [[ "$line" =~ ^pkg=(.+)$ ]] || continue
+    pkg_name="${BASH_REMATCH[1]}"
+    pkg_file=""
+    [ -f "$SUBMODULE/packages/$pkg_name.pkg" ] && pkg_file="$SUBMODULE/packages/$pkg_name.pkg"
+    [ -f "$SUBMODULE/lib/platforms/$PLATFORM/packages/$pkg_name.pkg" ] && pkg_file="$SUBMODULE/lib/platforms/$PLATFORM/packages/$pkg_name.pkg"
+    if [ -z "$pkg_file" ]; then
+      echo "  warn  package '$pkg_name' not found in submodule — skipping"
+      continue
+    fi
+    for a in $(read_pkg "$pkg_file" agents); do expected_agents+=("$a"); done
+    for s in $(read_pkg "$pkg_file" skills); do expected_skills+=("$s"); done
+  done < "$LOCKFILE"
+
+  # Link missing agents and skills
+  echo "  Linking..."
+  for agent in "${expected_agents[@]}"; do link_agent "$agent"; done
+  for skill in "${expected_skills[@]}"; do link_skill "$skill"; done
+
+  # Remove stale agent symlinks (point into submodule but not in expected set)
+  echo ""
+  echo "  Cleaning stale symlinks..."
+  stale_found=false
+  for link in "$PROJECT_ROOT/.claude/agents/"*.md; do
+    [ -L "$link" ] || continue
+    target="$(readlink "$link")"
+    [[ "$target" == *"software-dev-agentic"* ]] || continue
+    name="$(basename "$link" .md)"
+    if [ ! -e "$link" ]; then
+      rm "$link"; echo "  remove  $name.md (dangling)"; stale_found=true; continue
+    fi
+    in_expected=false
+    for e in "${expected_agents[@]}"; do [ "$e" = "$name" ] && in_expected=true && break; done
+    if ! $in_expected; then
+      rm "$link"; echo "  remove  $name.md (not in installed packages)"; stale_found=true
+    fi
+  done
+  for link in "$PROJECT_ROOT/.claude/skills/"*/; do
+    [ -L "$link" ] || continue
+    target="$(readlink "$link")"
+    [[ "$target" == *"software-dev-agentic"* ]] || continue
+    name="$(basename "$link")"
+    if [ ! -e "$link" ]; then
+      rm "$link"; echo "  remove  $name (dangling)"; stale_found=true; continue
+    fi
+    in_expected=false
+    for e in "${expected_skills[@]}"; do [ "$e" = "$name" ] && in_expected=true && break; done
+    if ! $in_expected; then
+      rm "$link"; echo "  remove  $name (not in installed packages)"; stale_found=true
+    fi
+  done
+  $stale_found || echo "  clean"
+fi
 
 # ── Sync managed section in CLAUDE.md ────────────────────────────────────────
 
