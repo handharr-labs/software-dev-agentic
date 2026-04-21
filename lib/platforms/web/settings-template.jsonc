@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      // Common entries to add per project:
+      // "Bash(npm run lint:*)",
+      // "Bash(npm run test:*)",
+      // "Bash(npx drizzle-kit:*)",
+      // "Bash(git log:*)",
+      // "Bash(git diff:*)"
+    ],
+    "deny": []
+  }
+}

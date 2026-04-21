@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      // Common entries to add per project:
+      // "Bash(xcodebuild:*)",
+      // "Bash(swift:*)",
+      // "Bash(git log:*)",
+      // "Bash(git diff:*)"
+    ],
+    "deny": []
+  }
+}
