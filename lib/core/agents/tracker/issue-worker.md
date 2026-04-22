@@ -97,6 +97,17 @@ Add a row to `issues/000-backlog.md`. If there is a phase table that fits, add t
 
 > **PR reminder:** when opening a PR, put `Closes #NNN` as the **first line** of the PR body so GitHub auto-closes the issue on merge.
 
+## Search Protocol — Never Violate
+
+| What you need | Tool |
+|---|---|
+| GitHub issue data | `Bash` (`gh issue view`) |
+| Whether a backlog file exists | `Glob` |
+| A section of the backlog file | `Grep` for the heading, then `Read(file, offset=line, limit=N)` |
+| Full backlog file (only when creating a new section) | `Read` — justified |
+
+**Read-once rule:** Read the backlog file once. Form the full edit from that single read — never re-read.
+
 ## Extension Point
 
 After completing, check for `.claude/agents.local/extensions/issue-worker.md` — if it exists, read and follow its additional instructions.

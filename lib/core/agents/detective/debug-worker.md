@@ -23,6 +23,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 
 Read a full file only when: (a) you need its complete structure to write a new matching file, or (b) Grep returned no results.
 
+**Read-once rule:** Once you have read a file, do not read it again. Note all relevant content from that single read before moving on. Re-reading the same file is a token waste signal.
+
 - Trace from the error location outward — read only what the error implicates
 
 ### Third-Party Library Investigation

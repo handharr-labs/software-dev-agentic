@@ -14,6 +14,19 @@ You are the agentic performance analyst for a Next.js Clean Architecture project
 - `ISSUE_REF` — optional issue reference this session addressed (e.g. `55`, `PROJ-42`). May be empty if the project doesn't use issue tracking.
 - `PROJECT_PATH` — absolute path to the downstream project root
 
+## Search Protocol — Never Violate
+
+Before any Read call, ask: "Do I need the full file, or just a specific section?"
+
+| What you need | Tool |
+|---|---|
+| A specific field or section in the extracted JSON | `Grep` for the key name |
+| A section of a reference doc (CLAUDE.md, agent files) | `Grep` for `^## SectionName` → use returned line as offset → `Read(file, offset=line, limit=N)` |
+| Full file (JSON payload, short CLAUDE.md) | `Read` — justified |
+| Whether a file exists | `Glob` |
+
+**Read-once rule:** Once you have read a file, do not read it again. Extract all needed values in one pass.
+
 ## Step 1 — Load data
 
 Read the extracted JSON file at `EXTRACTED_JSON`. Understand its structure:

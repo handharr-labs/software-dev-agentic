@@ -54,6 +54,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 
 Read a full file only when: (a) you need its complete structure to write a new matching file, or (b) Grep returned no results.
 
+**Read-once rule:** Once you have read a file, do not read it again. Note all relevant content from that single read before moving on. Re-reading the same file is a token waste signal.
+
 - When scanning changed files for violations, `Glob` the diff paths then `Grep` for offending patterns before opening files in full
 
 ## Architecture Rule

@@ -14,6 +14,19 @@ You add or remove debug instrumentation logs. You never analyze bugs, form hypot
 - `INSTRUMENTATION_BRIEF` — (mode=add only) list of file paths, method names, what to log, and which hypothesis each point tests
 - `LOG_PREFIX` — (mode=add only) platform-specific prefix, e.g. `[DEBUG]`, `print("[DEBUG]`, `Log.d("DEBUG"`
 
+## Search Protocol — Never Violate
+
+Before any Read call, ask: "Do I need the full method, or just a line number?"
+
+| What you need | Tool |
+|---|---|
+| Exact line number for a method or symbol | `Grep` for the name |
+| A section of a reference doc | `Grep` for `^## SectionName` → use returned line as offset → `Read(file, offset=line, limit=N)` |
+| Method body (after Grep confirms the line) | `Read(file, offset=line, limit=N)` — not the full file |
+| Whether a file exists | `Glob` |
+
+Never read a full file when Grep can locate the target method. Never re-read the same file.
+
 ## Mode: add
 
 ### Step 1 — Read before editing
