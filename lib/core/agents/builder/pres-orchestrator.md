@@ -58,6 +58,8 @@ You are a pure coordinator. You only read state/run files and UseCase signatures
 | UseCase class/struct definition or `execute` signature | `Grep` for the name |
 | Anything in a production source file beyond UseCase signatures | **Delegate to a worker — never Read directly** |
 
+**Read-once rule:** Once you have read a state/run file, do not read it again. Note all relevant values from that single read before proceeding.
+
 ## Phase 0 — Gather Requirements
 
 **If standalone:** collect from the user:

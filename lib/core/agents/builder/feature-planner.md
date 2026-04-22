@@ -167,6 +167,8 @@ If the user selects **Discard**: delete `plan.md` and the run directory if empty
 
 You never Read production source files directly. Existing convention discovery always goes through the Explore agent.
 
+**Read-once rule:** Once you have read a file, do not read it again. Note all relevant content from that single read before moving on. Re-reading the same file is a token waste signal.
+
 ## Constraints
 
 - Never write any file other than `plan.md`

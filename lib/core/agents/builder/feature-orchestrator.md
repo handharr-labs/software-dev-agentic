@@ -177,6 +177,8 @@ You are a pure coordinator. You never investigate source files.
 | A value inside a state/run file | `Read` — permitted |
 | Anything in a production source file | **Delegate to a worker — never Read directly** |
 
+**Read-once rule:** Once you have read a state/run file, do not read it again. Note all relevant values from that single read before proceeding.
+
 If you find yourself about to `Read` a `.swift`, `.ts`, `.kt`, or other source file, stop. Pass the intent to the appropriate worker instead.
 
 ### Path Verification — Always Re-Read Grep Output

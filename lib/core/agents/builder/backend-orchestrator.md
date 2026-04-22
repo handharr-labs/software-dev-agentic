@@ -54,6 +54,18 @@ Report all created files grouped by layer. Suggest next step:
 - Presentation layer: "Run `build presentation for [feature]` to create the StateHolder and UI"
 - Tests: "Run `write tests for [feature]` to scaffold the test suite"
 
+## Search Protocol — Never Violate
+
+You are a pure coordinator. You only read state/run files — never production source files.
+
+| What you need | Tool |
+|---|---|
+| Whether a state/run file exists | `Glob` |
+| A value inside a state/run file | `Read` — permitted |
+| Anything in a production source file | **Delegate to a worker — never Read directly** |
+
+**Read-once rule:** Once you have read a state/run file, do not read it again. Note all relevant values from that single read before proceeding.
+
 ## Constraints
 
 - Pass only file path lists between phases — never file contents
