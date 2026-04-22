@@ -795,7 +795,7 @@ struct BaseErrorModel: Error {
 }
 ```
 
-`BaseErrorModel` is the canonical error type for all UseCase and Repository completions (`Result<Model, BaseErrorModel>`). Repositories map `NetworkError` → `BaseErrorModel` before propagating upward. See `reference/contract/error-handling.md` for full error flow and mapping patterns.
+`BaseErrorModel` is the canonical error type for all UseCase and Repository completions (`Result<Model, BaseErrorModel>`). Repositories map `NetworkError` → `BaseErrorModel` before propagating upward. See `reference/contract/builder/error-handling.md` for full error flow and mapping patterns.
 
 ---
 
