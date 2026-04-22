@@ -102,6 +102,7 @@ link_skills() {
     [ -d "$skill_dir" ] || continue
     name="$(basename "$skill_dir")"
     [ "$name" = "contract" ] && continue
+    [ "$name" = "extensions" ] && continue
     link_if_absent "$rel_prefix/$name" "$CLAUDE_DIR/skills/$name"
   done
   if [ -d "$src_dir/contract" ]; then
