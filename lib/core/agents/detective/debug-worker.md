@@ -81,23 +81,19 @@ Common cross-layer failure modes:
 5. **Wrong layer dependency** — layer imports from a layer it shouldn't (e.g. presentation → data)
 6. **Async/reactive chain breaks** — observable/promise completes without emitting
 
-## Step 5 — Decide: Diagnose or Instrument
+## Step 5 — Report Findings
 
-**If root cause is clear from static analysis:** report it (Step 6).
-
-**If root cause needs runtime confirmation:** spawn `debug-log-worker` with `MODE=add` and:
-- File paths and method names to instrument
-- What to log at each point (entry params, state, results, error details)
-- Which hypothesis each log tests
-- The log prefix convention for the platform
-
-After the user reproduces and shares logs, interpret them and report the root cause.
-
-## Step 6 — Report
+Always report before any instrumentation. Output:
 
 ```
-ROOT CAUSE
-  [One sentence]
+ANALYSIS
+  Hypotheses (ranked):
+  1. [Most likely] — [evidence from static analysis]
+  2. [Second guess] — [evidence from static analysis]
+  3. [Less likely]  — [evidence from static analysis]
+
+ROOT CAUSE (if clear)
+  [One sentence, or "Inconclusive — runtime data needed"]
 
 LAYER
   [DI / Domain / Data / Presentation]
@@ -105,12 +101,29 @@ LAYER
 EVIDENCE
   [File path — what the code does vs what it should do]
 
-FIX
+FIX (if clear)
   [Exact change needed — file path + what to add/change/remove]
 
 PREVENT RECURRENCE
   [The CLEAN rule that was violated]
 ```
+
+Then ask the user:
+
+> Static analysis is complete. Want me to add debug instrumentation to confirm this at runtime?
+> I'll insert log statements at the key points for each hypothesis and tell you exactly what to watch for.
+
+**Do not spawn `debug-log-worker` until the user confirms.**
+
+## Step 6 — Instrument (user-confirmed only)
+
+When the user confirms, spawn `debug-log-worker` with `MODE=add` and:
+- File paths and method names to instrument
+- What to log at each point (entry params, state, results, error details)
+- Which hypothesis each log tests
+- The log prefix convention for the platform
+
+After the user reproduces and shares logs, interpret them and update the report with the confirmed root cause.
 
 ## Cleanup
 
