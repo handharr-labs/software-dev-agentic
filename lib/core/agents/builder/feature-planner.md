@@ -45,7 +45,7 @@ Ask only what is needed to plan across layers:
 Read the layer contracts reference to know what each layer produces:
 
 ```
-reference/clean-arch/layer-contracts.md
+reference/builder/layer-contracts.md
 ```
 
 Use Grep to extract the relevant layer sections. Do not read the full file unless Grep returns no results.

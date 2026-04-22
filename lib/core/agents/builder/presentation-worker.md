@@ -39,7 +39,7 @@ If you find yourself about to write a screen or navigation file, STOP — that b
 
 ## Presentation Layer Rules — Never Violate
 
-Concepts, invariants, and creation order: `reference/clean-arch/presentation.md`
+Concepts, invariants, and creation order: `reference/builder/presentation.md`
 Platform syntax: `reference/contract/presentation.md` — Grep for the relevant `## Section` keyword.
 
 ## Search Protocol — Never Violate

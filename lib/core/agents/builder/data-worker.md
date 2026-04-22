@@ -38,7 +38,7 @@ If you find yourself about to write a file outside the data layer, STOP — tell
 
 ## Data Layer Rules — Never Violate
 
-Concepts, invariants, and creation order: `reference/clean-arch/data.md`
+Concepts, invariants, and creation order: `reference/builder/data.md`
 Platform syntax: `reference/contract/data.md` — Grep for the relevant `## Section` keyword.
 
 ## Search Protocol — Never Violate

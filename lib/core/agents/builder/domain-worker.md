@@ -37,7 +37,7 @@ If you find yourself about to write a file outside the domain layer, STOP — te
 
 ## Domain Layer Rules — Never Violate
 
-Concepts, invariants, and creation order: `reference/clean-arch/domain.md`
+Concepts, invariants, and creation order: `reference/builder/domain.md`
 Platform syntax: `reference/contract/domain.md` — Grep for the relevant `## Section` keyword.
 
 ## Search Protocol — Never Violate
