@@ -4,7 +4,7 @@ description: Update an existing Screen or View widget — add new state bindings
 user-invocable: false
 ---
 
-Update an existing Screen following `.claude/reference/contract/presentation.md ## Screen Structure section`.
+Update an existing Screen following `.claude/reference/contract/builder/presentation.md ## Screen Structure section`.
 
 ## Steps
 

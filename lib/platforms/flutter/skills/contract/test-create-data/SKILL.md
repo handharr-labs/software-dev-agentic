@@ -4,11 +4,11 @@ description: Create unit tests for Data layer artifacts — Mapper, Repository i
 user-invocable: false
 ---
 
-Create data layer tests following `.claude/reference/contract/testing.md ## Repository Tests, ## Mapper Tests sections`.
+Create data layer tests following `.claude/reference/contract/builder/testing.md ## Repository Tests, ## Mapper Tests sections`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/testing.md` for `## Repository Tests` and `## Mapper Tests`
+1. **Grep** `.claude/reference/contract/builder/testing.md` for `## Repository Tests` and `## Mapper Tests`
 2. **Read** the RepositoryImpl and/or Mapper file being tested
 3. **Update** `test/helpers/mocks/[feature]_mocks.dart` with any missing mock specs
 4. **Update** `test/helpers/fixtures/[feature]_fixtures.dart` with models and responses

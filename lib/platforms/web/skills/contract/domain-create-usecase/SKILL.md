@@ -24,6 +24,6 @@ Create a use case at `src/domain/use-cases/[feature]/[Verb][Feature]UseCase.ts`.
 - PUT: `{ id: string; payload: { [fields] } }`
 - DELETE: `{ id: string }`
 
-**Pattern:** `reference/contract/domain.md` — Grep `## Use Cases`
+**Pattern:** `reference/contract/builder/domain.md` — Grep `## Use Cases`
 
 **Return:** created file path. Suggest next step: `data-worker`.

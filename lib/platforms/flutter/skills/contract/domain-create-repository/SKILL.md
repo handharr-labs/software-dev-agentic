@@ -4,11 +4,11 @@ description: Create a Domain Repository abstract class for a new feature.
 user-invocable: false
 ---
 
-Create a Repository interface following `.claude/reference/contract/domain.md ## Repository Interfaces section`.
+Create a Repository interface following `.claude/reference/contract/builder/domain.md ## Repository Interfaces section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/domain.md` for `## Repository Interfaces`; only **Read** the full file if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/domain.md` for `## Repository Interfaces`; only **Read** the full file if the section cannot be located
 2. **Verify** the entity exists in `lib/src/features/[feature]/domain/entities/`
 3. **Locate** path: `lib/src/features/[feature]/domain/repositories/`
 4. **Create** `[feature]_repository.dart`

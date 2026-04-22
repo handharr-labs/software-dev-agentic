@@ -4,7 +4,7 @@ description: Update an existing Mapper and/or Model — add/remove/rename fields
 user-invocable: false
 ---
 
-Update a Mapper and/or Model following `.claude/reference/contract/data.md ## DTOs` and `## Mappers sections`.
+Update a Mapper and/or Model following `.claude/reference/contract/builder/data.md ## DTOs` and `## Mappers sections`.
 
 ## Steps
 

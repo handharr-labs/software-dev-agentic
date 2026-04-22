@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a UseCase following `.claude/reference/contract/domain.md ## Use Cases section` and DI rules in `.claude/reference/contract/di.md ## DI Principles section`.
+Create a UseCase following `.claude/reference/contract/builder/domain.md ## Use Cases section` and DI rules in `.claude/reference/contract/builder/di.md ## DI Principles section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/domain.md` for `## Use Cases` and `.claude/reference/contract/di.md` for `## DI Principles`; only **Read** a file in full if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/domain.md` for `## Use Cases` and `.claude/reference/contract/builder/di.md` for `## DI Principles`; only **Read** a file in full if the section cannot be located
 2. **Locate** module path: `Talenta/Module/[Module]/Domain/UseCase/`
 3. **Create** `[HttpMethod][Feature]UseCase.swift`
 4. **Wire** into the module's `DIContainer`

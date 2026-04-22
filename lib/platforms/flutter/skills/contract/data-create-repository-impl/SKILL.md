@@ -4,11 +4,11 @@ description: Create a Repository implementation that bridges the domain interfac
 user-invocable: false
 ---
 
-Create a RepositoryImpl following `.claude/reference/contract/data.md ## Repository Implementations section` and `reference/contract/error-handling.md`.
+Create a RepositoryImpl following `.claude/reference/contract/builder/data.md ## Repository Implementations section` and `reference/contract/builder/error-handling.md`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/data.md` for `## Repository Implementations`; only **Read** the full file if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/data.md` for `## Repository Implementations`; only **Read** the full file if the section cannot be located
 2. **Verify** all three dependencies exist: domain repository interface, datasource, mapper
 3. **Locate** path: `lib/src/features/[feature]/data/repositories/`
 4. **Create** `[feature]_repository_impl.dart`

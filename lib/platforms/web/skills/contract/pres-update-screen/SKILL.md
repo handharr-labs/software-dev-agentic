@@ -5,7 +5,7 @@ user-invocable: false
 tools: Read, Edit, Glob
 ---
 
-Update an existing View component following `reference/contract/presentation.md`.
+Update an existing View component following `reference/contract/builder/presentation.md`.
 
 ## Steps
 
@@ -52,7 +52,7 @@ if (viewModel.newQuery.isError) return <ErrorState />
 - `'use client'` must already be present if adding event handlers
 - After adding event handlers, verify the StateHolder exposes the mutation/action
 
-**Pattern:** `reference/contract/presentation.md` — `Grep` for view/binding section.
+**Pattern:** `reference/contract/builder/presentation.md` — `Grep` for view/binding section.
 
 ## Output
 

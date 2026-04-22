@@ -6,11 +6,11 @@ user-invocable: false
 
 > **Flutter mapping**: StateHolder = BLoC (or Cubit for simple state)
 
-Create a BLoC following `.claude/reference/contract/presentation.md ## Events, ## States, ## BLoC sections` and DI rules in `.claude/reference/contract/di.md ## Annotations section`.
+Create a BLoC following `.claude/reference/contract/builder/presentation.md ## Events, ## States, ## BLoC sections` and DI rules in `.claude/reference/contract/builder/di.md ## Annotations section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/presentation.md` for `## 2. Events` and `## 3. States`; only **Read** the full file if sections cannot be located
+1. **Grep** `.claude/reference/contract/builder/presentation.md` for `## 2. Events` and `## 3. States`; only **Read** the full file if sections cannot be located
 2. **Read** the UseCase signatures that this BLoC will call — never guess method names
 3. **Decide**: BLoC or Cubit? (see reference ## Cubit (Simpler Alternative) section — use Cubit for 1-3 simple mutations with no payload)
 4. **Locate** path: `lib/src/features/[feature]/presentation/blocs/`

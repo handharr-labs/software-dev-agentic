@@ -4,7 +4,7 @@ description: Fix failing Flutter tests — diagnose failures, update mocks/stubs
 user-invocable: false
 ---
 
-Fix failing tests following patterns in `.claude/reference/contract/testing.md`.
+Fix failing tests following patterns in `.claude/reference/contract/builder/testing.md`.
 
 ## Steps
 

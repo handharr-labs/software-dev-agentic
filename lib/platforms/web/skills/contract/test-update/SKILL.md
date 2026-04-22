@@ -5,7 +5,7 @@ user-invocable: false
 tools: Read, Edit, Glob
 ---
 
-Update existing tests following `reference/contract/testing.md`.
+Update existing tests following `reference/contract/builder/testing.md`.
 
 ## Steps
 
@@ -44,7 +44,7 @@ Update existing tests following `reference/contract/testing.md`.
 - Never modify production StateHolder code to make tests pass
 - After removing a query/mutation, delete its tests + update mocks
 
-**Pattern:** `reference/contract/testing.md` — Grep `## ViewModel Hook Tests`
+**Pattern:** `reference/contract/builder/testing.md` — Grep `## ViewModel Hook Tests`
 
 ## Output
 

@@ -4,7 +4,7 @@ description: Create BLoC tests using bloc_test, covering all events and state tr
 user-invocable: false
 ---
 
-Create BLoC tests following `.claude/reference/contract/testing.md ## BLoC Tests section`.
+Create BLoC tests following `.claude/reference/contract/builder/testing.md ## BLoC Tests section`.
 
 ## Steps
 

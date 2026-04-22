@@ -12,10 +12,10 @@ Migrate one Presentation layer component at a time to the modern architecture st
 ## Architecture Reference
 
 Read these before starting:
-- `.claude/reference/contract/presentation.md` — V2 ViewModel, State/Event/Action, Navigator, Coordinator
-- `.claude/reference/contract/presentation.md #Advanced-Patterns` — Navigator protocol pattern, Coordinator pattern
+- `.claude/reference/contract/builder/presentation.md` — V2 ViewModel, State/Event/Action, Navigator, Coordinator
+- `.claude/reference/contract/builder/presentation.md #Advanced-Patterns` — Navigator protocol pattern, Coordinator pattern
 - `.claude/reference/migration.md ## Legacy Code Migration Checklist section` — legacy code migration checklist
-- `.claude/reference/contract/di.md` — factory method pattern in DIContainer
+- `.claude/reference/contract/builder/di.md` — factory method pattern in DIContainer
 
 ## Scope
 
@@ -75,7 +75,7 @@ enum Action { ... }
 **Step 4: Extract Navigator (if navigation logic exists)**
 - Create `[Feature]Navigator` protocol with `weak var` delegate
 - Move navigation calls from ViewModel to Navigator
-- See `.claude/reference/contract/presentation.md #Navigator-Protocol-Pattern`
+- See `.claude/reference/contract/builder/presentation.md #Navigator-Protocol-Pattern`
 
 **Step 5: Update ViewController bindings**
 - Update any call sites that changed (inputs → `send(action:)`, outputs → `state.map { ... }`)
@@ -83,11 +83,11 @@ enum Action { ... }
 
 **Step 6: Update or create tests**
 - ViewModel tests: use `state` relay assertions instead of direct property checks
-- See `.claude/reference/contract/testing.md` for test patterns
+- See `.claude/reference/contract/builder/testing.md` for test patterns
 
 **Step 7: Wire DI Container**
 - Add factory method: `func make[Feature]ViewModel(navigator: [Feature]Navigator) -> [Feature]ViewModel`
-- See `.claude/reference/contract/di.md`
+- See `.claude/reference/contract/builder/di.md`
 
 **Step 8: Build + test**
 ```bash
@@ -98,5 +98,5 @@ xcodebuild -project Talenta.xcodeproj -scheme Talenta -configuration Debug \
 
 ## Before/After Reference
 
-See `.claude/reference/contract/presentation.md` for full V2 ViewModel pattern.
+See `.claude/reference/contract/builder/presentation.md` for full V2 ViewModel pattern.
 See `.claude/reference/migration.md ## Legacy Code Migration Checklist section` for legacy code migration checklist.

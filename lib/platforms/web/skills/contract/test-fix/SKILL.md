@@ -5,7 +5,7 @@ user-invocable: false
 tools: Read, Edit, Glob
 ---
 
-Fix failing tests following `reference/contract/testing.md`.
+Fix failing tests following `reference/contract/builder/testing.md`.
 
 ## Critical Constraint
 

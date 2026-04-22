@@ -5,12 +5,12 @@ description: |
 user-invocable: false
 ---
 
-Update an existing ViewModel following `.claude/reference/contract/presentation.md`.
+Update an existing ViewModel following `.claude/reference/contract/builder/presentation.md`.
 
 ## Steps
 
 1. **Read** the existing ViewModel file completely
-2. **Grep** `.claude/reference/contract/presentation.md` for the relevant pattern keyword; only **Read** the full file if the section cannot be located
+2. **Grep** `.claude/reference/contract/builder/presentation.md` for the relevant pattern keyword; only **Read** the full file if the section cannot be located
 3. **Apply targeted changes** — do not restructure unrelated code
 4. **Check** if ViewController needs corresponding updates (binding new State fields, sending new Events)
 

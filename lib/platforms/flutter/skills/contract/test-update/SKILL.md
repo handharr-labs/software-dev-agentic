@@ -4,7 +4,7 @@ description: Update existing Flutter tests — add new test cases for new events
 user-invocable: false
 ---
 
-Update existing tests following `.claude/reference/contract/testing.md`.
+Update existing tests following `.claude/reference/contract/builder/testing.md`.
 
 ## Steps
 

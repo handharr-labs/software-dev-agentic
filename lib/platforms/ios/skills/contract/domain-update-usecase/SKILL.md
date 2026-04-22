@@ -5,12 +5,12 @@ description: |
 user-invocable: false
 ---
 
-Update an existing UseCase following `.claude/reference/contract/domain.md ## Use Cases section`.
+Update an existing UseCase following `.claude/reference/contract/builder/domain.md ## Use Cases section`.
 
 ## Steps
 
 1. **Read** the existing UseCase file completely
-2. **Grep** `.claude/reference/contract/domain.md` for `## Use Cases`; only **Read** the full file if the section cannot be located
+2. **Grep** `.claude/reference/contract/builder/domain.md` for `## Use Cases`; only **Read** the full file if the section cannot be located
 3. **Apply targeted changes only** — do not restructure unrelated code
 4. **Check** if `[Feature]RepositoryProtocol` signature needs updating
 5. **Check** if DI container usage needs updating

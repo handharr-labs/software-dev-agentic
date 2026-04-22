@@ -12,9 +12,9 @@ Migrate one Domain layer component at a time to the modern architecture standard
 ## Architecture Reference
 
 Read these before starting:
-- `.claude/reference/contract/domain.md` — V2 Domain patterns (entities, repo protocols, UseCases, Params)
+- `.claude/reference/contract/builder/domain.md` — V2 Domain patterns (entities, repo protocols, UseCases, Params)
 - `.claude/reference/migration.md ## Legacy → Modern Code, ## UseCase Migration sections` — folder structure + UseCase migration guide
-- `.claude/reference/contract/di.md` — DI Container wiring
+- `.claude/reference/contract/builder/di.md` — DI Container wiring
 
 ## Scope
 
@@ -67,7 +67,7 @@ Before starting, ask the user:
 
 **Step 5: Update DI Container**
 - Ensure the UseCase is registered with lazy property in module DIContainer
-- See `.claude/reference/contract/di.md` for pattern
+- See `.claude/reference/contract/builder/di.md` for pattern
 
 **Step 6: Build + test**
 ```bash

@@ -5,7 +5,7 @@ description: |
 user-invocable: false
 ---
 
-Create a ViewModel test suite following `.claude/reference/contract/testing.md ## ViewModel Tests, ## Mapper Tests sections` and patterns in `.claude/reference/testing-patterns-advanced.md`.
+Create a ViewModel test suite following `.claude/reference/contract/builder/testing.md ## ViewModel Tests, ## Mapper Tests sections` and patterns in `.claude/reference/testing-patterns-advanced.md`.
 
 ## Steps
 

@@ -4,11 +4,11 @@ description: Create a UseCase class for a single business operation, with its Pa
 user-invocable: false
 ---
 
-Create a UseCase following `.claude/reference/contract/domain.md ## Use Cases section`.
+Create a UseCase following `.claude/reference/contract/builder/domain.md ## Use Cases section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/domain.md` for `## Use Cases`; only **Read** the full file if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/domain.md` for `## Use Cases`; only **Read** the full file if the section cannot be located
 2. **Verify** the repository interface exists — run `domain-create-repository` first if missing
 3. **Determine** the operation type: GET-single / GET-list / write (POST/PUT) / no-params
 4. **Locate** path: `lib/src/features/[feature]/domain/usecases/`

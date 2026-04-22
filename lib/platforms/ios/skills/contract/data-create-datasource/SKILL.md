@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a DataSource following `.claude/reference/contract/data.md ## Data Sources section`.
+Create a DataSource following `.claude/reference/contract/builder/data.md ## Data Sources section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/data.md` for `## Data Sources`; only **Read** the full file if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/data.md` for `## Data Sources`; only **Read** the full file if the section cannot be located
 2. **Locate** module paths:
    - Protocol: `Talenta/Module/[Module]/Data/DataSource/[Feature]DataSource.swift`
    - Impl: `Talenta/Module/[Module]/Data/DataSource/[Feature]RemoteDataSourceImpl.swift`

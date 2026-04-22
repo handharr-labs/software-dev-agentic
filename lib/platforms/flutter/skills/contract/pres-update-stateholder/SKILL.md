@@ -4,7 +4,7 @@ description: Update an existing BLoC — add/remove events, update state fields,
 user-invocable: false
 ---
 
-Update an existing BLoC following `.claude/reference/contract/presentation.md ## Events, ## States, ## BLoC sections`.
+Update an existing BLoC following `.claude/reference/contract/builder/presentation.md ## Events, ## States, ## BLoC sections`.
 
 ## Steps
 

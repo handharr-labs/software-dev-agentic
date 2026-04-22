@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a Domain Entity struct following `.claude/reference/contract/domain.md ## Entities section` and project conventions in `.claude/reference/project.md ## Conventions & Naming section`.
+Create a Domain Entity struct following `.claude/reference/contract/builder/domain.md ## Entities section` and project conventions in `.claude/reference/project.md ## Conventions & Naming section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/domain.md` for `## Entities`; only **Read** the full file if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/domain.md` for `## Entities`; only **Read** the full file if the section cannot be located
 2. **Locate** the correct module path: `Talenta/Module/[Module]/Domain/Entities/`
 3. **Create** the entity file named `[Feature]Model.swift`
 

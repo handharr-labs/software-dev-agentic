@@ -4,7 +4,7 @@ description: Update an existing UseCase — add params fields, change return typ
 user-invocable: false
 ---
 
-Update an existing UseCase following `.claude/reference/contract/domain.md ## Use Cases section`.
+Update an existing UseCase following `.claude/reference/contract/builder/domain.md ## Use Cases section`.
 
 ## Steps
 

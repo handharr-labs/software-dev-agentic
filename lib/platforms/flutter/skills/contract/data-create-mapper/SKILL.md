@@ -4,11 +4,11 @@ description: Create a Model (DTO) and Mapper for a feature — both the freezed 
 user-invocable: false
 ---
 
-Create a Model and Mapper following `.claude/reference/contract/data.md ## DTOs` and `## Mappers sections`.
+Create a Model and Mapper following `.claude/reference/contract/builder/data.md ## DTOs` and `## Mappers sections`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/data.md` for `## DTOs` and `## Mappers`; only **Read** the full file if sections cannot be located
+1. **Grep** `.claude/reference/contract/builder/data.md` for `## DTOs` and `## Mappers`; only **Read** the full file if sections cannot be located
 2. **Verify** the domain entity exists
 3. **Locate** paths:
    - Model: `lib/src/features/[feature]/data/models/`

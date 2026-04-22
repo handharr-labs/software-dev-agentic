@@ -5,12 +5,12 @@ user-invocable: false
 tools: Read, Edit, Glob
 ---
 
-Update an existing StateHolder (ViewModel hook or pure function) following `reference/contract/presentation.md`.
+Update an existing StateHolder (ViewModel hook or pure function) following `reference/contract/builder/presentation.md`.
 
 ## Steps
 
 1. **Read** the existing StateHolder file completely
-2. **Read** `reference/contract/presentation.md` — `Grep` for the relevant pattern section
+2. **Read** `reference/contract/builder/presentation.md` — `Grep` for the relevant pattern section
 3. **Apply targeted changes** — do not restructure unrelated code
 
 ## Common Update Scenarios

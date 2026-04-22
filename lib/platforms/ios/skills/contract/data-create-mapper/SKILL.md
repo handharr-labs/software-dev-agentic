@@ -5,11 +5,11 @@ description: |
 user-invocable: false
 ---
 
-Create a Mapper following `.claude/reference/contract/data.md ## Mappers section` and null safety utilities in `.claude/reference/contract/utilities.md ## Null Safety Extensions section`.
+Create a Mapper following `.claude/reference/contract/builder/data.md ## Mappers section` and null safety utilities in `.claude/reference/contract/builder/utilities.md ## Null Safety Extensions section`.
 
 ## Steps
 
-1. **Grep** `.claude/reference/contract/data.md` for `## Mappers` and `.claude/reference/contract/utilities.md` for `## Null Safety Extensions`; only **Read** a file in full if the section cannot be located
+1. **Grep** `.claude/reference/contract/builder/data.md` for `## Mappers` and `.claude/reference/contract/builder/utilities.md` for `## Null Safety Extensions`; only **Read** a file in full if the section cannot be located
 2. **Read** the Response DTO and Entity to understand all fields
 3. **Locate** module path: `Talenta/Module/[Module]/Data/Mapper/`
 4. **Create** `[Feature]ModelMapper.swift`
