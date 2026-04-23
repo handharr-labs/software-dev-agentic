@@ -253,6 +253,17 @@ LOCAL_SETTINGS="$CLAUDE_DIR/settings.local.json"
 if [ ! -f "$LOCAL_SETTINGS" ] && [ -f "$PLATFORM_DIR/settings-template.jsonc" ]; then
   cp "$PLATFORM_DIR/settings-template.jsonc" "$LOCAL_SETTINGS"
   echo "copy  .claude/settings.local.json"
+elif [ -f "$LOCAL_SETTINGS" ] && grep -q 'PROJECT_ROOT/hooks/' "$LOCAL_SETTINGS"; then
+  # Migrate: old template used literal PROJECT_ROOT placeholder — replace with correct relative path
+  python3 - "$LOCAL_SETTINGS" <<'PYEOF'
+import sys, re
+f = sys.argv[1]
+content = open(f).read()
+fixed = re.sub(r'PROJECT_ROOT/hooks/', '.claude/hooks/', content)
+if fixed != content:
+    open(f, 'w').write(fixed)
+    print("  migrate  settings.local.json (PROJECT_ROOT/hooks/ → .claude/hooks/)")
+PYEOF
 fi
 
 # ── CLAUDE.md ─────────────────────────────────────────────────────────────────

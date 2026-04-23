@@ -26,7 +26,7 @@ If one or more `plan.md` files are found:
              plus always: label: "Start new plan", description: "Begin fresh for a new feature"
   ```
 
-If the user picks **Resume**: read the existing `plan.md`, present it, and ask: "Edit, approve, or discard?"
+If the user picks **Resume**: read the existing `plan.md`, present it inline, then call `AskUserQuestion` immediately with the same options as Phase 5 — do NOT ask in prose.
 If the user picks **Start new plan**: proceed to Phase 0.
 
 ## Phase 0 — Gather Intent
@@ -139,20 +139,20 @@ After writing `plan.md`:
 
 1. Display the full plan inline so the engineer can read it without opening the file
 2. State the path: `.claude/agentic-state/runs/<feature>/plan.md`
-3. Call `AskUserQuestion` with:
+3. Call `AskUserQuestion` **immediately** — do NOT present options in prose, do NOT write "Reply approve/edit/discard", do NOT describe choices in your response text:
    ```
    question : "What would you like to do with this plan?"
    header   : "Plan"
    multiSelect: false
    options  :
      - label: "Approve", description: "Run feature-orchestrator to execute this plan"
-     - label: "Edit",    description: "I will modify plan.md then run feature-orchestrator manually"
+     - label: "Discuss more", description: "I have questions or changes before this plan is finalized"
      - label: "Discard", description: "Cancel and delete this plan"
    ```
 
 If the user selects **Approve**: update `status` in `plan.md` frontmatter to `approved`, then instruct the user to run `feature-orchestrator` — do not invoke it yourself.
 
-If the user selects **Edit**: update `status` to `in-review` and stop. The engineer edits `plan.md` directly.
+If the user selects **Discuss more**: stay in conversation and address the engineer's questions or requested changes, then call `AskUserQuestion` again with the same three options.
 
 If the user selects **Discard**: delete `plan.md` and the run directory if empty.
 

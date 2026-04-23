@@ -308,6 +308,25 @@ else
   fi
 fi
 
+# ── Prune stale symlinks ──────────────────────────────────────────────────────
+
+echo ""
+echo "Pruning stale symlinks..."
+_pruned=0
+for _dir in "$CLAUDE_DIR/agents" "$CLAUDE_DIR/skills" "$CLAUDE_DIR/hooks"; do
+  [ -d "$_dir" ] || continue
+  for _link in "$_dir"/*; do
+    [ -L "$_link" ] || continue
+    if [ ! -e "$_link" ]; then
+      rm "$_link"
+      echo "  $(yellow "prune")  $(basename "$_link") (target gone)"
+      _pruned=$((_pruned + 1))
+    fi
+  done
+done
+[ "$_pruned" -eq 0 ] && echo "  skip  (no stale symlinks)"
+unset _pruned _dir _link
+
 # ── .gitignore ────────────────────────────────────────────────────────────────
 
 echo ""
@@ -355,6 +374,17 @@ LOCAL_SETTINGS="$CLAUDE_DIR/settings.local.json"
 if [ ! -f "$LOCAL_SETTINGS" ] && [ -f "$PLATFORM_DIR/settings-template.jsonc" ]; then
   cp "$PLATFORM_DIR/settings-template.jsonc" "$LOCAL_SETTINGS"
   echo "copy  settings.local.json"
+elif [ -f "$LOCAL_SETTINGS" ] && grep -q 'PROJECT_ROOT/hooks/' "$LOCAL_SETTINGS"; then
+  # Migrate: old template used literal PROJECT_ROOT placeholder — replace with correct relative path
+  python3 - "$LOCAL_SETTINGS" <<'PYEOF'
+import sys, re
+f = sys.argv[1]
+content = open(f).read()
+fixed = re.sub(r'PROJECT_ROOT/hooks/', '.claude/hooks/', content)
+if fixed != content:
+    open(f, 'w').write(fixed)
+    print("  migrate  settings.local.json (PROJECT_ROOT/hooks/ → .claude/hooks/)")
+PYEOF
 fi
 
 # ── CLAUDE.md ─────────────────────────────────────────────────────────────────
