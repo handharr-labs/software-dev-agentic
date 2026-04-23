@@ -55,6 +55,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 
 Read a full file only when: (a) you need its complete structure to write a new matching file, or (b) Grep returned no results.
 
+**Never use Bash `cat` to read files** — always use `Grep` or `Read` above. Bash cat bypasses the read-once discipline and inflates token costs significantly.
+
 **Read-once rule:** Once you have read a file, do not read it again. Form your complete edit plan from that single read, then apply all changes in one `Edit` call. Re-reading the same file is a token waste signal — if you feel the urge to re-read, it means your edit plan was incomplete. Start the plan over from your existing read output, not from a new read.
 
 ## Preconditions — Fail Fast
@@ -62,6 +64,7 @@ Read a full file only when: (a) you need its complete structure to write a new m
 Before writing:
 - Use case(s) must exist in the domain layer — run `domain-worker` first if missing
 - DI container must exist — check for its presence before wiring
+- **New StateHolder creation** — you MUST invoke `pres-create-stateholder` before any Write or Edit call. Writing a StateHolder directly without skill scaffolding bypasses `ViewModelState` conformance, `InitializableDefault`, singleton patterns, and `updateState` signatures — causing compilation errors that require a full rework pass.
 
 ## Workflow
 
