@@ -159,6 +159,14 @@ else
       rm "$link"; echo "  remove  $name (not in installed packages)"; stale_found=true
     fi
   done
+  # Prune dangling hook symlinks
+  for link in "$PROJECT_ROOT/.claude/hooks/"*.sh; do
+    [ -L "$link" ] || continue
+    if [ ! -e "$link" ]; then
+      rm "$link"; echo "  remove  $(basename "$link") (dangling hook)"; stale_found=true
+    fi
+  done
+
   $stale_found || echo "  clean"
 fi
 
@@ -195,6 +203,24 @@ if grep -qs 'agentic-state' "$GITIGNORE" 2>/dev/null; then
 else
   printf '\n# Claude Code — agentic state (delegation flags, session state, run artifacts)\n.claude/agentic-state/\n' >> "$GITIGNORE"
   echo "patch .gitignore (added agentic-state/)"
+fi
+
+# ── settings.local.json — migrate stale PROJECT_ROOT/hooks/ placeholder ───────
+
+echo ""
+LOCAL_SETTINGS="$PROJECT_ROOT/.claude/settings.local.json"
+if [ -f "$LOCAL_SETTINGS" ] && grep -q 'PROJECT_ROOT/hooks/' "$LOCAL_SETTINGS"; then
+  python3 - "$LOCAL_SETTINGS" <<'PYEOF'
+import sys, re
+f = sys.argv[1]
+content = open(f).read()
+fixed = re.sub(r'PROJECT_ROOT/hooks/', '.claude/hooks/', content)
+if fixed != content:
+    open(f, 'w').write(fixed)
+    print("  migrate  settings.local.json (PROJECT_ROOT/hooks/ → .claude/hooks/)")
+PYEOF
+else
+  echo "skip  settings.local.json migration (not needed)"
 fi
 
 # ── settings.json ─────────────────────────────────────────────────────────────
