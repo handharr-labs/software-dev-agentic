@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.40.8] — 2026-04-23
+
+### Fixed
+- `setup-symlinks.sh`: correct relative path depth in recursive `link_reference` — symlinks inside subdirectories (e.g. `reference/builder/`, `reference/contract/builder/`) were one `../` too shallow, causing broken symlinks in downstream projects
+- `data-worker`, `presentation-worker`: enforce skill-before-write precondition — new artifact creation must invoke the corresponding skill before any Write/Edit call to prevent pattern-error rework loops
+- `data-worker`, `presentation-worker`: prohibit Bash `cat` reads in Search Protocol — workers must use `Grep` or `Read` tools only
+- `feature-orchestrator`: add pre-flight test intent check — pure test-creation requests (matching "create tests", "write tests", etc.) are now routed to `test-worker` instead of self-executing
+- `feature-orchestrator`: add auth interruption recovery — orchestrator saves state and surfaces a clear resume message on session expiry rather than stalling silently
+
 ## [3.40.7] — 2026-04-23
 
 ### Fixed
