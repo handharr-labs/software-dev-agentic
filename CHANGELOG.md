@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.40.3] — 2026-04-23
+
+### Added
+- `feature-orchestrator` skill: directory-based (`SKILL.md`), replaces flat file; agent now asks "plan first or build directly?" when no approved plan exists
+- `debug-orchestrator` skill: converted from flat file to directory-based (`SKILL.md`)
+- `detective.pkg`: added `debug-orchestrator` to skills
+- `feature-orchestrator` agent: new decision step — prompts user to invoke `feature-planner` or proceed inline when no approved plan is found
+
+### Removed
+- `lib/core/skills/feature-orchestrator.md` — replaced by `feature-orchestrator/SKILL.md`
+- `lib/core/skills/debug-orchestrator.md` — replaced by `debug-orchestrator/SKILL.md`
+
+---
+
 ## [3.40.2] — 2026-04-23
 
 ### Removed

@@ -53,7 +53,18 @@ For each found `plan.md`, Grep for `status: approved`. If an approved plan exist
 - Skip Phase 0 entirely — intent is already known
 - Inform the user: "Found approved plan for `<feature>` — skipping intent gathering"
 
-If no approved plan is found: proceed to Phase 0 normally.
+If no approved plan is found, call `AskUserQuestion` with:
+```
+question : "How would you like to proceed?"
+header   : "Feature"
+multiSelect: false
+options  :
+  - label: "Plan first",     description: "Run feature-planner to produce a reviewable plan before building"
+  - label: "Build directly", description: "Skip planning — gather intent inline and go straight to workers"
+```
+
+If the user picks **Plan first**: spawn `feature-planner` with no arguments, then return here and re-check for an approved plan before continuing.
+If the user picks **Build directly**: proceed to Phase 0 normally.
 
 ## Pre-flight — Set Delegation Flag
 

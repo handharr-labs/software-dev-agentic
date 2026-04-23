@@ -1,8 +1,7 @@
 ---
 name: debug-orchestrator
 description: Trigger the debug-orchestrator agent. Accepts an optional bug description, collects any missing intake (error message, expected vs actual behavior, entry point, platform), then hands off to the agent.
-user-invocable: true
-tools: Agent, AskUserQuestion
+allowed-tools: Agent, AskUserQuestion
 ---
 
 ## Arguments
