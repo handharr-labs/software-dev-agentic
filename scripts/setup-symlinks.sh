@@ -159,6 +159,25 @@ link_agents "$SUBMODULE/lib/core/agents" "$REL_CORE/agents"
 link_skills "$SUBMODULE/lib/core/skills" "$REL_CORE/skills"
 link_reference "$SUBMODULE/lib/core/reference" "$REL_CORE/reference"
 
+# ── Prune dangling symlinks ───────────────────────────────────────────────────
+
+echo ""
+echo "Pruning dangling symlinks..."
+_pruned=0
+for _dir in "$CLAUDE_DIR/agents" "$CLAUDE_DIR/skills" "$CLAUDE_DIR/hooks"; do
+  [ -d "$_dir" ] || continue
+  for _link in "$_dir"/* "$_dir"/*.sh 2>/dev/null; do
+    [ -L "$_link" ] || continue
+    if [ ! -e "$_link" ]; then
+      rm "$_link"
+      echo "  remove  $(basename "$_link") (dangling)"
+      _pruned=$((_pruned + 1))
+    fi
+  done
+done
+[ "$_pruned" -eq 0 ] && echo "  clean"
+unset _pruned _dir _link
+
 # ── .gitignore ────────────────────────────────────────────────────────────────
 
 echo ""
