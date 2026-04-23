@@ -97,6 +97,52 @@ PYEOF
 
 This writes the current branch into `delegation.json` with a timestamp, unblocking the `require-feature-orchestrator` hook. The entry is branch-scoped and persists across sessions — no need to re-run on continuation sessions.
 
+## Correction Mode
+
+When a completed phase needs a fix (wrong location, wrong value, missed wiring), evaluate the correction before spawning anything.
+
+**Step 1 — Classify the correction:**
+
+| Signal | Classification |
+|---|---|
+| Single file, single location change (move a call, fix a value, adjust one handler) | Trivial |
+| Multiple files, or changes to a public contract (new param, new State field, new DI wiring) | Complex |
+
+**Step 2 — Route based on classification:**
+
+**Trivial correction → surface to user for inline fix.**
+
+Do not spawn. Instead, output:
+
+```
+Trivial correction — fixing inline is cheaper than spawning.
+
+File: <path from state.json artifacts>
+Change: <exact what needs to move/change and where — function name, case name, line order>
+
+The main session can apply this directly. Proceed?
+```
+
+Wait for user confirmation before doing anything else. You cannot apply the edit yourself (ZERO INLINE WORK). The user or main Claude session applies it directly.
+
+**Complex correction → spawn the layer worker directly.**
+
+Do not re-enter full orchestration. Identify the responsible layer worker from the affected files:
+
+| Layer | Worker |
+|---|---|
+| Domain entities / use cases | `domain-worker` |
+| DTOs / mappers / datasources | `data-worker` |
+| StateHolder / ViewModel / BLoC | `presentation-worker` |
+| Screen / UI components | `ui-worker` |
+
+Spawn that worker with:
+- Exact file path(s) from `state.json` artifacts
+- Exact insertion point (function name, case name, MARK section, line order relative to existing calls)
+- The specific change needed
+
+Do **not** re-run pre-flight, do **not** re-write `delegation.json`, do **not** spawn a sub-orchestrator. Update `state.json` after the worker completes.
+
 ## Phase 0 — Gather Intent
 
 Ask only what you need to coordinate layers. Do not gather platform-specific details — workers handle those.
@@ -112,17 +158,23 @@ Required:
 
 ## Phase 1 — Domain Layer
 
+Before spawning `domain-worker`, write an initial state file so the session is resumable even if it exits mid-phase:
+```json
+{ "feature": "<name>", "completed_phases": [], "artifacts": {}, "next_phase": "domain" }
+```
+
 Spawn `domain-worker` and:
 - Feature name
 - Platform (e.g. `web`, `ios`, `flutter`)
 - Operations needed (so it knows which use cases to create)
+- `context-path`: `.claude/agentic-state/runs/<feature>/context.md` (pass only if the file exists on disk)
 
 Wait for completion. Extract from the `## Output` section:
 - List of created file paths (pass to Phase 2)
 
 If the worker's response has no `## Output` section, or any listed path does not exist on disk, STOP — do not proceed to Phase 2. Surface the failure and the worker's full response to the user.
 
-Write state file `.claude/agentic-state/runs/<feature>/state.json`:
+Update state file `.claude/agentic-state/runs/<feature>/state.json`:
 ```json
 { "feature": "<name>", "completed_phases": ["domain"], "artifacts": { "domain": ["<paths>"] }, "next_phase": "data" }
 ```
@@ -134,6 +186,7 @@ Depends on Phase 1. Spawn `data-worker` and:
 - Platform (e.g. `web`, `ios`, `flutter`)
 - Operations needed
 - File paths from Phase 1
+- `context-path`: `.claude/agentic-state/runs/<feature>/context.md` (pass only if the file exists on disk)
 
 Wait for completion. Extract from the `## Output` section:
 - List of created file paths (pass to Phase 3)
@@ -152,6 +205,7 @@ Depends on Phase 2. Spawn `pres-orchestrator` with:
 - Platform (e.g. `web`, `ios`, `flutter`)
 - File paths from Phase 1 + Phase 2 (domain + data artifacts)
 - Whether a separate UI layer exists (from Phase 0)
+- `context-path`: `.claude/agentic-state/runs/<feature>/context.md` (pass only if the file exists on disk)
 
 `pres-orchestrator` handles StateHolder + UI internally — do not spawn `presentation-worker` or `ui-worker` directly.
 
