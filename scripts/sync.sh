@@ -56,6 +56,24 @@ link_if_absent() {
   fi
 }
 
+link_reference() {
+  local src_dir="$1"
+  local rel_prefix="$2"
+  local dest_base="${3:-$PROJECT_ROOT/.claude/reference}"
+  [ -d "$src_dir" ] || return 0
+  for ref in "$src_dir"/*.md; do
+    [ -f "$ref" ] || continue
+    name="$(basename "$ref")"
+    link_if_absent "$rel_prefix/$name" "$dest_base/$name"
+  done
+  for subdir in "$src_dir"/*/; do
+    [ -d "$subdir" ] || continue
+    subname="$(basename "$subdir")"
+    mkdir -p "$dest_base/$subname"
+    link_reference "$subdir" "../$rel_prefix/$subname" "$dest_base/$subname"
+  done
+}
+
 find_agent() {
   local name="$1" found
   found="$(find "$SUBMODULE/lib/platforms/$PLATFORM/agents" -name "$name.md" -type f 2>/dev/null | head -1)"
@@ -176,6 +194,14 @@ else
   fi
 
   $stale_found || echo "  clean"
+
+  # Re-link reference files (always — reference/ is not tracked by the lockfile)
+  echo ""
+  echo "  Re-linking reference..."
+  CLAUDE_DIR="$PROJECT_ROOT/.claude"
+  REL_BASE="../software-dev-agentic/lib"
+  link_reference "$SUBMODULE/lib/platforms/$PLATFORM/reference" "$REL_BASE/platforms/$PLATFORM/reference"
+  link_reference "$SUBMODULE/lib/core/reference" "$REL_BASE/core/reference"
 fi
 
 # ── Sync managed section in CLAUDE.md ────────────────────────────────────────
