@@ -323,7 +323,7 @@ agents=<agent1> <agent2>
 skills=
 ```
 3. Scaffold each agent using the worker/orchestrator template above
-4. Remind the user: add the persona to `scripts/setup-packages.sh` Step 2 menu manually
+4. Remind the user: run `setup-symlinks.sh --platform=<platform>` to pick up the new persona in downstream projects
 
 ---
 
@@ -344,7 +344,7 @@ Scaffolded: <name>
 Next steps:
   - Fill in the <Domain> Rules section with your specific constraints
   - <If worker: implement the skills listed in related_skills>
-  - <If new persona: add to scripts/setup-packages.sh Step 2 menu>
+  - <If new persona: run setup-symlinks.sh --platform=<platform> in downstream projects to pick it up>
   - Run arch-review-orchestrator to validate conventions
 ```
 

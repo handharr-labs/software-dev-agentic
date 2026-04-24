@@ -1,4 +1,0 @@
-name=core
-description=Always installed — issue management, perf review, release tooling, project setup
-agents=issue-worker perf-worker setup-worker
-skills=doctor release agentic-perf-review clear-runs tracker-adjust-ticket

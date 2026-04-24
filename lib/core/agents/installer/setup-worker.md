@@ -26,7 +26,7 @@ Accept from the user:
 ### 1 — Detect state
 
 Check if setup is complete:
-- `Glob` `.claude/software-dev-agentic/` — if missing, submodule not wired; tell the user to run `setup-packages.sh` or `setup-symlinks.sh` first, then stop
+- `Glob` `.claude/software-dev-agentic/` — if missing, submodule not wired; tell the user to run `setup-symlinks.sh` first, then stop
 - `Glob` `CLAUDE.md` — if it exists, Read it to detect platform and current config
 
 Detect platform from CLAUDE.md:

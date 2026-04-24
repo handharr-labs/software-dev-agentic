@@ -8,12 +8,9 @@ Platforms: **web** (Next.js 15) · **ios** (Swift/UIKit) · **flutter** (Dart/BL
 ## Dev Commands
 
 ```bash
-# Wire into a downstream project — interactive package selection (recommended)
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=web
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
-
-# Or link everything without prompts
+# Wire into a downstream project — links all agents, skills, hooks, and reference
 .claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
 
 # Cut a release
 /release

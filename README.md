@@ -21,7 +21,7 @@ your-project/
     agents.local/           ← your project-specific overrides (never touched by sync)
 ```
 
-Agents are organized into **personas** — coherent workflow groups. You install only the personas you need.
+Agents are organized into **personas** — coherent workflow groups. All personas are installed by default.
 
 ---
 
@@ -37,13 +37,13 @@ cd my-app
 # 2. Add the submodule
 git submodule add https://github.com/mekaripaper/software-dev-agentic .claude/software-dev-agentic
 
-# 3. Run interactive setup — pick the personas and skills you need
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=web
+# 3. Wire everything — symlinks all agents, skills, hooks, and reference for the platform
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 # or
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
 ```
 
-Open Claude Code, then describe what you want to build — agents are routed automatically.
+Open Claude Code and use trigger skills (`/feature-orchestrator`, `/debug-orchestrator`, etc.) as the entry point.
 
 ---
 
@@ -52,9 +52,9 @@ Open Claude Code, then describe what you want to build — agents are routed aut
 ```bash
 git submodule add https://github.com/mekaripaper/software-dev-agentic .claude/software-dev-agentic
 
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=web
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 # or
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
 ```
 
 The script wires symlinks, copies `CLAUDE.md`, and sets up `settings.local.json`. Re-running is safe — existing files and local overrides are never overwritten.

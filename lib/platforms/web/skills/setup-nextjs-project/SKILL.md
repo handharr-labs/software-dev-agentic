@@ -25,10 +25,10 @@ git submodule add <STARTER_KIT_URL> .claude/software-dev-agentic
 ### 3 — Run the setup script
 
 ```bash
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=web
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 ```
 
-This creates `.claude/agents/` and `.claude/skills/` as symlink-only directories, makes hooks executable, and copies `settings-template.json` → `.claude/settings.local.json`. Re-running is safe.
+This symlinks all agents, skills, hooks, and reference for the web platform into `.claude/`, copies `CLAUDE.md` from the template, and creates `settings.local.json`. Re-running is safe.
 
 ### 4 — Copy CLAUDE-template.md
 

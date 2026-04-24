@@ -1,4 +1,0 @@
-name=detective
-description=Debug orchestrator and debug worker for tracing bugs across layers
-agents=debug-orchestrator debug-worker debug-log-worker
-skills=debug-orchestrator

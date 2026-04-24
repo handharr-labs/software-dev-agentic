@@ -207,27 +207,14 @@ software-dev-agentic enforces its own conventions through an automated internal 
 
 ## Setup & Installation
 
-**Recommended: Interactive Package Installer**
-
-```bash
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=web
-.claude/software-dev-agentic/scripts/setup-packages.sh --platform=ios
-```
-
-The interactive installer runs in three steps:
-- **Step 1 — Always installed (core package):** `issue-worker`, `perf-worker`, `setup-worker`, core skills: `doctor`, `release`, `agentic-perf-review`
-- **Step 2 — Core agent groups (your choice):** persona group selection menu
-- **Step 3 — Platform packages (your choice):** platform-specific optional packages
-
-**Alternative: Install Everything (no prompts)**
-
 ```bash
 .claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
+.claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
 ```
 
-Both scripts are idempotent — re-running never overwrites existing files (`link_if_absent` guard). `setup-symlinks.sh` links all core agents (all persona groups) without asking.
+Idempotent — re-running never overwrites existing files (`link_if_absent` guard). All personas are installed; no menu or selection needed.
 
-**What the setup scripts do:**
+**What `setup-symlinks.sh` does:**
 1. Convert any old-style directory symlinks to real directories
 2. Create `.claude/agents/`, `.claude/skills/`, `.claude/reference/`, `.claude/agents.local/extensions/`, `.claude/skills.local/extensions/`
 3. Pass 1: Link local overrides from `agents.local/` and `skills.local/`
@@ -235,7 +222,7 @@ Both scripts are idempotent — re-running never overwrites existing files (`lin
 5. Pass 3: Link core agents, skills, and reference from `lib/core/` (recurse into persona subdirs; skip if name already linked)
 6. Make hooks executable
 7. Copy `settings-template.json` → `.claude/settings.local.json` if not present
-8. Copy `CLAUDE-template.md` → `CLAUDE.md` if not present
+8. Copy or sync managed section in `CLAUDE.md`
 
 > Note: `.claude/agents/` and `.claude/skills/` (internal tooling) are NOT linked to downstream projects. Only content under `lib/` is symlinked.
 
@@ -246,9 +233,8 @@ Both scripts are idempotent — re-running never overwrites existing files (`lin
 ```
 
 1. `git pull` inside the submodule
-2. Re-runs `setup-symlinks.sh` (idempotent — new agents/skills get linked, existing overrides preserved)
-3. Syncs the managed section in `CLAUDE.md`
-4. Prints the commit command to lock in the updated submodule pointer
+2. Calls `setup-symlinks.sh` — re-links everything, syncs the managed section in `CLAUDE.md`
+3. Prints the commit command to lock in the updated submodule pointer
 
 **Post-setup checklist:**
 1. Edit `CLAUDE.md` — fill in `[AppName]` and stack placeholders
@@ -259,7 +245,7 @@ Both scripts are idempotent — re-running never overwrites existing files (`lin
 
 ## Repository Structure
 
-**Per-Project Layout (after `setup-packages.sh --platform=ios`)**
+**Per-Project Layout (after `setup-symlinks.sh --platform=ios`)**
 
 ```
 /

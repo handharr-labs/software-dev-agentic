@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 # setup-symlinks.sh
-# Run once from the project root after adding software-dev-agentic as a submodule.
-# Links core agents/skills/reference + the chosen platform's agents/skills/reference
-# into .claude/agents/, .claude/skills/, .claude/reference/ and .claude/hooks/.
+# Wires all agents/skills/hooks/reference for the chosen platform into .claude/.
+# Safe to re-run — link_if_absent never overwrites existing files.
+# Also used by sync.sh to re-link after a submodule update.
 #
 # Usage:
 #   .claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 #   .claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
 #
-# Re-running is safe — link_if_absent never overwrites existing files.
 # Priority order: agents.local > platform > core  (first link wins)
 
 set -euo pipefail
@@ -269,21 +268,30 @@ fi
 
 # ── CLAUDE.md ─────────────────────────────────────────────────────────────────
 
+TEMPLATE="$PLATFORM_DIR/CLAUDE-template.md"
+BEGIN_MARKER="<!-- BEGIN software-dev-agentic:$PLATFORM -->"
+END_MARKER="<!-- END software-dev-agentic:$PLATFORM -->"
+
 echo ""
-if [ ! -f "$PLATFORM_DIR/CLAUDE-template.md" ]; then
+if [ ! -f "$TEMPLATE" ]; then
   echo "skip  CLAUDE.md (no template for $PLATFORM)"
-elif [ -f "$PROJECT_ROOT/CLAUDE.md" ]; then
-  MARKER="<!-- BEGIN software-dev-agentic:$PLATFORM -->"
-  if grep -qF "$MARKER" "$PROJECT_ROOT/CLAUDE.md"; then
-    echo "skip  CLAUDE.md ($PLATFORM block already present)"
-  else
-    BLOCK=$(sed -n "/<!-- BEGIN software-dev-agentic:$PLATFORM -->/,/<!-- END software-dev-agentic:$PLATFORM -->/p" "$PLATFORM_DIR/CLAUDE-template.md")
-    printf '\n%s\n' "$BLOCK" >> "$PROJECT_ROOT/CLAUDE.md"
-    echo "append CLAUDE.md ($PLATFORM block)"
-  fi
-else
-  cp "$PLATFORM_DIR/CLAUDE-template.md" "$PROJECT_ROOT/CLAUDE.md"
+elif [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+  cp "$TEMPLATE" "$PROJECT_ROOT/CLAUDE.md"
   echo "copy  CLAUDE.md (from $PLATFORM CLAUDE-template.md)"
+elif grep -qF "$BEGIN_MARKER" "$PROJECT_ROOT/CLAUDE.md"; then
+  managed_tmp="$(mktemp)"
+  awk "/^${BEGIN_MARKER}$/{found=1} found{print} /^${END_MARKER}$/{found=0}" "$TEMPLATE" > "$managed_tmp"
+  awk -v begin="$BEGIN_MARKER" -v end="$END_MARKER" -v src="$managed_tmp" '
+    $0 == begin { while ((getline line < src) > 0) print line; skip=1; next }
+    $0 == end   { skip=0; next }
+    !skip        { print }
+  ' "$PROJECT_ROOT/CLAUDE.md" > "$PROJECT_ROOT/CLAUDE.md.tmp" && mv "$PROJECT_ROOT/CLAUDE.md.tmp" "$PROJECT_ROOT/CLAUDE.md"
+  rm -f "$managed_tmp"
+  echo "sync  CLAUDE.md (managed section updated)"
+else
+  BLOCK=$(sed -n "/<!-- BEGIN software-dev-agentic:$PLATFORM -->/,/<!-- END software-dev-agentic:$PLATFORM -->/p" "$TEMPLATE")
+  printf '\n%s\n' "$BLOCK" >> "$PROJECT_ROOT/CLAUDE.md"
+  echo "append CLAUDE.md ($PLATFORM block)"
 fi
 
 if [ -f "$PROJECT_ROOT/CLAUDE.md" ] && grep -q '\[AppName\]' "$PROJECT_ROOT/CLAUDE.md"; then
@@ -297,33 +305,6 @@ if [ -f "$PROJECT_ROOT/CLAUDE.md" ] && grep -q '\[AppName\]' "$PROJECT_ROOT/CLAU
   else
     echo "  ⚠  Fill in [AppName] placeholders in CLAUDE.md"
   fi
-fi
-
-# ── Lockfile ──────────────────────────────────────────────────────────────────
-
-LOCKFILE="$CLAUDE_DIR/config/installed-packages"
-if [ ! -f "$LOCKFILE" ]; then
-  {
-    echo "# Managed by setup-symlinks.sh — do not edit manually"
-    echo "platform=$PLATFORM"
-    # Core packages
-    for pkg_file in "$SUBMODULE/packages"/*.pkg; do
-      [ -f "$pkg_file" ] || continue
-      pkg_name="$(grep "^name=" "$pkg_file" | cut -d= -f2-)"
-      echo "pkg=$pkg_name"
-    done
-    # Platform packages
-    if [ -d "$PLATFORM_DIR/packages" ]; then
-      for pkg_file in "$PLATFORM_DIR/packages"/*.pkg; do
-        [ -f "$pkg_file" ] || continue
-        pkg_name="$(grep "^name=" "$pkg_file" | cut -d= -f2-)"
-        echo "pkg=$pkg_name"
-      done
-    fi
-  } > "$LOCKFILE"
-  echo "write .claude/config/installed-packages (all packages)"
-else
-  echo "skip  .claude/config/installed-packages (already exists)"
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────

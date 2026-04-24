@@ -7,6 +7,21 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.45.0] — 2026-04-24
+
+### Added
+- `setup-symlinks.sh`: now does full managed-section sync on `CLAUDE.md` (replaces content between markers on re-run, not just skip)
+
+### Changed
+- `sync.sh`: simplified to pull + delegate to `setup-symlinks.sh` — all link/prune/CLAUDE.md logic is now in one place
+- `CLAUDE.md`, `README.md`, `submodule-repo-structure.md`, `setup-nextjs-project/SKILL.md`, `setup-worker.md`, `agent-scaffold-worker.md`: updated all references from `setup-packages.sh` → `setup-symlinks.sh`
+
+### Removed
+- `scripts/setup-packages.sh` — selective persona installation no longer needed; all personas install by default
+- `scripts/local-setup-packages.sh` — removed alongside `setup-packages.sh`
+- `packages/*.pkg` — package definition files no longer needed
+- Lockfile (`config/installed-packages`) — removed from `setup-symlinks.sh`; no package selection to track
+
 ## [3.44.4] — 2026-04-24
 
 ### Changed
