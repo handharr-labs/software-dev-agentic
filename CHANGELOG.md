@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.47.1] — 2026-04-25
+
+### Changed
+- `feature-planner`: enforce 60-line read budget on Explore agent — offset+limit required after Grep, never unbounded Read; Key Symbols extraction uses Grep line number + ±30 line window
+- `feature-planner`: Search Protocol updated — all Reads capped at `limit=60`, unbounded Read on a large file is an explicit violation
+
 ## [3.47.0] — 2026-04-25
 
 ### Changed
