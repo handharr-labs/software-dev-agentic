@@ -49,6 +49,10 @@ The trigger skill owns three responsibilities before spawning the agent:
 
 The agent detects the `Pre-loaded context` block in its prompt and jumps directly to the first pending phase. Without it, the agent warns that direct invocation is unsupported.
 
+**Multiple workflow skills per persona are allowed** — as long as they all route through the same primary entry agent. Example: the builder persona has two Type T skills: `feature-orchestrator` (direct build or resume) and `plan-feature` (planning-first workflow that sequences `feature-planner` → user approval → `feature-orchestrator`). Both converge on the same executor; the rule guards against direct-invocation bypasses, not workflow variations.
+
+A sub-agent used only as a step inside a workflow skill (e.g. `feature-planner` inside `plan-feature`) does not need its own standalone trigger skill.
+
 > **Adding a new persona:** create the entry agent + its trigger skill together. A persona without a trigger skill is incomplete.
 
 ---

@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.44.1] — 2026-04-24
+
+### Changed
+- `core-design-principles.md`: clarified Skill-First Entry — multiple workflow skills per persona are allowed when they converge on the same primary entry agent; sub-agents used only as workflow steps do not need standalone trigger skills
+
 ## [3.44.0] — 2026-04-24
 
 ### Added
