@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.46.2] — 2026-04-24
+
+### Changed
+- CLAUDE-template.md (ios, web, flutter): replaced agent list with skill-first entry rule; removed stale delegation guard hook line
+
 ## [3.46.1] — 2026-04-24
 
 ### Fixed

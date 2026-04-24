@@ -13,11 +13,9 @@ Clean Architecture · DRY · SOLID — apply to all new code.
 
 ## Workflow
 
-Agents: `feature-orchestrator` · `backend-orchestrator` · `debug-worker` · `test-worker` · `arch-review-worker` · `.claude/skills/`
+Use trigger skills as entry points — `/feature-orchestrator`, `/arch-review`, `/debug-orchestrator`, etc.
 
-**Feature work (create or update, any scope) → always delegate to `feature-orchestrator`, never inline.**
-
-**If the delegation guard hook blocks an edit → always stop and ask the user: inline or `feature-orchestrator`? Never resolve it autonomously.**
+**Feature work → always start with `/feature-orchestrator`, never inline.**
 
 ## Agent Spawning Rules
 
