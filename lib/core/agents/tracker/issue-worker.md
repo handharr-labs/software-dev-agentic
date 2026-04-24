@@ -1,6 +1,6 @@
 ---
 name: issue-worker
-description: Create or pick up a GitHub Issue — opens the issue, creates a git branch, and updates the local backlog. Use when starting new work or picking up a PM-created issue.
+description: Create or pick up a GitHub Issue — opens the issue, creates a git branch, and updates the local backlog. Designed to be invoked only by the `/issue-worker` skill — not directly.
 model: sonnet
 tools: Bash, Read, Edit, Write
 ---

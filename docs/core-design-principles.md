@@ -27,11 +27,29 @@ There are two valid entry points into the agentic system:
 
 **A — Natural language routing (default):** Users describe what they want; Claude matches the intent to an agent's description and spawns it automatically. No slash commands, no manual chaining.
 
-**B — Trigger skill:** A user-invocable skill (`user-invocable: true`) that explicitly spawns an agent workflow. Use this when the entry point is a specific, named operation — not open-ended intent. The skill handles the invocation; the agent handles the work.
+**B — Trigger skill:** A user-invocable skill (`user-invocable: true`) that explicitly spawns an agent workflow. Use this when the entry point is a specific, named operation — not open-ended intent. The skill owns the full entry sequence: routing (resume vs new run), context pre-loading from the runs directory, and spawning the agent with context already inlined. The agent handles the work.
 
 > Agent descriptions must be precise and use vocabulary developers naturally say. Routing is only as good as the description.
 
 > Not every request needs an agent. If a change is simple and localized (rename a variable, fix a typo, add an import), act directly — the cost of delegation exceeds the task itself.
+
+**Skill-First Entry for Personas:**
+
+Every persona must have exactly one primary entry agent. That agent must have a corresponding Type T trigger skill. The skill is the only supported entry path — direct agent invocation bypasses context loading and is unsupported.
+
+| Role | Has trigger skill? | Spawned by |
+|---|---|---|
+| Persona entry agent (orchestrator, or single worker if no orchestrator) | Yes — required | User via trigger skill |
+| Workers inside a persona | No | Orchestrator only |
+
+The trigger skill owns three responsibilities before spawning the agent:
+1. **Routing** — detect existing runs (resume vs new call) and ask the user when ambiguous
+2. **Context pre-loading** — read `context.md` and `state.json` from the runs directory (cache hits in the same session) and inline them into the spawn prompt
+3. **Spawn prompt construction** — pass the pre-loaded block so the agent can skip all cold pre-flight file reads
+
+The agent detects the `Pre-loaded context` block in its prompt and jumps directly to the first pending phase. Without it, the agent warns that direct invocation is unsupported.
+
+> **Adding a new persona:** create the entry agent + its trigger skill together. A persona without a trigger skill is incomplete.
 
 ---
 
@@ -243,6 +261,13 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
 | Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
 | Orchestrator context accumulation | Minimal — file paths only | Workers return paths, not content; state file prevents re-reads |
+| Context relay (trigger skills) | Zero cold reads on resume | Skill reads `context.md` + `state.json` from runs directory (cache hit — same session), passes inline to spawn prompt; orchestrator detects pre-loaded block and skips pre-flight file reads entirely |
+
+**Context relay pattern:**
+
+When a trigger skill spawns an orchestrator, it pre-loads the runs context into the spawn prompt rather than letting the orchestrator re-read files cold. The skill runs in the root agent's context — if `context.md` and `state.json` were written earlier in the same session, they are already in the prompt cache (cache reads at $0.30/MTok). The orchestrator receives context on its first token and jumps directly to execution.
+
+This eliminates the orchestrator's cold pre-flight penalty (cache misses at $3.75/MTok for cache creation, $3.00/MTok for full input) while keeping the disk files as the authoritative source for workers.
 
 ---
 
@@ -359,7 +384,7 @@ The agentic system enforces its own conventions through automated review — the
 
 | Goal | How it's achieved |
 |---|---|
-| Token efficiency | Isolated context; Search Protocol decision gate; Haiku for mechanical workers; file paths only between phases; orchestrator state files prevent mid-run re-reads |
+| Token efficiency | Isolated context; Search Protocol decision gate; Haiku for mechanical workers; file paths only between phases; orchestrator state files prevent mid-run re-reads; context relay — skill pre-loads warm-cache runs context into spawn prompt, eliminating orchestrator cold pre-flight reads |
 | Modular knowledge | Skills preloaded, not embedded |
 | Single source of truth | `reference/` Grep-accessed, never duplicated |
 | Safe destructive operations | `disable-model-invocation: true` on Type B |

@@ -1,6 +1,6 @@
 ---
 name: setup-worker
-description: Set up or reconfigure a downstream project to use the software-dev-agentic starter kit. Run after wiring the submodule — handles CLAUDE.md configuration, stack choices, and project orientation.
+description: Set up or reconfigure a downstream project to use the software-dev-agentic starter kit. Designed to be invoked only by the `/setup-worker` skill — not directly.
 model: sonnet
 tools: Read, Glob, Grep, Bash
 related_skills:

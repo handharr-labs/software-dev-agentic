@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.44.0] — 2026-04-24
+
+### Added
+- `backend-orchestrator` skill: Type T trigger skill — owns routing (resume/new), context pre-loading from runs directory, and spawn prompt construction
+- `setup-worker` skill: Type T trigger skill — asks platform if not provided, then spawns `setup-worker` agent
+- `issue-worker` skill: Type T trigger skill — spawns `issue-worker` agent with `$ARGUMENTS`
+- `core-design-principles.md`: Skill-First Entry for Personas principle — every persona's primary entry agent requires a trigger skill; workers remain orchestrator-spawned
+
+### Changed
+- `backend-orchestrator.md`: description updated to "skill-only" and added `Pre-flight — Context Check` (same context relay pattern as `feature-orchestrator`)
+- `setup-worker.md`, `issue-worker.md`: descriptions updated to "skill-only — invoked only by trigger skill"
+
 ## [3.43.3] — 2026-04-24
 
 ### Fixed

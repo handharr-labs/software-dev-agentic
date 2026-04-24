@@ -6,6 +6,8 @@
 > Sessions analysed: 10
 > Prepared by: Engineering
 
+> **Architectural note (v3.42.0, 2026-04-24):** The delegation guard hook (`require-feature-orchestrator.sh`) described in this report has been retired. The `/plan-feature` and `/feature-orchestrator` skills are now the enforced entry point — they own routing (resume vs new), context pre-loading, and orchestrator spawning. The `delegation.json` flag mechanism and `feature-dirs` config are removed. References to these mechanisms below reflect the state of the system at the time of this report.
+
 ---
 
 ## Executive Summary
