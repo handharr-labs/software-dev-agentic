@@ -31,6 +31,42 @@ Two constraints enforced from the theory:
 
 ---
 
+## Anatomy
+
+The detective persona follows the scientific debugging sequence strictly. Each agent owns one step and stops.
+
+```
+User (natural language)
+ │
+ ▼
+debug-orchestrator            — static analysis; forms 2–3 ranked, falsifiable hypotheses
+ │
+ ▼
+debug-log-worker (MODE=add)   — inserts hypothesis-tagged log statements at predicted failure points
+ │
+ [user reproduces the bug in the running app]
+ │
+ ▼
+debug-worker                  — interprets log output; concludes root cause
+ │
+ ▼
+debug-log-worker (MODE=remove) — strips all instrumentation before commit
+```
+
+**Key structural constraint — tool isolation:**
+
+`Edit` lives exclusively in `debug-log-worker`. `debug-orchestrator` and `debug-worker` are physically read-only. No diagnostic agent can alter logic — only log statements, only via the designated instrumenter.
+
+**Short-circuit path:**
+
+When the root cause is statically visible (e.g. a silent catch block in plain view), `debug-orchestrator` routes directly to `debug-worker` — no instrumentation cycle needed. `debug-log-worker` is skipped entirely.
+
+**Handoff boundary:**
+
+Detective terminates with a `ROOT CAUSE` report. The user decides the next action — invoking a builder worker, applying a trivial inline fix, or escalating. Detective never chooses or invokes the fix agent.
+
+---
+
 ## Step-to-Agent Mapping
 
 | Scientific Debugging Step | Agent |

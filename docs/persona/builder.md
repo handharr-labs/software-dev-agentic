@@ -8,23 +8,86 @@ Location: `lib/core/agents/builder/`
 
 ---
 
+## Anatomy
+
+The builder persona has two entry skills that both converge on `feature-orchestrator`:
+
+```
+User
+ │
+ ├─ /plan-feature skill (Type T)         — plan-first; sequences planner → approval → worker
+ │
+ └─ /feature-orchestrator skill (Type T) — direct entry; routes resume vs new, or build-directly
+          │
+          ▼
+    feature-orchestrator                 — coordinates phases; never writes source files
+          │
+          ▼  (plan-first path)
+    feature-planner                      — scopes build; produces plan.md + context.md
+      │           │           │
+      ▼           ▼           ▼
+ domain-       data-       pres-
+ planner       planner     planner       — explore each layer in parallel; no source writes
+          │
+          │  [user reviews and approves plan.md]
+          │
+          ▼
+    feature-worker                       — reads approved plan; executes skills in layer order
+          │
+          ▼
+    platform-contract skills             — concrete artifact creation per platform and layer
+```
+
+**Two entry paths — same executor:**
+
+| Entry skill | When to use | Difference |
+|---|---|---|
+| `/plan-feature` | Complex or cross-layer features; uncertain existing state | Runs `feature-planner` first; user reviews plan before execution begins |
+| `/feature-orchestrator` | Known scope; resuming an existing run | Routes directly to `feature-worker`, or lets orchestrator decide |
+
+**Planner phase — parallel sub-planners:**
+
+`feature-planner` spawns all three layer planners simultaneously. Each explores its layer independently and returns a structured findings block. `feature-planner` aggregates the findings into `plan.md` and `context.md`, then stops for human approval.
+
+| Sub-planner | Explores |
+|---|---|
+| `domain-planner` | Entities, use cases, repository interfaces, domain services |
+| `data-planner` | DTOs, mappers, datasources, repository implementations |
+| `pres-planner` | StateHolders, screens, components, navigators, key symbols |
+
+**Execution phase — `feature-worker`:**
+
+`feature-worker` is the only agent that writes source files. It reads the approved `plan.md` and calls skills in CLEAN layer order — domain → data → presentation → UI. Each artifact is validated via `Glob` + `Grep` before moving to the next. `state.json` is updated after each artifact so the run is resumable.
+
+**Standalone paths (no orchestrator or planner needed):**
+
+| Task | Path |
+|---|---|
+| Single known artifact | Worker directly (`domain-worker`, `data-worker`, `presentation-worker`, `ui-worker`) |
+| Test generation | `test-worker` directly |
+| Targeted edit to existing artifact | Worker with `context.md` Key Symbols if available |
+
+---
+
 ## Agent Roster
 
 ### Core agents (`lib/core/agents/builder/`)
 
 | Role | Agent | Responsibility |
 |---|---|---|
-| Orchestrator | `feature-orchestrator` | Full feature build — coordinates all layers |
-| Orchestrator | `pres-orchestrator` | Presentation + UI phase (standalone or sub-orchestrator) |
+| Orchestrator | `feature-orchestrator` | Full feature build — coordinates planner + feature-worker phases |
+| Orchestrator | `pres-orchestrator` | Presentation + UI phase — standalone entry for pres-only tasks |
 | Orchestrator | `backend-orchestrator` | Backend API + data layer coordination |
-| Orchestrator | `debug-orchestrator` | Debug session coordination |
-| Orchestrator | `feature-planner` | Pre-build planning and scope definition |
-| Worker | `domain-worker` | Domain layer: entities, use cases, repository interfaces |
-| Worker | `data-worker` | Data layer: mappers, datasources, repository implementations |
-| Worker | `presentation-worker` | Presentation layer: StateHolder, state management |
-| Worker | `ui-worker` | UI layer: screens, components, navigation |
+| Planner | `feature-planner` | Pre-build planning — spawns layer planners in parallel, produces plan.md |
+| Planner | `domain-planner` | Domain layer exploration — entities, use cases, repository interfaces |
+| Planner | `data-planner` | Data layer exploration — DTOs, mappers, datasources, repo implementations |
+| Planner | `pres-planner` | Presentation layer exploration — StateHolders, screens, key symbols |
+| Worker | `feature-worker` | Plan-driven executor — reads plan.md, calls skills in layer order, validates each artifact |
+| Worker | `domain-worker` | Domain layer direct creation — for single known artifacts |
+| Worker | `data-worker` | Data layer direct creation — for single known artifacts |
+| Worker | `presentation-worker` | Presentation layer creation — StateHolder, state management |
+| Worker | `ui-worker` | UI layer creation — screens, components, navigation |
 | Worker | `test-worker` | Test generation across all layers |
-| Worker | `debug-worker` | Root cause analysis and fix execution |
 | Worker | `prompt-debug-worker` | Agent prompt diagnosis from perf reports |
 | Worker | `arch-review-worker` | CLEAN Architecture violation review (downstream projects) |
 
@@ -46,12 +109,12 @@ Location: `lib/core/agents/builder/`
 
 ## Layer-to-Agent Mapping
 
-| Layer | Worker | Skills |
-|---|---|---|
-| Domain | `domain-worker` | `domain-create-entity`, `domain-create-usecase`, `domain-create-repository`, `domain-create-service`, `domain-update-usecase` |
-| Data | `data-worker` | `data-create-datasource`, `data-create-mapper`, `data-create-response`, `data-create-repository-impl`, `data-update-mapper` |
-| Presentation | `presentation-worker`, `ui-worker` | `pres-create-stateholder`, `pres-update-stateholder`, `pres-create-screen`, `pres-create-component`, `pres-create-navigator`, `pres-update-screen` |
-| Test | `test-worker` | `test-create-domain`, `test-create-data`, `test-create-presentation`, `test-update`, `test-fix` |
+| Layer | Planner | Worker | Skills |
+|---|---|---|---|
+| Domain | `domain-planner` | `domain-worker` | `domain-create-entity`, `domain-create-usecase`, `domain-create-repository`, `domain-create-service` |
+| Data | `data-planner` | `data-worker` | `data-create-datasource`, `data-create-mapper`, `data-create-response`, `data-create-repository-impl` |
+| Presentation | `pres-planner` | `presentation-worker`, `ui-worker` | `pres-create-stateholder`, `pres-create-screen`, `pres-create-component`, `pres-create-navigator` |
+| Test | — | `test-worker` | `test-create-domain`, `test-create-data`, `test-create-presentation` |
 
 ---
 
@@ -59,14 +122,15 @@ Location: `lib/core/agents/builder/`
 
 | Skill | Called by | Layer |
 |---|---|---|
-| `domain-create-entity` | `domain-worker` | Domain |
-| `domain-create-repository` | `domain-worker` | Domain |
-| `domain-create-usecase` | `domain-worker` | Domain |
-| `data-create-mapper` | `data-worker` | Data |
-| `data-create-datasource` | `data-worker` | Data |
-| `data-create-repository-impl` | `data-worker` | Data |
-| `pres-create-stateholder` | `presentation-worker` | Presentation |
-| `pres-create-screen` | `ui-worker` | Presentation/UI |
+| `domain-create-entity` | `domain-worker`, `feature-worker` | Domain |
+| `domain-create-repository` | `domain-worker`, `feature-worker` | Domain |
+| `domain-create-usecase` | `domain-worker`, `feature-worker` | Domain |
+| `domain-create-service` | `domain-worker`, `feature-worker` | Domain |
+| `data-create-mapper` | `data-worker`, `feature-worker` | Data |
+| `data-create-datasource` | `data-worker`, `feature-worker` | Data |
+| `data-create-repository-impl` | `data-worker`, `feature-worker` | Data |
+| `pres-create-stateholder` | `presentation-worker`, `feature-worker` | Presentation |
+| `pres-create-screen` | `ui-worker`, `feature-worker` | Presentation/UI |
 | `test-create-domain` | `test-worker` | Test |
 | `test-create-data` | `test-worker` | Test |
 | `test-create-presentation` | `test-worker` | Test |
