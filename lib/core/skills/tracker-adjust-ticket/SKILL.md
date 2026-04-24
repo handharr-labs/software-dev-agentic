@@ -1,6 +1,6 @@
 ---
 name: tracker-adjust-ticket
-description: Adjust a locally fetched Jira ticket (.md file) based on session discussion. Appends a new section capturing development progress — never modifies existing content.
+description: Adjust a locally fetched Jira ticket (.md file) based on session discussion. Updates a single Session Adjustment section — never modifies other existing content.
 user-invocable: true
 tools: Read, Edit, AskUserQuestion
 ---
@@ -27,11 +27,14 @@ Verify the file exists before continuing. If it does not exist, report the path 
    - "Are there any blockers, decisions, or open questions from this session?"
    - "What is the current development status? (e.g. In Progress, Ready for Review, Blocked)"
 
-3. Compose the adjustment section using the answers. Use today's date (ISO 8601) as the section timestamp.
+3. Compose the adjustment section using the answers. Use today's date (ISO 8601) as the last-updated date.
 
-   Do NOT edit, reorder, or remove any existing content in the file.
+   Do NOT edit, reorder, or remove any other existing content in the file.
 
-4. Append the following block at the **end** of the file:
+4. Check if a `## Session Adjustment` section already exists in the file.
+
+   - **If it exists:** replace the entire block (from the preceding `---` separator through the end of the section) with the updated content below.
+   - **If it does not exist:** append the block at the end of the file.
 
    ```
    ---
@@ -51,10 +54,10 @@ Verify the file exists before continuing. If it does not exist, report the path 
    <current development status from step 2>
    ```
 
-5. Confirm to the user: "Ticket updated — new session adjustment section appended. No existing content was modified."
+5. Confirm to the user: "Ticket updated — session adjustment section updated. No other content was modified."
 
 ## Rules
 
-- NEVER edit, reorder, or strip any content that already exists in the ticket file.
-- NEVER overwrite a previous `## Session Adjustment` section — always append a new one.
-- Use `Edit` to append only — target the end of the file.
+- NEVER edit, reorder, or strip any content that already exists in the ticket file outside the Session Adjustment section.
+- There is always exactly one `## Session Adjustment` section — update it in place, never append a second one.
+- Use `Edit` to replace the existing section, or to append if none exists yet.

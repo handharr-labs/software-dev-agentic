@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.46.3] — 2026-04-24
+
+### Changed
+- `tracker-adjust-ticket`: update in place instead of appending — exactly one `## Session Adjustment` section, date reflects last update
+
 ## [3.46.2] — 2026-04-24
 
 ### Changed
