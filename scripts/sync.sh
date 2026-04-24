@@ -260,51 +260,27 @@ fi
 # ── settings.json ─────────────────────────────────────────────────────────────
 
 echo ""
-HOOK_CMD=".claude/hooks/require-feature-orchestrator.sh"
 SHARED_SETTINGS="$PROJECT_ROOT/.claude/settings.json"
-if [ ! -f "$SHARED_SETTINGS" ]; then
-  echo "skip  settings.json (not found)"
-elif grep -q 'require-feature-orchestrator' "$SHARED_SETTINGS"; then
-  echo "skip  settings.json (require-feature-orchestrator already present)"
-else
-  RESULT=$(python3 - "$SHARED_SETTINGS" "$HOOK_CMD" <<'EOF'
+if grep -q 'require-feature-orchestrator' "$SHARED_SETTINGS" 2>/dev/null; then
+  RESULT=$(python3 - "$SHARED_SETTINGS" <<'EOF'
 import sys, re
-
-settings_file, hook_cmd = sys.argv[1], sys.argv[2]
-content = open(settings_file).read()
-
-pattern = r'("matcher"\s*:\s*"Write\|Edit"(?:[^[]*?)"hooks"\s*:\s*\[)'
-match = re.search(pattern, content, re.DOTALL)
-if not match:
+f = sys.argv[1]
+content = open(f).read()
+cleaned = re.sub(r',?\s*\{\s*"type"\s*:\s*"command"\s*,\s*"command"\s*:\s*"[^"]*require-feature-orchestrator[^"]*"\s*\}', '', content)
+if cleaned != content:
+    open(f, 'w').write(cleaned)
+    print("removed")
+else:
     print("warn")
-    sys.exit(0)
-
-indent_match = re.match(r'\n(\s*)', content[match.end():])
-indent = indent_match.group(1) if indent_match else "          "
-new_hook = f'\n{indent}{{"type": "command", "command": "{hook_cmd}"}},'
-open(settings_file, "w").write(content[:match.end()] + new_hook + content[match.end():])
-print("patched")
 EOF
   )
-  if [ "$RESULT" = "patched" ]; then
-    echo "patch settings.json (added require-feature-orchestrator hook)"
+  if [ "$RESULT" = "removed" ]; then
+    echo "patch settings.json (removed require-feature-orchestrator hook)"
   else
-    echo "warn  settings.json — could not auto-patch, add manually:"
-    echo "      { \"type\": \"command\", \"command\": \"$HOOK_CMD\" }"
+    echo "warn  settings.json — could not auto-remove hook, remove manually"
   fi
-fi
-
-# ── .claude/config/feature-dirs ──────────────────────────────────────────────
-# setup-symlinks.sh (called above) handles creation and migration.
-# This check just confirms the file is present after setup.
-
-echo ""
-FEATURE_DIRS_FILE="$PROJECT_ROOT/.claude/config/feature-dirs"
-if [ -f "$FEATURE_DIRS_FILE" ]; then
-  echo "skip  .claude/config/feature-dirs (already exists)"
 else
-  echo "warn  .claude/config/feature-dirs — not found after setup, delegation hook will not guard any directories"
-  echo "      Run: .claude/software-dev-agentic/scripts/setup-symlinks.sh --platform=$PLATFORM"
+  echo "skip  settings.json (require-feature-orchestrator not present)"
 fi
 
 echo ""

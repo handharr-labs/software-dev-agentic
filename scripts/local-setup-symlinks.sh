@@ -209,34 +209,25 @@ if [ ! -f "$SETTINGS_FILE" ]; then
     echo "  ⚠  Edit .claude/settings.local.json — replace PROJECT_ROOT with your .claude path"
   fi
 elif grep -q 'require-feature-orchestrator' "$SETTINGS_FILE"; then
-  echo "skip  settings.local.json (require-feature-orchestrator already present)"
-else
-  RESULT=$(python3 - "$SETTINGS_FILE" "$CLAUDE_DIR" <<'EOF'
+  RESULT=$(python3 - "$SETTINGS_FILE" <<'EOF'
 import sys, re
-
-settings_file, claude_dir = sys.argv[1], sys.argv[2]
-hook_cmd = claude_dir + "/hooks/require-feature-orchestrator.sh"
-content = open(settings_file).read()
-
-pattern = r'("matcher"\s*:\s*"Write\|Edit"(?:[^[]*?)"hooks"\s*:\s*\[)'
-match = re.search(pattern, content, re.DOTALL)
-if not match:
+f = sys.argv[1]
+content = open(f).read()
+cleaned = re.sub(r',?\s*\{\s*"type"\s*:\s*"command"\s*,\s*"command"\s*:\s*"[^"]*require-feature-orchestrator[^"]*"\s*\}', '', content)
+if cleaned != content:
+    open(f, 'w').write(cleaned)
+    print("removed")
+else:
     print("warn")
-    sys.exit(0)
-
-indent_match = re.match(r'\n(\s*)', content[match.end():])
-indent = indent_match.group(1) if indent_match else "          "
-new_hook = f'\n{indent}{{"type": "command", "command": "{hook_cmd}"}},'
-open(settings_file, "w").write(content[:match.end()] + new_hook + content[match.end():])
-print("patched")
 EOF
   )
-  if [ "$RESULT" = "patched" ]; then
-    echo "patch settings.local.json (added require-feature-orchestrator hook)"
+  if [ "$RESULT" = "removed" ]; then
+    echo "patch settings.local.json (removed require-feature-orchestrator hook)"
   else
-    echo "warn  settings.local.json — could not auto-patch, add manually:"
-    echo "      { \"type\": \"command\", \"command\": \"$CLAUDE_DIR/hooks/require-feature-orchestrator.sh\" }"
+    echo "warn  settings.local.json — could not auto-remove hook, remove manually"
   fi
+else
+  echo "skip  settings.local.json (require-feature-orchestrator not present)"
 fi
 
 # ── CLAUDE.md ─────────────────────────────────────────────────────────────────
@@ -268,61 +259,6 @@ if [ -f "$PROJECT_ROOT/CLAUDE.md" ] && grep -q '\[AppName\]' "$PROJECT_ROOT/CLAU
     echo "  ✓  Replaced [AppName] with '$APP_NAME'"
   else
     echo "  ⚠  Fill in [AppName] placeholders in CLAUDE.md"
-  fi
-fi
-
-# ── .claude/config/feature-dirs ──────────────────────────────────────────────
-
-echo ""
-FEATURE_DIRS_FILE="$CLAUDE_DIR/config/feature-dirs"
-if [ -f "$FEATURE_DIRS_FILE" ]; then
-  echo "skip  .claude/config/feature-dirs (already exists)"
-else
-  # Migrate from old path if present (v3.9.x upgrade path)
-  if [ -f "$CLAUDE_DIR/feature-dirs" ]; then
-    mv "$CLAUDE_DIR/feature-dirs" "$FEATURE_DIRS_FILE"
-    echo "migrate .claude/config/feature-dirs (from .claude/feature-dirs)"
-  fi
-fi
-if [ ! -f "$FEATURE_DIRS_FILE" ]; then
-  # Migrate from CLAUDE.md ## Feature Directories if present
-  MIGRATED_DIRS=""
-  if [ -f "$PROJECT_ROOT/CLAUDE.md" ] && grep -q '## Feature Directories' "$PROJECT_ROOT/CLAUDE.md" 2>/dev/null; then
-    MIGRATED_DIRS=$(python3 -c "
-import sys, re
-content = open('$PROJECT_ROOT/CLAUDE.md').read()
-m = re.search(r'## Feature Directories\s+\x60\x60\x60\s*(.*?)\s*\x60\x60\x60', content, re.DOTALL)
-if m:
-    for line in m.group(1).splitlines():
-        line = line.strip()
-        if line and not line.startswith('#'):
-            print(line)
-" 2>/dev/null || true)
-  fi
-
-  if [ -n "$MIGRATED_DIRS" ]; then
-    printf '# Path fragments guarded by the delegation hook (one per line)\n%s\n' "$MIGRATED_DIRS" > "$FEATURE_DIRS_FILE"
-    echo "migrate .claude/config/feature-dirs (from CLAUDE.md ## Feature Directories)"
-  else
-    case "$PLATFORM" in
-      web)
-        printf '# Path fragments guarded by the delegation hook (one per line)\nsrc\n' > "$FEATURE_DIRS_FILE"
-        ;;
-      ios)
-        printf '# Path fragments guarded by the delegation hook (one per line)\n[AppName]/Module\n[AppName]/Shared\n[AppName]Tests/Module\n[AppName]Tests/Shared\n' > "$FEATURE_DIRS_FILE"
-        if [ -n "$APP_NAME" ]; then
-          sed -i.bak "s/\[AppName\]/$APP_NAME/g" "$FEATURE_DIRS_FILE" && rm "$FEATURE_DIRS_FILE.bak"
-        fi
-        ;;
-      *)
-        printf '# Path fragments guarded by the delegation hook (one per line)\n' > "$FEATURE_DIRS_FILE"
-        ;;
-    esac
-    echo "create .claude/config/feature-dirs"
-  fi
-
-  if grep -q '\[AppName\]' "$FEATURE_DIRS_FILE" 2>/dev/null; then
-    echo "  ⚠  Replace [AppName] in .claude/config/feature-dirs with your app target name"
   fi
 fi
 
