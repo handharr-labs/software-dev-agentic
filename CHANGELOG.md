@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.43.0] — 2026-04-24
+
+### Added
+- `tracker-adjust-ticket` skill: appends a new `## Session Adjustment` section to a locally fetched Jira ticket `.md` file based on session discussion — captures progress, decisions/blockers, and development status; never modifies existing content
+
 ## [3.42.0] — 2026-04-24
 
 ### Added
