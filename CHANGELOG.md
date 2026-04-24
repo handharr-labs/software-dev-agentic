@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.44.3] — 2026-04-24
+
+### Added
+- `arch-review` skill: Type T trigger skill for the auditor persona — presents scope options (file / feature folder / full codebase) then spawns `arch-review-worker`
+
+### Changed
+- `arch-review-worker.md`: description updated to "skill-only — invoked only by `/arch-review` skill"
+
 ## [3.44.2] — 2026-04-24
 
 ### Fixed
