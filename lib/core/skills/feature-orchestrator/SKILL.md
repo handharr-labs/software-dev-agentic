@@ -15,11 +15,19 @@ allowed-tools: Bash, Read, AskUserQuestion, Agent
    find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs" -name "state.json" 2>/dev/null
    ```
 
-2. **If runs exist:** use `AskUserQuestion`:
-   - One option per found run: label `"Resume: <feature>"`, description `"next: <next_phase>"`
-   - Always include: label `"Start new feature"`
+2. **If runs exist:** call `AskUserQuestion`:
+   ```
+   question    : "Which feature would you like to work on?"
+   header      : "Feature"
+   multiSelect : false
+   options     :
+     (one entry per found run, values from state.json)
+     - label: "Resume: <feature>", description: "Next phase: <next_phase>"
+     (always include)
+     - label: "Start new feature", description: "Begin a fresh feature from scratch"
+   ```
    - If user picks **Resume** → read `context.md` and `state.json` for that run → go to step 3
-   - If user picks **Start new** → go to step 4
+   - If user picks **Start new feature** → go to step 4
 
    **If no runs exist** → go to step 4
 

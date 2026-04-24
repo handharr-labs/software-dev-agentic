@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.44.2] — 2026-04-24
+
+### Fixed
+- `feature-orchestrator` skill: made AskUserQuestion explicit with `question/header/options` format matching the established pattern
+- `plan-feature` skill: added `AskUserQuestion` gate after planner returns — user now picks "Build now" or "Review first" before orchestrator spawns; also stops cleanly if plan was discarded (no context.md found)
+
 ## [3.44.1] — 2026-04-24
 
 ### Changed
