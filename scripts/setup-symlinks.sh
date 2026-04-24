@@ -74,7 +74,6 @@ mkdir -p \
   "$CLAUDE_DIR/agents" \
   "$CLAUDE_DIR/skills" \
   "$CLAUDE_DIR/reference" \
-  "$CLAUDE_DIR/config" \
   "$CLAUDE_DIR/agents.local/extensions" \
   "$CLAUDE_DIR/skills.local/extensions" \
   "$CLAUDE_DIR/agentic-state/runs"

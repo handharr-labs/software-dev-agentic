@@ -2,12 +2,6 @@
 # Hook: Run ESLint --fix after Write|Edit on TypeScript files
 # Event: PostToolUse on Write|Edit
 
-# Disable guard — exits 0 immediately if listed in .claude/config/disabled-hooks
-_hook_name="$(basename "$0" .sh)"
-_disabled_file="$(dirname "$0")/../config/disabled-hooks"
-if [ -f "$_disabled_file" ] && grep -qx "$_hook_name" "$_disabled_file" 2>/dev/null; then exit 0; fi
-unset _hook_name _disabled_file
-
 set -euo pipefail
 
 INPUT=$(cat)

@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.46.0] — 2026-04-24
+
+### Removed
+- `scripts/local-setup-symlinks.sh`, `scripts/local-sync.sh` — local (non-submodule) variants no longer needed
+- `scripts/manage-packages.sh`, `scripts/local-manage-packages.sh` — package management scripts removed with packages
+- `disabled-hooks` guard from all 3 web hooks (`check-use-server.sh`, `block-impl-import-in-presentation.sh`, `lint-on-edit.sh`) — skill-first entry replaces hook-level guards
+- `feature-dirs` check from `doctor` skill — delegation hook retired, fragment config no longer relevant
+- `config/` directory creation from `setup-symlinks.sh` — nothing writes there anymore
+
 ## [3.45.1] — 2026-04-24
 
 ### Changed

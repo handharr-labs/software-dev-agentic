@@ -89,29 +89,7 @@ grep -c "PROJECT_ROOT" .claude/settings.local.json || true
 - Warn: file exists but still contains `PROJECT_ROOT` placeholder
 - Fail: file missing
 
-### 6. .claude/config/feature-dirs
-
-```bash
-[ -f .claude/config/feature-dirs ] && echo "exists" || echo "missing"
-```
-
-If it exists, count non-comment, non-empty lines (active fragments):
-
-```bash
-grep -v '^\s*#' .claude/config/feature-dirs | grep -v '^\s*$' | wc -l
-```
-
-Also check for unfilled `[AppName]` placeholder:
-
-```bash
-grep -c '\[AppName\]' .claude/config/feature-dirs || true
-```
-
-- Pass: file exists, at least 1 fragment, no `[AppName]` placeholder
-- Warn: file exists but contains `[AppName]` placeholder (not yet configured for iOS)
-- Fail: file missing — delegation hook will not guard any directories
-
-### 7. GitHub CLI auth
+### 6. GitHub CLI auth
 
 ```bash
 gh auth status 2>&1
@@ -135,7 +113,6 @@ software-dev-agentic doctor
 ✗  skills       .claude/skills/ missing — run: .claude/software-dev-agentic/scripts/setup-symlinks.sh
 ✓  CLAUDE.md    managed markers found
 ⚠  settings     PROJECT_ROOT placeholder not replaced — edit .claude/settings.local.json
-✓  feature-dirs 1 fragment configured (src)
 ✓  gh auth      logged in
 ──────────────────────────────────────────
 1 error · 1 warning
