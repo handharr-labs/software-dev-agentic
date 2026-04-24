@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.49.0] — 2026-04-25
+
+### Added
+- `feature-worker`: plan-driven executor — reads approved plan.md, calls skills in layer order (domain → data → presentation → UI), validates each artifact inline via Glob+Grep, tracks per-artifact state.json, handles stateholder-contract handoff, and supports auth interruption recovery
+
+### Changed
+- `/plan-feature` skill: execution step now spawns `feature-worker` instead of `feature-orchestrator`; plan.md passed inline alongside context.md
+- `/feature-orchestrator` skill: resume path now spawns `feature-worker` with plan+context inline; new-call path routes to `feature-planner` for plan-first flow
+- `feature-orchestrator` agent: `agents:` list updated to include `feature-worker` and `feature-planner`
+
 ## [3.48.0] — 2026-04-25
 
 ### Added
