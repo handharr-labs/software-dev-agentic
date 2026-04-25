@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.50.1] — 2026-04-25
+
+### Fixed
+- `feature-planner`: Phase 5 now shows plan path + numbered step list (`ArtifactName → short description`) before prompting for approval — previously showed nothing
+- `feature-planner`: agent can no longer pre-announce "Plan approved" before the user selects Approve in AskUserQuestion
+
 ## [3.50.0] — 2026-04-25
 
 ### Added

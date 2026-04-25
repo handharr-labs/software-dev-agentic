@@ -195,9 +195,19 @@ separate-ui-layer: true | false
 
 After writing `plan.md`:
 
-1. Display the full plan inline so the engineer can read it without opening the file
-2. State the path: `.claude/agentic-state/runs/<feature>/plan.md`
-3. Call `AskUserQuestion` **immediately** — do NOT present options in prose, do NOT write "Reply approve/edit/discard", do NOT describe choices in your response text:
+1. State the path, then list the planned artifacts as a flat numbered list — one line per artifact with its layer and status. Do NOT display the full markdown table. Example:
+   ```
+   Plan written to .claude/agentic-state/runs/<feature>/plan.md
+
+   1. UserEntity → new entity
+   2. UserRepository → repository interface
+   3. GetUserListUseCase → fetch list
+   4. UserDto → map API response
+   5. UserRepositoryImpl → implement + wire data source
+   6. UserStateHolder → list + loading state
+   7. UserScreen → display list
+   ```
+2. Call `AskUserQuestion` **immediately after** — do NOT write "Plan approved", do NOT write "Approved", do NOT describe choices in prose:
    ```
    question : "What would you like to do with this plan?"
    header   : "Plan"
@@ -207,6 +217,8 @@ After writing `plan.md`:
      - label: "Discuss more", description: "I have questions or changes before this plan is finalized"
      - label: "Discard", description: "Cancel and delete this plan"
    ```
+
+**Do NOT set status to `approved` or say "Plan approved" until the user selects Approve in the question above.**
 
 If the user selects **Approve**: update `status` in `plan.md` frontmatter to `approved`, then instruct the user to run `feature-orchestrator` — do not invoke it yourself.
 
