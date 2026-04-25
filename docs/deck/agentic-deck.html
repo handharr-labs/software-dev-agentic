@@ -828,8 +828,8 @@ talenta-ios/.claude/
   ════════════════════════════════════════════ -->
   <section class="slide" id="s11">
     <div class="label">Architecture</div>
-    <h2 class="headline">Four roles. <em>Each knows exactly what it owns.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+    <h2 class="headline">Five roles. <em>Each knows exactly what it owns.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-bottom: 18px;">
       <div class="card">
         <div class="card-label">Trigger Skill</div>
         <div class="card-desc">
@@ -844,6 +844,14 @@ talenta-ios/.claude/
           Coordinates workers in a defined sequence. Validates each worker's output before proceeding.
           <strong style="color: var(--text);">Never writes files directly</strong> — all writes go through workers.<br><br>
           Passes only file paths between phases. Stops immediately if a worker fails.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Planner</div>
+        <div class="card-desc">
+          Explores the codebase before any source file is written. May spawn layer-specialized sub-planners in parallel.
+          <strong style="color: var(--text);">Writes only plan.md + context.md</strong> — never source files.<br><br>
+          Stops and waits for human approval. Always read-only with respect to source code.
         </div>
       </div>
       <div class="card">
@@ -864,8 +872,154 @@ talenta-ios/.claude/
       </div>
     </div>
     <div class="caption">
-      Trigger skills are the enforced entry gate — they pre-load warm-cache context before any agent spawns.
+      Trigger skills are the enforced entry gate. Planners de-risk execution — explore and plan first, so workers execute with zero rework.
       <strong>Workers are the brains. Skills are the hands. The trigger skill is the front door.</strong>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — ANATOMY (GENERIC)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s11b">
+    <div class="label">Anatomy</div>
+    <h2 class="headline">Every persona is the same layered stack. <em>Not every layer is always present.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 28px; align-items: start;">
+      <div class="tree" style="font-size: 12.5px; line-height: 1.8;">
+<span class="dm">User</span>
+<span class="dm"> │</span>
+<span class="dm"> ▼</span>
+<span class="ac">Trigger Skill</span> <span class="rl">(Type T)</span>     <span class="dm">— routes, pre-loads context, builds spawn prompt</span>
+<span class="dm"> │</span>
+<span class="dm"> ▼</span>
+<span class="ac">Orchestrator</span>               <span class="dm">— coordinates phases; never writes source files</span>
+<span class="dm"> │             │</span>
+<span class="dm"> ▼             ▼</span>
+<span class="ac">Planner</span>   <span class="ac">Planner</span>        <span class="dm">— parallel; produce plan.md + context.md; no source writes</span>
+<span class="dm">               │</span>
+<span class="dm">               ▼</span>
+<span class="dm">           </span><span class="ac">Worker</span>         <span class="dm">— reads plan, calls skills, writes + validates source files</span>
+<span class="dm">               │</span>
+<span class="dm">               ▼</span>
+<span class="dm">           </span><span class="ac">Skill(s)</span>       <span class="dm">— concrete platform implementation (one per artifact type)</span>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>Handoff</th>
+              <th>Passes</th>
+              <th>Never passes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Trigger Skill → Orch</td>
+              <td><strong>context.md + state.json inline</strong></td>
+              <td>Raw file reads</td>
+            </tr>
+            <tr>
+              <td>Orch → Planner</td>
+              <td><strong>Feature name, platform, runs path</strong></td>
+              <td>Source file contents</td>
+            </tr>
+            <tr>
+              <td>Planner → Orch</td>
+              <td><strong>plan.md + context.md (paths)</strong></td>
+              <td>Source paths or contents</td>
+            </tr>
+            <tr>
+              <td>Orch → Worker</td>
+              <td><strong>File path lists from prior phases</strong></td>
+              <td>File contents</td>
+            </tr>
+            <tr>
+              <td>Worker → Orch</td>
+              <td><strong>## Output — Glob+Grep verified paths</strong></td>
+              <td>Partial or unverified paths</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="caption" style="margin-top: 16px;">
+          State files: <strong>state.json</strong> (phase pointer + next_phase) ·
+          <strong>plan.md</strong> (execution instructions per artifact) ·
+          <strong>context.md</strong> (key symbols, existing conventions)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — ANATOMY: BUILDER PERSONA
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s11c">
+    <div class="label">Anatomy — Builder Persona</div>
+    <h2 class="headline">Two entry paths. <em>Same executor. Same anatomy.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+      <div class="tree" style="font-size: 12px; line-height: 1.78;">
+<span class="dm">User</span>
+<span class="dm"> │</span>
+<span class="dm"> ├─ </span><span class="ac">/plan-feature</span>           <span class="dm">(Type T) — planner-first path</span>
+<span class="dm"> │</span>
+<span class="dm"> └─ </span><span class="ac">/feature-orchestrator</span>   <span class="dm">(Type T) — direct or resume</span>
+<span class="dm">          │</span>
+<span class="dm">          ▼</span>
+<span class="rl">feature-orchestrator</span>        <span class="dm">— coordinates phases; passes file paths only</span>
+<span class="dm">          │</span>
+<span class="dm">          ▼  (plan-first path)</span>
+<span class="rl">feature-planner</span>             <span class="dm">— scopes build; writes plan.md + context.md</span>
+<span class="dm">    │          │         │</span>
+<span class="dm">    ▼          ▼         ▼</span>
+<span class="ac">domain-</span>   <span class="ac">data-</span>   <span class="ac">pres-</span>
+<span class="ac">planner</span>   <span class="ac">planner</span> <span class="ac">planner</span>  <span class="dm">← parallel layer exploration</span>
+<span class="dm">          │</span>
+<span class="dm">          │  [user reviews + approves plan.md]</span>
+<span class="dm">          │</span>
+<span class="dm">          ▼</span>
+<span class="rl">feature-worker</span>              <span class="dm">— reads plan; executes skills in layer order</span>
+<span class="dm">          │</span>
+<span class="dm">          ▼</span>
+<span class="ac">platform-contract skills</span>    <span class="dm">— Flutter / iOS / Web implementation per layer</span>
+      </div>
+      <div>
+        <table style="margin-bottom: 18px;">
+          <thead>
+            <tr><th>Entry skill</th><th>When to use</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>/plan-feature</td>
+              <td>Complex or cross-layer feature; uncertain existing state. Planner explores first — user approves before any source write.</td>
+            </tr>
+            <tr>
+              <td>/feature-orchestrator</td>
+              <td>Known scope or resuming an existing run. Routes directly to feature-worker.</td>
+            </tr>
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr><th>Sub-planner</th><th>Explores</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>domain-planner</td>
+              <td>Entities, use cases, repository interfaces, domain services</td>
+            </tr>
+            <tr>
+              <td>data-planner</td>
+              <td>DTOs, mappers, datasources, repository implementations</td>
+            </tr>
+            <tr>
+              <td>pres-planner</td>
+              <td>StateHolders, screens, components, navigators</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="caption" style="margin-top: 14px;">
+          <strong>feature-worker is the only agent that writes source files.</strong>
+          Standalone paths skip the orchestrator — spawn domain-worker, data-worker, or ui-worker directly for single known artifacts.
+        </div>
+      </div>
     </div>
   </section>
 
@@ -874,11 +1028,11 @@ talenta-ios/.claude/
   ════════════════════════════════════════════ -->
   <section class="slide" id="s12">
     <div class="label">Architecture — Builder Persona Example</div>
-    <h2 class="headline">Builder persona. <em>One example of what these roles look like in practice.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+    <h2 class="headline">Builder persona. <em>Five roles in practice.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-bottom: 18px;">
       <div class="card">
         <div class="card-label">Trigger Skill</div>
-        <div style="font-size: 12px; color: var(--accent); font-family: var(--mono); margin-bottom: 12px;">/feature-orchestrator · /plan-feature · /backend-orchestrator</div>
+        <div style="font-size: 11px; color: var(--accent); font-family: var(--mono); margin-bottom: 12px;">/feature-orchestrator · /plan-feature · /backend-orchestrator</div>
         <div class="card-desc">
           Three entry paths, one executor. <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">/plan-feature</code> runs the planner first. <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">/feature-orchestrator</code> resumes or builds directly. Both pre-load run context inline.
         </div>
@@ -889,6 +1043,14 @@ talenta-ios/.claude/
         <div class="card-desc">
           Coordinates the full feature build across layers: domain → data → presentation → UI.
           Validates each worker's output. Passes file paths, not file contents.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Planner</div>
+        <div style="font-size: 11px; color: var(--accent); font-family: var(--mono); margin-bottom: 12px;">feature-planner · domain-planner · data-planner · pres-planner</div>
+        <div class="card-desc">
+          feature-planner spawns three layer planners in parallel. Each explores its layer and returns structured findings aggregated into plan.md.
+          <strong style="color: var(--text);">Stops for user approval</strong> before any source file is written.
         </div>
       </div>
       <div class="card">
@@ -909,8 +1071,81 @@ talenta-ios/.claude/
       </div>
     </div>
     <div class="caption">
-      This is the <strong>Builder</strong> persona — one example of how all four roles are applied.
+      This is the <strong>Builder</strong> persona — one example of how all five roles are applied.
       Other personas (Detective, Auditor, Tracker, Installer) follow the same structure with different responsibilities.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — TAXONOMY
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s12b">
+    <div class="label">Taxonomy</div>
+    <h2 class="headline">Decision gates. <em>Where does each new file belong?</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start;">
+      <div>
+        <p style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px;">Agents — By Role</p>
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Suffix</th><th>Writes files?</th><th>Has agents field?</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Orchestrator</td>
+              <td><strong>-orchestrator</strong></td>
+              <td>No — delegates to workers</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Planner</td>
+              <td><strong>-planner</strong></td>
+              <td>plan.md + context.md only</td>
+              <td>Yes (sub-planners)</td>
+            </tr>
+            <tr>
+              <td>Worker</td>
+              <td><strong>-worker</strong></td>
+              <td>Yes — source files only</td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <p style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px;">Skills — By Invocation Type</p>
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Triggered by</th><th>Use for</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A — Regular</strong></td>
+              <td>Worker (agent) only</td>
+              <td>Standard build / update procedures</td>
+            </tr>
+            <tr>
+              <td><strong>B — Destructive</strong></td>
+              <td>User only</td>
+              <td>Destructive or side-effect operations — no model reasoning</td>
+            </tr>
+            <tr>
+              <td><strong>T — Trigger</strong></td>
+              <td>User only</td>
+              <td>Entry point that spawns an agent workflow</td>
+            </tr>
+            <tr>
+              <td><strong>U — Utility</strong></td>
+              <td>User only</td>
+              <td>Self-contained interactive tool — no agents spawned</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="caption">
+      Naming: agents follow <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">&lt;domain&gt;-&lt;role&gt;.md</code> ·
+      skills follow <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">&lt;layer&gt;-&lt;action&gt;-&lt;target&gt;</code>.
+      <strong>Toolkit skills are always T or U. Platform-contract skills are always A. Persona entry agents always have a Type T trigger skill.</strong>
     </div>
   </section>
 
