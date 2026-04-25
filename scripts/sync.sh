@@ -21,11 +21,26 @@ for arg in "$@"; do
   esac
 done
 
+# Auto-detect platform from existing skill symlink when --platform is omitted
 if [ -z "$PLATFORM" ]; then
-  echo "Error: --platform is required."
-  echo "Usage: $0 --platform=web|ios|flutter"
+  SKILL_LINK="$PROJECT_ROOT/.claude/skills/domain-create-entity"
+  if [ -L "$SKILL_LINK" ]; then
+    TARGET=$(readlink "$SKILL_LINK")
+    case "$TARGET" in
+      *platforms/ios*)     PLATFORM="ios" ;;
+      *platforms/web*)     PLATFORM="web" ;;
+      *platforms/flutter*) PLATFORM="flutter" ;;
+    esac
+  fi
+fi
+
+if [ -z "$PLATFORM" ]; then
+  echo "Error: could not detect platform. Pass it explicitly:"
+  echo "  $0 --platform=web|ios|flutter"
   exit 1
 fi
+
+echo "Platform: $PLATFORM"
 
 # ── Pull latest ───────────────────────────────────────────────────────────────
 
