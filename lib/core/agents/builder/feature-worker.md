@@ -45,6 +45,12 @@ Extract from the inlined content:
 - Artifact tables per layer (Domain / Data / Presentation / UI)
 - Key Symbols per existing artifact from context.md
 
+Load the platform utilities reference before writing any code:
+```
+lib/platforms/<platform>/reference/contract/builder/utilities.md
+```
+Read the **Null Safety** section. Apply the conventions from it throughout all artifacts — this is not optional.
+
 Check for a state file to resume from a previous run:
 ```bash
 find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>" -name "state.json" 2>/dev/null
@@ -80,6 +86,31 @@ Derive the skill from each artifact's type in plan.md:
 | StateHolder | `pres-create-stateholder` |
 | Screen | `pres-create-screen` |
 | Component | `pres-create-component` |
+
+## Syntax Conventions
+
+Apply these rules in every artifact you write or edit, regardless of layer.
+
+### Null Safety — Extension Methods Over Raw Operators
+
+Never use raw `??`, `!` (force-unwrap), or `?.` chains directly in business logic. Always route through the extension methods from the platform utilities reference:
+
+| Need | iOS | Flutter | Web |
+|---|---|---|---|
+| Optional numeric → 0 | `.orZero()` | `.orZero()` | `orZero(value)` |
+| Optional string → `""` | `.orEmpty()` | `.orEmpty()` | `orEmpty(value)` |
+| Optional collection → `[]` | `.orEmpty()` | `.orEmpty()` | `orEmptyArray(value)` |
+| Optional bool → false | `.orFalse()` | `.orFalse()` | — |
+| Optional bool → true | `.orTrue()` | `.orTrue()` | — |
+| Optional → custom default | `.orDefault(x)` | `.orDefault(x)` | `orDefault(value, x)` |
+
+**iOS — wrap the optional chain in parentheses before calling:**
+```swift
+($0.dataState.data?.title).orEmpty()   // ✅
+$0.dataState.data?.title.orEmpty()     // ❌ compile error
+```
+
+Raw `??` is allowed only in infrastructure/extension implementations themselves, not in domain, data, or presentation code.
 
 ## Per-Artifact Workflow
 
@@ -156,6 +187,10 @@ If execution is interrupted mid-artifact:
 1. Update state.json with the last successfully completed artifact
 2. Surface: "Session interrupted after `<last artifact>`. Resume via `/feature-orchestrator` → Resume: `<feature>`."
 3. Do not retry inline — wait for explicit resume
+
+## Run Directory Ownership
+
+Do not delete the run directory (`runs/<feature>/`). Cleanup is the calling skill's responsibility — not this agent's. Only `build-from-ticket` performs cleanup; local interactive triggers preserve the run for resume.
 
 ## Output
 
