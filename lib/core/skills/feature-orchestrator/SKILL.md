@@ -1,6 +1,6 @@
 ---
 name: feature-orchestrator
-description: Build or update a feature across Clean Architecture layers. Loads run context from disk and passes it inline — orchestrator skips cold pre-flight reads.
+description: Build or update a feature across Clean Architecture layers. Routes through feature-orchestrator agent — resumes an existing run or starts a new one.
 allowed-tools: Bash, Read, AskUserQuestion, Agent
 ---
 
@@ -22,17 +22,18 @@ allowed-tools: Bash, Read, AskUserQuestion, Agent
    multiSelect : false
    options     :
      (one entry per found run, values from state.json)
-     - label: "Resume: <feature>", description: "Next phase: <next_phase>"
+     - label: "Resume: <feature>", description: "Next artifact: <next_artifact>"
      (always include)
      - label: "Start new feature", description: "Begin a fresh feature from scratch"
    ```
-   - If user picks **Resume** → read `context.md` and `state.json` for that run → go to step 3
+   - If user picks **Resume** → read `plan.md`, `context.md`, and `state.json` for that run → go to step 3
    - If user picks **Start new feature** → go to step 4
 
    **If no runs exist** → go to step 4
 
-3. **Resume — spawn `feature-worker` using the Agent tool with pre-loaded context** (substitute actual file contents):
+3. **Resume — spawn `feature-orchestrator` using the Agent tool with pre-loaded context** (substitute actual file contents):
 
+   > **Trigger: resume**
    > Feature: <feature name from state.json>
    >
    > Pre-loaded context — do not re-read plan.md, context.md, or state.json:
@@ -46,13 +47,11 @@ allowed-tools: Bash, Read, AskUserQuestion, Agent
    > **state.json**
    > <content>
    >
-   > Proceed directly to the next pending artifact. Skip completed artifacts listed in state.json.
+   > Spawn `feature-worker` directly with this context. Skip Phase 0 and planning.
 
-4. **New call — spawn `feature-orchestrator` using the Agent tool:**
+4. **New — spawn `feature-orchestrator` using the Agent tool:**
 
+   > **Trigger: new**
    > Feature: <$ARGUMENTS, or empty if not provided>
    >
-   > No existing run. If no feature description was given, ask the user for it. Then ask: "Would you like to plan first (recommended) or build directly?"
-   >
-   > Plan first → spawn feature-planner, await approval, then spawn feature-worker with plan inline.
-   > Build directly → gather intent inline, then spawn feature-worker directly.
+   > No existing run. If no feature description was given, ask the user for it. Then ask whether to plan first or build directly.
