@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.51.3] — 2026-04-28
+
+### Changed
+- `debug-orchestrator`: Step 2 now includes an intake assessment table — classifies what is known before any tool call and maps directly to the required action (skip, one Grep, or route immediately with `layer: unknown`)
+- `debug-orchestrator`: added 2-call exploration budget with explicit stopping condition; explicit ban on reading `.pbxproj`, `.xcworkspace`, and build-system metadata
+
 ## [3.51.2] — 2026-04-26
 
 ### Changed
