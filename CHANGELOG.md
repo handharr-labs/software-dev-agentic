@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.52.3] — 2026-04-29
+
+### Fixed
+- `feature-orchestrator` skill: moved "Plan first / Build directly" `AskUserQuestion` from the orchestrator agent into the skill (Step 4) — option menus only work in the main session
+- `feature-orchestrator` agent: replaced `new` trigger with `build-directly`; agent no longer calls interactive option menus
+- `plan-feature` skill: Step 1 now spawns `feature-orchestrator (Trigger: plan-first)` instead of `feature-planner` directly, keeping routing in the agent layer
+
 ## [3.52.2] — 2026-04-29
 
 ### Fixed
