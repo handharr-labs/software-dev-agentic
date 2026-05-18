@@ -33,10 +33,15 @@ Never Read a file in full. Grep gives you the line number — read a window arou
 
 **Step 0 — Load reference**
 
+Always load:
 ```
 .claude/reference/code-architecture/presentation-theory.md
-.claude/reference/code-architecture/ui-theory.md
 .claude/reference/code-architecture/presentation-impl.md
+```
+
+Load only when `scope` includes `screen`, `component`, or `navigator` (or scope is absent):
+```
+.claude/reference/code-architecture/ui-theory.md
 .claude/reference/code-architecture/navigation-impl.md
 ```
 
