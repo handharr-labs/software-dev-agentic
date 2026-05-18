@@ -706,14 +706,14 @@
       <div class="roadmap-item">
         <div class="roadmap-num">02</div>
         <div class="roadmap-text">
-          <strong>Collaboration</strong>
+          <strong>Collaboration &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">research &amp; prototyping</span></strong>
           <span>How do multiple teams contribute improvements without breaking each other? Covers: contribution workflow, ownership model, versioning, and review process.</span>
         </div>
       </div>
       <div class="roadmap-item">
         <div class="roadmap-num">03</div>
         <div class="roadmap-text">
-          <strong>Distribution</strong>
+          <strong>Distribution &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">research &amp; prototyping</span></strong>
           <span>How does the toolkit reach every project, reliably? Two approaches to evaluate: submodule + symlinks (current, proven for iOS · Flutter · Web) vs. monorepo with all products and the agentic repo as parent.</span>
         </div>
       </div>
@@ -1087,6 +1087,115 @@ struct UserEntity: Equatable { ... }</pre>
     </div>
   </section>
 
+  <!-- ═══════════════════════════════════════════
+       SLIDE 11 — Phase 02: Collaboration
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s11">
+    <div class="label">Phase 02 — Collaboration · Research &amp; Prototyping</div>
+    <h2 class="headline">One repo. <em>All agents, skills, and references.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 8px;">
+      <div>
+        <div class="card-label" style="margin-bottom: 12px;">Current Approach</div>
+        <div class="tree">software-dev-agentic/
+├── <span class="ac">lib/core/</span>          <span class="dm">← shared agents + skills</span>
+├── <span class="ac">lib/platforms/</span>     <span class="dm">← web · ios · flutter</span>
+│   ├── web/
+│   ├── ios/
+│   └── flutter/
+└── <span class="rl">docs/principles/</span>   <span class="dm">← reference docs</span></div>
+        <div class="caption" style="margin-top: 14px;">Single source of truth — one PR, one version, all platforms.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label">Open Questions</div>
+        <ul class="bullets">
+          <li><strong>Contribution workflow</strong> — who reviews what, across platforms?</li>
+          <li><strong>Ownership model</strong> — core team vs. platform teams?</li>
+          <li><strong>Versioning</strong> — per platform or a single version for all?</li>
+          <li><strong>Review process</strong> — how do changes get validated before merge?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 12 — Phase 03: Distribution
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s12">
+    <div class="label">Phase 03 — Distribution · Research &amp; Prototyping</div>
+    <h2 class="headline">How does the toolkit <em>reach every project?</em></h2>
+    <div class="compare" style="margin-top: 8px;">
+      <div class="code-panel">
+        <div class="code-panel-header good">Current — Submodule + Symlinks</div>
+        <pre>project-root/
+├── software-dev-agentic/  <span class="cm"># git submodule</span>
+└── .claude/
+    ├── agents → <span class="ac">../software-dev-agentic/lib/</span>
+    └── skills → <span class="ac">../software-dev-agentic/lib/</span>
+
+<span class="ac">✓</span> Proven on iOS · Flutter · Web
+<span class="ac">✓</span> Each project pins a commit
+<span class="ac">✓</span> Works offline, no build step</pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-header" style="color: var(--muted);">Evaluating — Monorepo</div>
+        <pre>mono-root/
+├── software-dev-agentic/  <span class="cm"># agentic toolkit</span>
+├── project-web/
+├── project-ios/
+└── project-flutter/
+
+<span class="cm">? Simpler contribution story</span>
+<span class="cm">? One version across all products</span>
+<span class="cm">? Repo size and CI scope tradeoffs</span></pre>
+      </div>
+    </div>
+    <div class="caption">No decision yet — evaluating tradeoffs. Symlink approach works today; monorepo is a structural change that touches all teams.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 13 — Phase 04: Expansion
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s13">
+    <div class="label">Phase 04 — Expansion</div>
+    <h2 class="headline">From Implementation to <em>every process.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 8px;">
+      <div class="card" style="opacity: 0.4;">
+        <div class="card-label">01</div>
+        <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Requirement</div>
+        <div class="card-desc">Spec agents, PRD generation, risk analysis</div>
+      </div>
+      <div class="card" style="opacity: 0.4;">
+        <div class="card-label">02</div>
+        <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Design</div>
+        <div class="card-desc">Architecture agents, diagram generation</div>
+      </div>
+      <div class="card" style="border-color: var(--accent-bd); background: var(--accent-bg);">
+        <div class="card-label">03</div>
+        <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Implementation</div>
+        <div class="card-desc">Builder · Detective · Auditor — <strong>active today</strong></div>
+      </div>
+      <div class="card" style="opacity: 0.4;">
+        <div class="card-label">04</div>
+        <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Testing</div>
+        <div class="card-desc">Test generation, coverage analysis agents</div>
+      </div>
+      <div class="card" style="opacity: 0.4;">
+        <div class="card-label">05</div>
+        <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Delivery</div>
+        <div class="card-desc">Release agents, deploy pipeline automation</div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;">
+      <div class="caption" style="margin-top: 0; align-self: start;">No progress yet — depends on Distribution being solved first. Expansion defines the <strong>end state</strong>: specialized agents across every SDLC process, not just Implementation.</div>
+      <div>
+        <div class="card-label" style="margin-bottom: 12px;">Open Questions</div>
+        <ul class="bullets">
+          <li><strong>Orchestrating every process</strong> — how does one agent hand off to the next across the full pipeline?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- future slides go here -->
 
 </div>
@@ -1094,7 +1203,7 @@ struct UserEntity: Equatable { ... }</pre>
 <!-- mobile prev/next bar — hidden on desktop via CSS -->
 <div id="mobile-nav" style="display:none">
   <button id="btn-prev" onclick="goTo(current - 1)">← Prev</button>
-  <span id="mobile-counter">1 / 10</span>
+  <span id="mobile-counter">1 / 13</span>
   <button id="btn-next" class="primary" onclick="goTo(current + 1)">Next →</button>
 </div>
 
