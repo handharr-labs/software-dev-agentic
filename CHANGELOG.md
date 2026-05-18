@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.2.1] — 2026-05-18
+
+### Fixed
+- `setup-symlinks.sh`: added `flutter-qontak` to usage comment and error string
+- `sda.sh`: added `flutter-qontak` as option 4 in `ask_platform` interactive menu
+
+---
+
 ## [7.2.0] — 2026-05-18
 
 ### Added
