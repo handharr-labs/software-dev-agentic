@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.4.1] — 2026-05-18
+
+### Fixed
+- `ios/di-impl.md` — corrected framing: constructor injection is the current pattern; DIContainer is aspirational/target; renamed "Fallback Pattern" to "Current Pattern"
+- `ios/ui-impl.md` — DI Wiring section: replaced DIContainer factory claim with actual Coordinator-owned constructor injection
+- `ios/domain-impl.md` — added Legacy UseCase Pattern (Current) documenting the 3-param `UseCase<Query, Path, Result>` + `call(queryParams:pathParams:expected:)` signature; V2 UseCaseProtocol marked as target
+- `android/presentation-impl.md` — fixed `BaseMvpVbActivity` type param order to `<Presenter, View, Binding>` (was `<Binding, Presenter>`); fixed error handler call to `errorHandler.proceed(error)` (was `errorHandler.handle(error) { ... }`)
+- `flutter-qontak/ui-impl.md` — BlocProvider placement corrected to app-level `route_manager.dart` (was per-module `BaseModule.routes()`)
+- `flutter-qontak/modular-structure-impl.md` — added note that current codebase uses centralized route manager; BaseModule pattern is the target architecture
+- `flutter-qontak/di-impl.md` — Registration Order renamed to layer-based convention matching actual code: `_registerData → _registerRepository → _registerDomain → _registerPresentation`
+- `flutter/ui-impl.md` — Screen section: added `StatefulWidget` lifecycle pattern and feature-scoped DI accessor (`[feature]Dependency<Bloc>()`)
+- `flutter/domain-impl.md` — entity `@freezed` rule softened to "recommended"; plain Dart classes documented as acceptable
+
 ## [7.4.0] — 2026-05-18
 
 ### Added
