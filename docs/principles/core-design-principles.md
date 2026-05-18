@@ -7,6 +7,8 @@ A coding assistant where Claude autonomously routes, decides, and executes — w
 
 > Skills first. No manual chaining. No context pollution.
 
+**Current scope:** This system today covers the **Implementation** process of the SDLC (build, debug, review, groom). The long-term goal is specialized agents across every process — Requirement, Design, Implementation, Testing, and Delivery. Expansion into other processes depends on the Collaboration and Distribution phases being resolved first.
+
 ---
 
 ## Design Goals

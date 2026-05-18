@@ -736,8 +736,8 @@
   ════════════════════════════════════════════ -->
   <section class="slide" id="s7">
     <div class="label">Phase 01 — Foundation · Anatomy</div>
-    <h2 class="headline">Three building blocks. <em>Each with one clear responsibility.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 14px;">
+    <h2 class="headline">Four building blocks. <em>Each with one clear responsibility.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px;">
 
       <div class="code-panel">
         <div class="code-panel-header good">Skill — The Entry &amp; The Hands</div>
@@ -772,6 +772,22 @@
       </div>
 
       <div class="code-panel">
+        <div class="code-panel-header" style="color: #D2A8FF; background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.25); border-bottom-color: var(--border);">MCP — The Reach</div>
+        <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;">
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Agents reach into external systems via MCP servers. No file reads needed — structured tool calls return Jira tickets, IDE diagnostics, Figma designs, and build results directly.</p>
+          <div>
+            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D2A8FF; margin-bottom: 8px;">In use today</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.75;">
+              <span style="color: var(--text); font-weight: 600;">mmpa</span> — Jira · Confluence · Bitbucket<br>
+              <span style="color: var(--text); font-weight: 600;">ide</span> — diagnostics · code execution<br>
+              <span style="color: var(--text); font-weight: 600;">Figma · XcodeBuildMCP</span> — design + build
+            </div>
+          </div>
+          <div class="caption" style="margin-top: 0; font-size: 12px;">Skills reach into the codebase. MCP reaches into external systems. Same agent, two directions.</div>
+        </div>
+      </div>
+
+      <div class="code-panel">
         <div class="code-panel-header neutral">Reference — The Knowledge</div>
         <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;">
           <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Agents stay lean. Deep knowledge lives in reference docs, loaded on demand via Grep — never embedded in the agent body. Update one file, every agent that reads it gets the update.</p>
@@ -790,7 +806,7 @@
     </div>
 
     <div class="tree" style="font-size: 12px; line-height: 1.7; padding: 14px 20px;">
-<span class="dm">User  →</span>  <span class="ac">Skill (T)</span>  <span class="dm">→ routes, loads context, spawns →</span>  <span class="rl">Orchestrator</span>  <span class="dm">→ Decision block →</span>  <span class="ac">Skill (T)</span>  <span class="dm">→ spawns →</span>  <span class="rl">Planners / Worker</span>  <span class="dm">→</span>  <span class="ac">Skills (A)</span>  <span class="dm">+ Reference  →  code</span></div>
+<span class="dm">User  →</span>  <span class="ac">Skill (T)</span>  <span class="dm">→ routes, loads context, spawns →</span>  <span class="rl">Orchestrator</span>  <span class="dm">→ Decision block →</span>  <span class="ac">Skill (T)</span>  <span class="dm">→ spawns →</span>  <span class="rl">Planners / Worker</span>  <span class="dm">→</span>  <span class="ac">Skills (A)</span>  <span class="dm">+ Reference  →  code  ·</span>  <span style="color:#D2A8FF;">MCP</span>  <span class="dm">→ external systems</span></div>
   </section>
 
   <!-- ═══════════════════════════════════════════
@@ -1088,9 +1104,70 @@ struct UserEntity: Equatable { ... }</pre>
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE 11 — Phase 02: Collaboration
+       SLIDE 11 — Phase 01: Foundation · MCP
        ═══════════════════════════════════════════ -->
   <section class="slide" id="s11">
+    <div class="label">Phase 01 — Foundation · MCP</div>
+    <h2 class="headline">Skills reach the codebase. <em>MCP reaches everything else.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px;">
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label">Two directions of reach</div>
+        <div class="compare" style="grid-template-columns: 1fr; gap: 12px;">
+          <div class="code-panel">
+            <div class="code-panel-header good">Via Skill — into the codebase</div>
+            <pre style="font-size: 12px;"><span class="cm"># Worker calls a platform-contract skill</span>
+call builder-domain-create-entity
+  feature: GetUser
+  platform: ios
+
+<span class="ac">→ creates GetUserUseCase.swift</span></pre>
+          </div>
+          <div class="code-panel">
+            <div class="code-panel-header" style="color: #D2A8FF; background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.25); border-bottom-color: var(--border);">Via MCP — into external systems</div>
+            <pre style="font-size: 12px;"><span class="cm"># Agent calls an MCP tool directly</span>
+mcp__mmpa__mmpa_get_jira(
+  ticket_id: "PROJ-42"
+)
+
+<span style="color:#D2A8FF;">→ returns ticket, context, acceptance criteria</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label">MCP servers in use today</div>
+        <table>
+          <thead><tr><th>Server</th><th>Reaches into</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">mmpa</code></td>
+              <td>Jira tickets · Confluence pages · Bitbucket PRs</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">ide</code></td>
+              <td>Live diagnostics · in-editor code execution</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">Figma</code></td>
+              <td>Design data · component specs · asset export</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">XcodeBuildMCP</code></td>
+              <td>Build · test · simulate · screenshot on iOS</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="caption">MCP tools are just tool calls — no special wiring in the agent. Any agent with the right MCP server configured can reach any external system.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 12 — Phase 02: Collaboration
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s12">
     <div class="label">Phase 02 — Collaboration · Research &amp; Prototyping</div>
     <h2 class="headline">One repo. <em>All agents, skills, and references.</em></h2>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 8px;">
@@ -1118,9 +1195,9 @@ struct UserEntity: Equatable { ... }</pre>
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE 12 — Phase 03: Distribution
+       SLIDE 13 — Phase 03: Distribution
        ═══════════════════════════════════════════ -->
-  <section class="slide" id="s12">
+  <section class="slide" id="s13">
     <div class="label">Phase 03 — Distribution · Research &amp; Prototyping</div>
     <h2 class="headline">How does the toolkit <em>reach every project?</em></h2>
     <div class="compare" style="margin-top: 8px;">
@@ -1153,9 +1230,9 @@ struct UserEntity: Equatable { ... }</pre>
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE 13 — Phase 04: Expansion
+       SLIDE 14 — Phase 04: Expansion
        ═══════════════════════════════════════════ -->
-  <section class="slide" id="s13">
+  <section class="slide" id="s14">
     <div class="label">Phase 04 — Expansion</div>
     <h2 class="headline">From Implementation to <em>every process.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 8px;">
@@ -1203,7 +1280,7 @@ struct UserEntity: Equatable { ... }</pre>
 <!-- mobile prev/next bar — hidden on desktop via CSS -->
 <div id="mobile-nav" style="display:none">
   <button id="btn-prev" onclick="goTo(current - 1)">← Prev</button>
-  <span id="mobile-counter">1 / 13</span>
+  <span id="mobile-counter">1 / 14</span>
   <button id="btn-next" class="primary" onclick="goTo(current + 1)">Next →</button>
 </div>
 

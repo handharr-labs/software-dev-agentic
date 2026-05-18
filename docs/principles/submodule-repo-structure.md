@@ -3,6 +3,8 @@
 
 ## Delivery Mechanism
 
+> **Distribution phase:** The submodule + symlinks approach is the current, proven mechanism (iOS · Flutter · Web). A monorepo alternative — where all products and the agentic repo share a single root — is under evaluation. No decision has been made. This doc describes the current approach.
+
 `software-dev-agentic` is consumed as a git submodule at the project root:
 
 ```
@@ -273,6 +275,8 @@ software-dev-agentic/scripts/sync.sh --platform=<platform>
 ---
 
 ## Contribution Workflow
+
+> **Collaboration phase:** The workflow below is the current, working approach — not a finalized model. Open questions remain: contribution workflow across platform teams, ownership model (core team vs. platform teams), versioning strategy (per-platform or unified), and the review process for changes that affect multiple platforms. These are being worked out in the Collaboration phase.
 
 1. Engineer identifies a new agent/skill or improvement
 2. PR to `software-dev-agentic` with the new/updated file (under `lib/core/` or `lib/platforms/<platform>/`)
