@@ -2,7 +2,7 @@
 
 ---
 
-## Flavor Definitions <!-- 14 -->
+## Flavor Definitions <!-- 12 -->
 
 Three standard flavors controlled by a `--dart-define` value:
 
@@ -14,7 +14,7 @@ Three standard flavors controlled by a `--dart-define` value:
 
 ---
 
-## Dart Define — Env Selection <!-- 22 -->
+## Dart Define — Env Selection <!-- 43 -->
 
 No `.env` files or `envied` — env selection uses `String.fromEnvironment` at compile time:
 
@@ -57,7 +57,7 @@ EnvType getEnvType() {
 
 ---
 
-## EnvData — Per-Flavor Config <!-- 22 -->
+## EnvData — Per-Flavor Config <!-- 51 -->
 
 Environment-specific URLs and API keys are in concrete `EnvData` subclasses. The `Env` class selects the correct data at runtime.
 
@@ -108,7 +108,7 @@ class Env {
 
 ---
 
-## Running Per Flavor <!-- 14 -->
+## Running Per Flavor <!-- 18 -->
 
 ```bash
 # Staging (default)
@@ -126,7 +126,7 @@ flutter run --dart-define=ENV=SANDBOX
 
 ---
 
-## Firebase Per Flavor <!-- 16 -->
+## Firebase Per Flavor <!-- 24 -->
 
 Each flavor maps to a separate Firebase project:
 

@@ -6,7 +6,7 @@ The CRM uses a Melos monorepo. The root application package (`qontak_crm`) conta
 
 ---
 
-## BaseModule Contract <!-- 15 -->
+## BaseModule Contract <!-- 18 -->
 
 `BaseModule` lives in `crm_core` and defines what the application module needs from every feature module:
 
@@ -24,7 +24,7 @@ Every feature package exports a `<PREFIX>Module` class implementing `BaseModule`
 
 ---
 
-## Feature Module Implementation <!-- 20 -->
+## Feature Module Implementation <!-- 23 -->
 
 ```dart
 // features/crm_company/lib/src/crm_company.dart
@@ -47,7 +47,7 @@ class CRMCompanyModule implements BaseModule {
 
 ---
 
-## featureModules Registration <!-- 10 -->
+## featureModules Registration <!-- 21 -->
 
 ```dart
 // lib/configs/modules.dart
@@ -68,7 +68,7 @@ All modules are consumed by `app.dart` to aggregate localization delegates and b
 
 ---
 
-## Feature Package Internal Layout <!-- 20 -->
+## Feature Package Internal Layout <!-- 42 -->
 
 Every feature package follows this structure under `lib/src/`:
 
@@ -110,7 +110,7 @@ features/crm_company/
 
 ---
 
-## Shared Packages <!-- 12 -->
+## Shared Packages <!-- 13 -->
 
 | Package | Purpose | Access via |
 |---|---|---|
@@ -123,7 +123,7 @@ features/crm_company/
 
 ---
 
-## Adding a New Feature Package <!-- 12 -->
+## Adding a New Feature Package <!-- 11 -->
 
 1. Create `features/crm_<domain>/` with the standard layout above
 2. Declare it in `melos.yaml` under `packages:`
@@ -134,7 +134,7 @@ features/crm_company/
 
 ---
 
-## Public API Contract <!-- 8 -->
+## Public API Contract <!-- 14 -->
 
 Each feature package exports only its public API through the barrel file:
 

@@ -14,7 +14,7 @@ Forbidden: any `RepositoryImpl`, `DataSourceImpl`, DTO, mapper, `http`/`dio` imp
 
 ---
 
-## ViewDataState (from `qontak_common`) <!-- 20 -->
+## ViewDataState (from `qontak_common`) <!-- 26 -->
 
 `ViewDataState<T>` is defined in `qontak_common`. The API surface uses a `.status` field with extension getters — NOT direct bool helpers on `ViewDataState`:
 
@@ -40,7 +40,7 @@ state.companyListState.message             // String? error message
 
 ---
 
-## Events <!-- 18 -->
+## Events <!-- 21 -->
 
 Events are `@freezed` classes. Named after user intent — verb + noun.
 
@@ -61,7 +61,7 @@ class CompanyEvent with _$CompanyEvent {
 
 ---
 
-## States <!-- 18 -->
+## States <!-- 21 -->
 
 ```dart
 // features/crm_company/lib/src/presentation/bloc/company/company_state.dart
@@ -82,7 +82,7 @@ class CompanyState with _$CompanyState {
 
 ---
 
-## BLoC <!-- 35 -->
+## BLoC <!-- 56 -->
 
 BLoCs use named constructor parameters. No `@injectable` or `@lazySingleton` annotations — registration is manual. BLoCs are **NOT** registered in `get_it` — they are instantiated inline in `route_manager.dart`.
 
@@ -138,7 +138,7 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
 
 ---
 
-## Screen Structure <!-- 30 -->
+## Screen Structure <!-- 58 -->
 
 Screens are `StatefulWidget`. Fetch dependencies directly from the accessor in `initState` — not via `context`.
 
@@ -196,7 +196,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
 
 ---
 
-## Route Registration <!-- 12 -->
+## Route Registration <!-- 21 -->
 
 `BlocProvider` lives in `route_manager.dart`, not inside the screen. The screen only reads state and dispatches events.
 
@@ -217,7 +217,7 @@ case AppRoute.company:
 
 ---
 
-## BlocListener (Side Effects) <!-- 12 -->
+## BlocListener (Side Effects) <!-- 28 -->
 
 ```dart
 BlocListener<CompanyBloc, CompanyState>(
@@ -245,7 +245,7 @@ Key: Use `.status.isHasData` (not `.isLoaded`), `.status.isError` (not `.hasErro
 
 ---
 
-## Shared Component Paths <!-- 8 -->
+## Shared Component Paths <!-- 9 -->
 
 | Scope | Path |
 |---|---|

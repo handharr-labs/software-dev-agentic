@@ -13,7 +13,7 @@ Forbidden: use case interfaces, repository interfaces, DTOs, mappers, datasource
 
 ---
 
-## Screen <!-- 20 -->
+## Screen <!-- 17 -->
 
 A **Screen** is a `StatelessWidget` or `StatefulWidget` that observes state via `BlocBuilder`/`BlocListener`/`BlocConsumer` and dispatches events — it contains no business logic.
 
@@ -30,7 +30,7 @@ A **Screen** is a `StatelessWidget` or `StatefulWidget` that observes state via 
 
 ---
 
-## BlocProvider.value (Route-Scoped BLoC Reuse) <!-- 18 -->
+## BlocProvider.value (Route-Scoped BLoC Reuse) <!-- 34 -->
 
 When a route needs to use a BLoC instance that already exists higher in the widget tree (e.g. a calling BLoC created at the initiating screen and passed into a sub-route), use `BlocProvider.value` instead of `BlocProvider`. This passes the existing instance without recreating or closing it.
 

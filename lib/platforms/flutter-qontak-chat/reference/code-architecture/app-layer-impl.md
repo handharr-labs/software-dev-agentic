@@ -6,7 +6,7 @@ The application module is the entry point. It owns: `main.dart`, `engine.dart`, 
 
 ---
 
-## main.dart <!-- 10 -->
+## main.dart <!-- 16 -->
 
 `main.dart` is a thin delegate that reads the env type and forwards to `engine.start()`. It also declares the background entrypoint for headless call rejection.
 
@@ -22,7 +22,7 @@ void backgroundRejectEntry() => engine.backgroundRejectCallHandler();
 
 ---
 
-## Engine (Startup Orchestrator) <!-- 42 -->
+## Engine (Startup Orchestrator) <!-- 57 -->
 
 `engine.dart` owns the full initialization sequence inside `runZonedGuarded`. Add new initialization steps here in dependency order.
 
@@ -79,7 +79,7 @@ void start({EnvType envType = EnvType.staging}) =>
 
 ---
 
-## App Widget <!-- 20 -->
+## App Widget <!-- 41 -->
 
 `App` is a `StatefulWidget` with `WidgetsBindingObserver` that configures `MaterialApp` (not `MaterialApp.router`). Navigation uses `Navigator` + `onGenerateRoute`.
 
@@ -120,7 +120,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
 ---
 
-## DI Orchestration <!-- 30 -->
+## DI Orchestration <!-- 78 -->
 
 No `@InjectableInit` or code generation in the app layer. DI uses static methods with manual `GetIt.registerLazySingleton` / `registerFactory`.
 
@@ -198,7 +198,7 @@ class MainDependency {
 
 ---
 
-## Global BLoC Provider <!-- 20 -->
+## Global BLoC Provider <!-- 38 -->
 
 App-wide BLoCs (available across all routes) are wired in `AppProvider` using `MultiBlocProvider`. Route-scoped BLoCs are wired in `route_manager.dart`.
 
@@ -236,7 +236,7 @@ Note: `AppInitializationBloc` is an orchestrator that subscribes to sibling BLoC
 
 ---
 
-## AppInitializationBloc (Orchestrator BLoC) <!-- 32 -->
+## AppInitializationBloc (Orchestrator BLoC) <!-- 54 -->
 
 `AppInitializationBloc` is a special orchestrator BLoC that drives a multi-step sequential initialization flow by subscribing to sibling BLoCs via `StreamSubscription`. It does not own any use cases directly — it reacts to state changes from other BLoCs already in the `AppProvider` tree.
 
@@ -290,7 +290,7 @@ class AppInitializationBloc extends Bloc<AppInitializationEvent, AppInitializati
 
 ---
 
-## Firebase Background Message Handling <!-- 18 -->
+## Firebase Background Message Handling <!-- 30 -->
 
 Firebase background messages require a top-level Dart function annotated with `@pragma('vm:entry-point')`. This tells the Dart VM to preserve the function in AOT-compiled builds (it would otherwise be tree-shaken away).
 
@@ -320,7 +320,7 @@ Future<void> fcmBackgroundHandler(RemoteMessage message) async {
 
 ---
 
-## Analytics & Error Reporting <!-- 12 -->
+## Analytics & Error Reporting <!-- 18 -->
 
 Wired directly in `engine.dart` — no separate analytics setup file:
 

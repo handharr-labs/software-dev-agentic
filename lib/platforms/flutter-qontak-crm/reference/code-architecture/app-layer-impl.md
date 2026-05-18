@@ -6,7 +6,7 @@ The app module (`lib/`) is the app-shell only — auth, bottom navigation, DI or
 
 ---
 
-## Initialization Order <!-- 15 -->
+## Initialization Order <!-- 26 -->
 
 `engine.dart` owns the boot sequence:
 
@@ -32,7 +32,7 @@ Future<void> initEngine() async {
 
 ---
 
-## CrmDi (DI Orchestrator) <!-- 20 -->
+## CrmDi (DI Orchestrator) <!-- 34 -->
 
 ```dart
 // lib/configs/di/crm_di.dart
@@ -66,7 +66,7 @@ When adding a new feature package: add its `Dependency.register*()` call in step
 
 ---
 
-## App Entry Point <!-- 10 -->
+## App Entry Point <!-- 27 -->
 
 ```dart
 // lib/app.dart
@@ -93,7 +93,7 @@ class CrmApp extends StatelessWidget {
 
 ---
 
-## featureModules List <!-- 12 -->
+## featureModules List <!-- 21 -->
 
 ```dart
 // lib/configs/modules.dart
@@ -114,7 +114,7 @@ Each `BaseModule` provides: `LocalizationsDelegate` for the active flavor + `Col
 
 ---
 
-## BaseModule Pattern <!-- 12 -->
+## BaseModule Pattern <!-- 18 -->
 
 ```dart
 // features/crm_company/lib/src/crm_company.dart
@@ -132,7 +132,7 @@ class CRMCompanyModule implements BaseModule {
 
 ---
 
-## App-Shell Concerns <!-- 10 -->
+## App-Shell Concerns <!-- 14 -->
 
 The application module's own `lib/data/`, `lib/domain/`, `lib/presentation/` contain only app-shell features:
 

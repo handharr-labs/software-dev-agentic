@@ -6,7 +6,7 @@
 
 ---
 
-## DI Architecture <!-- 18 -->
+## DI Architecture <!-- 27 -->
 
 The app module (`lib/configs/di/crm_di.dart`) is the DI root. Feature packages each expose a static `register*()` method. `CrmDi.initDependency()` orchestrates the registration order.
 
@@ -33,7 +33,7 @@ engine.dart
 
 ---
 
-## Feature Accessor Pattern <!-- 12 -->
+## Feature Accessor Pattern <!-- 15 -->
 
 Each feature (and the app shell) has a module-scoped accessor. All features share the **same** `GetIt.instance` — the named variables are aliases, not separate containers.
 
@@ -48,7 +48,7 @@ final qontakCoreDependency = GetIt.instance;     // from crm_core
 
 ---
 
-## Feature DI Class Pattern <!-- 25 -->
+## Feature DI Class Pattern <!-- 57 -->
 
 ```dart
 class QontakCompanyDependency {
@@ -118,7 +118,7 @@ class QontakCompanyDependency {
 
 ---
 
-## BLoC Instantiation (Route-Scoped) <!-- 14 -->
+## BLoC Instantiation (Route-Scoped) <!-- 42 -->
 
 BLoCs are instantiated in `route_manager.dart` pulling use cases from the dependency accessor:
 
@@ -160,7 +160,7 @@ case AppRoute.companyDetail:
 
 ---
 
-## Cross-Feature Resolution <!-- 10 -->
+## Cross-Feature Resolution <!-- 17 -->
 
 Use the source feature's accessor to pull cross-module dependencies:
 
@@ -177,7 +177,7 @@ qontakContactDependency.registerLazySingleton<ContactRepository>(
 
 ---
 
-## Testing with DI <!-- 8 -->
+## Testing with DI <!-- 19 -->
 
 Prefer constructor injection — pass mock instances directly, no `GetIt` manipulation:
 

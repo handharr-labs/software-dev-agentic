@@ -2,7 +2,7 @@
 
 ---
 
-## App Overview <!-- 10 -->
+## App Overview <!-- 11 -->
 
 **Package name:** `qontak_crm`
 **Description:** Qontak CRM mobile application — a full-featured CRM for managing contacts, companies, deals, tasks, notes, products, and live GPS tracking.
@@ -13,7 +13,7 @@ The app supports **multiple flavors** (main Qontak CRM, Pyridam, KRAS SalesGo) t
 
 ---
 
-## Repo Layout <!-- 30 -->
+## Repo Layout <!-- 43 -->
 
 ```
 / (monorepo root)
@@ -68,7 +68,7 @@ The app supports **multiple flavors** (main Qontak CRM, Pyridam, KRAS SalesGo) t
 
 ---
 
-## Dependency Graph <!-- 8 -->
+## Dependency Graph <!-- 22 -->
 
 ```
 qontak_crm (application)
@@ -90,7 +90,7 @@ Cross-feature data sharing uses dependency accessor cross-resolution at the DI l
 
 ---
 
-## Package Naming Conventions <!-- 10 -->
+## Package Naming Conventions <!-- 12 -->
 
 | What | Pattern | Example |
 |---|---|---|
@@ -102,7 +102,7 @@ Cross-feature data sharing uses dependency accessor cross-resolution at the DI l
 
 ---
 
-## Model Naming (Data Layer) <!-- 10 -->
+## Model Naming (Data Layer) <!-- 13 -->
 
 | Type | Suffix | Example |
 |---|---|---|

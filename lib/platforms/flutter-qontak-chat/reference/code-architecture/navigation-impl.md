@@ -6,7 +6,7 @@ Navigation uses Flutter's `Navigator` 1.0 API with `MaterialPageRoute`. All rout
 
 ---
 
-## Route Constants <!-- 12 -->
+## Route Constants <!-- 20 -->
 
 All route name constants live in `QontakAppRoute` (in `lib/config/constants/`):
 
@@ -26,7 +26,7 @@ QontakAppRoute.walkthrough  // → OnBoardingScreen
 
 ---
 
-## AppRouteManger (Centralized Router) <!-- 38 -->
+## AppRouteManger (Centralized Router) <!-- 73 -->
 
 A single `AppRouteManger` extends `RouteManager` (from `chat_core`) and handles ALL route resolution. `BlocProvider` wiring for route-scoped BLoCs lives here, not inside screen widgets.
 
@@ -99,7 +99,7 @@ class AppRouteManger extends RouteManager {
 
 ---
 
-## Navigating from Widgets/Services <!-- 22 -->
+## Navigating from Widgets/Services <!-- 26 -->
 
 Navigation uses `NavigationHelper` (from `chat_core`) which wraps the global `navigatorKey`:
 
@@ -125,7 +125,7 @@ The global `navigatorKey` (`NavigationHelperImpl.navigatorKey`) is passed to `Ma
 
 ---
 
-## Navigating from BLoC (Side Effects) <!-- 20 -->
+## Navigating from BLoC (Side Effects) <!-- 23 -->
 
 BLoC state drives navigation via `BlocListener` in the screen. The BLoC never touches `NavigationHelper` directly.
 
@@ -148,7 +148,7 @@ BlocListener<LoginBloc, LoginState>(
 
 ---
 
-## Arguments Pattern <!-- 16 -->
+## Arguments Pattern <!-- 24 -->
 
 Each route that needs data defines a typed `*Arguments` class (in the feature package):
 
@@ -172,7 +172,7 @@ case QontakAppRoute.chatRoom:
 
 ---
 
-## Nested Navigation (Bottom Nav) <!-- 12 -->
+## Nested Navigation (Bottom Nav) <!-- 20 -->
 
 Bottom navigation is managed by `NavBarBloc` (app-level, in `MainPage`). Tab switching does NOT use nested navigators — it uses indexed widget switching driven by BLoC state.
 
@@ -192,7 +192,7 @@ BlocBuilder<NavBarBloc, NavBarState>(
 
 ---
 
-## Notification-Driven Navigation <!-- 14 -->
+## Notification-Driven Navigation <!-- 24 -->
 
 The `App` widget's `build` method wraps the `MaterialApp` builder with a `BlocListener<NotificationBloc>` to handle push notification taps at the app level:
 

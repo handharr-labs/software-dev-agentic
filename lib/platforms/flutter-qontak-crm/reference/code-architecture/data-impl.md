@@ -6,7 +6,7 @@ Data lives inside each feature package at `features/<pkg>/lib/src/data/`. It imp
 
 ---
 
-## Dependency Rule <!-- 10 -->
+## Dependency Rule <!-- 13 -->
 
 Data depends on Domain only. It never imports from Presentation or UI.
 
@@ -19,7 +19,7 @@ Data depends on Domain only. It never imports from Presentation or UI.
 
 ---
 
-## DTO Models <!-- 40 -->
+## DTO Models <!-- 78 -->
 
 Three kinds of DTO — all nullable fields, all with `fromJson`.
 
@@ -97,7 +97,7 @@ class CompanyObjectBox {
 
 ---
 
-## Mappers <!-- 30 -->
+## Mappers <!-- 41 -->
 
 Static-only classes. Naming: `<Feature>Mapper`, with methods named `from{Source}To{Target}`.
 
@@ -138,7 +138,7 @@ class CompanyMapper {
 
 ---
 
-## Data Sources <!-- 35 -->
+## Data Sources <!-- 47 -->
 
 Abstract interface + implementation in the same file. Remote sources take `BaseApi`; local sources take `DatabaseService.instance` or an ObjectBox adapter.
 
@@ -185,7 +185,7 @@ class CompanyRemoteDataSourceImpl implements CompanyRemoteDataSource {
 
 ---
 
-## Repository Implementation <!-- 30 -->
+## Repository Implementation <!-- 41 -->
 
 Two acceptable patterns — `TaskEither.tryCatch` (FP style, used in newer packages) or manual `try/catch`. Be consistent within a feature.
 
@@ -226,7 +226,7 @@ Future<Either<Failure, Company>> getCompany(String id) =>
 
 ---
 
-## Dual-DB Migration <!-- 12 -->
+## Dual-DB Migration <!-- 23 -->
 
 The app is migrating from Isar to ObjectBox. `DataSourceSwapHelper.shouldUseObjectBox` determines the active backend.
 
@@ -249,7 +249,7 @@ class CompanyDataLocalDataSourceImpl implements CompanyDataLocalDataSource {
 
 ---
 
-## DI Registration Pattern <!-- 15 -->
+## DI Registration Pattern <!-- 34 -->
 
 ```dart
 // features/crm_company/lib/src/config/di/qontak_company_dependency.dart
@@ -283,7 +283,7 @@ Registration order within a feature: Database/ObjectBox → Data sources → Rep
 
 ---
 
-## Creation Order <!-- 8 -->
+## Creation Order <!-- 12 -->
 
 ```
 1. features/<pkg>/lib/src/data/models/remote/<concept>_response.dart  ← API response DTO

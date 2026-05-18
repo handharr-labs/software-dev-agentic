@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.8.2] — 2026-05-18
+
+### Fixed
+- `flutter-qontak-chat` and `flutter-qontak-crm` reference impl files — corrected line counts across 25 files in `reference/code-architecture/` and `reference/project.md`
+
+---
+
 ## [7.8.1] — 2026-05-18
 
 ### Fixed

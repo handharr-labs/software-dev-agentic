@@ -6,7 +6,7 @@
 
 ---
 
-## Test Structure per Package <!-- 18 -->
+## Test Structure per Package <!-- 28 -->
 
 ```
 features/crm_company/
@@ -34,7 +34,7 @@ features/crm_company/
 
 ---
 
-## Dev Dependencies (per feature package) <!-- 10 -->
+## Dev Dependencies (per feature package) <!-- 14 -->
 
 ```yaml
 # features/crm_company/pubspec.yaml
@@ -48,7 +48,7 @@ dev_dependencies:
 
 ---
 
-## Running Tests <!-- 12 -->
+## Running Tests <!-- 18 -->
 
 ```bash
 # All packages via melos
@@ -66,7 +66,7 @@ cd features/crm_company && dart run build_runner build --delete-conflicting-outp
 
 ---
 
-## Mock Generation <!-- 20 -->
+## Mock Generation <!-- 29 -->
 
 ```dart
 // features/crm_company/test/helpers/mocks/company_mocks.dart
@@ -95,7 +95,7 @@ Generated file: `company_mocks.mocks.dart`. Run `build_runner` after adding mock
 
 ---
 
-## BLoC Tests <!-- 40 -->
+## BLoC Tests <!-- 88 -->
 
 ```dart
 // features/crm_company/test/presentation/blocs/company_bloc_test.dart
@@ -183,7 +183,7 @@ void main() {
 
 ---
 
-## Use Case Tests <!-- 25 -->
+## Use Case Tests <!-- 40 -->
 
 ```dart
 void main() {
@@ -223,7 +223,7 @@ void main() {
 
 ---
 
-## Mapper Tests <!-- 18 -->
+## Mapper Tests <!-- 38 -->
 
 No mocks needed — pure function tests:
 
@@ -261,7 +261,7 @@ void main() {
 
 ---
 
-## Test Fixtures <!-- 12 -->
+## Test Fixtures <!-- 20 -->
 
 ```dart
 // features/crm_company/test/helpers/fixtures/company_fixtures.dart
@@ -281,7 +281,7 @@ final tServerFailure = Failure(message: 'Server error');
 
 ---
 
-## Test Naming Convention <!-- 8 -->
+## Test Naming Convention <!-- 10 -->
 
 Pattern: `'[returns/emits/calls] [expected] when [condition]'`
 

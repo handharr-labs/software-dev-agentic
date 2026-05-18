@@ -6,7 +6,7 @@ Errors flow from DataSource (throws exception) → RepositoryImpl (catches, retu
 
 ---
 
-## Error Flow <!-- 10 -->
+## Error Flow <!-- 16 -->
 
 ```
 DataSource        throws Exception
@@ -22,7 +22,7 @@ Screen            BlocListener: state.*.status.isError → show SnackBar / dialo
 
 ---
 
-## Failure (from `qontak_common`) <!-- 12 -->
+## Failure (from `qontak_common`) <!-- 15 -->
 
 `Failure` is defined in `qontak_common` and used across all layers.
 
@@ -37,7 +37,7 @@ state.companyListState.message        // String?
 
 ---
 
-## Repository Error Handling <!-- 20 -->
+## Repository Error Handling <!-- 45 -->
 
 Two acceptable patterns — choose one and be consistent within a feature.
 
@@ -82,7 +82,7 @@ Future<Either<Failure, Company>> getCompany(String id) =>
 
 ---
 
-## QontakMonitor Logging <!-- 15 -->
+## QontakMonitor Logging <!-- 25 -->
 
 All repository and data source error paths log via `QontakMonitor`:
 
@@ -107,7 +107,7 @@ abstract class CompanyLogConstant {
 
 ---
 
-## BLoC Error Handling <!-- 15 -->
+## BLoC Error Handling <!-- 29 -->
 
 ```dart
 Future<void> _onLoadRemoteCompany(
@@ -136,7 +136,7 @@ BLoCs never log to `QontakMonitor` — logging belongs at the repository boundar
 
 ---
 
-## Error Display in Screen <!-- 12 -->
+## Error Display in Screen <!-- 29 -->
 
 ```dart
 BlocConsumer<CompanyBloc, CompanyState>(

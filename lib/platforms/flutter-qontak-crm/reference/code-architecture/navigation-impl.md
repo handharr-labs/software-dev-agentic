@@ -6,7 +6,7 @@ Navigation uses Flutter Navigator 1.0 — no `go_router`. The `route_manager.dar
 
 ---
 
-## Route Constants <!-- 10 -->
+## Route Constants <!-- 17 -->
 
 ```dart
 // lib/configs/constants/app_route.dart
@@ -23,7 +23,7 @@ abstract class AppRoute {
 
 ---
 
-## route_manager.dart Pattern <!-- 20 -->
+## route_manager.dart Pattern <!-- 49 -->
 
 All `BlocProvider` wiring for route-scoped BLoCs lives in `route_manager.dart`. The screen never owns its own `BlocProvider`.
 
@@ -72,7 +72,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
 
 ---
 
-## Screen Arguments Pattern <!-- 12 -->
+## Screen Arguments Pattern <!-- 15 -->
 
 ```dart
 // lib/src/presentation/screens/company_detail/company_detail_argument.dart
@@ -87,7 +87,7 @@ Arguments are passed as `settings.arguments` and cast in `route_manager.dart`. N
 
 ---
 
-## Navigation Calls <!-- 12 -->
+## Navigation Calls <!-- 23 -->
 
 Navigation side effects belong in `BlocListener` — BLoC never calls navigation directly.
 
@@ -110,7 +110,7 @@ Navigator.of(context).pop(true);
 
 ---
 
-## BLoC → Navigation Side Effect Pattern <!-- 10 -->
+## BLoC → Navigation Side Effect Pattern <!-- 23 -->
 
 ```dart
 BlocListener<CompanyBloc, CompanyState>(

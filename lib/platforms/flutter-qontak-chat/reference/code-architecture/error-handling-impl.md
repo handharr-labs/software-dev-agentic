@@ -40,7 +40,7 @@ HTTP / Storage / Parse error
 
 ---
 
-## Repository Error Handling <!-- 22 -->
+## Repository Error Handling <!-- 38 -->
 
 The app-level repository pattern catches `Exception` (not `AppException`) and maps via `CoreMapperExceptionToFailure` (from `chat_core`):
 
@@ -78,7 +78,7 @@ Use `CoreMapperExceptionToFailure.mapExceptionToFailure(exception: error)` from 
 
 ---
 
-## BLoC Error Handling <!-- 20 -->
+## BLoC Error Handling <!-- 25 -->
 
 ```dart
 // Actual pattern from LoginBloc
@@ -199,7 +199,7 @@ BlocListener<InboxBloc, InboxState>(
 
 ---
 
-## Global Error Boundary <!-- 23 -->
+## Global Error Boundary <!-- 30 -->
 
 The global error boundary lives in `engine.dart`, wrapping the entire startup sequence:
 

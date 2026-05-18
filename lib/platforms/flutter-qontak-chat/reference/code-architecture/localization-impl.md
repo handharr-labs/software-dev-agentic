@@ -60,7 +60,7 @@ Generated output lands in `lib/src/gen/l10n/` — add to `.gitignore` or commit
 
 ---
 
-## Registering Delegates in the App <!-- 30 -->
+## Registering Delegates in the App <!-- 32 -->
 
 There is no `ModuleRegistrar` — delegates are listed **explicitly** in `app.dart`. Add new package delegates here when onboarding a new feature package:
 

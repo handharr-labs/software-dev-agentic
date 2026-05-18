@@ -6,7 +6,7 @@ Shared infrastructure lives in `features/crm_core/` and `features/qontak_common/
 
 ---
 
-## QontakMonitor (Crash Monitoring) <!-- 15 -->
+## QontakMonitor (Crash Monitoring) <!-- 21 -->
 
 `QontakMonitor` wraps Firebase Crashlytics. Registered in `QontakCommonDependency` and accessed via `qontakCommonDependency`.
 
@@ -27,7 +27,7 @@ Never use `print` or `debugPrint` in repository/data source code — use `Qontak
 
 ---
 
-## BaseApi / mekari_network (HTTP Client) <!-- 18 -->
+## BaseApi / mekari_network (HTTP Client) <!-- 37 -->
 
 `BaseApi` (from internal `mekari_network` package) is the only HTTP client. Registered in `QontakCommonDependency`.
 
@@ -64,7 +64,7 @@ abstract class Endpoint {
 
 ---
 
-## DatabaseService / Isar (Legacy) <!-- 12 -->
+## DatabaseService / Isar (Legacy) <!-- 18 -->
 
 `DatabaseService` manages Isar. Available via `qontakCommonDependency<DatabaseService>()`. Use only in features not yet migrated to ObjectBox.
 
@@ -82,7 +82,7 @@ class CompanyIsarDatabase {
 
 ---
 
-## ObjectBoxStore (Migration Target) <!-- 12 -->
+## ObjectBoxStore (Migration Target) <!-- 23 -->
 
 ObjectBox is the target local DB. Feature packages wrap it via `ObjectBoxStore`.
 
@@ -105,7 +105,7 @@ qontakCompanyDependency.registerLazySingleton<CompanyObjectBoxStore>(
 
 ---
 
-## FlavorChecker <!-- 10 -->
+## FlavorChecker <!-- 16 -->
 
 For flavor-specific code paths:
 
@@ -121,7 +121,7 @@ if (FlavorChecker.isKrasSalesGo) {
 
 ---
 
-## DataSourceSwapHelper <!-- 8 -->
+## DataSourceSwapHelper <!-- 15 -->
 
 Determines which local DB backend is active during the Isar → ObjectBox migration:
 
@@ -136,7 +136,7 @@ Use in local data source implementations only — never in repositories or domai
 
 ---
 
-## Asset Generation (flutter_gen) <!-- 8 -->
+## Asset Generation (flutter_gen) <!-- 15 -->
 
 Assets are referenced via the generated `QontakCRMAssets` class:
 
@@ -151,7 +151,7 @@ Never reference asset paths as raw strings. Never edit files under `lib/gen/`.
 
 ---
 
-## Localization <!-- 8 -->
+## Localization <!-- 10 -->
 
 ARB files live per feature and per flavor under `lib/src/config/l10n/`. Accessed via the generated localization class:
 

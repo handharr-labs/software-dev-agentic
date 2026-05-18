@@ -90,7 +90,7 @@ Never write the Screen before the StateHolder contract exists.
 
 ---
 
-## ViewDataState (from `qontak_common`) <!-- 34 -->
+## ViewDataState (from `qontak_common`) <!-- 63 -->
 
 `ViewDataState<T>` is defined in `qontak_common` (re-exported via `chat_core`). The API surface uses a `.status` field with extension getters — NOT direct bool helpers on `ViewDataState`:
 
@@ -153,7 +153,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
 ---
 
-## Events <!-- 21 -->
+## Events <!-- 19 -->
 
 Events are `@freezed` classes with named factory constructors. Sealed classes (`sealed class`) are used when the BLoC pattern-matches exhaustively.
 
@@ -172,7 +172,7 @@ class LoginEvent with _$LoginEvent {
 
 ---
 
-## States <!-- 22 -->
+## States <!-- 33 -->
 
 ```dart
 // lib/presentation/bloc/login/login_state.dart
@@ -205,7 +205,7 @@ class ProductTourState with _$ProductTourState {
 
 ---
 
-## BLoC <!-- 42 -->
+## BLoC <!-- 52 -->
 
 BLoCs use **named constructor parameters** (not positional). No `@injectable` annotation in the app module — registration is done manually in `MainDependency._registerPresentation()`.
 
@@ -257,7 +257,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
 ---
 
-## Screen Structure <!-- 38 -->
+## Screen Structure <!-- 53 -->
 
 Screens do NOT own `BlocProvider` — that lives in `route_manager.dart`. The screen just reads state and dispatches events.
 
@@ -310,7 +310,7 @@ case QontakAppRoute.login:
 
 ---
 
-## BlocListener (Side Effects) <!-- 24 -->
+## BlocListener (Side Effects) <!-- 28 -->
 
 ```dart
 BlocListener<ResolveRoomBloc, ResolveRoomState>(

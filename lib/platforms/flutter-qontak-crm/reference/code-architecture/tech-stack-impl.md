@@ -4,7 +4,7 @@ Standard dependencies for the Qontak CRM monorepo.
 
 ---
 
-## Core Dependencies <!-- 25 -->
+## Core Dependencies <!-- 21 -->
 
 | Concern | Library | Notes |
 |---|---|---|
@@ -25,7 +25,7 @@ Standard dependencies for the Qontak CRM monorepo.
 
 ---
 
-## pubspec.yaml Patterns <!-- 20 -->
+## pubspec.yaml Patterns <!-- 73 -->
 
 The root app (`qontak_crm`) declares feature packages as local path dependencies via melos:
 
@@ -98,7 +98,7 @@ dev_dependencies:
 
 ---
 
-## Melos Configuration <!-- 12 -->
+## Melos Configuration <!-- 26 -->
 
 ```yaml
 # melos.yaml
@@ -124,7 +124,7 @@ Run `melos bootstrap` after cloning — this links all local path packages.
 
 ---
 
-## Linter Setup <!-- 8 -->
+## Linter Setup <!-- 15 -->
 
 ```yaml
 # analysis_options.yaml (root and each feature package)

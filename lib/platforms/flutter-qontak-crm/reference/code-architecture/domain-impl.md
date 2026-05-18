@@ -6,7 +6,7 @@ Domain lives inside each feature package at `features/<pkg>/lib/src/domain/`. It
 
 ---
 
-## Dependency Rule <!-- 13 -->
+## Dependency Rule <!-- 15 -->
 
 Domain is the innermost layer — it imports nothing from outer layers.
 
@@ -21,7 +21,7 @@ Domain is the innermost layer — it imports nothing from outer layers.
 
 ---
 
-## Entities <!-- 18 -->
+## Entities <!-- 30 -->
 
 ```dart
 // features/crm_company/lib/src/domain/entities/company.dart
@@ -51,7 +51,7 @@ class Company with _$Company {
 
 ---
 
-## Repository Interfaces <!-- 18 -->
+## Repository Interfaces <!-- 26 -->
 
 ```dart
 // features/crm_company/lib/src/domain/repositories/company_repository.dart
@@ -77,7 +77,7 @@ abstract class CompanyRepository {
 
 ---
 
-## Use Cases <!-- 35 -->
+## Use Cases <!-- 67 -->
 
 CRM use cases extend `UseCase<ReturnType, Params>` from `qontak_common` and carry the `UseCase` suffix.
 
@@ -144,7 +144,7 @@ Params class: plain Dart, no `@freezed`, no `@JsonKey`.
 
 ---
 
-## Domain Services <!-- 12 -->
+## Domain Services <!-- 22 -->
 
 Pure synchronous logic. No I/O, no async, no side effects.
 
@@ -166,7 +166,7 @@ class DealStageCalculator {
 
 ---
 
-## Creation Order <!-- 8 -->
+## Creation Order <!-- 10 -->
 
 ```
 1. features/<pkg>/lib/src/domain/entities/<concept>.dart         ← Entity (@freezed, no fromJson)

@@ -5,7 +5,7 @@
 
 ---
 
-## Typedef Callback Injection (Primary Pattern) <!-- 38 -->
+## Typedef Callback Injection (Primary Pattern) <!-- 31 -->
 
 In `mobile-qontak-chat`, cross-package UI behavior is shared by passing typed functions (typedefs) during DI registration in `ChatDi`. This is the main pattern for the app module.
 
@@ -36,7 +36,7 @@ This allows `chat_composer` to display a video viewer without importing `chat_co
 
 ---
 
-## Module API Pattern (for Data Sharing) <!-- 77 -->
+## Module API Pattern (for Data Sharing) <!-- 2 -->
 
 ## Module API Pattern <!-- 77 -->
 

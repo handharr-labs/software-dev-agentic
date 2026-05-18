@@ -2,7 +2,7 @@
 
 ---
 
-## App Layout <!-- 42 -->
+## App Layout <!-- 46 -->
 
 The application module (`qontak_chat_app`) is a standard Flutter app package. Feature code lives in **external pub packages** (not local path packages or a melos workspace). The app-level `lib/` contains only app-wiring, entry screens, and DI orchestration.
 
@@ -59,7 +59,7 @@ The application module (`qontak_chat_app`) is a standard Flutter app package. Fe
 
 ---
 
-## Dependency Graph <!-- 12 -->
+## Dependency Graph <!-- 18 -->
 
 ```
 qontak_chat_app (application)
@@ -77,7 +77,7 @@ qontak_chat_app (application)
 
 ---
 
-## App-Level Folder Structure <!-- 20 -->
+## App-Level Folder Structure <!-- 49 -->
 
 The app module uses Clean Architecture in its own `lib/` for app-shell features only (product tour, bottom navigation, notification handling):
 
@@ -126,7 +126,7 @@ lib/presentation/
 
 ---
 
-## Package Naming Conventions <!-- 10 -->
+## Package Naming Conventions <!-- 12 -->
 
 | What | Pattern | Example |
 |---|---|---|
@@ -138,7 +138,7 @@ lib/presentation/
 
 ---
 
-## Model Naming (Data Layer) <!-- 13 -->
+## Model Naming (Data Layer) <!-- 12 -->
 
 | Type | Suffix | Example |
 |---|---|---|
@@ -150,7 +150,7 @@ lib/presentation/
 
 ---
 
-## Mapper Convention <!-- 13 -->
+## Mapper Convention <!-- 11 -->
 
 Mapper is a non-instantiable class with static methods named `from{Source}To{Destination}`:
 

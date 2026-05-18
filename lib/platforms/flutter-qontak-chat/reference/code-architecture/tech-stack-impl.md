@@ -4,7 +4,7 @@ Standard dependencies for Mekari/Qontak Flutter modular projects.
 
 ---
 
-## Core Dependencies <!-- 26 -->
+## Core Dependencies <!-- 25 -->
 
 | Purpose | Package | Notes |
 |---|---|---|
@@ -29,7 +29,7 @@ Standard dependencies for Mekari/Qontak Flutter modular projects.
 
 ---
 
-## pubspec.yaml Patterns <!-- 28 -->
+## pubspec.yaml Patterns <!-- 39 -->
 
 The application module (`qontak_chat_app`) declares feature packages as pub dependencies (not local paths — they are external packages):
 

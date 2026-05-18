@@ -7,7 +7,7 @@ No code generation (`@InjectableInit`, `injectable_generator`) is used in the ap
 
 ---
 
-## DI Architecture <!-- 18 -->
+## DI Architecture <!-- 20 -->
 
 The app module is the DI root. External feature packages each expose a static `register*()` method. The app calls them in dependency order via `ChatDi.initDependency()`.
 
@@ -27,7 +27,7 @@ engine.dart
 
 ---
 
-## Module DI Accessors <!-- 14 -->
+## Module DI Accessors <!-- 17 -->
 
 Each feature package exposes a typed accessor function (from `chat_core`/`chat_dependency`). These are the preferred way to resolve dependencies from feature packages:
 
@@ -44,7 +44,7 @@ mainDependency<GetFirstRunUseCase>()     // app-level (GetIt.instance)
 
 ---
 
-## App-Level Registration (`MainDependency`) <!-- 30 -->
+## App-Level Registration (`MainDependency`) <!-- 47 -->
 
 App-level dependencies follow a `_registerData → _registerDomain → _registerPresentation` pattern:
 
@@ -113,7 +113,7 @@ class MainDependency {
 
 ---
 
-## Resolving in BlocProvider (Route-Scoped) <!-- 16 -->
+## Resolving in BlocProvider (Route-Scoped) <!-- 35 -->
 
 BLoCs resolved at route time use the appropriate accessor function directly in `route_manager.dart`:
 
@@ -148,13 +148,13 @@ case QontakAppRoute.contactDetail:
 
 ---
 
-## Global Provider Wiring <!-- 10 -->
+## Global Provider Wiring <!-- 6 -->
 
 App-wide BLoCs (not scoped to a single route) are wired in `provider.dart` (`AppProvider`) — see `app-layer-impl.md`. They are resolved in the same way, using typed accessor functions.
 
 ---
 
-## Testing with DI <!-- 14 -->
+## Testing with DI <!-- 21 -->
 
 Prefer constructor injection — pass mock instances directly, no `getIt` manipulation:
 

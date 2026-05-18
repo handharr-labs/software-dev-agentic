@@ -4,7 +4,7 @@
 
 ---
 
-## Naming Conventions <!-- 28 -->
+## Naming Conventions <!-- 29 -->
 
 | Artifact | Convention | Example |
 |---|---|---|
@@ -33,7 +33,7 @@
 
 ---
 
-## File Placement Rules <!-- 15 -->
+## File Placement Rules <!-- 20 -->
 
 | What | Where |
 |---|---|
@@ -53,7 +53,7 @@
 
 ---
 
-## Import Order <!-- 10 -->
+## Import Order <!-- 24 -->
 
 ```dart
 // 1. Dart SDK
@@ -77,7 +77,7 @@ import '../repositories/company_repository.dart';
 
 ---
 
-## Null Safety Patterns <!-- 12 -->
+## Null Safety Patterns <!-- 18 -->
 
 ```dart
 // Prefer ?? with explicit defaults in mapper
@@ -95,7 +95,7 @@ final date = response.createdAt != null
 
 ---
 
-## Code Style <!-- 10 -->
+## Code Style <!-- 12 -->
 
 - `const` constructors wherever possible
 - `final` for all injected dependencies in class fields
@@ -107,7 +107,7 @@ final date = response.createdAt != null
 
 ---
 
-## Linter Setup <!-- 10 -->
+## Linter Setup <!-- 16 -->
 
 ```yaml
 # analysis_options.yaml (root and each feature package)
