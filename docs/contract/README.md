@@ -35,7 +35,7 @@ Platforms may add platform-specific `##` sections and adapt content to their syn
 software-dev-agentic/scripts/check-skill-contracts.sh
 
 # Check one platform
-software-dev-agentic/scripts/check-skill-contracts.sh --platform=flutter
+software-dev-agentic/scripts/check-skill-contracts.sh --platform=flutter-mobile-talenta
 ```
 
 Exits non-zero if any Required skill is missing — safe to run in CI. Also runs automatically at the end of `setup-symlinks.sh`.

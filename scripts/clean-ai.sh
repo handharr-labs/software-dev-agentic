@@ -2,7 +2,7 @@
 # clean-ai.sh — Remove AI config and compiled skill artifacts from the project.
 #
 # Usage:
-#   software-dev-agentic/scripts/clean-ai.sh --ai=copilot --platform=ios
+#   software-dev-agentic/scripts/clean-ai.sh --ai=copilot --platform=ios-talenta
 #   software-dev-agentic/scripts/clean-ai.sh --ai=gemini  --platform=web
 
 set -euo pipefail

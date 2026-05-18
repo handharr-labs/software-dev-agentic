@@ -75,9 +75,9 @@ For each `SKILL.md` file in scope:
 ### Platform skill parity (when scope is a platform directory)
 
 7. **Contract skill parity** — when scope is `lib/platforms/<platform>/` or a platform's `skills/contract/` dir:
-   - `Glob lib/platforms/ios/skills/contract/*/SKILL.md` → extract skill names from paths
+   - `Glob lib/platforms/ios-talenta/skills/contract/*/SKILL.md` → extract skill names from paths
    - `Glob lib/platforms/web/skills/contract/*/SKILL.md` → extract skill names from paths
-   - `Glob lib/platforms/flutter/skills/contract/*/SKILL.md` → extract skill names from paths
+   - `Glob lib/platforms/flutter-mobile-talenta/skills/contract/*/SKILL.md` → extract skill names from paths
    - For each skill present on **both** other platforms but absent on the target: BROKEN
    - For each skill present on only one other platform: WARNING (may be intentionally platform-specific)
    - **Do not report any skill as missing unless it is confirmed absent via Glob on the target platform** — the presence check is always Glob-first, never name-guessing

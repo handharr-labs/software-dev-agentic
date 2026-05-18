@@ -79,7 +79,7 @@ Sections (with `<!-- N -->` line counts):
 
 ### 2. iOS Platform Contract Reference Doc
 
-**`lib/platforms/ios/reference/contract/builder/app-layer.md`**
+**`lib/platforms/ios-talenta/reference/contract/builder/app-layer.md`**
 
 Sections:
 - `## Dependency Registration` — Needle Component pattern; how to create a child component; how `RootComponent` / `MainTabComponent` hierarchy works; where to add new component
@@ -90,7 +90,7 @@ Sections:
 
 ### 3. Flutter Platform Contract Reference Doc
 
-**`lib/platforms/flutter/reference/contract/builder/app-layer.md`**
+**`lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`**
 
 Sections:
 - `## Dependency Registration` — get_it + injectable pattern; `{feature}_dependencies.dart` structure; `@injectable` annotation on BLoCs; how to add a new feature DI file
@@ -158,8 +158,8 @@ Add App Layer step after Presentation Layer execution:
 ## Execution Order
 
 1. Write `lib/core/reference/code-architecture/app-layer.md` (core theory)
-2. Write `lib/platforms/ios/reference/contract/builder/app-layer.md`
-3. Write `lib/platforms/flutter/reference/contract/builder/app-layer.md`
+2. Write `lib/platforms/ios-talenta/reference/contract/builder/app-layer.md`
+3. Write `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`
 4. Write `lib/core/agents/builder/app-planner.md`
 5. Update `lib/core/agents/builder/feature-planner.md` — add app-planner to Phase 2 spawn + Phase 3 aggregation
 6. Update plan.md format in feature-planner (Phase 4 — Write plan.md)

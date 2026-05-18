@@ -75,7 +75,7 @@ Three auto-patches for existing projects on upgrade:
 
 Also fixed: `git pull` in submodule context (detached HEAD) → `git submodule update --remote` from project root.
 
-### New: `lib/platforms/ios/settings-template.json`
+### New: `lib/platforms/ios-talenta/settings-template.json`
 
 Was missing entirely. Added with `require-feature-orchestrator` wired as `PreToolUse`.
 

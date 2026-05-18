@@ -3,9 +3,9 @@
 #
 # Usage:
 #   scripts/sda.sh                               # interactive menu
-#   scripts/sda.sh setup --platform=ios          # first-time Claude Code wiring
+#   scripts/sda.sh setup --platform=ios-talenta          # first-time Claude Code wiring
 #   scripts/sda.sh sync                          # pull latest from main
-#   scripts/sda.sh add-ai --ai=copilot --platform=ios
+#   scripts/sda.sh add-ai --ai=copilot --platform=ios-talenta
 #   scripts/sda.sh remove-ai --ai=gemini
 
 set -euo pipefail

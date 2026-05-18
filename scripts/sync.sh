@@ -5,7 +5,10 @@
 #
 # Usage:
 #   software-dev-agentic/scripts/sync.sh --platform=web
-#   software-dev-agentic/scripts/sync.sh --platform=ios
+#   software-dev-agentic/scripts/sync.sh --platform=ios-talenta
+#   software-dev-agentic/scripts/sync.sh --platform=android-talenta
+#   software-dev-agentic/scripts/sync.sh --platform=flutter-mobile-talenta
+#   software-dev-agentic/scripts/sync.sh --platform=flutter-qontak-chat
 
 set -euo pipefail
 
@@ -27,16 +30,18 @@ if [ -z "$PLATFORM" ]; then
   if [ -L "$SKILL_LINK" ]; then
     TARGET=$(readlink "$SKILL_LINK")
     case "$TARGET" in
-      *platforms/ios*)     PLATFORM="ios" ;;
-      *platforms/web*)     PLATFORM="web" ;;
-      *platforms/flutter*) PLATFORM="flutter" ;;
+      *platforms/ios-talenta*)            PLATFORM="ios-talenta" ;;
+      *platforms/android-talenta*)        PLATFORM="android-talenta" ;;
+      *platforms/web*)                    PLATFORM="web" ;;
+      *platforms/flutter-qontak-chat*)    PLATFORM="flutter-qontak-chat" ;;
+      *platforms/flutter-mobile-talenta*) PLATFORM="flutter-mobile-talenta" ;;
     esac
   fi
 fi
 
 if [ -z "$PLATFORM" ]; then
   echo "Error: could not detect platform. Pass it explicitly:"
-  echo "  $0 --platform=web|ios|flutter"
+  echo "  $0 --platform=web|ios-talenta|android-talenta|flutter-mobile-talenta|flutter-qontak-chat"
   exit 1
 fi
 

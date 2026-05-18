@@ -11,9 +11,9 @@ allowed-tools: Bash
    ```bash
    readlink .claude/skills/domain-create-entity 2>/dev/null
    ```
-   - Contains `platforms/ios` → `ios`
+   - Contains `platforms/ios-talenta` → `ios`
    - Contains `platforms/web` → `web`
-   - Contains `platforms/flutter` → `flutter`
+   - Contains `platforms/flutter-mobile-talenta` → `flutter`
 
 2. **If detection fails** (no symlink or unknown path), ask the user which platform:
    - `web` — Next.js project

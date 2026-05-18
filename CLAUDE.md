@@ -10,7 +10,7 @@ Platforms: **web** (Next.js 15) · **ios** (Swift/UIKit) · **flutter** (Dart/BL
 ```bash
 # Wire into a downstream project — links all agents, skills, hooks, and reference
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
+software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
 
 # Cut a release
 /release

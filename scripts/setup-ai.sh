@@ -3,7 +3,7 @@
 # Safe to re-run — skips existing generated files.
 #
 # Usage:
-#   software-dev-agentic/scripts/setup-ai.sh --ai=copilot --platform=ios [--app-name=MyApp]
+#   software-dev-agentic/scripts/setup-ai.sh --ai=copilot --platform=ios-talenta [--app-name=MyApp]
 #   software-dev-agentic/scripts/setup-ai.sh --ai=gemini  --platform=web [--app-name=MyApp]
 
 set -euo pipefail

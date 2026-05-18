@@ -40,7 +40,7 @@ git submodule add https://github.com/mekaripaper/software-dev-agentic software-d
 # 3. Wire everything — symlinks all agents, skills, hooks, and reference for the platform
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 # or
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
+software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
 ```
 
 Open Claude Code and use trigger skills (`/builder-build-feature`, `/detective-debug`, etc.) as the entry point.
@@ -54,7 +54,7 @@ git submodule add https://github.com/mekaripaper/software-dev-agentic software-d
 
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 # or
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
+software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
 ```
 
 The script wires symlinks, copies `CLAUDE.md`, and sets up `settings.local.json`. Re-running is safe — existing files and local overrides are never overwritten.

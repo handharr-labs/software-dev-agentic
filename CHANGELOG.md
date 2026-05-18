@@ -7,17 +7,33 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.7.0] — 2026-05-18
+
+### Changed
+- `lib/platforms/ios/` → `lib/platforms/ios-talenta/`
+- `lib/platforms/android/` → `lib/platforms/android-talenta/`
+- `lib/platforms/flutter/` → `lib/platforms/flutter-mobile-talenta/`
+- `lib/platforms/flutter-qontak/` → `lib/platforms/flutter-qontak-chat/`
+- `scripts/setup-symlinks.sh` — updated `--platform=` usage examples and error message to new names
+- `scripts/sync.sh` — updated auto-detect case patterns and usage comments to new names
+- `scripts/check-skill-contracts.sh` — updated usage example
+- `scripts/sda.sh`, `scripts/setup-ai.sh`, `scripts/clean-ai.sh` — updated platform name references in comments
+- All internal skill and reference files — updated `lib/platforms/<old>/` path references to new names
+- All docs, agents, and core skills — updated `--platform=` and `platforms/` references throughout
+
+---
+
 ## [7.6.0] — 2026-05-18
 
 ### Added
-- `lib/platforms/flutter-qontak/skills/contract/` — 17 contract skills scaffolded: `auditor-arch-check`, all `builder-domain-*`, `builder-data-*`, `builder-pres-*`, `builder-test-*`, `detective-debug-add-logs`, `detective-debug-remove-logs`, `installer-setup-project`
+- `lib/platforms/flutter-qontak-chat/skills/contract/` — 17 contract skills scaffolded: `auditor-arch-check`, all `builder-domain-*`, `builder-data-*`, `builder-pres-*`, `builder-test-*`, `detective-debug-add-logs`, `detective-debug-remove-logs`, `installer-setup-project`
 - `app-layer-impl.md` — `AppInitializationBloc` orchestrator pattern (sibling BLoC stream subscriptions, internal `_` events, `close()` cleanup)
 - `app-layer-impl.md` — Firebase background message handling pattern (`@pragma('vm:entry-point')`, top-level handler, iOS-only registration, isolate `Firebase.initializeApp()`)
 - `ui-impl.md` — `BlocProvider.value` pattern for route-scoped BLoC reuse (long-lived BLoCs spanning multiple routes)
 
 ### Changed
-- `lib/platforms/flutter-qontak/reference/` — 11 reference files synced against `mobile-qontak-chat`: `project.md`, `app-layer-impl.md`, `navigation-impl.md`, `di-impl.md`, `flavor-impl.md`, `presentation-impl.md`, `ui-impl.md`, `error-handling-impl.md`, `localization-impl.md`, `tech-stack-impl.md`, `module-communication-impl.md`
-- `lib/platforms/flutter-qontak/CLAUDE-template.md` — corrected architecture description, removed stale melos/go_router/injectable references, added `ViewDataState` API note
+- `lib/platforms/flutter-qontak-chat/reference/` — 11 reference files synced against `mobile-qontak-chat`: `project.md`, `app-layer-impl.md`, `navigation-impl.md`, `di-impl.md`, `flavor-impl.md`, `presentation-impl.md`, `ui-impl.md`, `error-handling-impl.md`, `localization-impl.md`, `tech-stack-impl.md`, `module-communication-impl.md`
+- `lib/platforms/flutter-qontak-chat/CLAUDE-template.md` — corrected architecture description, removed stale melos/go_router/injectable references, added `ViewDataState` API note
 
 ---
 
@@ -40,7 +56,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Multiple `*-impl.md` reference files across all platforms — `<!-- N -->` line count annotations corrected
 
 ### Removed
-- `lib/platforms/ios/packages/ios.pkg` — obsolete; iOS platform agents no longer rely on a `.pkg` manifest
+- `lib/platforms/ios-talenta/packages/ios.pkg` — obsolete; iOS platform agents no longer rely on a `.pkg` manifest
 
 ---
 
@@ -158,9 +174,9 @@ Downstream projects must re-run `setup-symlinks.sh` to get the new symlink layou
 - `android/contract/builder/error-handling.md`: added `## Error Response Models`, `## Error Interceptor`, `## ErrorHandler` sections (folded from `reference/error-handling.md`); updated `builder-pres-create-screen` skill pointer to `contract/builder/error-handling.md`
 
 ### Removed
-- `lib/platforms/android/reference/error-handling.md` — misplaced pre-contract era file; content folded into `contract/builder/error-handling.md`
-- `lib/platforms/ios/reference/core-services.md` — zero external consumers; content already covered by `contract/builder/utilities.md`
-- `lib/platforms/ios/reference/error-utilities.md` — zero external consumers; error handling covered by `contract/builder/error-handling.md`, utilities (incl. Null Safety Extensions) folded into `contract/builder/utilities.md`
+- `lib/platforms/android-talenta/reference/error-handling.md` — misplaced pre-contract era file; content folded into `contract/builder/error-handling.md`
+- `lib/platforms/ios-talenta/reference/core-services.md` — zero external consumers; content already covered by `contract/builder/utilities.md`
+- `lib/platforms/ios-talenta/reference/error-utilities.md` — zero external consumers; error handling covered by `contract/builder/error-handling.md`, utilities (incl. Null Safety Extensions) folded into `contract/builder/utilities.md`
 
 ---
 
@@ -186,24 +202,24 @@ Downstream projects must re-run `setup-symlinks.sh` to get the new symlink layou
 ## [6.4.1] — 2026-05-16
 
 ### Changed
-- `lib/platforms/flutter/reference/contract/builder/app-layer.md`, `ios`, `android`: folded `## Hybrid Embedding` content into each platform's `contract/builder/app-layer.md` as a section; removed standalone `contract/builder/hybrid-embedding.md` files — hybrid embedding is an app-layer concern, not a separate contract layer
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`, `ios`, `android`: folded `## Hybrid Embedding` content into each platform's `contract/builder/app-layer.md` as a section; removed standalone `contract/builder/hybrid-embedding.md` files — hybrid embedding is an app-layer concern, not a separate contract layer
 - `## Planner Search Patterns` `hybrid_embedding` row: updated Grep hint from stale file-load instruction to `## Hybrid Embedding section below`
 
 ### Removed
-- `lib/platforms/flutter/reference/contract/builder/hybrid-embedding.md`
-- `lib/platforms/ios/reference/contract/builder/hybrid-embedding.md`
-- `lib/platforms/android/reference/contract/builder/hybrid-embedding.md`
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/hybrid-embedding.md`
+- `lib/platforms/ios-talenta/reference/contract/builder/hybrid-embedding.md`
+- `lib/platforms/android-talenta/reference/contract/builder/hybrid-embedding.md`
 
 ## [6.4.0] — 2026-05-16
 
 ### Added
 - `lib/core/reference/code-architecture/app-layer.md`: `## Hybrid Embedding` section — canonical terms, communication directions (Host→Guest navigation, headless execution, Guest→Host response/action), and module registration pattern; grep-first selectable via `<!-- 64 -->` annotation
-- `lib/platforms/ios/reference/contract/builder/hybrid-embedding.md`: iOS-specific hybrid embedding patterns (BrickWrap, ModuleFactory, engine lifecycle)
-- `lib/platforms/android/reference/contract/builder/hybrid-embedding.md`: Android-specific hybrid embedding patterns (bricks-talenta, BrickHelper, ActionListener)
-- `lib/platforms/flutter/reference/contract/builder/hybrid-embedding.md`: Flutter guest-side patterns (brick_way, HostParams decoding, ExternalDataSourceHelper)
+- `lib/platforms/ios-talenta/reference/contract/builder/hybrid-embedding.md`: iOS-specific hybrid embedding patterns (BrickWrap, ModuleFactory, engine lifecycle)
+- `lib/platforms/android-talenta/reference/contract/builder/hybrid-embedding.md`: Android-specific hybrid embedding patterns (bricks-talenta, BrickHelper, ActionListener)
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/hybrid-embedding.md`: Flutter guest-side patterns (brick_way, HostParams decoding, ExternalDataSourceHelper)
 
 ### Changed
-- `lib/platforms/flutter/reference/contract/builder/app-layer.md`, `ios`, `android`: added `hybrid_embedding` scope row to `## Planner Search Patterns`
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`, `ios`, `android`: added `hybrid_embedding` scope row to `## Planner Search Patterns`
 - `docs/persona/builder.md`: moved `domain-worker`, `data-worker`, `presentation-worker`, `builder-ui-worker` from active to Removed table with version and reason
 - `docs/deck/workflow-deck.html`: fixed domain-planner step numbering (Step 4 → Step 3, Step 4a → Step 3a); added Step 0 reference load annotation
 
@@ -223,9 +239,9 @@ Downstream projects must re-run `setup-symlinks.sh` to get the new symlink layou
 - `lib/core/reference/code-architecture/domain.md`: `## Repository` → `## Repository Interfaces` (canonical heading alignment)
 - Platform contract `domain.md` files (web, ios, android): `## Services` → `## Domain Services`
 - `lib/platforms/web/reference/contract/builder/data.md`: `## DTOs (Data Transfer Objects)` → `## DTOs`
-- `lib/platforms/android/reference/contract/builder/data.md` and `flutter`: `## Repository Implementations` → `## Repository Implementation`
-- `lib/platforms/flutter/reference/contract/builder/error-handling.md`: `## Widget Error UI` → `## Error UI`
-- `lib/platforms/ios/reference/contract/builder/utilities.md`: `## Helper Extensions Index` → `## Helper Extensions`
+- `lib/platforms/android-talenta/reference/contract/builder/data.md` and `flutter`: `## Repository Implementations` → `## Repository Implementation`
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/error-handling.md`: `## Widget Error UI` → `## Error UI`
+- `lib/platforms/ios-talenta/reference/contract/builder/utilities.md`: `## Helper Extensions Index` → `## Helper Extensions`
 
 ## [6.2.1] — 2026-05-15
 
@@ -477,7 +493,7 @@ mv issue-worker.md          tracker-issue-worker.md
 ## [3.65.4] — 2026-05-10
 
 ### Added
-- `lib/platforms/android/reference/contract/builder/app-layer.md`: Android app-layer reference doc
+- `lib/platforms/android-talenta/reference/contract/builder/app-layer.md`: Android app-layer reference doc
 - `lib/core/agents/builder/app-planner.md`: Android glob patterns
 
 ### Changed
@@ -493,22 +509,22 @@ mv issue-worker.md          tracker-issue-worker.md
 
 ### Added
 - `lib/core/reference/code-architecture/app-layer.md`: two new canonical headings — `## Analytics Constants` and `## Feature Flag Registration` (platform-agnostic theory)
-- `lib/platforms/ios/reference/contract/builder/app-layer.md`: iOS implementations — `{Feature}FirebaseName.swift` struct pattern for analytics; `FeatureFlagKey` + `FeatureFlagCollection` registration steps in `Shared/Infrastructure/FeatureFlag/FeatureFlag.swift`
-- `lib/platforms/flutter/reference/contract/builder/app-layer.md`: Flutter stubs for Analytics Constants and Feature Flag Registration (discovery-oriented — pattern varies by project)
+- `lib/platforms/ios-talenta/reference/contract/builder/app-layer.md`: iOS implementations — `{Feature}FirebaseName.swift` struct pattern for analytics; `FeatureFlagKey` + `FeatureFlagCollection` registration steps in `Shared/Infrastructure/FeatureFlag/FeatureFlag.swift`
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`: Flutter stubs for Analytics Constants and Feature Flag Registration (discovery-oriented — pattern varies by project)
 
 ### Changed
 - `lib/core/agents/builder/app-planner.md`: added Steps 5–6 (locate analytics constants files; locate feature flag registration files); Output block gains `### Analytics Constants` and `### Feature Flag Registration` sections; Naming Conventions gains `analytics_pattern` and `feature_flag_pattern`
 - `lib/core/agents/builder/feature-planner.md`: `## App Layer` plan.md table gains Analytics Constants and Feature Flag Registration rows
 - `lib/core/agents/builder/feature-worker.md`: App Layer execution section gains special-case handling for Analytics Constants (create) and Feature Flag Registration (update/skip)
-- `lib/core/reference/code-architecture/app-layer.md`, `lib/platforms/ios/reference/contract/builder/app-layer.md`, `lib/platforms/flutter/reference/contract/builder/app-layer.md`: corrected `<!-- N -->` line counts on `## Module Registration` sections
+- `lib/core/reference/code-architecture/app-layer.md`, `lib/platforms/ios-talenta/reference/contract/builder/app-layer.md`, `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`: corrected `<!-- N -->` line counts on `## Module Registration` sections
 
 ## [3.64.0] — 2026-05-10
 
 ### Added
 - `lib/core/agents/builder/app-planner.md`: new planner agent — explores DI registration, route registration, and module registration patterns for a feature; returns structured `## App Findings` block; no writes
 - `lib/core/reference/code-architecture/app-layer.md`: platform-agnostic theory for Dependency Registration, Route Registration, and Module Registration concepts
-- `lib/platforms/ios/reference/contract/builder/app-layer.md`: iOS/Needle/Coordinator patterns for all three app-layer concerns
-- `lib/platforms/flutter/reference/contract/builder/app-layer.md`: Flutter/get_it/BaseModule patterns for all three app-layer concerns
+- `lib/platforms/ios-talenta/reference/contract/builder/app-layer.md`: iOS/Needle/Coordinator patterns for all three app-layer concerns
+- `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`: Flutter/get_it/BaseModule patterns for all three app-layer concerns
 
 ### Changed
 - `lib/core/agents/builder/feature-planner.md`: Phase 2 spawns `app-planner` in parallel alongside the three layer planners; Phase 3 aggregates `## App Findings`; `context.md` format gains `### App` discovered-artifacts table; `plan.md` format gains `## App Layer` table after `## UI Layer`
@@ -531,7 +547,7 @@ mv issue-worker.md          tracker-issue-worker.md
 - `lib/core/agents/builder/feature-orchestrator.md`: direct invocation now hard-stops instead of warn-and-proceed
 
 ### Fixed
-- `lib/platforms/ios/skills/`: 5 skills misclassified as Type B (`disable-model-invocation: true`) — all migrated to Type U (`user-invocable: true`): `generate-changelog`, `audit-presentation-test`, `migrate-presentation`, `migrate-usecase`, `sonar-check`
+- `lib/platforms/ios-talenta/skills/`: 5 skills misclassified as Type B (`disable-model-invocation: true`) — all migrated to Type U (`user-invocable: true`): `generate-changelog`, `audit-presentation-test`, `migrate-presentation`, `migrate-usecase`, `sonar-check`
 
 ## [3.61.0] — 2026-05-09
 
@@ -572,7 +588,7 @@ mv issue-worker.md          tracker-issue-worker.md
 
 ### Added
 - `scripts/sda.sh`: new CLI entry point — interactive menu for `setup` (first-time wiring) and `sync` (pull latest + re-wire); prompts for platform when not passed; delegates to `setup-symlinks.sh` and `sync.sh`
-- `lib/platforms/ios/skills/`: promoted 13 skills from `talenta-ios/.claude/skills.local/` — `data-create-datasource`, `data-create-mapper`, `data-create-repository-impl`, `domain-create-entity`, `domain-create-repository`, `domain-create-service`, `domain-create-usecase`, `pres-create-component`, `pres-create-screen`, `pres-create-stateholder`, `test-create-data`, `test-create-domain`, `test-create-presentation`
+- `lib/platforms/ios-talenta/skills/`: promoted 13 skills from `talenta-ios/.claude/skills.local/` — `data-create-datasource`, `data-create-mapper`, `data-create-repository-impl`, `domain-create-entity`, `domain-create-repository`, `domain-create-service`, `domain-create-usecase`, `pres-create-component`, `pres-create-screen`, `pres-create-stateholder`, `test-create-data`, `test-create-domain`, `test-create-presentation`
 - `lib/core/agents/builder/backend-orchestrator.md`: rebuilt — calls skills directly in layer order (no sub-agents); handles Domain + Data layers for a feature
 - `lib/core/skills/backend-orchestrator/SKILL.md`: entry trigger for the rebuilt `backend-orchestrator`
 
@@ -614,18 +630,18 @@ mv issue-worker.md          tracker-issue-worker.md
 ## [3.55.0] — 2026-05-06
 
 ### Added
-- `lib/platforms/android/reference/contract/builder/error-handling.md`: new — `## Error Flow`, `## Error Types`, `## Error Mapping`, `## Error UI` covering `DomainException`, `ErrorHandler`, and `onErrorResumeNext` patterns
-- `lib/platforms/android/reference/contract/builder/navigation.md`: new — `## Navigator` (custom `NavigationImpl` pattern) and `## Route Constants` stub
-- `lib/platforms/android/reference/contract/builder/domain.md`: added `## Services` and `## Domain Errors` sections
-- `lib/platforms/android/reference/contract/builder/presentation.md`: added `## State` (MVP View interface as state surface) and `## Shared Component Paths`
-- `lib/platforms/android/reference/contract/builder/testing.md`: added `## Test Pyramid` and `## Repository Tests` with full Mockito example
-- `lib/platforms/android/reference/contract/builder/utilities.md`: added `## StorageService`, `## DateService`, `## Logger` stubs
+- `lib/platforms/android-talenta/reference/contract/builder/error-handling.md`: new — `## Error Flow`, `## Error Types`, `## Error Mapping`, `## Error UI` covering `DomainException`, `ErrorHandler`, and `onErrorResumeNext` patterns
+- `lib/platforms/android-talenta/reference/contract/builder/navigation.md`: new — `## Navigator` (custom `NavigationImpl` pattern) and `## Route Constants` stub
+- `lib/platforms/android-talenta/reference/contract/builder/domain.md`: added `## Services` and `## Domain Errors` sections
+- `lib/platforms/android-talenta/reference/contract/builder/presentation.md`: added `## State` (MVP View interface as state surface) and `## Shared Component Paths`
+- `lib/platforms/android-talenta/reference/contract/builder/testing.md`: added `## Test Pyramid` and `## Repository Tests` with full Mockito example
+- `lib/platforms/android-talenta/reference/contract/builder/utilities.md`: added `## StorageService`, `## DateService`, `## Logger` stubs
 - `arch-check-conventions`: new `## Reference Doc Section Line-Count Check` — every `##` heading must carry `<!-- N -->` integer; missing or non-integer is a Warning violation
 - `docs/core-design-principles.md §6`: authoring rule for `<!-- N -->` line-count convention (writer-side documentation)
 
 ### Changed
-- `lib/platforms/ios/reference/contract/builder/data.md`: `## Response Models (DTOs)` → `## DTOs`; iOS naming explained in section body
-- `lib/platforms/android/reference/contract/builder/data.md`: `## Response Models` → `## DTOs`; `## API Service` → `## Data Sources`; platform naming explained in body
+- `lib/platforms/ios-talenta/reference/contract/builder/data.md`: `## Response Models (DTOs)` → `## DTOs`; iOS naming explained in section body
+- `lib/platforms/android-talenta/reference/contract/builder/data.md`: `## Response Models` → `## DTOs`; `## API Service` → `## Data Sources`; platform naming explained in body
 - `arch-review-worker`: platform scope now includes `reference/contract/**/*.md`; adds `reference-doc` as third file classification routing to Contract Schema + Line-Count checks
 - `docs/deck/agentic-deck.html`: corrected `feature-orchestrator` flow (spawns `feature-worker`, not individual layer workers); Android promoted from "coming soon" to active; removed false pre-commit hook claim
 
@@ -637,13 +653,13 @@ mv issue-worker.md          tracker-issue-worker.md
 ## [3.54.0] — 2026-05-04
 
 ### Added
-- `lib/platforms/android/`: new Android platform for Kotlin/MVP (Dagger 2 + RxJava 3) projects
-- `lib/platforms/android/skills/contract/` (12 skills): full builder persona contract skill set — `domain-create-entity`, `domain-create-repository`, `domain-create-usecase`, `domain-create-service`, `data-create-datasource`, `data-create-mapper`, `data-create-repository-impl`, `pres-create-stateholder`, `pres-create-screen`, `test-create-domain`, `test-create-data`, `test-create-presentation`
-- `lib/platforms/android/reference/contract/builder/` (6 files): `domain.md`, `data.md`, `presentation.md`, `di.md`, `utilities.md`, `testing.md` — all reflecting real Talenta Android patterns (`BaseMvpVbActivity`, `BaseMvpPresenter`, `doOnSubscribe`/`doFinally`, `addToDisposables()`, `given/when/then` test naming)
-- `lib/platforms/android/reference/error-handling.md`: `ErrorHandler`, `ApiException`, `ErrorInterceptor` — platform-specific, not a contract file
-- `lib/platforms/android/reference/network.md`: Retrofit/OkHttp setup, `AuthInterceptor` — platform-specific
-- `lib/platforms/android/reference/project.md`: module structure, naming conventions, build commands
-- `lib/platforms/android/CLAUDE-template.md` and `settings-template.jsonc`
+- `lib/platforms/android-talenta/`: new Android platform for Kotlin/MVP (Dagger 2 + RxJava 3) projects
+- `lib/platforms/android-talenta/skills/contract/` (12 skills): full builder persona contract skill set — `domain-create-entity`, `domain-create-repository`, `domain-create-usecase`, `domain-create-service`, `data-create-datasource`, `data-create-mapper`, `data-create-repository-impl`, `pres-create-stateholder`, `pres-create-screen`, `test-create-domain`, `test-create-data`, `test-create-presentation`
+- `lib/platforms/android-talenta/reference/contract/builder/` (6 files): `domain.md`, `data.md`, `presentation.md`, `di.md`, `utilities.md`, `testing.md` — all reflecting real Talenta Android patterns (`BaseMvpVbActivity`, `BaseMvpPresenter`, `doOnSubscribe`/`doFinally`, `addToDisposables()`, `given/when/then` test naming)
+- `lib/platforms/android-talenta/reference/error-handling.md`: `ErrorHandler`, `ApiException`, `ErrorInterceptor` — platform-specific, not a contract file
+- `lib/platforms/android-talenta/reference/network.md`: Retrofit/OkHttp setup, `AuthInterceptor` — platform-specific
+- `lib/platforms/android-talenta/reference/project.md`: module structure, naming conventions, build commands
+- `lib/platforms/android-talenta/CLAUDE-template.md` and `settings-template.jsonc`
 
 ### Changed
 - `scripts/setup-symlinks.sh`: added `android` to supported platforms list and usage/validation message
@@ -654,7 +670,7 @@ mv issue-worker.md          tracker-issue-worker.md
 ## [3.53.0] — 2026-05-03
 
 ### Added
-- `lib/platforms/flutter/reference/index.md`: new index listing all 6 contract reference files with sections and Grep pattern — enables workers to satisfy the P6 Grep-first rule when uncertain which file covers a topic
+- `lib/platforms/flutter-mobile-talenta/reference/index.md`: new index listing all 6 contract reference files with sections and Grep pattern — enables workers to satisfy the P6 Grep-first rule when uncertain which file covers a topic
 - `agent-audit-worker`: Check 7 — platform skill parity via Glob comparison; audits a platform's `skills/contract/` dir against sibling platforms and reports gaps based on actual file presence, not assumed names
 
 ### Changed
@@ -665,7 +681,7 @@ mv issue-worker.md          tracker-issue-worker.md
 - `agent-audit-worker`: hard constraint added at top of Checks section — every "missing" finding must be grounded in a Glob result, never inferred from framework or domain knowledge
 
 ### Fixed
-- `lib/platforms/flutter/skills/contract/` (all 9 skills): removed Fix G `Rules:` prose blocks; non-obvious constraints inlined as code comments in templates; reference docs carry the full specification
+- `lib/platforms/flutter-mobile-talenta/skills/contract/` (all 9 skills): removed Fix G `Rules:` prose blocks; non-obvious constraints inlined as code comments in templates; reference docs carry the full specification
 - `data-create-repository-impl/SKILL.md`: corrected `reference/contract/builder/error-handling.md` → `.claude/reference/contract/builder/error-handling.md` (missing `.claude/` prefix)
 - `arch-review-orchestrator`: Intent Routing table phase labels aligned with three-phase body structure — audit/review now explicitly show they skip Phase 2 and go to Phase 3 (report)
 
@@ -1096,7 +1112,7 @@ mv issue-worker.md          tracker-issue-worker.md
 ## [3.33.0] — 2026-04-22
 
 ### Added
-- `lib/platforms/ios/packages/ios.pkg`: iOS platform package — declares `test-orchestrator` and `pr-review-worker` so package-aware sync manages them correctly
+- `lib/platforms/ios-talenta/packages/ios.pkg`: iOS platform package — declares `test-orchestrator` and `pr-review-worker` so package-aware sync manages them correctly
 - `scripts/setup-packages.sh`: writes `.claude/config/installed-packages` lockfile after installation — records platform and selected package names for use by sync
 
 ### Changed
@@ -1458,7 +1474,7 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 ## [3.12.0] — 2026-04-16
 
 ### Added
-- `lib/platforms/flutter/`: full Flutter platform implementation — Clean Architecture + BLoC
+- `lib/platforms/flutter-mobile-talenta/`: full Flutter platform implementation — Clean Architecture + BLoC
   - `reference/`: 8 project-agnostic knowledge docs (domain, data, presentation, di, testing, navigation, project, error-handling)
   - `skills/`: 19 platform skills for core workers (domain, data, presentation, test layers)
   - `CLAUDE-template.md`: downstream CLAUDE.md snippet
@@ -1510,12 +1526,12 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 ### Changed
 - `lib/core/hooks/require-feature-orchestrator.sh`: reads feature directories from `.claude/feature-dirs` instead of parsing `## Feature Directories` fenced block in `CLAUDE.md` — simpler grep, no Python regex on markdown
 - `lib/core/hooks/require-feature-orchestrator.sh`: added session boundary detection (session_id tracking) previously only present in the iOS hook — new sessions now wipe stale delegation entries immediately rather than waiting for the 4h TTL
-- `lib/platforms/ios/hooks/require-feature-orchestrator.sh`: removed — now identical to core hook after session boundary and `delegation.json` changes; iOS projects fall through to core hook automatically
+- `lib/platforms/ios-talenta/hooks/require-feature-orchestrator.sh`: removed — now identical to core hook after session boundary and `delegation.json` changes; iOS projects fall through to core hook automatically
 - `agentic-state/.delegated-<branch-slug>` files replaced by a single `agentic-state/delegation.json` — branch-slug → Unix timestamp entries, atomic writes via `os.replace`; session boundary cleanup clears the JSON object instead of globbing flag files
 - Block message in `require-feature-orchestrator.sh` restructured to present numbered choices `[1] Delegate` / `[2] Proceed inline` so Claude surfaces a menu to the user instead of a free-form ask
 - `scripts/setup-symlinks.sh`, `scripts/setup-packages.sh`: `settings.local.json` now patched (add `require-feature-orchestrator` hook) when file already exists, instead of skipping — mirrors `sync.sh` behaviour
 - `scripts/setup-symlinks.sh`, `scripts/setup-packages.sh`, `scripts/sync.sh`, `scripts/local-sync.sh`: create/migrate `.claude/feature-dirs` during setup; migrate from `## Feature Directories` in `CLAUDE.md` if present, else write platform default (`src` for web, `[AppName]/*` for iOS)
-- `lib/platforms/web/CLAUDE-template.md`, `lib/platforms/ios/CLAUDE-template.md`: `## Feature Directories` section removed — configuration now lives in `.claude/feature-dirs`
+- `lib/platforms/web/CLAUDE-template.md`, `lib/platforms/ios-talenta/CLAUDE-template.md`: `## Feature Directories` section removed — configuration now lives in `.claude/feature-dirs`
 - `lib/core/skills/doctor/SKILL.md`: added check 6 — validates `.claude/feature-dirs` exists, has at least one active fragment, and has no unfilled `[AppName]` placeholder
 
 ### Fixed
@@ -1529,7 +1545,7 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 ### Changed
 - Consolidated agentic runtime state into `.claude/agentic-state/` — delegation flags (`.delegated-*`), session file (`.session-id`), and run artifacts (`runs/`) moved from `.claude/` root into a single subdirectory
 - All scripts (`setup-packages.sh`, `setup-symlinks.sh`, `sync.sh`, `local-sync.sh`): mkdir now creates `agentic-state/runs/`; gitignore patch now adds `.claude/agentic-state/` as a single entry
-- `lib/core/hooks/require-feature-orchestrator.sh`, `lib/platforms/ios/hooks/require-feature-orchestrator.sh`: updated FLAG_FILE and SESSION_FILE paths to `agentic-state/`
+- `lib/core/hooks/require-feature-orchestrator.sh`, `lib/platforms/ios-talenta/hooks/require-feature-orchestrator.sh`: updated FLAG_FILE and SESSION_FILE paths to `agentic-state/`
 - `lib/core/agents/builder/feature-orchestrator.md`: delegation flag and run state paths updated to `agentic-state/`
 - `lib/core/agents/builder/presentation-worker.md`: stateholder contract path updated to `agentic-state/runs/`
 - `lib/core/skills/clear-runs/SKILL.md`: all paths updated to `agentic-state/runs/`
@@ -1562,7 +1578,7 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 
 ### Added
 - `lib/core/skills/clear-runs/`: new core skill for clearing `.claude/runs/` artifacts
-- `lib/platforms/ios/hooks/`: platform-specific iOS delegation guard hook
+- `lib/platforms/ios-talenta/hooks/`: platform-specific iOS delegation guard hook
 
 ### Changed
 - `feature-orchestrator`: added Search Protocol — forbids direct `Read` on production source files; orchestrator must remain a pure coordinator and delegate all source investigation to workers
@@ -1616,7 +1632,7 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 ## [3.4.5] — 2026-04-13
 
 ### Changed
-- `lib/platforms/ios/CLAUDE-template.md`: add same delegation guard rule as web — if hook blocks an edit, ask the user inline vs `feature-orchestrator`, never resolve autonomously
+- `lib/platforms/ios-talenta/CLAUDE-template.md`: add same delegation guard rule as web — if hook blocks an edit, ask the user inline vs `feature-orchestrator`, never resolve autonomously
 
 ---
 
@@ -1652,8 +1668,8 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 
 ### Added
 - `lib/core/hooks/require-feature-orchestrator.sh`: new `PreToolUse` hook — blocks inline `Edit`/`Write` on `feat/*` branches when the target file is in a feature directory and no branch-scoped delegation flag exists
-- `lib/platforms/ios/settings-template.json`: new file wiring the delegation guard hook for iOS projects
-- `lib/platforms/web/CLAUDE-template.md`, `lib/platforms/ios/CLAUDE-template.md`: `## Feature Directories` section — hook reads path fragments from here; iOS template uses `[AppName]` placeholder
+- `lib/platforms/ios-talenta/settings-template.json`: new file wiring the delegation guard hook for iOS projects
+- `lib/platforms/web/CLAUDE-template.md`, `lib/platforms/ios-talenta/CLAUDE-template.md`: `## Feature Directories` section — hook reads path fragments from here; iOS template uses `[AppName]` placeholder
 - `setup-packages.sh`, `setup-symlinks.sh`: `--app-name=` flag + interactive prompt to replace `[AppName]` in CLAUDE.md at setup time
 - `setup-symlinks.sh`: core hooks (`lib/core/hooks/`) now linked alongside platform hooks
 - `README.md`: `.gitignore` recommendations section — documents `.claude/.delegated-*` pattern
@@ -1712,8 +1728,8 @@ Zero `§` section references remain anywhere in `lib/` — all 29 web skills now
 ## [3.0.1] — 2026-04-12
 
 ### Fixed
-- `lib/platforms/ios/skills/test-fix/` — stale reference `testing-patterns.md` → `testing-patterns-advanced.md`
-- `lib/platforms/ios/skills/migrate-usecase/` — stale reference `domain-layer.md` → `domain.md`
+- `lib/platforms/ios-talenta/skills/test-fix/` — stale reference `testing-patterns.md` → `testing-patterns-advanced.md`
+- `lib/platforms/ios-talenta/skills/migrate-usecase/` — stale reference `domain-layer.md` → `domain.md`
 
 ---
 

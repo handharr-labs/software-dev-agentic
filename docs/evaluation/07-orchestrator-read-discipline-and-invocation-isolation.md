@@ -57,7 +57,7 @@ If you find yourself about to `Read` a `.swift`, `.ts`, `.kt`, or other source f
 Pass the intent to the appropriate worker instead.
 ```
 
-### Updated: `lib/platforms/ios/CLAUDE-template.md` and `lib/platforms/web/CLAUDE-template.md`
+### Updated: `lib/platforms/ios-talenta/CLAUDE-template.md` and `lib/platforms/web/CLAUDE-template.md`
 
 Delegation rule updated to include `isolation: worktree`:
 

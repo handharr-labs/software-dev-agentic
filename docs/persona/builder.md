@@ -223,7 +223,7 @@ These skills cover **artifact creation only**. Workers handle modifications to e
 
 ## Agent Count Snapshot
 
-| Category | `lib/core/agents/` | `lib/platforms/ios/agents/` | `lib/platforms/web/agents/` |
+| Category | `lib/core/agents/` | `lib/platforms/ios-talenta/agents/` | `lib/platforms/web/agents/` |
 |---|---|---|---|
 | Orchestrators | 3 in `builder/` + 1 in `detective/` | 1 (`test-orchestrator`) | — |
 | Workers | 3 in `builder/` + 2 in `detective/` + 2 in `tracker/` + 1 in `auditor/` + 1 in `installer/` + 1 flat (`perf-worker`) | 1 (`pr-review-worker`) | — |
@@ -276,7 +276,7 @@ Platform skill counts: Flutter 18 · Android 17 · flutter-qontak 0 (uses flutte
 ```
 pr-review-worker       (iOS platform worker)   ← iOS-specific workflow
   └─ review-pr         (iOS platform skill)    ← Swift/UIKit conventions
-       lib/platforms/ios/skills/review-pr/SKILL.md
+       lib/platforms/ios-talenta/skills/review-pr/SKILL.md
 ```
 
 ### Other persona flows
@@ -305,10 +305,10 @@ perf-worker           ← scores session D1–D7
 
 | Project | Stack | Status |
 |---|---|---|
-| talenta-ios | Swift/UIKit | `lib/platforms/ios/` — 18 contract skills, 4 platform-only skills, 11 reference docs. Submodule wiring pending. |
-| mobile-talenta (Flutter) | Dart/BLoC, get_it + injectable | `lib/platforms/flutter/` — 18 contract skills, 11 reference docs, no platform agents. |
-| talenta-mobile-android | Kotlin MVP, Dagger 2, RxJava 3 | `lib/platforms/android/` — 17 contract skills, 11 reference docs. Wire submodule with `setup-symlinks.sh --platform=android`. |
-| mobile-qontak-chat | Flutter/BLoC, modular, get_it + injectable | `lib/platforms/flutter-qontak/` — 16 reference docs (modular-structure, module-communication, flavor extras). No separate contract skills — shares flutter platform skills. |
+| talenta-ios | Swift/UIKit | `lib/platforms/ios-talenta/` — 18 contract skills, 4 platform-only skills, 11 reference docs. Submodule wiring pending. |
+| mobile-talenta (Flutter) | Dart/BLoC, get_it + injectable | `lib/platforms/flutter-mobile-talenta/` — 18 contract skills, 11 reference docs, no platform agents. |
+| talenta-mobile-android | Kotlin MVP, Dagger 2, RxJava 3 | `lib/platforms/android-talenta/` — 17 contract skills, 11 reference docs. Wire submodule with `setup-symlinks.sh --platform=android-talenta`. |
+| mobile-qontak-chat | Flutter/BLoC, modular, get_it + injectable | `lib/platforms/flutter-qontak-chat/` — 16 reference docs (modular-structure, module-communication, flavor extras). No separate contract skills — shares flutter platform skills. |
 | wehire, xpnsio | Next.js 15 | `lib/platforms/web/` — 18 contract skills. Active — consuming submodule via web platform. |
 
 > **Breaking:** downstream projects must re-run setup scripts after updating the submodule pointer.
@@ -319,11 +319,11 @@ perf-worker           ← scores session D1–D7
 
 | # | Topic | Status |
 |---|---|---|
-| 1 | Migration: talenta-ios | Agents/skills/reference content copied to `lib/platforms/ios/`. Full submodule wiring = separate session. |
+| 1 | Migration: talenta-ios | Agents/skills/reference content copied to `lib/platforms/ios-talenta/`. Full submodule wiring = separate session. |
 | 2 | Versioning | ✅ Resolved — semantic versioning established: v2.0.0 tagged. |
 | 3 | Naming alignment | Flutter/Android adopt `-orchestrator` / `-worker` suffix — required before migration |
 | 4 | Reference doc splitting | Structural split of `lib/platforms/web/reference/code-architecture/data.md` and `lib/platforms/web/reference/utilities.md` by operation type |
-| 5 | Flutter implementation | ✅ Resolved — `lib/platforms/flutter/` has 18 contract skills + 11 reference docs. No platform agents yet (none needed). |
+| 5 | Flutter implementation | ✅ Resolved — `lib/platforms/flutter-mobile-talenta/` has 18 contract skills + 11 reference docs. No platform agents yet (none needed). |
 
 ---
 

@@ -218,7 +218,7 @@ software-dev-agentic enforces its own conventions through an automated internal 
 
 ```bash
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios
+software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
 ```
 
 Idempotent — re-running never overwrites existing files (`link_if_absent` guard). All personas are installed; no menu or selection needed.
@@ -254,7 +254,7 @@ software-dev-agentic/scripts/sync.sh --platform=<platform>
 
 ## Repository Structure
 
-**Per-Project Layout (after `setup-symlinks.sh --platform=ios`)**
+**Per-Project Layout (after `setup-symlinks.sh --platform=ios-talenta`)**
 
 ```
 /

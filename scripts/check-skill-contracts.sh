@@ -5,7 +5,7 @@
 #
 # Usage:
 #   software-dev-agentic/scripts/check-skill-contracts.sh
-#   software-dev-agentic/scripts/check-skill-contracts.sh --platform=flutter
+#   software-dev-agentic/scripts/check-skill-contracts.sh --platform=flutter-mobile-talenta
 
 set -euo pipefail
 
