@@ -4,16 +4,16 @@ description: Execute an approved feature plan across Clean Architecture layers â
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
 related_skills:
-  - domain-create-entity
-  - domain-create-repository
-  - domain-create-usecase
-  - domain-create-service
-  - data-create-mapper
-  - data-create-datasource
-  - data-create-repository-impl
-  - pres-create-stateholder
-  - pres-create-screen
-  - pres-create-component
+  - builder-domain-create-entity
+  - builder-domain-create-repository
+  - builder-domain-create-usecase
+  - builder-domain-create-service
+  - builder-data-create-mapper
+  - builder-data-create-datasource
+  - builder-data-create-repository-impl
+  - builder-pres-create-stateholder
+  - builder-pres-create-screen
+  - builder-pres-create-component
 ---
 
 You are the feature executor. You read an approved plan and build every artifact in the correct layer order by calling skills directly. You never spawn sub-agents â€” skills are your hands.

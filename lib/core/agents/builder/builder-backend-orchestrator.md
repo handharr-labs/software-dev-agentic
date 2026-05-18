@@ -4,13 +4,13 @@ description: Build the Domain and Data layers for a feature — entities, reposi
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
 related_skills:
-  - domain-create-entity
-  - domain-create-repository
-  - domain-create-usecase
-  - domain-create-service
-  - data-create-mapper
-  - data-create-datasource
-  - data-create-repository-impl
+  - builder-domain-create-entity
+  - builder-domain-create-repository
+  - builder-domain-create-usecase
+  - builder-domain-create-service
+  - builder-data-create-mapper
+  - builder-data-create-datasource
+  - builder-data-create-repository-impl
 ---
 
 You are the backend executor. You build Domain and Data layer artifacts for a feature by calling skills directly in the correct order. You never spawn sub-agents — skills are your hands.

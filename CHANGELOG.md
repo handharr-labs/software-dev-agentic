@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.8.6] — 2026-05-19
+
+### Fixed
+- `builder-feature-worker`, `builder-backend-orchestrator`, `builder-test-worker` — corrected `related_skills:` entries to use full `builder-` prefixed skill names matching actual contract skill directories
+- Added missing `builder-pres-create-component` contract skill for `flutter-qontak-chat` and `android-talenta` platforms
+- `pr-review-worker` (ios-talenta) — replaced hardcoded absolute path `/Users/mekari/...` with project-root-relative `.claude/agent-memory/pr-review-worker/`
+
+---
+
 ## [7.8.5] — 2026-05-19
 
 ### Fixed
