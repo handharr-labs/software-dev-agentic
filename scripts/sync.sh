@@ -9,6 +9,7 @@
 #   software-dev-agentic/scripts/sync.sh --platform=android-talenta
 #   software-dev-agentic/scripts/sync.sh --platform=flutter-mobile-talenta
 #   software-dev-agentic/scripts/sync.sh --platform=flutter-qontak-chat
+#   software-dev-agentic/scripts/sync.sh --platform=flutter-qontak-crm
 
 set -euo pipefail
 
@@ -34,6 +35,7 @@ if [ -z "$PLATFORM" ]; then
       *platforms/android-talenta*)        PLATFORM="android-talenta" ;;
       *platforms/web*)                    PLATFORM="web" ;;
       *platforms/flutter-qontak-chat*)    PLATFORM="flutter-qontak-chat" ;;
+      *platforms/flutter-qontak-crm*)     PLATFORM="flutter-qontak-crm" ;;
       *platforms/flutter-mobile-talenta*) PLATFORM="flutter-mobile-talenta" ;;
     esac
   fi
@@ -41,7 +43,7 @@ fi
 
 if [ -z "$PLATFORM" ]; then
   echo "Error: could not detect platform. Pass it explicitly:"
-  echo "  $0 --platform=web|ios-talenta|android-talenta|flutter-mobile-talenta|flutter-qontak-chat"
+  echo "  $0 --platform=web|ios-talenta|android-talenta|flutter-mobile-talenta|flutter-qontak-chat|flutter-qontak-crm"
   exit 1
 fi
 

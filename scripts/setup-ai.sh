@@ -31,7 +31,7 @@ if [ -z "$AI" ]; then
 fi
 
 if [ -z "$PLATFORM" ]; then
-  echo "Error: --platform is required. Options: ios, web, flutter, android"
+  echo "Error: --platform is required. Options: ios-talenta, android-talenta, web, flutter-mobile-talenta, flutter-qontak-chat, flutter-qontak-crm"
   exit 1
 fi
 

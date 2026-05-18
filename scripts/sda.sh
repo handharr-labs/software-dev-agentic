@@ -3,7 +3,7 @@
 #
 # Usage:
 #   scripts/sda.sh                               # interactive menu
-#   scripts/sda.sh setup --platform=ios-talenta          # first-time Claude Code wiring
+#   scripts/sda.sh setup --platform=ios-talenta           # first-time Claude Code wiring
 #   scripts/sda.sh sync                          # pull latest from main
 #   scripts/sda.sh add-ai --ai=copilot --platform=ios-talenta
 #   scripts/sda.sh remove-ai --ai=gemini
@@ -41,20 +41,24 @@ ask_ai() {
 
 ask_platform() {
   echo "  Platform:"
-  echo "    1) ios"
-  echo "    2) web"
-  echo "    3) flutter"
-  echo "    4) flutter-qontak"
-  echo "    5) other"
+  echo "    1) ios-talenta"
+  echo "    2) android-talenta"
+  echo "    3) web"
+  echo "    4) flutter-mobile-talenta"
+  echo "    5) flutter-qontak-chat"
+  echo "    6) flutter-qontak-crm"
+  echo "    7) other"
   echo ""
   printf "  Choice: "
   read -r choice
   case "$choice" in
-    1) PLATFORM="ios" ;;
-    2) PLATFORM="web" ;;
-    3) PLATFORM="flutter" ;;
-    4) PLATFORM="flutter-qontak" ;;
-    5)
+    1) PLATFORM="ios-talenta" ;;
+    2) PLATFORM="android-talenta" ;;
+    3) PLATFORM="web" ;;
+    4) PLATFORM="flutter-mobile-talenta" ;;
+    5) PLATFORM="flutter-qontak-chat" ;;
+    6) PLATFORM="flutter-qontak-crm" ;;
+    7)
       printf "  Platform name: "
       read -r PLATFORM
       ;;
