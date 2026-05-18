@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.8.5] — 2026-05-19
+
+### Fixed
+- `builder-pres-planner` Step 0 now conditionally loads `ui-theory.md` and `navigation-impl.md` only when scope includes `screen`, `component`, or `navigator` — stateholder-only runs no longer pull in UI reference files
+
+---
+
 ## [7.8.4] — 2026-05-18
 
 ### Fixed
