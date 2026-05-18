@@ -7,6 +7,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.0.0] — 2026-05-18
+
+### Changed
+- Reference docs restructured: theory and impl files co-located per platform as `<topic>-theory.md` / `<topic>-impl.md` under `lib/platforms/<platform>/reference/builder/`
+- `lib/core/reference/builder/` eliminated — theory content duplicated into each platform's `reference/builder/` directory (accepted tradeoff for single base path)
+- All `reference/contract/builder/<topic>.md` paths renamed to `reference/builder/<topic>-impl.md` across all agents, skills, and templates
+- Setup script: removed core reference linking step (no longer a separate source)
+- Principles docs updated: Section 4 rewritten, all reference path examples updated
+- Deck (`docs/deck/agentic-deck.html`): MCP added as 4th building block on Anatomy slide; new Foundation MCP slide (s11); Collaboration, Distribution, Expansion slides added (s12–s14); official Claude docs definitions added to all four anatomy cards
+
+### Removed
+- `lib/core/reference/builder/` — 10 theory files (content moved to each platform's `reference/builder/<topic>-theory.md`)
+- `lib/platforms/*/reference/contract/` — 40 impl files across iOS, Flutter, Web, Android (renamed to `reference/builder/<topic>-impl.md`)
+
+### Migration
+Downstream projects must re-run `setup-symlinks.sh` to get the new symlink layout. Agent and skill files that hardcode old paths (`reference/builder/<topic>.md` or `reference/contract/builder/<topic>.md`) must be updated to the new `-theory.md` / `-impl.md` suffixes.
+
+---
+
 ## [6.4.4] — 2026-05-16
 
 ### Changed
