@@ -15,10 +15,11 @@ Forbidden: use case interfaces, repository interfaces, DTOs, mappers, datasource
 
 ## Screen <!-- 15 -->
 
-A **Screen** is a `Widget` (typically `StatelessWidget`) wrapped with `BlocProvider` that binds to a single `Bloc`/`Cubit`. It observes state via `BlocBuilder`/`BlocListener` and dispatches events — it contains no business logic.
+A **Screen** is a `Widget` (`StatelessWidget` or `StatefulWidget`) bound to a single `Bloc`/`Cubit`. It observes state via `BlocBuilder`/`BlocListener` and dispatches events — it contains no business logic.
 
 **Invariants:**
-- Wrapped with `BlocProvider` that resolves the Bloc from `GetIt` — never `MyBloc()` inline
+- Wrapped with `BlocProvider` that resolves the Bloc from `GetIt` or a feature-scoped DI accessor (e.g. `[feature]Dependency<MyBloc>()`) — never `MyBloc()` inline
+- `StatefulWidget` is used when screen lifecycle (`initState`, `dispose`) is needed — e.g. to trigger the initial Bloc event on mount
 - Observes every `State` variant via `BlocBuilder` — no state variant goes unhandled
 - Sends events via `context.read<MyBloc>().add(...)` for every user interaction — never mutates state directly
 - Contains no business logic — `if`/`switch` only decides what to render
@@ -63,7 +64,7 @@ A **Navigator** is GoRouter's `AppRouter` singleton that owns all navigation log
 **Invariants:**
 - Bloc annotated `@injectable` (or `@lazySingleton` for shared state) — scope matches feature lifetime
 - Use cases injected into the Bloc constructor — never instantiated inside the Bloc
-- `BlocProvider` in Screen resolves via `getIt<MyBloc>()` — never constructed inline
+- `BlocProvider` in Screen resolves via `getIt<MyBloc>()` or a feature-scoped accessor `[feature]Dependency<MyBloc>()` — never constructed inline
 
 **When to create:** After the Screen and Bloc exist. Required before the route is reachable.
 

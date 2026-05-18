@@ -119,9 +119,30 @@ protocol LiveAttendanceRepository {
 
 ## Use Cases <!-- 333 -->
 
-### Modern UseCase Protocol (Simplified)
+### Legacy UseCase Pattern (Current — In Use)
 
-Talenta iOS V2 uses **ONE** clean protocol with nested Params:
+The codebase uses a 3-parameter base class with separate query params, path params, and a completion callback:
+
+```swift
+// Shared/Domain/UseCase/UseCase.swift
+typealias PostSubmitCICOUseCaseType = UseCase<PostSubmitCICOQueryParam, LiveAttendanceCICOPathParam, RequestLiveAttendanceModel>
+
+// Usage in ViewModel:
+useCase.call(
+    queryParams: queryParam,
+    pathParams: pathParam,
+    expected: { result in /* handle Result<Model, BaseErrorModel> */ }
+)
+```
+
+The use case type alias pattern: `typealias [Feature]UseCaseType = UseCase<QueryParam, PathParam, ResultModel>`.
+`call(queryParams:pathParams:expected:)` is the call site signature.
+
+---
+
+### Modern UseCase Protocol (Target — V2)
+
+Talenta iOS V2 target uses **ONE** clean protocol with nested Params (not yet adopted codebase-wide):
 
 ```swift
 // Shared/Domain/UseCaseType.swift

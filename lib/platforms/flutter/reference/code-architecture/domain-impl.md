@@ -18,7 +18,7 @@ Domain is the innermost layer — it imports nothing from outer layers.
 
 ## Entities <!-- 30 -->
 
-Immutable business objects with `@freezed`. **No `fromJson` — ever.**
+Immutable business objects. `@freezed` is **recommended** for `copyWith` and pattern matching, but plain Dart classes are acceptable when the entity is simple and not pattern-matched in the UI. **No `fromJson` — ever.**
 
 ```dart
 // domain/entities/employee_entity.dart
@@ -38,7 +38,7 @@ class EmployeeEntity with _$EmployeeEntity {
 ```
 
 **Rules:**
-- `@freezed` for immutability + `copyWith`
+- `@freezed` recommended for immutability + `copyWith`; plain Dart class acceptable for simple entities
 - Only `.freezed.dart` part — never `.g.dart`
 - No `@JsonKey` annotations
 - No `fromJson` / `toJson` factories

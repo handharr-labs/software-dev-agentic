@@ -2,7 +2,7 @@
 
 > Concepts and invariants: `reference/code-architecture/di-theory.md`. This file covers Swift syntax and iOS-specific patterns.
 
-Talenta iOS uses **Manual DI Container + Constructor Injection** pattern — lightweight, explicit, and framework-free.
+Talenta iOS uses **Constructor Injection with defaults** as the current pattern — dependencies are injected via `init` parameters that default to shared singletons. The **Manual DI Container** pattern described below is the target architecture and is not yet implemented in the codebase.
 
 ## Architecture Overview <!-- 25 -->
 
@@ -273,9 +273,9 @@ extension CICOCoordinator: CICOLocationNavigator {
 }
 ```
 
-## Constructor Injection (Fallback Pattern) <!-- 25 -->
+## Constructor Injection (Current Pattern) <!-- 25 -->
 
-For classes **not** managed by DI Container (legacy code, simple utilities), use constructor injection with defaults:
+The actual pattern in use throughout the codebase — Coordinators instantiate ViewModels directly via `init`, and dependencies default to shared singletons:
 
 ```swift
 class CICOLocationViewModel: BaseViewModelV2<...> {
@@ -295,8 +295,8 @@ class CICOLocationViewModel: BaseViewModelV2<...> {
 ```
 
 **When to use:**
-- ✅ **DI Container Factory:** New code, complex dependency graphs
-- ✅ **Constructor Injection with Defaults:** Legacy code, simple utilities, backward compatibility
+- ✅ **Constructor Injection with Defaults:** Current codebase pattern — use this for all new code until DIContainer is introduced
+- ✅ **DI Container Factory:** Target pattern for new modules once DIContainer is established
 
 ## Testing with DI Container <!-- 56 -->
 

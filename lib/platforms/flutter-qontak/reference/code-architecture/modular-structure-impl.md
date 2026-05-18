@@ -3,6 +3,8 @@
 > Project layout and module types: `reference/project.md`.
 > This file covers Dart code patterns for creating and wiring modules.
 
+> **Note on routing:** The `mobile-qontak-chat` codebase uses a **centralized route manager** (`lib/src/configs/route_manager.dart`) rather than per-module `BaseModule.routes()`. `BlocProvider` wiring lives in `route_manager.dart`, not in individual module configs. The `BaseModule` pattern below is the target architecture for new modules.
+
 ---
 
 ## BaseModule Contract <!-- 24 -->

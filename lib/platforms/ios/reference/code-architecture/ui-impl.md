@@ -58,14 +58,14 @@ A **Coordinator** (inheriting `BaseCoordinator<T>`) owns all navigation logic fo
 
 ## DI Wiring <!-- 13 -->
 
-**DI wiring** registers the ViewModel and its dependencies in the feature's `DIContainer`.
+**DI wiring** wires the ViewModel's dependencies at the call site in the Coordinator.
 
 **Invariants:**
-- ViewModel registered as a factory method on the feature `DIContainer` (e.g., `makeDashboardViewModel(navigator:)`)
-- Use cases injected into the ViewModel factory — never instantiated inside the ViewModel
-- DI factory method matches the ViewModel protocol exactly
+- ViewModel instantiated directly by the Coordinator via constructor injection — `let viewModel = MyViewModel(navigator: self, useCase: ...)` 
+- Dependencies default to shared singletons in the `init` signature — enabling test overrides without a container
+- Use cases and services never instantiated inside the ViewModel body — always injected via `init`
 
-**When to create:** After the ViewController and ViewModel protocol exist. Required before the feature is navigable via its Coordinator.
+**When to create:** After the ViewController and ViewModel exist. The Coordinator owns construction. See `di-impl.md` for the target DIContainer pattern.
 
 ---
 
@@ -83,7 +83,7 @@ The `ViewModel` protocol and its concrete implementation must exist before any U
 
 - ViewController never mutates state directly — observes RxSwift streams only
 - ViewController never calls use cases directly — all interactions go through the ViewModel
-- ViewModel instantiated via DI Container factory — never `MyViewModel()` inline
+- ViewModel instantiated by the Coordinator via constructor injection — never `MyViewModel()` with no dependencies
 - Navigation delegated to Coordinator — ViewController emits intent via Navigator protocol, not destination
 - No data layer knowledge — no DTOs, no datasources, no network types visible in UI files
 

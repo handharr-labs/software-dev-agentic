@@ -15,16 +15,16 @@ Forbidden: use case interfaces, repository interfaces, DTOs, mappers, datasource
 
 ## Screen <!-- 15 -->
 
-A **Screen** is a `StatelessWidget` wrapped with `BlocProvider` at the module route level. It observes state via `BlocBuilder`/`BlocListener` and dispatches events — it contains no business logic.
+A **Screen** is a `StatelessWidget` or `StatefulWidget` that observes state via `BlocBuilder`/`BlocListener` and dispatches events — it contains no business logic.
 
 **Invariants:**
-- `BlocProvider` placed at the module route entry (in `BaseModule.routes()`) — not inside the Screen widget itself
+- `BlocProvider` placed at the app-level route manager (`route_manager.dart`) — not inside the Screen widget itself and not per-module
 - Bound to exactly one `Bloc`/`Cubit` — resolved from GetIt, never `MyBloc()` inline
 - Observes every `State` variant via `BlocBuilder` — no state variant goes unhandled
 - Sends events via `context.read<MyBloc>().add(...)` — never mutates state directly
 - Contains no business logic — `if`/`switch` only decides what to render
 
-**When to create:** One Screen widget per route entry in the module. Created after the Bloc/Cubit contract exists.
+**When to create:** One Screen widget per route. Created after the Bloc/Cubit contract exists. `BlocProvider` wiring added in `route_manager.dart`.
 
 ---
 

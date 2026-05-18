@@ -79,29 +79,22 @@ same `GetIt` instance without knowing the implementation.
 
 ## Registration Order <!-- 32 -->
 
-Within each feature module, annotate classes in leaf-first order so `build_runner` generates a correct registration sequence:
+Within each feature module, register by layer from infrastructure up to presentation. The actual convention in the codebase uses `_registerData → _registerRepository → _registerDomain → _registerPresentation`:
 
 ```dart
-// 1. External dependencies (via @module) — registered in [prefix]_core
-@module abstract class NetworkModule {
-  @lazySingleton Dio get dio => ...;
-}
-
-// 2. DataSources (depend on Dio from core)
+// _registerData — DataSources and external clients
 @LazySingleton(as: InboxRemoteDataSource)
 class InboxRemoteDataSourceImpl implements InboxRemoteDataSource { ... }
 
-// 3. Repositories (depend on DataSource)
+// _registerRepository — Repositories (depend on DataSource)
 @LazySingleton(as: InboxRepository)
 class InboxRepositoryImpl implements InboxRepository { ... }
 
-// 4. Use Cases (depend on Repository)
+// _registerDomain — Use Cases (depend on Repository) + Module API impls
 @lazySingleton class GetInbox { ... }
-
-// 5. Module API impl (depends on Use Cases)
 @LazySingleton(as: InboxModuleApi) class InboxModuleApiImpl implements InboxModuleApi { ... }
 
-// 6. BLoCs (depend on Use Cases) — @injectable, not singleton
+// _registerPresentation — BLoCs (depend on Use Cases) — @injectable, not singleton
 @injectable class InboxBloc extends Bloc<InboxEvent, InboxState> { ... }
 ```
 

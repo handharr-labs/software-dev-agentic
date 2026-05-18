@@ -156,7 +156,7 @@ class TimeOffRequestPresenter @Inject constructor(
             .doFinally { view?.hideLoading() }
             .subscribe(
                 { requests -> view?.showTimeOffRequests(requests) },
-                { error -> errorHandler.handle(error) { view?.showError(it) } }
+                { error -> errorHandler.proceed(error) }
             )
             .addToDisposables()
     }
@@ -170,19 +170,19 @@ class TimeOffRequestPresenter @Inject constructor(
 Rules:
 - `@Inject constructor` — Dagger provides use cases, SchedulerTransformers, ErrorHandler
 - `doOnSubscribe { view?.showLoading() }` / `doFinally { view?.hideLoading() }` — loading state always managed this way
-- `errorHandler.handle(error) { view?.showError(it) }` — never call `view?.showError(error.message.orEmpty())` directly
+- `errorHandler.proceed(error)` — delegates error display to the ErrorHandler; never call `view?.showError(error.message.orEmpty())` directly
 - `addToDisposables()` — disposes on `detachView()`; never call `dispose()` manually
 - `view?.` guard on all view calls — view may be null after `detachView()`
 - One presenter per screen
 
 ## Activity / Fragment <!-- 56 -->
 
-Extends `BaseMvpVbActivity<Binding, Presenter>` — ViewBinding via `bindingInflater`, presenter injected via `@Inject`.
+Extends `BaseMvpVbActivity<Presenter, View, Binding>` — three type params in order: Presenter contract, View contract, ViewBinding. ViewBinding via `bindingInflater`, presenter injected via `@Inject`.
 
 ```kotlin
 // presentation/[feature]/TimeOffRequestActivity.kt
 class TimeOffRequestActivity :
-    BaseMvpVbActivity<ActivityTimeOffRequestBinding, TimeOffRequestPresenter>(),
+    BaseMvpVbActivity<TimeOffRequestPresenter, TimeOffRequestContract.View, ActivityTimeOffRequestBinding>(),
     TimeOffRequestContract.View {
 
     @Inject
@@ -224,7 +224,7 @@ class TimeOffRequestActivity :
 ```
 
 Rules:
-- Extends `BaseMvpVbActivity<Binding, Presenter>` — handles `attachView`/`detachView` lifecycle automatically
+- Extends `BaseMvpVbActivity<Presenter, View, Binding>` — type param order is `<Presenter, View, Binding>`; handles `attachView`/`detachView` lifecycle automatically
 - `@Inject override lateinit var presenter` — Dagger field injection for presenter
 - `bindingInflater` property provides the ViewBinding — no `setContentView` needed
 - Override `onViewCreated` (not `onCreate`) for setup logic
