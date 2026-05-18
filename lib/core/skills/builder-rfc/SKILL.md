@@ -151,6 +151,12 @@ Wait for the orchestrator to write `plan.md` + `context.md` and return the plan 
 
 ## Step 8 — Write RFC and Breakdown
 
+Create the output directory:
+
+```bash
+mkdir -p "$(git rev-parse --show-toplevel)/.claude/agentic-state/rfc"
+```
+
 Read `plan.md` and `context.md` from the run directory. Then spawn `builder-rfc-writer`:
 
 > **Epic key:** <epic-key>

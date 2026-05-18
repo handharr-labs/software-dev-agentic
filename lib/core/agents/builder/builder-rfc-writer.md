@@ -25,7 +25,7 @@ The calling skill passes all of the following inline:
 git rev-parse --show-toplevel
 ```
 
-Output directory `.claude/agentic-state/rfc/` is created by the setup script — do not mkdir.
+Output directory is created by the calling skill — do not mkdir.
 
 ## Step 2 — Write RFC
 

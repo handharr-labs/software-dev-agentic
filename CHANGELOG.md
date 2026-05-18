@@ -7,6 +7,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.2.3] — 2026-05-18
+
+### Changed
+- `builder-rfc` skill owns `agentic-state/rfc/` directory creation (Step 8) — removed from setup script and writer
+- `builder-rfc-writer`: output directory is guaranteed by the calling skill
+
+### Reverted
+- `setup-symlinks.sh`: removed `agentic-state/rfc/` pre-creation (not setup script's responsibility)
+
+---
+
 ## [7.2.2] — 2026-05-18
 
 ### Fixed
