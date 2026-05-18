@@ -3,7 +3,7 @@
 
 ## Delivery Mechanism
 
-> **Distribution phase:** The submodule + symlinks approach is the current, proven mechanism (iOS · Flutter · Web). A monorepo alternative — where all products and the agentic repo share a single root — is under evaluation. No decision has been made. This doc describes the current approach.
+> **Distribution phase:** The submodule + symlinks approach is the current, proven mechanism (iOS · Flutter · Android · Web). A monorepo alternative — where all products and the agentic repo share a single root — is under evaluation. No decision has been made. This doc describes the current approach.
 
 `software-dev-agentic` is consumed as a git submodule at the project root:
 
@@ -52,7 +52,7 @@ Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/orchest
 
 **Decision:** The correct platform skill files are linked at project setup time via the `--platform=` flag. There is no `.claude/platform` file — platform identity is baked into the symlinks themselves. At runtime, orchestrators also pass `platform` explicitly in every worker spawn prompt so workers can resolve skill paths without relying solely on symlink structure.
 
-**Rationale:** With workers being platform-agnostic files in `lib/core/agents/`, and skills being the platform-specific layer, setup-time symlinks wire the right skill implementations into `.claude/skills/`. Workers resolve skills via the symlinked path `.claude/skills/<name>/SKILL.md` — no runtime platform path construction needed. The runtime platform parameter (`web`/`ios`/`flutter`) is still passed in every spawn prompt for workers that need to reference platform-specific conventions, but skill execution always goes through the downstream symlink.
+**Rationale:** With workers being platform-agnostic files in `lib/core/agents/`, and skills being the platform-specific layer, setup-time symlinks wire the right skill implementations into `.claude/skills/`. Workers resolve skills via the symlinked path `.claude/skills/<name>/SKILL.md` — no runtime platform path construction needed. The runtime platform parameter (`web`/`ios`/`flutter`/`android`) is still passed in every spawn prompt for workers that need to reference platform-specific conventions, but skill execution always goes through the downstream symlink.
 
 Three-pass linking priority: `agents.local` > platform > core (first link wins)
 
