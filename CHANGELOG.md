@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.8.4] — 2026-05-18
+
+### Fixed
+- `setup-symlinks.sh` CLAUDE.md sync appended duplicate blocks on every run when the template's marker tag (e.g. `ios`) differed from the platform directory name (e.g. `ios-talenta`) — markers are now read directly from the template instead of constructed from `$PLATFORM`
+
+---
+
 ## [7.8.3] — 2026-05-18
 
 ### Fixed
