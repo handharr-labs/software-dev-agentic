@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.10.0] — 2026-05-19
+
+### Added
+- `flutter-mobile-jurnal` platform — 8 reference impl files and 18 contract skills generated from `mobile-jurnal` repo scan; covers domain, data, presentation, navigation, DI, testing, error handling, and utilities layers.
+
+---
+
 ## [7.9.2] — 2026-05-19
 
 ### Changed
