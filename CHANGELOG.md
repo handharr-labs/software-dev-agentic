@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.12.1] — 2026-05-19
+
+### Fixed
+- `sync.sh` — added `flutter-mobile-jurnal` to platform auto-detect table; updated usage comment and error message to point at `lib/platforms/` directory.
+
+---
+
 ## [7.12.0] — 2026-05-19
 
 ### Added

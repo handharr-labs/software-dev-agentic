@@ -4,12 +4,9 @@
 # Run from the project root whenever you want to adopt new agents/skills.
 #
 # Usage:
-#   software-dev-agentic/scripts/sync.sh --platform=web
-#   software-dev-agentic/scripts/sync.sh --platform=ios-talenta
-#   software-dev-agentic/scripts/sync.sh --platform=android-talenta
-#   software-dev-agentic/scripts/sync.sh --platform=flutter-mobile-talenta
-#   software-dev-agentic/scripts/sync.sh --platform=flutter-qontak-chat
-#   software-dev-agentic/scripts/sync.sh --platform=flutter-qontak-crm
+#   software-dev-agentic/scripts/sync.sh --platform=<platform>
+#
+# Available platforms: see software-dev-agentic/lib/platforms/
 
 set -euo pipefail
 
@@ -31,19 +28,20 @@ if [ -z "$PLATFORM" ]; then
   if [ -L "$SKILL_LINK" ]; then
     TARGET=$(readlink "$SKILL_LINK")
     case "$TARGET" in
-      *platforms/ios-talenta*)            PLATFORM="ios-talenta" ;;
-      *platforms/android-talenta*)        PLATFORM="android-talenta" ;;
-      *platforms/web*)                    PLATFORM="web" ;;
-      *platforms/flutter-qontak-chat*)    PLATFORM="flutter-qontak-chat" ;;
-      *platforms/flutter-qontak-crm*)     PLATFORM="flutter-qontak-crm" ;;
-      *platforms/flutter-mobile-talenta*) PLATFORM="flutter-mobile-talenta" ;;
+      *platforms/ios-talenta*)              PLATFORM="ios-talenta" ;;
+      *platforms/android-talenta*)          PLATFORM="android-talenta" ;;
+      *platforms/web*)                      PLATFORM="web" ;;
+      *platforms/flutter-qontak-chat*)      PLATFORM="flutter-qontak-chat" ;;
+      *platforms/flutter-qontak-crm*)       PLATFORM="flutter-qontak-crm" ;;
+      *platforms/flutter-mobile-talenta*)   PLATFORM="flutter-mobile-talenta" ;;
+      *platforms/flutter-mobile-jurnal*)    PLATFORM="flutter-mobile-jurnal" ;;
     esac
   fi
 fi
 
 if [ -z "$PLATFORM" ]; then
   echo "Error: could not detect platform. Pass it explicitly:"
-  echo "  $0 --platform=web|ios-talenta|android-talenta|flutter-mobile-talenta|flutter-qontak-chat|flutter-qontak-crm"
+  echo "  $0 --platform=<platform>  (see software-dev-agentic/lib/platforms/ for options)"
   exit 1
 fi
 
