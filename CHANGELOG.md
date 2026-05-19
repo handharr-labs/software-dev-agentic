@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.9.2] — 2026-05-19
+
+### Changed
+- `installer-setup` skill — platforms are now discovered dynamically via `ls software-dev-agentic/lib/platforms/` instead of being hardcoded; added `Bash` to `allowed-tools`.
+
+---
+
 ## [7.9.1] — 2026-05-19
 
 ### Changed
