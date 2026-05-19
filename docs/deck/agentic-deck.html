@@ -1222,7 +1222,7 @@ Read offset=<span class="ac">13</span> limit=<span class="ac">60</span>   <span 
   ════════════════════════════════════════════ -->
   <section class="slide" id="s10">
     <div class="label">Phase 01 — Foundation · Reference</div>
-    <h2 class="headline">Topic. Term. <em>The two levels every reference doc must have.</em></h2>
+    <h2 class="headline">Topic. Term. <em>Three reference types. One grep key.</em></h2>
 
     <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-bottom: 12px;">
 
@@ -1230,58 +1230,54 @@ Read offset=<span class="ac">13</span> limit=<span class="ac">60</span>   <span 
         <div class="tree" style="font-size: 12px; line-height: 1.8;">
 <span class="dm">Process</span>   <span class="dm">Implementation · Design · Requirement · …</span>
   <span class="dm">│</span>
-  <span class="ac">Topic</span>     <span class="dm">domain · data · presentation · components · …</span>
+  <span class="ac">Topic</span>     <span class="dm">domain · data · presentation · design-system · …</span>
   <span class="dm">│            one reference file per topic per platform</span>
   <span class="dm">│</span>
-  <span class="rl">Term</span>      <span class="dm">UseCase · Entity · Repository · Button · …</span>
+  <span class="rl">Term</span>      <span class="dm">UseCase · Entity · Repository · MpButton · …</span>
   <span class="dm">│            one ## heading per term, same name everywhere</span>
   <span class="dm">│</span>
-  ├── <span class="ac">Core definition</span>    <span class="dm">what it IS · platform-agnostic</span>
-  └── <span class="ac">Platform impl</span>      <span class="dm">how to build it in this language</span></div>
+  ├── <span class="ac">-theory.md</span>   <span class="dm">what it IS · platform-agnostic</span>
+  ├── <span class="ac">-impl.md</span>     <span class="dm">how to build it in this language</span>
+  └── <span class="ac">-catalog.md</span>  <span class="dm">queryable symbol inventory (### per entry)</span></div>
 
         <div class="cache-box stable" style="font-size: 12.5px;">
           <div class="cache-label">The Term is the grep key</div>
           One Term = one canonical name = one <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">##</code> heading, everywhere.<br><br>
-          If iOS uses <code style="font-family:var(--mono);font-size:11px;">## Use Case Protocol</code> instead of <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">## UseCase</code>,
-          the grep misses — agent gets incomplete knowledge.
-          Platform dialect belongs in the body, never the heading.
+          Catalog entries use <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">###</code> per symbol — agents grep the symbol name directly, read 8 lines. No full-file load, ever.
         </div>
       </div>
 
       <div class="code-panel">
-        <div class="code-panel-header neutral">Core definition vs Platform implementation</div>
-        <pre style="font-size: 11.5px;"><span class="cm">lib/core/reference/code-architecture/domain-theory.md</span>
-<span class="dm">────────────────── answers: WHAT and WHY ──────────────────</span>
+        <div class="code-panel-header neutral">Three types — theory · impl · catalog</div>
+        <pre style="font-size: 11.5px;"><span class="cm">domain-theory.md  — WHAT and WHY</span>
 <span class="ac">## UseCase <!-- 28 --></span>
 A use case encapsulates one business operation.
-It depends on nothing outside the domain layer.
 Invariants: no framework imports, single execute()...
-<span class="dm">(28 lines — agent reads exactly this section)</span>
 
-<span class="ac">## Entity <!-- 15 --></span>
-An entity is a pure domain object with identity.
-No serialization logic. No platform dependencies...
-
-
-<span class="cm">lib/platforms/ios/reference/code-architecture/domain-impl.md</span>
-<span class="dm">────────────────── answers: HOW in Swift ──────────────────</span>
+<span class="cm">domain-impl.md  — HOW in Swift</span>
 <span class="ac">## UseCase <!-- 31 --></span>  <span class="dm">← same Term, Swift body</span>
 final class GetUserUseCase: UseCase {
-  struct Params { let userId: String }
   func execute(_ params: Params) async throws
-  <span class="dm">→ Swift protocol, Needle DI, async/await</span>
 
-<span class="ac">## Entity <!-- 22 --></span>  <span class="dm">← same Term, Swift body</span>
-struct UserEntity: Equatable { ... }</pre>
+
+<span class="cm">mekari-pixel-flutter-catalog.md  — WHAT EXISTS</span>
+<span class="ac">## Atoms <!-- 146 --></span>
+
+<span class="ac">### MpButton</span>
+- <span class="dm">Category:</span> <span class="ac">`atoms/button`</span>
+- <span class="dm">Description:</span> Mekari Mobile Kit Button.
+- <span class="dm">Key params:</span> `label`, `icon`, `onPressed`, `size`
+- <span class="dm">Variants:</span> `MpButton.primary()`, `.secondary()`
+
+<span class="ac">### MpTextField</span>
+- <span class="dm">Key params:</span> `controller`, `label`, `onChanged`</pre>
       </div>
 
     </div>
 
     <div class="caption">
-      Core definition answers <strong>what</strong> and <strong>why</strong> — platform-agnostic, shared by every platform.
-      Platform implementation answers <strong>how</strong> in that language.
-      A worker Greps the core file to understand the contract, then Greps the platform file to write the code.
-      One Grep each. Never the full file.
+      <strong>-theory</strong> answers what and why. <strong>-impl</strong> answers how in that language. <strong>-catalog</strong> answers what exists — a queryable inventory of available symbols.
+      Agents grep the symbol name directly in a catalog; no full-file load needed.
     </div>
   </section>
 

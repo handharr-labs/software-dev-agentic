@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.14.2] — 2026-05-20
+
+### Added
+- `-catalog.md` as a third reference type in `core-design-principles.md` — alongside `-theory.md` (what/why) and `-impl.md` (how). Catalogs are queryable symbol inventories with `## Section <!-- N -->` and `### Symbol` entries. Added to Reference vocabulary table, By Scope table, and Decision Rules.
+
+### Changed
+- `mekari-pixel-flutter-catalog.md` — added `<!-- N -->` line-count annotations to all `## Atoms/Components/Pages/Templates` headings for correct section-query compliance.
+- `agentic-deck.html` — slide 10 updated to show all three reference types (theory · impl · catalog) with a catalog example using MekariPixel.
+- `workflow-deck.html` — slide 6 headline and layout updated to three-column view showing theory, impl, and catalog side by side.
+
+---
+
 ## [7.14.1] — 2026-05-20
 
 ### Added

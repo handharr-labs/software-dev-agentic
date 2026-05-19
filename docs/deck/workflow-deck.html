@@ -599,41 +599,67 @@ hard cap: <span class="ac">3 rounds</span>  <span class="dm">→ blocked if exce
   ════════════════════════════════════════════ -->
   <section class="slide" id="s6">
     <div class="label">Knowledge Structure · Reference Docs</div>
-    <h2 class="headline">Abstract definitions. <em>Platform implementations.</em></h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+    <h2 class="headline">Theory. Impl. <em>Catalog. Three reference types.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
       <div class="code-panel">
-        <div class="code-panel-header neutral">lib/core/reference/builder/  — canonical terms</div>
-        <pre><span class="ac">domain.md</span>           <span class="dm">← what a UseCase IS</span>
-<span class="ac">data.md</span>             <span class="dm">← what a Mapper IS</span>
-<span class="ac">presentation.md</span>     <span class="dm">← what a StateHolder IS</span>
-<span class="ac">layer-contracts.md</span>  <span class="dm">← cross-layer rules</span>
-<span class="ac">di.md</span>               <span class="dm">← DI principles</span>
-<span class="ac">app-layer.md</span>        <span class="dm">← wiring conventions</span>
+        <div class="code-panel-header neutral">-theory.md — WHAT &amp; WHY</div>
+        <pre><span class="ac">domain-theory.md</span>
+<span class="dm">## UseCase <!-- 28 --></span>
+A use case encapsulates
+one business operation.
+Invariants: no framework
+imports, single execute()
 
-<span class="cm">Platform-neutral. Canonical definitions.</span>
-<span class="cm">Think: abstract class or interface.</span>
-<span class="cm">Agents load these to understand WHAT</span>
-<span class="cm">something is before building it.</span></pre>
+<span class="ac">presentation-theory.md</span>
+<span class="dm">## StateHolder <!-- 12 --></span>
+Holds UI state, emits
+events, no business logic.
+
+<span class="cm">Platform-neutral.</span>
+<span class="cm">Canonical definitions.</span></pre>
       </div>
       <div class="code-panel">
-        <div class="code-panel-header good">lib/platforms/&lt;platform&gt;/reference/contract/builder/</div>
-        <pre><span class="dm">ios/</span>
-  <span class="rl">domain.md</span>        <span class="dm">← UseCase in Swift + protocol</span>
-  <span class="rl">data.md</span>          <span class="dm">← Codable DTO, URLSession</span>
-  <span class="rl">presentation.md</span>  <span class="dm">← ViewModel, UIKit binding</span>
-  <span class="rl">app-layer.md</span>     <span class="dm">← Needle DI, Coordinator</span>
+        <div class="code-panel-header good">-impl.md — HOW</div>
+        <pre><span class="rl">flutter/domain-impl.md</span>
+<span class="dm">## UseCase <!-- 31 --></span>
+abstract class UseCase&lt;T&gt; {
+  Future&lt;T&gt; call(params);
+}
 
-<span class="dm">android/</span>
-  <span class="rl">domain.md</span>        <span class="dm">← UseCase in Kotlin</span>
-  <span class="rl">data.md</span>          <span class="dm">← Retrofit, Room</span>
-  <span class="rl">app-layer.md</span>     <span class="dm">← Dagger 2, RxJava 3</span>
+<span class="rl">ios/domain-impl.md</span>
+<span class="dm">## UseCase <!-- 29 --></span>
+protocol UseCase {
+  func execute(_ p: P)
+  async throws -&gt; Output
+}
 
-<span class="cm">Concrete implementations. One per platform.</span>
-<span class="cm">Skills Grep these — never embed content.</span></pre>
+<span class="cm">One per platform.</span>
+<span class="cm">Skills Grep these.</span></pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-header" style="background:#2a2a3a;color:#aaa;">-catalog.md — WHAT EXISTS</div>
+        <pre><span class="ac">design-system/</span>
+<span class="ac">mekari-pixel-flutter-catalog.md</span>
+
+<span class="dm">## Atoms <!-- 146 --></span>
+
+<span class="dm">### MpButton</span>
+- Category: atoms/button
+- Params: label, icon,
+  onPressed, size
+- Variants: .primary()
+  .secondary() .ghost()
+
+<span class="dm">### MpTextField</span>
+- Params: controller,
+  label, onChanged
+
+<span class="cm">Queryable symbol index.</span>
+<span class="cm">Grep ### MpButton → 8 lines.</span></pre>
       </div>
     </div>
     <div class="caption" style="margin-top: 16px;">
-      Core reference defines <strong>what</strong> and <strong>why</strong>. Platform contract defines <strong>how</strong> in that language and stack. Every skill that creates or modifies an artifact loads the platform contract — the single source of truth.
+      <strong>-theory</strong> defines what and why. <strong>-impl</strong> defines how in that language. <strong>-catalog</strong> is a queryable inventory of available symbols — agents grep the symbol name directly, read 8 lines, never load in full.
     </div>
   </section>
 

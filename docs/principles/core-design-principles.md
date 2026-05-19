@@ -300,6 +300,7 @@ Reference docs are organized around two levels:
 | Term | `UseCase` | Same `##` heading on every platform that implements it |
 | Theory file | what a UseCase IS | `lib/core/reference/code-architecture/<topic>-theory.md` |
 | Impl file | how to write a UseCase in Swift | `lib/platforms/<platform>/reference/code-architecture/<topic>-impl.md` |
+| Catalog file | queryable inventory of available symbols, components, or tokens | `lib/core/reference/<topic>/<name>-catalog.md` |
 
 Theory lives in `lib/core/` — single source of truth, platform-agnostic. Impl lives per platform. Both land at `.claude/reference/code-architecture/` downstream via symlinks. The theory file answers *what* and *why*; the impl file answers *how* in that language and syntax. A worker Greps the theory file to understand the contract, then Greps the impl file to write the correct code. One Grep each. Never the full file.
 
@@ -478,6 +479,7 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 | Scope | Location | Ships downstream? |
 |---|---|---|
 | **Core reference** | `lib/core/reference/code-architecture/` | Yes — all platforms. Contains `<topic>-theory.md` (what/why, platform-agnostic, single source of truth). |
+| **Core catalog** | `lib/core/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `section-query` or `symbol-query` these; never load in full. |
 | **Platform reference** | `lib/platforms/<platform>/reference/code-architecture/` | Yes — matching platform. Contains `<topic>-impl.md` (how in that language). |
 | **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides platform docs for project-specific conventions. |
 
@@ -553,6 +555,7 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
 | Architecture reference knowledge (any topic) | `lib/core/reference/code-architecture/<topic>-theory.md` (what/why) + `lib/platforms/<platform>/reference/code-architecture/<topic>-impl.md` (how) — both land at `.claude/reference/code-architecture/` downstream |
 | Architecture reference knowledge (platform-specific, no theory counterpart) | `lib/platforms/<platform>/reference/` (flat) |
+| Queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` — `## Section <!-- N -->` headings, `### Symbol` entries; agents section-query or grep for symbol name directly |
 
 **Planner vs Worker — when to use which:**
 
