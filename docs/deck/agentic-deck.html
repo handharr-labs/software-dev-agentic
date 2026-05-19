@@ -736,84 +736,286 @@
   ════════════════════════════════════════════ -->
   <section class="slide" id="s7">
     <div class="label">Phase 01 — Foundation · Anatomy</div>
-    <h2 class="headline">Four building blocks. <em>Each with one clear responsibility.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px;">
+    <h2 class="headline" style="margin-bottom: 16px;">Five components. <em>Each with one clear responsibility.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px;">
 
       <div class="code-panel">
-        <div class="code-panel-header good">Skill — The Entry &amp; The Hands</div>
-        <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">All user-facing work starts here. The Type T skill owns routing, context loading, spawning agents, and the convergence loop — the full session lifecycle.</p>
+        <div class="code-panel-header good">Skill — The Hands</div>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Procedural instructions executed in the caller's context. The Type W skill is the only supported entry point — it owns routing, context relay, and the convergence loop.</p>
           <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px;">Two types</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.75;">
-              <span style="color: var(--text); font-weight: 600;">W · Workflow</span> — user entry; owns the full session or does its own work<br>
-              <span style="color: var(--text); font-weight: 600;">P · Procedure</span> — called by a worker; one artifact, one platform
+            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px;">Two types</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
+              <span style="color: var(--text); font-weight: 600;">W · Workflow</span> — user entry; owns the session or does its own work<br>
+              <span style="color: var(--text); font-weight: 600;">P · Procedure</span> — agent-called; thin, non-interactive, no branching
             </div>
           </div>
-          <div class="caption" style="margin-top: 0; font-size: 12px;">A persona without a trigger skill is incomplete. Always start here.</div>
+          <div class="caption" style="margin-top: 0; font-size: 11.5px;">A persona without a W skill is incomplete.</div>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"Skills extend what Claude can do. Create a SKILL.md file with instructions, and Claude adds it to its toolkit." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--accent);">code.claude.com/docs/en/skills</span></div>
         </div>
       </div>
 
       <div class="code-panel">
         <div class="code-panel-header" style="color: var(--blue); background: rgba(121,192,255,0.06); border-color: rgba(121,192,255,0.25); border-bottom-color: var(--border);">Agent — The Brain</div>
-        <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Brain only. Assesses, reasons, and returns structured decisions. Never writes source files. Never spawns agents directly — that's the skill's job.</p>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Reasoning specialist in its own isolated context window. Assesses, decides, and returns structured output. Never spawns agents directly — that belongs to the calling skill.</p>
           <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 8px;">Three roles</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.75;">
-              <span style="color: var(--text); font-weight: 600;">Orchestrator</span> — decides what runs next; returns Decision blocks<br>
-              <span style="color: var(--text); font-weight: 600;">Planner</span> — explores one layer read-only; returns findings<br>
+            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 6px;">Three roles</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
+              <span style="color: var(--text); font-weight: 600;">Orchestrator</span> — returns Decision blocks; never writes files<br>
+              <span style="color: var(--text); font-weight: 600;">Planner</span> — read-only layer explorer; returns findings<br>
               <span style="color: var(--text); font-weight: 600;">Worker</span> — executes the plan; writes source files via skills
             </div>
           </div>
-          <div class="caption" style="margin-top: 0; font-size: 12px;">Platform-agnostic by design. Workers call skills — skills know the platform.</div>
+          <div class="caption" style="margin-top: 0; font-size: 11.5px;">Platform-agnostic. Workers call skills — skills know the platform.</div>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"Subagents are specialized AI assistants that handle specific types of tasks. Each runs in its own context window with a custom system prompt, specific tool access, and independent permissions." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--blue);">code.claude.com/docs/en/sub-agents</span></div>
         </div>
       </div>
 
       <div class="code-panel">
         <div class="code-panel-header" style="color: #D2A8FF; background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.25); border-bottom-color: var(--border);">MCP — The Reach</div>
-        <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Agents reach into external systems via MCP servers. No file reads needed — structured tool calls return Jira tickets, IDE diagnostics, Figma designs, and build results directly.</p>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Structured tool calls that reach external systems — no file reads needed. Jira tickets, IDE diagnostics, Figma designs, and build results returned directly to the agent.</p>
           <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D2A8FF; margin-bottom: 8px;">In use today</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.75;">
-              <span style="color: var(--text); font-weight: 600;">mmpa</span> — Jira · Confluence · Bitbucket<br>
+            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D2A8FF; margin-bottom: 6px;">Examples</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
+              <span style="color: var(--text); font-weight: 600;">Atlassian</span> — Jira · Confluence · Bitbucket<br>
               <span style="color: var(--text); font-weight: 600;">ide</span> — diagnostics · code execution<br>
               <span style="color: var(--text); font-weight: 600;">Figma · XcodeBuildMCP</span> — design + build
             </div>
           </div>
-          <div class="caption" style="margin-top: 0; font-size: 12px;">Skills reach into the codebase. MCP reaches into external systems. Same agent, two directions.</div>
+          <div class="caption" style="margin-top: 0; font-size: 11.5px;">Skills reach the codebase. MCP reaches everything else.</div>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"MCP servers give Claude Code access to your tools, databases, and APIs. Once connected, Claude can read and act on that system directly instead of working from what you paste." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#D2A8FF;">code.claude.com/docs/en/mcp</span></div>
         </div>
       </div>
 
       <div class="code-panel">
         <div class="code-panel-header neutral">Reference — The Knowledge</div>
-        <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Agents stay lean. Deep knowledge lives in reference docs, loaded on demand via Grep — never embedded in the agent body. Update one file, every agent that reads it gets the update.</p>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Deep knowledge loaded on demand via Grep — never embedded in agent bodies. Update one reference file, every agent that reads it gets the update automatically.</p>
           <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Three tiers</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.75;">
-              <span style="color: var(--text); font-weight: 600;">CLAUDE.md</span> — universal rules, ~1 page, always loaded<br>
+            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">Three tiers</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
+              <span style="color: var(--text); font-weight: 600;">CLAUDE.md</span> — universal rules, always loaded<br>
               <span style="color: var(--text); font-weight: 600;">Agent body</span> — decision logic for that agent only<br>
               <span style="color: var(--text); font-weight: 600;">Reference docs</span> — deep knowledge, one Grep per section
             </div>
           </div>
-          <div class="caption" style="margin-top: 0; font-size: 12px;">Core reference defines what. Platform reference defines how in that language.</div>
+          <div class="caption" style="margin-top: 0; font-size: 11.5px;">Core = what. Platform = how in that language.</div>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"CLAUDE.md files give Claude persistent instructions for a project. Keep it to facts Claude should hold in every session." No official doc for deep reference docs — this pattern extends the memory system. <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--muted);">code.claude.com/docs/en/memory</span></div>
+        </div>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel-header" style="color: #FFA657; background: rgba(255,166,87,0.06); border-color: rgba(255,166,87,0.25); border-bottom-color: var(--border);">Hooks — The Automation</div>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Shell commands that fire on lifecycle events with no model involvement. Logic that must always run — regardless of what the agent decides to do.</p>
+          <div>
+            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FFA657; margin-bottom: 6px;">Four events</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
+              <span style="color: var(--text); font-weight: 600;">PreToolUse</span> — intercept before a tool runs<br>
+              <span style="color: var(--text); font-weight: 600;">PostToolUse</span> — react after a tool completes<br>
+              <span style="color: var(--text); font-weight: 600;">Stop</span> — run when the agent finishes<br>
+              <span style="color: var(--text); font-weight: 600;">Notification</span> — fire on agent events
+            </div>
+          </div>
+          <div class="caption" style="margin-top: 0; font-size: 11.5px;">For validation and safety guards — not logic that belongs in a skill.</div>
+          <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"Hooks let you execute shell commands at key points in Claude's lifecycle — before or after tools run, when the agent stops, or on notifications." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#FFA657;">code.claude.com/docs/en/hooks</span></div>
         </div>
       </div>
 
     </div>
 
-    <div class="tree" style="font-size: 12px; line-height: 1.7; padding: 14px 20px;">
-<span class="dm">User  →</span>  <span class="ac">Skill (W)</span>  <span class="dm">→ routes, loads context, spawns →</span>  <span class="rl">Orchestrator</span>  <span class="dm">→ Decision block →</span>  <span class="ac">Skill (W)</span>  <span class="dm">→ spawns →</span>  <span class="rl">Planners / Worker</span>  <span class="dm">→</span>  <span class="ac">Skills (P)</span>  <span class="dm">+ Reference  →  code  ·</span>  <span style="color:#D2A8FF;">MCP</span>  <span class="dm">→ external systems</span></div>
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE 8 — SKILL TYPES IN DEPTH
+       SLIDE 7b — CAPABILITY MATRIX
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s7b">
+    <div class="label">Phase 01 — Foundation · Capabilities</div>
+    <h2 class="headline" style="margin-bottom: 28px;">What each component <em>is, by nature.</em></h2>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+      <table style="font-size: 14px;">
+        <thead>
+          <tr>
+            <th style="width: 200px; border-right: 1px solid var(--border);">Capability</th>
+            <th style="text-align: center; color: var(--accent);">Skill</th>
+            <th style="text-align: center; color: var(--blue);">Agent</th>
+            <th style="text-align: center; color: #D2A8FF;">MCP</th>
+            <th style="text-align: center; color: var(--muted);">Reference</th>
+            <th style="text-align: center; color: #FFA657;">Hooks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">LLM reasoning</td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Isolated context window</td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Runs in caller's context</td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Uses Claude tools</td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Writes source files</td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Bridges external systems</td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Grep-addressable knowledge</td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Shell execution (no model)</td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="caption" style="margin-top: 20px;">
+      Natural behavior — not conventions. <strong>Skill and Agent</strong> share tool access and file writes; what sets Agent apart is LLM reasoning and isolation.
+      Conventions restrict what each is <em>used for</em>. This table shows what each component <em>is</em>.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 8 — RUNTIME FLOW
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s8-flow">
+    <div class="label">Phase 01 — Foundation · Runtime Flow</div>
+    <h2 class="headline" style="margin-bottom: 20px;">How the components <em>connect at runtime.</em></h2>
+
+    <div style="display: grid; grid-template-columns: auto 1fr; gap: 0; max-width: 860px;">
+
+      <div style="display: flex; flex-direction: column; align-items: center; padding-top: 4px;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--muted); margin-bottom: 0;"></div>
+      </div>
+      <div style="padding: 0 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--text);">User</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">describes what to build</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+        <div style="width: 1px; flex: 1; background: var(--border);"></div>
+      </div>
+      <div style="padding: 2px 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--accent);">Skill (W) — entry</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">routes (resume vs new) · pre-loads <code style="font-family:var(--mono);font-size:11px;">plan.md</code> + <code style="font-family:var(--mono);font-size:11px;">context.md</code> from disk · inlines into spawn prompt</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--blue);"></div>
+        <div style="width: 1px; flex: 1; background: var(--border);"></div>
+      </div>
+      <div style="padding: 2px 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--blue);">Orchestrator (Agent) — isolated context</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">reasons about intent · returns <code style="font-family:var(--mono);font-size:11px;color:var(--blue);">Decision: spawn-planners</code> · never spawns agents or writes files</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+        <div style="width: 1px; flex: 1; background: var(--border);"></div>
+      </div>
+      <div style="padding: 2px 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--accent);">Skill (W) — convergence loop</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">spawns <span style="color:var(--blue);">Planners</span> in parallel per round · accumulates findings · feeds back to Orchestrator · loops until <code style="font-family:var(--mono);font-size:11px;color:var(--blue);">Decision: converged</code></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+        <div style="width: 1px; flex: 1; background: var(--border);"></div>
+      </div>
+      <div style="padding: 2px 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--accent);">Skill (W) — approval gate</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">Orchestrator synthesizes <code style="font-family:var(--mono);font-size:11px;">plan.md</code> · skill presents to user · <span style="color:var(--accent);">Approve</span> → execute &nbsp;·&nbsp; Discuss → revise &nbsp;·&nbsp; Discard → stop</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--blue);"></div>
+        <div style="width: 1px; flex: 1; background: var(--border);"></div>
+      </div>
+      <div style="padding: 2px 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--blue);">Worker (Agent) — isolated context</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">reads <code style="font-family:var(--mono);font-size:11px;">plan.md</code> (inlined) · calls <span style="color:var(--accent);">Skills (P)</span> per artifact · Greps <span style="color:var(--muted);">Reference</span> on demand · validates output</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+        <div style="width: 1px; flex: 1; background: var(--border);"></div>
+      </div>
+      <div style="padding: 2px 0 20px 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--accent);">Skills (P) + Reference</div>
+        <div style="font-size: 12.5px; color: var(--muted); margin-top: 2px;">creates artifacts with platform conventions · Grep-loaded knowledge · one section at a time, never full files</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 1px; height: 10px; background: var(--border);"></div>
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--text);"></div>
+      </div>
+      <div style="padding: 2px 0 0 16px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--text);">code &nbsp;·&nbsp; <span style="color:#D2A8FF;">MCP</span> <span style="color:var(--muted);font-weight:400;font-size:12.5px;">→ external systems</span></div>
+      </div>
+
+    </div>
+
+    <div class="caption" style="margin-top: 20px; max-width: 860px;">
+      <span style="color: #FFA657; font-weight: 600;">Hooks</span> fire orthogonally on every tool event throughout — <strong>PreToolUse · PostToolUse · Stop · Notification</strong> — with no model involvement.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 9 (was 8) — SKILL TYPES IN DEPTH
   ════════════════════════════════════════════ -->
   <section class="slide" id="s8">
     <div class="label">Phase 01 — Foundation · Skills</div>
@@ -854,10 +1056,11 @@ Spawn feature-worker
       </div>
 
       <div class="code-panel">
-        <div class="code-panel-header neutral">P · Procedure — worker calls, one artifact</div>
+        <div class="code-panel-header neutral">P · Procedure — agent calls, thin and non-interactive</div>
         <pre style="font-size: 11px;"><span class="cm">--- builder-domain-create-entity ---</span>
 <span class="bd">user-invocable: false</span>
 <span class="ac">allowed-tools: Read, Grep, Bash</span>
+<span class="dm">(no AskUserQuestion — no branching logic)</span>
 
 <span class="cm"># Input</span>
 entity_name, target_path, module
@@ -873,8 +1076,7 @@ Glob target path
 
 <span class="cm"># Step 3 — Write</span>
 Create entity from reference pattern
-Platform conventions applied here
-<span class="dm">(Swift struct · Dart class · TS interface)</span>
+<span class="dm">Logic belongs in the worker — not here</span>
 
 <span class="cm"># Output</span>
 <span class="ac">Glob + Grep verified path only</span></pre>
@@ -883,7 +1085,7 @@ Platform conventions applied here
     </div>
     <div class="caption" style="margin-top: 12px;">
       Start with <strong>Type W</strong> for any user-facing entry — simple ones do their own work, complex ones delegate to agents.
-      <strong>Type P</strong> only when a worker needs platform-specific artifact creation — the worker decides which skill to call.
+      <strong>Type P</strong> when an agent needs a non-user-invocable, thin step with no branching or runtime complexity — logic belongs in the worker, not the skill.
     </div>
   </section>
 
@@ -1106,8 +1308,8 @@ call builder-domain-create-entity
           <div class="code-panel">
             <div class="code-panel-header" style="color: #D2A8FF; background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.25); border-bottom-color: var(--border);">Via MCP — into external systems</div>
             <pre style="font-size: 12px;"><span class="cm"># Agent calls an MCP tool directly</span>
-mcp__mmpa__mmpa_get_jira(
-  ticket_id: "PROJ-42"
+mcp__atlassian__get_jira_issue(
+  issue_key: "PROJ-42"
 )
 
 <span style="color:#D2A8FF;">→ returns ticket, context, acceptance criteria</span></pre>
@@ -1121,7 +1323,7 @@ mcp__mmpa__mmpa_get_jira(
           <thead><tr><th>Server</th><th>Reaches into</th></tr></thead>
           <tbody>
             <tr>
-              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">mmpa</code></td>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">Atlassian</code></td>
               <td>Jira tickets · Confluence pages · Bitbucket PRs</td>
             </tr>
             <tr>

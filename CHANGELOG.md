@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.13.3] — 2026-05-19
+
+### Changed
+- `agentic-deck.html` — updated skill type taxonomy from T/A/U to W/P throughout; added Hooks as a fifth anatomy component; moved capability matrix and runtime flow diagram to dedicated slides; capability matrix now reflects natural component behavior (not conventions); MCP examples updated from internal `mmpa` to official Atlassian MCP
+
+---
+
 ## [7.13.2] — 2026-05-19
 
 ### Added
