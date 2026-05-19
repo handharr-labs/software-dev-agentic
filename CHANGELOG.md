@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.9.0] — 2026-05-19
+
+### Added
+- `builder-test-procedure` skill — internal 4-step unit test procedure: resolve test file, determine mock need, resolve/generate mocks, verify test cases. Reads platform-specific `testing-procedure-impl.md` for variable details.
+- `ios-talenta/reference/testing-procedure-impl.md` — XCTest + hand-written mocks, `TalentaTests/` path structure, `[safe:]` subscript pattern
+- `android-talenta/reference/testing-procedure-impl.md` — Mockito-Kotlin inline mocks, MVP presenter/view pattern, RxJava3 scheduler trigger
+- `flutter-mobile-talenta/reference/testing-procedure-impl.md` — `@GenerateNiceMocks` per test file, `build_runner`, monorepo `talenta/` package structure
+- `flutter-qontak-crm/reference/testing-procedure-impl.md` — `@GenerateMocks` in central `test_helper.dart` per feature package
+- `flutter-qontak-chat/reference/testing-procedure-impl.md` — `@GenerateNiceMocks` in central `mock_helper.dart` per feature package
+
+---
+
 ## [7.8.8] — 2026-05-19
 
 ### Added
