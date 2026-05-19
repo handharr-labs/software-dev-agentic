@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.8.8] — 2026-05-19
+
+### Added
+- `flutter-qontak-crm` platform: `CLAUDE-template.md` — covers Melos monorepo structure, manual GetIt DI, BLoC instantiation rules, and module dependency constraints
+
+---
+
 ## [7.8.7] — 2026-05-19
 
 ### Removed
