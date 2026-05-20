@@ -137,9 +137,12 @@ echo "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>"
 
 Spawn one `builder-figma-worker` per URL in `pending_figma_urls` — pass `figma_url`, `feature`, and `run_dir`. **Spawn all workers in parallel** (single Agent tool call).
 
-Collect results:
-- `figma_resolved` — successful outputs: all `## Figma Worker Output` blocks from all workers. A single worker may return multiple blocks if its URL pointed to a section node — collect all of them.
+Collect results from all workers:
+- `figma_resolved` — workers that returned `## Figma Worker Output` blocks
+- `figma_sections` — workers that returned `## Figma Section Detected` blocks
 - `figma_failed` — failed fetches: `{ source, reason }`
+
+**If `figma_sections` is non-empty** — expand each section into individual frame workers. For each section, spawn one `builder-figma-worker` per child frame **in parallel** (single Agent call across all children of all sections) — pass `figma_url` constructed as `https://www.figma.com/design/<fileKey>?node-id=<child_id>`, same `feature` and `run_dir`. Collect results and merge into `figma_resolved` and `figma_failed`.
 
 If `figma_failed` is non-empty, call `AskUserQuestion`:
 

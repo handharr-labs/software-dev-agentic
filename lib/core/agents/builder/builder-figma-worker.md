@@ -37,11 +37,8 @@ Call `mcp__Figma_MCP__get_design_context` with:
 
 If the response is a sparse metadata block (contains `<section>` with child `<frame>` elements and the note "You MUST call get_design_context on the nodes individually"):
 
-1. Extract all child frame IDs from the `<frame id="...">` elements.
-2. Call `mcp__Figma_MCP__get_design_context` for each child frame ID **in parallel** — same `fileKey`, same options.
-3. Also call `mcp__Figma_MCP__get_screenshot` for each child frame ID **in parallel**.
-4. Treat each child frame as an independent node — run Steps 2–4 once per child. Use the section name as `parent_frame` for all children.
-5. Return one `## Figma Worker Output` block per child frame (see Output section).
+- Extract all child `<frame id="..." name="...">` entries from the response.
+- **Do not fetch the children** — stop here and return a `## Figma Section Detected` block (see Output section). The calling skill will spawn one worker per child frame in parallel.
 
 If the response is a full design context (JSX code), proceed normally to Step 2.
 
@@ -114,22 +111,17 @@ components: <comma-separated list of notable component names>
 notes: <1–2 sentences on design-level observations relevant to implementation>
 ```
 
-**Section node** — return one block per child frame, separated by a blank line, no prose outside them:
+**Section node** — return exactly this block, no prose outside it:
 
 ```
-## Figma Worker Output
-source: <figma_url>#<child_node_id>
-file: <run_dir>/inputs/figma-<slug>.md
-layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
-screenshot: <screenshot_url>
-parent_frame: <section name — shared across all children>
-state: <state this child frame represents>
-components: <comma-separated list>
-notes: <1–2 sentences>
-
-## Figma Worker Output
-source: <figma_url>#<child_node_id_2>
-...
+## Figma Section Detected
+source: <figma_url>
+section_name: <section name from Figma response>
+fileKey: <fileKey>
+child_frames:
+  - id: <frame_id>  name: <frame_name>
+  - id: <frame_id>  name: <frame_name>
+  ...
 ```
 
 ## Extension Point
