@@ -138,7 +138,7 @@ echo "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>"
 Spawn one `builder-figma-worker` per URL in `pending_figma_urls` — pass `figma_url`, `feature`, and `run_dir`. **Spawn all workers in parallel** (single Agent tool call).
 
 Collect results:
-- `figma_resolved` — successful outputs: the worker's `## Figma Worker Output` block per URL
+- `figma_resolved` — successful outputs: all `## Figma Worker Output` blocks from all workers. A single worker may return multiple blocks if its URL pointed to a section node — collect all of them.
 - `figma_failed` — failed fetches: `{ source, reason }`
 
 If `figma_failed` is non-empty, call `AskUserQuestion`:

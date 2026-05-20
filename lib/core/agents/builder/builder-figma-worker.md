@@ -29,11 +29,29 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 Call `mcp__Figma_MCP__get_design_context` with:
 - `fileKey` and `nodeId` extracted from `figma_url` (convert `-` to `:` in nodeId)
-- `excludeScreenshot: true` — screenshot is fetched separately in Step 2
+- `excludeScreenshot: true` — screenshot is fetched separately
 - `clientLanguages: dart`
 - `clientFrameworks: flutter`
 
-From the response extract:
+**Step 1a — Detect section node**
+
+If the response is a sparse metadata block (contains `<section>` with child `<frame>` elements and the note "You MUST call get_design_context on the nodes individually"):
+
+1. Extract all child frame IDs from the `<frame id="...">` elements.
+2. Call `mcp__Figma_MCP__get_design_context` for each child frame ID **in parallel** — same `fileKey`, same options.
+3. Also call `mcp__Figma_MCP__get_screenshot` for each child frame ID **in parallel**.
+4. Treat each child frame as an independent node — run Steps 2–4 once per child. Use the section name as `parent_frame` for all children.
+5. Return one `## Figma Worker Output` block per child frame (see Output section).
+
+If the response is a full design context (JSX code), proceed normally to Step 2.
+
+**Step 2 — Fetch screenshot**
+
+Call `mcp__Figma_MCP__get_screenshot` with the same `fileKey` and `nodeId`.
+
+Note the returned screenshot URL as `<screenshot_url>`.
+
+From the design context response extract:
 - The fetched node's **name** — use as slug base
 - Its **parent frame or component set name** — the logical screen this node belongs to
 - The **named state** this node represents — infer from node name, variant property, or prop types if not explicit
@@ -43,12 +61,6 @@ From the response extract:
 - **Annotations** — aria-labels, visible text strings, designer comments
 
 Derive `<slug>` from the node name. Sanitize to lowercase-kebab (e.g. `expense-index-empty-data`).
-
-**Step 2 — Fetch screenshot**
-
-Call `mcp__Figma_MCP__get_screenshot` with the same `fileKey` and `nodeId`.
-
-Note the returned screenshot URL as `<screenshot_url>`.
 
 **Step 3 — Write artifacts**
 
@@ -88,7 +100,7 @@ Rules:
 
 ## Output
 
-Return exactly this block — no prose outside it:
+**Single node** — return exactly one block, no prose outside it:
 
 ```
 ## Figma Worker Output
@@ -96,10 +108,28 @@ source: <figma_url>
 file: <run_dir>/inputs/figma-<slug>.md
 layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
 screenshot: <screenshot_url>
-parent_frame: <parent frame or component set name — the logical screen this node belongs to>
+parent_frame: <parent frame or component set name>
 state: <state name this node represents>
 components: <comma-separated list of notable component names>
 notes: <1–2 sentences on design-level observations relevant to implementation>
+```
+
+**Section node** — return one block per child frame, separated by a blank line, no prose outside them:
+
+```
+## Figma Worker Output
+source: <figma_url>#<child_node_id>
+file: <run_dir>/inputs/figma-<slug>.md
+layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
+screenshot: <screenshot_url>
+parent_frame: <section name — shared across all children>
+state: <state this child frame represents>
+components: <comma-separated list>
+notes: <1–2 sentences>
+
+## Figma Worker Output
+source: <figma_url>#<child_node_id_2>
+...
 ```
 
 ## Extension Point
