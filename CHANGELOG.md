@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.17.0] — 2026-05-20
+
+### Added
+- `builder-figma-worker` — now writes three artifacts per Figma node: `figma-<slug>.md` (compact semantic reference), `figma-<slug>-layout.jsx` (raw JSX with exact spacing, design tokens, and component hierarchy), and captures `screenshot` URL — all isolated in the worker's context, persisted to `inputs/` on disk.
+
+### Changed
+- `builder-figma-worker` — migrated from old `mcp__Figma__get_figma_data` to `mcp__Figma_MCP__get_design_context` + `mcp__Figma_MCP__get_screenshot` (new official Figma MCP). Added `screenshot` and `layout_file` fields to the output block.
+- `builder-feature-worker` — Figma lookup now uses all three artifacts per artifact type: StateHolder reads `.md` only (semantic layer); Screen/Component reads `.md` (semantic) + `-layout.jsx` (section-queried for exact tokens/layout) + screenshot URL (visual grounding for creation skill).
+- `builder-plan-feature` — `figma_groups` structure extended to carry `layout_file` and `screenshot` per state entry alongside the `.md` file path.
+
+---
+
 ## [7.16.0] — 2026-05-20
 
 ### Added
