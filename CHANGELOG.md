@@ -7,6 +7,23 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.20.0] — 2026-05-20
+
+### Added
+- `builder-plan-feature` — **Step P (Figma Input Repair)** on every resume: scans `inputs/` for existing `figma-*.md` files, backfills missing screenshots via curl, reconstructs `figma-groups.json` from frontmatter `parent_frame` if absent, and offers a "Re-run UI with Figma" option that resets Screen/Component artifacts and rebuilds with full Figma layout + screenshot data.
+- `builder-plan-feature` — compaction guards: persist `figma-groups.json` immediately after Step 1.5b confirmation and `findings-round-N.json` after every planner round; preflight detects partial-planning runs and offers resume or discard.
+- `builder-pres-planner` — `Figma Files` column added to `### Figma Alignment` output table — lists absolute `.md` file paths per artifact so the feature worker can read them directly without Glob scanning.
+
+### Fixed
+- `builder-figma-worker` — screenshots now downloaded to disk via curl (`figma-<slug>-screenshot.png`); frontmatter writes local path instead of remote URL; `Bash` added to tools; verification step checks all three output files.
+- `builder-pres-planner` — corrected `figma_groups` shape in Step 0a: iterates `states[*].file` instead of non-existent top-level `files` key — was silently producing empty Figma Alignment tables.
+- `builder-feature-orchestrator` — Figma Alignment population merged into Step 5 (context.md write) rather than a deferred Step 6 patch; column header aligned with pres-planner output.
+- `builder-feature-worker` — reads `layout_file` and `screenshot` from `.md` frontmatter directly; reads file paths from `Figma Files` column in `## Figma Alignment` table — no Glob or frontmatter scanning required.
+- `builder-plan-feature` — `run_dir` now pinned from the found file's parent directory on both resume branches (partial-planning and full-plan) — never reconstructed from feature name.
+- `builder-plan-feature` — stale `Step 0b` reference in Step 2a corrected to `Step 1.5b or P2`.
+
+---
+
 ## [7.19.0] — 2026-05-20
 
 ### Added
