@@ -41,11 +41,15 @@ question: <what is missing or unresolvable>
 
 ## Mode: detect-scope
 
-Called first by the entry skill with ticket content injected inline.
+Called first by the entry skill with `ticket-path`. Read the ticket file before any other work:
+
+```
+Read: <ticket-path>
+```
 
 ### Phase 1 — Extract Ticket Intent
 
-From `ticket-content`, extract:
+From the ticket file content, extract:
 - **Feature name** — ticket title or summary
 - **Acceptance criteria** — every checklist item under any AC heading
 - **Ambiguities** — underspecified areas, missing layer hints, conflicting criteria
@@ -64,11 +68,23 @@ From the acceptance criteria, determine which layers are in scope. Do not includ
 
 Return a `Decision: spawn-planners` block listing only the in-scope layers. Include a `skipped:` entry for any layer with no signals.
 
-If the ticket has no acceptance criteria and no layer signals at all, return `Decision: blocked`.
+Return `Decision: blocked` in any of these cases — with specific questions derived from the ambiguities extracted in Phase 1:
+
+| Condition | Example |
+|---|---|
+| No acceptance criteria and no layer signals at all | Ticket is a title and description only |
+| AC exists but none map to any layer signal | "As a user I can do X" — no technical specifics |
+| AC is present but contradictory or incomplete enough that planners cannot usefully scope the work | Two criteria conflict, or a criterion references an unknown entity with no context |
+
+The `question` field in `Decision: blocked` must be specific — not "ticket is unclear" but the exact information that is missing (e.g. "Is this a new screen or a change to an existing one? Which entity does this feature operate on?").
 
 ## Mode: synthesize
 
-Called by the skill after planners complete. The skill passes all planner findings inline.
+Called by the skill after planners complete with `ticket-path` and all planner findings inline. Read the ticket file first — each mode runs in a fresh agent context:
+
+```
+Read: <ticket-path>
+```
 
 ### Phase 3 — Aggregate Grooming Summary
 
@@ -104,14 +120,19 @@ Rules:
 
 ### Phase 4 — Chain to tracker-adjust-ticket
 
+Before chaining, determine the output path based on Phase 3 findings:
+
+- **Rich path** — work items are defined and open questions (if any) are non-blocking clarifications → proceed with full work item list.
+- **Thin path** — open questions are blockers (missing entity definition, unclear scope, no clear layer owner) and work items cannot be derived without answers → `### Work Items` is empty or marked TBD.
+
 Read the skill at `.claude/skills/tracker-adjust-ticket/SKILL.md`.
 
 Execute its steps using the grooming summary as pre-filled answers:
 - **Progress** — "Grooming session: layer mapping and work item breakdown completed."
-- **Work Items** — use the `### Work Items` checklist from Phase 3.
+- **Work Items** — use the `### Work Items` checklist from Phase 3. If thin path, use "TBD — pending answers to open questions."
 - **Decisions** — use the `### Decisions` bullets from Phase 3. If none, answer "None this session."
 - **Open Questions** — use the `### Open Questions` checklist from Phase 3. If none, answer "None."
-- **Status** — "Groomed — ready for /builder-plan-feature"
+- **Status** — rich path: `"Groomed — ready for /builder-plan-feature"` · thin path: `"Needs clarification — answer open questions before planning"`
 
 Only fall back to `AskUserQuestion` for fields the grooming summary does not cover.
 
@@ -121,7 +142,7 @@ Pass `ticket-path` as the file path argument to the skill.
 
 | What you need | Tool |
 |---|---|
-| Ticket file content | Already injected by skill — do not re-read |
+| Ticket file content | `Read` the `ticket-path` passed by the skill — once per mode invocation |
 | Whether an artifact exists in the codebase | Delegate to layer planners — never Read source files directly |
 | Skill file content | `Grep` for section heading → `Read` with `offset` + `limit` |
 

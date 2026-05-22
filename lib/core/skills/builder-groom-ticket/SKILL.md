@@ -25,27 +25,20 @@ options     :
 
 Verify the file exists before continuing. If it does not exist, report the path and stop.
 
-## Step 2 — Load Ticket Content
-
-Read the ticket file at the resolved path. This is the only direct file read this skill performs.
-
-## Step 3 — Detect Scope
+## Step 2 — Detect Scope
 
 Spawn `builder-groom-orchestrator` with mode `detect-scope`:
 
 > **Mode: detect-scope**
 >
 > **ticket-path:** <resolved absolute path>
->
-> **ticket-content:**
-> <full content of the ticket file>
 
 Wait for the orchestrator to return a `Decision: spawn-planners` or `Decision: blocked`.
 
 - **`Decision: blocked`** → surface the orchestrator's question to the user via `AskUserQuestion`, then stop or retry based on the answer.
-- **`Decision: spawn-planners`** → proceed to Step 4.
+- **`Decision: spawn-planners`** → proceed to Step 3.
 
-## Step 4 — Spawn Planners
+## Step 3 — Spawn Planners
 
 Spawn each planner listed in the `Decision: spawn-planners` block **in parallel**, passing each the grooming-mode instruction:
 
@@ -65,7 +58,7 @@ Also pass to each: feature name (from ticket title), platform (if detectable fro
 
 Wait for all planners to complete.
 
-## Step 5 — Synthesize and Update Ticket
+## Step 4 — Synthesize and Update Ticket
 
 Spawn `builder-groom-orchestrator` with mode `synthesize`:
 

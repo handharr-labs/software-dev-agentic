@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.26.0] — 2026-05-22
+
+### Fixed
+- `builder-plan-feature` — `resume-as-is` with `plan_status: approved` no longer proceeds directly to execution. Skill now asks "Continue as-is / Start from beginning" after checkpoint detection so the user consciously routes to Step 5 rather than silently re-executing a previously approved plan.
+
+### Changed
+- `builder-groom-ticket` — skill no longer reads the ticket file directly. Ticket path is passed as a raw path to `builder-groom-orchestrator`; the orchestrator owns the read in each mode. Skill is now a pure router (Steps 1–4).
+- `builder-groom-orchestrator` — `detect-scope` Phase 2 expands `Decision: blocked` to cover thin/ambiguous tickets: fires when AC exists but maps to no layer signals, or when criteria are contradictory/incomplete. `question` field must be specific, not generic.
+- `builder-groom-orchestrator` — `synthesize` Phase 4 introduces rich vs thin output paths. Rich path sets status `"Groomed — ready for /builder-plan-feature"`; thin path (open questions block work items) sets `"Needs clarification — answer open questions before planning"`. Each mode now reads the ticket file directly from `ticket-path` since modes run in separate agent contexts.
+
+---
+
 ## [7.25.0] — 2026-05-21
 
 ### Changed
