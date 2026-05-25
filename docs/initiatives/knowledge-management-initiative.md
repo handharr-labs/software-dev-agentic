@@ -107,16 +107,22 @@ Feature Group     → HLD only, no implementation detail
 
 A new standalone persona — separate from `builder`. Distinct workflow (document existing features) vs builder (implement new ones). Feature Docs produced by `librarian` are consumed by `builder` — same relationship as `tracker` → `builder`.
 
-**Agent roster:**
+**Agent roster** (internal — lives in `.claude/`, not shipped downstream):
 
 ```
-lib/core/agents/librarian/
+.claude/agents/
   librarian-feature-orchestrator.md   ← routes generate/scan/merge/audit intents
   librarian-ios-worker.md
   librarian-android-worker.md
   librarian-flutter-worker.md
   librarian-synthesizer-worker.md
   librarian-audit-worker.md
+
+.claude/skills/
+  librarian-explain/SKILL.md
+  librarian-generate/SKILL.md
+  librarian-scan/SKILL.md
+  librarian-merge/SKILL.md
 ```
 
 **Skill workflows (Type W):**
@@ -377,9 +383,10 @@ RAG layer over `.claude/reference/feature-docs/` — local embeddings or CI-inde
 
 Before the first Feature Doc is written or any skill is built, the following must exist:
 
-- [ ] **`docs/principles/feature-doc-principles.md`** — canonical reference for what a Feature Doc is, the schema, scoping rules, naming conventions, and audit criteria. Extracted from this initiative doc. This is what `librarian-audit-worker` reads and what engineers reference when writing Feature Docs manually.
-- [ ] **`.claude/reference/feature-docs/`** folder created in downstream project repos
-- [ ] Naming convention confirmed for Feature Doc filenames (e.g. `time-off.md`, `live-attendance/clock-in-out.md`)
+- [x] **`docs/principles/feature-doc-principles.md`** — canonical reference for what a Feature Doc is, the schema, scoping rules, naming conventions, and audit criteria. Extracted from this initiative doc. This is what `librarian-audit-worker` reads and what engineers reference when writing Feature Docs manually.
+- [x] **Agents and skills implemented** — all 6 agents + 4 skills written, living in `.claude/` (internal only, not shipped downstream)
+- [x] **`.claude/reference/feature-docs/`** folder created in talenta-ios repo
+- [x] Naming convention confirmed: kebab-case filenames (e.g. `time-off.md`, `live-attendance/clock-in-out.md`)
 
 ---
 
