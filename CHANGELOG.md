@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.28.2] — 2026-05-25
+
+### Added
+- `scripts/install-plugin.sh` — installs the sda marketplace and platform plugin via `claude plugin` CLI
+- `scripts/sda.sh` — new `install-plugin` command (option 5 in interactive menu)
+
+### Fixed
+- `marketplace.json` — corrected `pluginRoot` path from `./dist/plugins` to `../dist/plugins` (relative to `.claude-plugin/` location)
+- `README.md` — corrected `enabledPlugins` format to `{ "plugin-id@marketplace-id": true }`
+
+---
+
 ## [7.28.1] — 2026-05-25
 
 ### Fixed
