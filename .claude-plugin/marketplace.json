@@ -15,37 +15,37 @@
     {
       "name": "sda-flutter-mobile-jurnal",
       "source": "./dist/plugins/flutter-mobile-jurnal",
-      "description": "Builder, detective, tracker, auditor personas for Flutter (mobile-jurnal)",
+      "description": "Builder, detective, tracker, auditor personas for flutter-mobile-jurnal",
       "category": "development-workflows"
     },
     {
       "name": "sda-flutter-qontak-chat",
       "source": "./dist/plugins/flutter-qontak-chat",
-      "description": "Builder, detective, tracker, auditor personas for Flutter (qontak-chat)",
+      "description": "Builder, detective, tracker, auditor personas for flutter-qontak-chat",
       "category": "development-workflows"
     },
     {
       "name": "sda-flutter-qontak-crm",
       "source": "./dist/plugins/flutter-qontak-crm",
-      "description": "Builder, detective, tracker, auditor personas for Flutter (qontak-crm)",
+      "description": "Builder, detective, tracker, auditor personas for flutter-qontak-crm",
       "category": "development-workflows"
     },
     {
       "name": "sda-ios-talenta",
       "source": "./dist/plugins/ios-talenta",
-      "description": "Builder, detective, tracker, auditor personas for iOS (talenta)",
+      "description": "Builder, detective, tracker, auditor personas for ios-talenta",
       "category": "development-workflows"
     },
     {
       "name": "sda-android-talenta",
       "source": "./dist/plugins/android-talenta",
-      "description": "Builder, detective, tracker, auditor personas for Android (talenta)",
+      "description": "Builder, detective, tracker, auditor personas for android-talenta",
       "category": "development-workflows"
     },
     {
       "name": "sda-web",
       "source": "./dist/plugins/web",
-      "description": "Builder, detective, tracker, auditor personas for Web (Next.js)",
+      "description": "Builder, detective, tracker, auditor personas for web",
       "category": "development-workflows"
     }
   ]

@@ -1,42 +1,43 @@
 ---
 name: installer-doctor
-description: Audit the software-dev-agentic setup in a downstream project — checks submodule, symlinks, CLAUDE.md markers, settings, and GitHub CLI auth.
+description: Audit the software-dev-agentic setup in a downstream project — detects submodule or plugin path, then checks agents, CLAUDE.md markers, settings, and GitHub CLI auth.
 user-invocable: true
 tools: Bash, Read, Glob
 ---
 
-You are a setup auditor. Run each check below in order, collect results, then print a single formatted report. Do not auto-fix anything — only diagnose and suggest.
+You are a setup auditor. First detect which distribution path is active, then run the appropriate checks. Collect all results, then print a single formatted report. Do not auto-fix anything — only diagnose and suggest.
 
-## Checks
+## Step 0 — Detect distribution path
 
-### 1. Submodule present
+```bash
+git submodule status software-dev-agentic 2>/dev/null
+```
+
+- If submodule is present and initialized → **submodule path**
+- Otherwise → **plugin path**
+
+Run the matching checks below.
+
+---
+
+## Submodule path checks
+
+### 1. Submodule present and up to date
 
 ```bash
 git submodule status software-dev-agentic
-```
-
-- Pass: submodule is present and initialized (line starts with a commit hash)
-- Fail: missing or not initialized
-
-If present, capture the current local commit hash. Then check if it's behind remote:
-
-```bash
 git -C software-dev-agentic fetch --quiet origin main 2>/dev/null
 git -C software-dev-agentic rev-list --count HEAD..origin/main
 ```
 
-- Pass: count is 0 (up to date)
-- Warn: count > 0 → "N commits behind origin/main"
+- Pass: present, count is 0
+- Warn: count > 0 → "N commits behind origin/main — run: software-dev-agentic/scripts/sync.sh"
+- Fail: missing or not initialized
 
-### 2. Agents symlinks
+### 2. Agent symlinks
 
 ```bash
 ls .claude/agents/
-```
-
-Count `.md` files. Then check for broken symlinks:
-
-```bash
 find .claude/agents -maxdepth 1 -name "*.md" -type l | while read f; do
   [ -e "$f" ] || echo "broken: $f"
 done
@@ -44,11 +45,9 @@ done
 
 - Pass: at least 1 agent linked, no broken symlinks
 - Warn: broken symlinks found
-- Fail: `.claude/agents/` missing or empty
+- Fail: missing or empty
 
-### 3. Skills symlinks
-
-Same as agents but for `.claude/skills/`:
+### 3. Skill symlinks
 
 ```bash
 ls .claude/skills/
@@ -59,34 +58,25 @@ done
 
 - Pass: at least 1 skill linked, no broken symlinks
 - Warn: broken symlinks found
-- Fail: `.claude/skills/` missing or empty
+- Fail: missing or empty
 
 ### 4. CLAUDE.md managed markers
 
-Read `CLAUDE.md` from the project root. Check for both:
-- `<!-- BEGIN software-dev-agentic -->`
-- `<!-- END software-dev-agentic -->`
+Check `CLAUDE.md` for `<!-- BEGIN software-dev-agentic -->` and `<!-- END software-dev-agentic -->`.
 
-- Pass: both markers present
-- Warn: one marker present but not the other
-- Fail: no markers found (sync.sh won't be able to update the shared section)
+- Pass: both present
+- Warn: one present but not the other
+- Fail: no markers — sync.sh won't be able to update the shared section
 
 ### 5. settings.local.json
 
-Check `.claude/settings.local.json` exists:
-
 ```bash
 [ -f .claude/settings.local.json ] && echo "exists" || echo "missing"
-```
-
-If it exists, check for the placeholder value:
-
-```bash
 grep -c "PROJECT_ROOT" .claude/settings.local.json || true
 ```
 
-- Pass: file exists, no `PROJECT_ROOT` placeholder
-- Warn: file exists but still contains `PROJECT_ROOT` placeholder
+- Pass: exists, no `PROJECT_ROOT` placeholder
+- Warn: `PROJECT_ROOT` placeholder not replaced
 - Fail: file missing
 
 ### 6. GitHub CLI auth
@@ -95,33 +85,87 @@ grep -c "PROJECT_ROOT" .claude/settings.local.json || true
 gh auth status 2>&1
 ```
 
-- Pass: output contains "Logged in"
+- Pass: contains "Logged in"
 - Fail: not logged in or `gh` not installed
+
+---
+
+## Plugin path checks
+
+### 1. Plugin installed
+
+```bash
+grep -l "sda-" .claude/settings.json 2>/dev/null
+cat .claude/settings.json 2>/dev/null
+```
+
+Extract the plugin name from `enabledPlugins`. Check it is installed at project scope.
+
+```bash
+claude plugin list 2>/dev/null | grep sda || true
+```
+
+- Pass: plugin present in `settings.json` and installed
+- Warn: in `settings.json` but not yet installed — run the install command
+- Fail: no plugin configured
+
+### 2. Marketplace configured
+
+Check `.claude/settings.json` for `extraKnownMarketplaces.sda`:
+
+- Pass: `hndhr/software-dev-agentic` present
+- Fail: missing — run: `claude plugin marketplace add hndhr/software-dev-agentic`
+
+### 3. No stale symlinks
+
+```bash
+find .claude/agents .claude/skills -type l 2>/dev/null | wc -l
+```
+
+- Pass: 0 symlinks (plugin path uses no symlinks)
+- Warn: symlinks found — leftover from submodule migration; run: `find .claude/agents .claude/skills -type l -delete`
+
+### 4. skillListingBudgetFraction set
+
+```bash
+grep "skillListingBudgetFraction" .claude/settings.json 2>/dev/null || true
+```
+
+- Pass: present (recommended: 0.03)
+- Warn: missing — skill descriptions will be truncated; add `"skillListingBudgetFraction": 0.03` to `.claude/settings.json`
+
+### 5. CLAUDE.md managed markers
+
+Same as submodule check 4.
+
+### 6. .gitignore — agentic-state
+
+```bash
+grep -q "agentic-state" .gitignore && echo "present" || echo "missing"
+```
+
+- Pass: `.claude/agentic-state/` in `.gitignore`
+- Warn: missing — add `.claude/agentic-state/` to `.gitignore`
 
 ---
 
 ## Report format
 
-Print a report using this format:
-
 ```
-software-dev-agentic doctor
+software-dev-agentic doctor  [submodule | plugin]
 ──────────────────────────────────────────
-✓  submodule    present (abc1234) · up to date
-⚠  submodule    3 commits behind origin/main — run: software-dev-agentic/scripts/sync.sh
-✓  agents       9 linked
-✗  skills       .claude/skills/ missing — run: software-dev-agentic/scripts/setup-symlinks.sh
-✓  CLAUDE.md    managed markers found
-⚠  settings     PROJECT_ROOT placeholder not replaced — edit .claude/settings.local.json
-✓  gh auth      logged in
+✓  submodule     present (abc1234) · up to date
+✓  agents        9 linked
+✗  skills        broken symlinks found — run: software-dev-agentic/scripts/setup-symlinks.sh
+✓  CLAUDE.md     managed markers found
+⚠  settings      PROJECT_ROOT placeholder not replaced — edit .claude/settings.local.json
+✓  gh auth       logged in
 ──────────────────────────────────────────
 1 error · 1 warning
 ```
 
 Rules:
-- `✓` green check for pass
-- `⚠` warning for non-blocking issues
-- `✗` error for failures that will break functionality
-- Each line: symbol · category (padded to 12 chars) · message · suggested fix command if applicable
-- Summary line at the bottom: count of errors and warnings (omit if all pass)
-- If all checks pass: print `All checks passed.` instead of the summary line
+- `✓` pass · `⚠` warning (non-blocking) · `✗` error (breaks functionality)
+- Each line: symbol · category (padded to 14 chars) · message · fix command if applicable
+- Summary: error + warning counts. If all pass: `All checks passed.`
+- For plugin path, append migration hint if submodule checks were skipped: `Tip: to migrate from submodule, run /installer-migrate-plugin`

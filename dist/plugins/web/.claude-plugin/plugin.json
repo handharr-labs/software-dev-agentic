@@ -1,7 +1,7 @@
 {
   "name": "sda-web",
   "description": "software-dev-agentic for web — builder, detective, tracker, auditor, installer personas",
-  "version": "7.28.0",
+  "version": "7.28.4",
   "author": {
     "name": "Jurnal Engineering"
   }

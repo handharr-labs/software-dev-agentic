@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.28.4] — 2026-05-25
+
+### Added
+- `installer-migrate-plugin` skill — migrates a project from submodule path to plugin path (removes submodule + symlinks, installs plugin, verifies result)
+
+### Changed
+- `installer-doctor` skill — now auto-detects submodule vs plugin path and runs appropriate checks for each; includes plugin-specific checks (marketplace, skillListingBudgetFraction, stale symlinks)
+
+---
+
 ## [7.28.3] — 2026-05-25
 
 ### Added
