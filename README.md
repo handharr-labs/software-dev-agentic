@@ -35,7 +35,11 @@ From inside the downstream project directory, run:
 curl -fsSL https://raw.githubusercontent.com/hndhr/software-dev-agentic/main/scripts/install-plugin.sh | bash -s -- --platform=flutter-mobile-talenta
 ```
 
-Replace `flutter-mobile-talenta` with your platform. This adds the marketplace, installs the plugin at project scope, and sets `skillListingBudgetFraction` in `.claude/settings.json`.
+Replace `flutter-mobile-talenta` with your platform. The script:
+- Installs at **project scope** — plugin is active only in this repo, not globally
+- Patches `.gitignore` with `.claude/agentic-state/`
+- Applies the platform `CLAUDE.md` template
+- Sets `skillListingBudgetFraction: 0.03` in `.claude/settings.json`
 
 Then run `/reload-plugins` in Claude Code to activate.
 
