@@ -130,6 +130,8 @@ for plan_path in <each path from found_plans>; do
 done
 ```
 
+**Always call `AskUserQuestion` — never infer the answer from the user's message or prior context, even if the user's wording implies a preference (e.g. "re-work", "redo", "continue"). The user must explicitly select via the UI.**
+
 Call `AskUserQuestion` — one option per run plus a Start fresh option:
 
 ```
@@ -164,10 +166,12 @@ multiSelect : false
 options     :
   - label: "Start from beginning", description: "Re-gather intent and re-plan using old plan as context"
   - label: "Continue as-is",       description: "Auto-detect latest checkpoint and resume from there"
+  - label: "New run directory",     description: "Create a fresh run directory — old run is kept but not used"
 ```
 
 - **Start from beginning** → set `update_mode = true`. Proceed to Step G2 (resume) with old plan history loaded as context.
 - **Continue as-is** → proceed to Step G1c (checkpoint detection).
+- **New run directory** → clear `run_dir` (do not reuse). Proceed to Step G2 (fresh) — treat as a new run for the same feature.
 
 ### Step G1c — Checkpoint Detection (Continue as-is)
 
