@@ -6,7 +6,7 @@
     "email": "engineering@jurnal.id"
   },
   "metadata": {
-    "pluginRoot": "../dist/plugins"
+    "pluginRoot": "./dist/plugins"
   },
   "plugins": [
     {
