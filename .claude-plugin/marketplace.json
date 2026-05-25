@@ -5,49 +5,46 @@
     "name": "Jurnal Engineering",
     "email": "engineering@jurnal.id"
   },
-  "metadata": {
-    "pluginRoot": "./dist/plugins"
-  },
   "plugins": [
     {
       "name": "sda-flutter-mobile-talenta",
-      "source": "flutter-mobile-talenta",
+      "source": "./dist/plugins/flutter-mobile-talenta",
       "description": "Builder, detective, tracker, auditor personas for Flutter (mobile-talenta)",
       "category": "development-workflows"
     },
     {
       "name": "sda-flutter-mobile-jurnal",
-      "source": "flutter-mobile-jurnal",
+      "source": "./dist/plugins/flutter-mobile-jurnal",
       "description": "Builder, detective, tracker, auditor personas for Flutter (mobile-jurnal)",
       "category": "development-workflows"
     },
     {
       "name": "sda-flutter-qontak-chat",
-      "source": "flutter-qontak-chat",
+      "source": "./dist/plugins/flutter-qontak-chat",
       "description": "Builder, detective, tracker, auditor personas for Flutter (qontak-chat)",
       "category": "development-workflows"
     },
     {
       "name": "sda-flutter-qontak-crm",
-      "source": "flutter-qontak-crm",
+      "source": "./dist/plugins/flutter-qontak-crm",
       "description": "Builder, detective, tracker, auditor personas for Flutter (qontak-crm)",
       "category": "development-workflows"
     },
     {
       "name": "sda-ios-talenta",
-      "source": "ios-talenta",
+      "source": "./dist/plugins/ios-talenta",
       "description": "Builder, detective, tracker, auditor personas for iOS (talenta)",
       "category": "development-workflows"
     },
     {
       "name": "sda-android-talenta",
-      "source": "android-talenta",
+      "source": "./dist/plugins/android-talenta",
       "description": "Builder, detective, tracker, auditor personas for Android (talenta)",
       "category": "development-workflows"
     },
     {
       "name": "sda-web",
-      "source": "web",
+      "source": "./dist/plugins/web",
       "description": "Builder, detective, tracker, auditor personas for Web (Next.js)",
       "category": "development-workflows"
     }
