@@ -9,7 +9,7 @@ Source of truth: `docs/initiatives/knowledge-management-initiative.md`.
 
 ## What is a Feature Doc
 
-A Feature Doc is a structured Markdown file describing a single sub-feature — its API contracts, data model, architecture, data flow, per-platform artifacts, and known constraints. Feature Docs live in the downstream project repo at `.claude/reference/feature-docs/` and are git-versioned.
+A Feature Doc is a structured Markdown file describing a single sub-feature — its API contracts, data model, architecture, data flow, per-platform artifacts, and known constraints. Feature Docs live at `lib/core/reference/feature-docs/` in the `software-dev-agentic` submodule and ship downstream to all projects via submodule.
 
 They are consumed by:
 - `librarian-audit-worker` — validates on every write
@@ -22,11 +22,11 @@ They are consumed by:
 
 | Case | Path |
 |---|---|
-| Standalone sub-feature | `.claude/reference/feature-docs/<feature-name>.md` |
-| Sub-feature within a group | `.claude/reference/feature-docs/<group>/<sub-feature>.md` |
-| Feature group article | `.claude/reference/feature-docs/<group>/_group.md` |
-| Shared screen or component | `.claude/reference/feature-docs/_shared/<name>.md` |
-| Archived original after merge | `.claude/reference/feature-docs/_archived/<name>.md` |
+| Standalone sub-feature | `lib/core/reference/feature-docs/<feature-name>.md` |
+| Sub-feature within a group | `lib/core/reference/feature-docs/<group>/<sub-feature>.md` |
+| Feature group article | `lib/core/reference/feature-docs/<group>/_group.md` |
+| Shared screen or component | `lib/core/reference/feature-docs/_shared/<name>.md` |
+| Archived original after merge | `lib/core/reference/feature-docs/_archived/<name>.md` |
 
 Filenames use kebab-case. Match the Jira epic/story title where possible (e.g. `time-off.md`, `clock-in-out.md`).
 
@@ -85,15 +85,33 @@ Data Model
   - At least one entity with fields and types
 
 High Level Design (optional — omit if not available)
-  - Layer map: Network | Data | Domain | Presentation columns with vertical dividers
-  - Dependency direction noted (arrows show direction of call)
-  - For hybrid-in-native: show Native Shell → FlutterEngine → FlutterModule boundary
-  - Diagram: <Figma or image link, if exists>
+  - Platforms on Y axis (rows), layers on X axis (columns): Presentation | Domain | Data | Network
+  - Main component on each platform row connected across columns with → arrows
+  - Secondary components listed below the main row (same layer, no arrow)
+  - Layer bypass shown with a dashed span ──────────────────────→ across skipped columns
+  - Separator line between each platform block
+  - Platform label carries [pre-Clean] or [Clean] marker
+
+  Template:
+  ```
+                     Presentation              Domain                 Data                    Network
+                  ─────────────────────   ──────────────────   ──────────────────────   ──────────────────
+  Platform A      MainComponent        → DomainComponent     → DataComponent           → POST /endpoint
+  [pre-Clean]     SecondaryComponent     SecondaryDomain       SecondaryData             GET  /endpoint
+                  BypassComponent *   ──────────────────────→ (bypasses domain) *
+  
+                  ─────────────────────   ──────────────────   ──────────────────────   ──────────────────
+  Platform B      MainComponent        → DomainComponent     → DataComponent           → POST /endpoint
+  [Clean]         SecondaryComponent     SecondaryDomain       SecondaryData             GET  /endpoint
+  
+    * footnote explaining any bypass or special path
+  ```
 
 Data Flow
-  - Numbered steps, end-to-end
-  - Optionally followed by an ASCII diagram
+  - Box-per-platform ASCII diagram first — one box per platform showing the component chain top-to-bottom
+  - Numbered step paths below the diagram — one named path per use case (e.g. Path A — iOS: view index)
   - Every class name in the diagram must appear in the numbered steps, and vice versa
+  - Show engine/bridge boundaries (┄┄┄FlutterEngine boundary┄┄┄) and layer bypasses (✕ bypasses domain layer) inline
 
 Artifacts (per platform)
   - Flat table: Layer column + one column per platform
@@ -143,7 +161,7 @@ Gotchas / Known Constraints
 - **Platform Variants** must cover all platforms present in the Artifacts table
 - **`[pending-scan]`** must be used for missing platforms — not blank, not omitted
 - **Data flow consistency** — every class name in the diagram must appear in the numbered steps, and vice versa
-- **HLD** — if present, the component diagram must use lane-based format: `Network | Data | Domain | Presentation` columns with vertical dividers; dependency direction must be explicit
+- **HLD** — if present, must use the standard pattern: platforms as rows (Y axis), layers as columns (X axis) in order `Presentation | Domain | Data | Network`; main components connected with `→` arrows; layer bypasses shown with `──────────────────────→` spans; separator line between platform blocks; each platform label carries `[pre-Clean]` or `[Clean]`
 
 ### Structural rules
 
@@ -175,7 +193,7 @@ Gotchas / Known Constraints
 |---|---|
 | API Contracts placeholder | Entry present but link is `<placeholder>` |
 | Data flow / diagram mismatch | Class name appears in diagram but not in numbered steps (or vice versa) |
-| HLD format | HLD present but does not use lane-based column format |
+| HLD format | HLD present but does not follow the standard pattern (platforms as rows, layers as columns with `→` arrows and platform `[pre-Clean]`/`[Clean]` markers) |
 | Pending-scan platforms | Any `[pending-scan]` entries remain — flag for follow-up |
 | Gotchas thin | Only 1 bullet — reviewer should confirm tribal knowledge is captured |
 | Feature group has implementation detail | `_group.md` contains API Contracts, Data Flow, or Artifacts |
@@ -195,5 +213,7 @@ Gotchas / Known Constraints
 **Document what exists, mark the gap** — do not invent Clean layers that aren't there. List only artifacts that actually exist in the codebase.
 
 **HLD is optional** — include it only when the integration boundary (bridge, engine, deeplink) is the key complexity. The HLD for a hybrid feature must explicitly show the `Native Shell → FlutterEngine → FlutterModule` boundary — this is where integration bugs concentrate.
+
+**HLD diagram pattern** — platforms on Y axis (rows), layers on X axis (columns) left to right: `Presentation | Domain | Data | Network`. Main component on each platform row connected with `→` arrows across columns. Secondary components listed below the main row (no arrow — same layer). Layer bypasses (e.g. native fallback skipping domain) drawn with `──────────────────────→` spanning the skipped columns, with a `*` footnote. Separator line between each platform block. Platform label carries `[pre-Clean]` or `[Clean]`. This orientation mirrors a sequence diagram: layers are the participant lanes, platforms are the callers.
 
 **Platform Variants vs Artifacts** — Artifacts captures names (class, file). Platform Variants captures structure — screen count, navigation pattern, architectural pattern, why platforms diverged. Omit Platform Variants only when all platforms are structurally identical.

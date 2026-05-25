@@ -128,48 +128,27 @@
 The feature has three distinct execution paths depending on platform and entry point:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ iOS Native Shell                                                                 │
-│                                                                                  │
-│  DashboardViewModel → DashboardCoordinator → TimeManagementManager              │
-│                                                      │                           │
-│                               ┌──────────────────────┴──────────────────┐        │
-│                               ↓ Flutter routes                           ↓ native │
-│                         TalentaModule                        RequestTimeOff       │
-│                         (BricksAddress)                      Coordinator          │
-│                               │                                    │              │
-│                    ───────────┼───────────                 RequestTimeOff         │
-│                    FlutterEngine boundary                  ViewController         │
-│                    ───────────┼───────────                         │              │
-│                               ↓                            RequestTimeOff         │
-│                      Flutter TM Module                     NetworkServiceImpl     │
-│                      (owns index, team,                            │              │
-│                       request form UI)                     TimeOffDataRequest     │
-│                                                            (Moya, bypasses        │
-│                                                             Clean layer)          │
-│                                                                                  │
-│  Legacy screens (TimeOffHistoryVC, DetailTimeOffVC) ─────→ TimeOffDataRequest    │
-└──────────────────────────────────────────────────────────────────────────────────┘
+                   Presentation              Domain                 Data                    Network
+                ─────────────────────   ──────────────────   ──────────────────────   ──────────────────
+iOS             DashboardViewModel    → TimeOffRepository  → TimeOffRepositoryImpl   → POST /time-off-request
+[pre-Clean]     DashboardCoordinator    (TalentaTM only)     TimeOffDataRequest (Moya)  GET  /history-request/…
+                TimeManagementManager                         TimeOffRequestApi           GET  /time-off/balance-detail
+                RequestTimeOffVC *   ──────────────────────→ (bypasses domain) *          GET  /multiple-shift/…
+                RequestTimeOffVM *
 
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ Android Native                                                                   │
-│  Fragment/Activity → Presenter → UseCase → TimeOffRepository (interface)         │
-│                                                  ↓                               │
-│                                         TimeOffRepositoryImpl                    │
-│                                         (cache-first via SessionPreference)      │
-│                                                  ↓                               │
-│                                           TimeOffApi (Retrofit)                  │
-└──────────────────────────────────────────────────────────────────────────────────┘
+                ─────────────────────   ──────────────────   ──────────────────────   ──────────────────
+Android         Fragment / Activity   → UseCase            → TimeOffRepositoryImpl   → POST /time-off-request
+[pre-Clean]     Presenter               TimeOffRepository    (cache-first via           GET  /history-request/…
+                                                             SessionPreference)          GET  /time-off/balance-detail
+                                                             TimeOffApi (Retrofit)       GET  /multiple-shift/…
 
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ Flutter Module (talenta_tm)                                                      │
-│  Screen → BLoC → UseCase → TimeOffRepository (interface)                         │
-│                                    ↓                                             │
-│                           TimeOffRepositoryImpl                                  │
-│                                    ↓                                             │
-│                        TimeOffRemoteDataSource/Impl                              │
-│                        (remote only, no local DS)                                │
-└──────────────────────────────────────────────────────────────────────────────────┘
+                ─────────────────────   ──────────────────   ──────────────────────   ──────────────────
+Flutter         Screen / Widget       → UseCase            → TimeOffRepositoryImpl   → POST /time-off-request
+[Clean]         BLoC                    TimeOffRepository    TimeOffRemoteDataSource    GET  /calendar/timeoff
+                                                             (remote only)              GET  /companies/{id}/…
+                                                                                        GET  /multiple-shift/…
+
+  * iOS native fallback — bypasses domain layer; triggered by Flutter ACTION_OPEN_PAGE callback
 ```
 
 **Native Shell → FlutterEngine → Flutter Module boundary:** iOS launches the time-off index, team time-off index, and request form through `TalentaModule` (BricksAddress). Flutter emits `ACTION_OPEN_PAGE` events back to iOS when it needs native screens (e.g. `CREATE_TIME_OFF_REQUEST_ACTIVITY`), and `TimeManagementManager.handleNativePageNavigation` routes to the appropriate native coordinator/ViewController.
@@ -177,6 +156,52 @@ The feature has three distinct execution paths depending on platform and entry p
 ---
 
 **Data Flow**
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│ iOS [pre-Clean]                                                                  │
+│                                                                                  │
+│  DashboardViewModel → DashboardCoordinator → TimeManagementManager              │
+│                                                      │                           │
+│                               ┌──────────────────────┴──────────────┐            │
+│                               ↓ Flutter routes                       ↓ native    │
+│                         TalentaModule                    RequestTimeOffCoordinator│
+│                         (BricksAddress)                        │                 │
+│                               │                      RequestTimeOffViewController │
+│                    ┄┄┄FlutterEngine boundary┄┄┄              │                  │
+│                               ↓                      RequestTimeOffNetworkService │
+│                      Flutter TM Module                        │                  │
+│                      (index, team, form)              TimeOffDataRequest (Moya)  │
+│                                                       ✕ bypasses domain layer    │
+│  Legacy screens (History, Detail, Balance) ──────────→ TimeOffDataRequest (Moya) │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│ Android [pre-Clean]                                                              │
+│                                                                                  │
+│  Fragment / Activity                                                             │
+│       ↓                                                                          │
+│  Presenter ──→ UseCase ──→ TimeOffRepository (interface)                         │
+│                                    ↓                                             │
+│                          TimeOffRepositoryImpl                                   │
+│                          (cache-first via SessionPreference)                     │
+│                                    ↓                                             │
+│                            TimeOffApi (Retrofit)                                 │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│ Flutter [Clean]                                                                  │
+│                                                                                  │
+│  Screen / Widget                                                                 │
+│       ↓                                                                          │
+│  BLoC ──→ UseCase ──→ TimeOffRepository (interface)                              │
+│                               ↓                                                  │
+│                      TimeOffRepositoryImpl                                       │
+│                               ↓                                                  │
+│                      TimeOffRemoteDataSource/Impl                                │
+│                      (remote only)                                               │
+└──────────────────────────────────────────────────────────────────────────────────┘
+```
 
 **Path A — iOS: view time-off index (Flutter-owned)**
 1. `DashboardViewModel` reads `.timeOff` menu item; user taps.
