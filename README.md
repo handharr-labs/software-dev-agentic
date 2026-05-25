@@ -27,9 +27,21 @@ Two distribution paths — same source, same behavior:
 
 The plugin path requires no submodule, no symlinks, and updates automatically on every release.
 
-### Add to your downstream project's `.claude/settings.json`
+### Install
 
-Commit this file — it declares the marketplace and auto-installs the right plugin for the repo. Engineers just trust the folder and Claude Code handles the rest.
+From inside the downstream project directory, run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hndhr/software-dev-agentic/main/scripts/install-plugin.sh | bash -s -- --platform=flutter-mobile-talenta
+```
+
+Replace `flutter-mobile-talenta` with your platform. This adds the marketplace, installs the plugin at project scope, and sets `skillListingBudgetFraction` in `.claude/settings.json`.
+
+Then run `/reload-plugins` in Claude Code to activate.
+
+### Auto-install for teammates
+
+Commit `.claude/settings.json` — it declares the marketplace and auto-installs the right plugin for the repo. Engineers just trust the folder and Claude Code handles the rest.
 
 **Flutter (mobile-talenta):**
 ```json
