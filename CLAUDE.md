@@ -8,9 +8,16 @@ Platforms: **web** (Next.js 15) · **ios** (Swift/UIKit) · **flutter** (Dart/BL
 ## Dev Commands
 
 ```bash
-# Wire into a downstream project — links all agents, skills, hooks, and reference
+# Wire into a downstream project (submodule path)
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
+
+# Build a Claude Code plugin for a platform (plugin path)
+software-dev-agentic/scripts/build-plugin.sh --platform=flutter-mobile-talenta
+software-dev-agentic/scripts/build-plugin.sh --platform=all
+
+# Test a built plugin locally
+claude --plugin-dir software-dev-agentic/dist/plugins/flutter-mobile-talenta
 
 # Cut a release
 /release

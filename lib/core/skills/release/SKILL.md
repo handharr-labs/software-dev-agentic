@@ -46,12 +46,22 @@ Compute the next version by incrementing the appropriate segment of the current 
 
 Only include sections that have entries. Use today's date (available in your system context).
 
-## Step 4 — Commit and tag
+## Step 4 — Build plugins
+
+Run the build script for all platforms:
+
+```bash
+scripts/build-plugin.sh --platform=all
+```
+
+This regenerates `dist/plugins/<platform>/` for every platform from `lib/`. The built output is committed so the marketplace serves the latest version.
+
+## Step 5 — Commit and tag
 
 Run:
 ```bash
-git add VERSION CHANGELOG.md
-git commit -m "chore: release vX.Y.Z"
+git add VERSION CHANGELOG.md dist/plugins/
+git commit -m "chore(release): vX.Y.Z"
 git tag vX.Y.Z
 ```
 
@@ -59,3 +69,4 @@ Then tell the user:
 - The new version number
 - The git tag created
 - To push with: `git push && git push --tags`
+- Engineers with auto-update enabled will receive the plugin update automatically on next session

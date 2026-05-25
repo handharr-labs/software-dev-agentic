@@ -2,7 +2,7 @@
 
 > Claude Code toolkit for Clean Architecture projects — v5.2.0
 
-A git submodule that wires AI agents, skills, hooks, and architecture reference docs into your project's `.claude/` directory. Version-controlled in one place, shared across all platforms and projects.
+A multi-platform agentic toolkit — agents, skills, hooks, and architecture reference docs for Clean Architecture projects. Distributed as a **git submodule** or a **Claude Code plugin**.
 
 **Platforms:** Web (Next.js 15) · iOS (Swift/UIKit) · Flutter · Android
 
@@ -10,22 +10,79 @@ A git submodule that wires AI agents, skills, hooks, and architecture reference 
 
 ## How it works
 
-Add this repo as a submodule at the project root under `software-dev-agentic/`. The setup script symlinks agents and skills into `.claude/agents/` and `.claude/skills/` — Claude Code, Gemini CLI, and GitHub Copilot all pick them up from there. Your project code stays untouched.
+Agents are organized into **personas** — coherent workflow groups (builder, detective, tracker, auditor, installer). All personas ship to every platform.
 
-```
-your-project/
-  software-dev-agentic/    ← this repo (submodule, at project root)
-  .claude/
-    agents/                → symlinks into submodule
-    skills/                → symlinks into submodule
-    agents.local/          ← your project-specific overrides (never touched by sync)
-```
+Two distribution paths — same source, same behavior:
 
-Agents are organized into **personas** — coherent workflow groups. All personas are installed by default.
+| | Submodule | Plugin |
+|---|---|---|
+| Setup | `setup-symlinks.sh` | `/plugin install` |
+| Skill entry | `/builder-build-feature` | `/sda-<platform>:builder-build-feature` |
+| Updates | `sync.sh` | auto-update on next session |
+| Overrides | `agents.local/` / `skills.local/` | `.claude/agents/` overrides plugin at higher priority |
 
 ---
 
-## Setup
+## Setup — Plugin (recommended)
+
+The plugin path requires no submodule, no symlinks, and updates automatically on every release.
+
+### Step 1 — Add the marketplace to your downstream project
+
+Add to `.claude/settings.json` in your project (commit this — all engineers get it automatically):
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "sda": {
+      "source": {
+        "source": "github",
+        "repo": "mekari-engineering/software-dev-agentic"
+      }
+    }
+  }
+}
+```
+
+### Step 2 — Each engineer installs once
+
+```
+/plugin install sda-flutter-mobile-talenta@sda
+```
+
+Available plugin names:
+
+| Plugin | Platform |
+|---|---|
+| `sda-flutter-mobile-talenta` | Flutter / mobile-talenta |
+| `sda-flutter-mobile-jurnal` | Flutter / mobile-jurnal |
+| `sda-flutter-qontak-chat` | Flutter / qontak-chat |
+| `sda-flutter-qontak-crm` | Flutter / qontak-crm |
+| `sda-ios-talenta` | iOS / talenta |
+| `sda-android-talenta` | Android / talenta |
+| `sda-web` | Web / Next.js |
+
+### Step 3 — Use trigger skills
+
+```
+/sda-flutter-mobile-talenta:builder-build-feature
+/sda-flutter-mobile-talenta:detective-debug
+/sda-flutter-mobile-talenta:auditor-arch-review
+```
+
+### Updates
+
+Engineers with auto-update enabled receive plugin updates automatically on the next session after a release. Others run:
+
+```
+/plugin marketplace update sda
+```
+
+---
+
+## Setup — Submodule
+
+Use this path if your project already uses the submodule approach or needs local file overrides.
 
 ### Starting a new project
 
@@ -35,7 +92,7 @@ npx create-next-app@latest my-app --typescript --tailwind --eslint --app --src-d
 cd my-app
 
 # 2. Add the submodule
-git submodule add https://github.com/mekaripaper/software-dev-agentic software-dev-agentic
+git submodule add https://github.com/mekari-engineering/software-dev-agentic software-dev-agentic
 
 # 3. Wire everything — symlinks all agents, skills, hooks, and reference for the platform
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
@@ -43,25 +100,27 @@ software-dev-agentic/scripts/setup-symlinks.sh --platform=web
 software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
 ```
 
-Open Claude Code and use trigger skills (`/builder-build-feature`, `/detective-debug`, etc.) as the entry point.
+```
+your-project/
+  software-dev-agentic/    ← this repo (submodule)
+  .claude/
+    agents/                → symlinks into submodule
+    skills/                → symlinks into submodule
+    agents.local/          ← your project-specific overrides (never touched by sync)
+```
 
----
+Open Claude Code and use trigger skills (`/builder-build-feature`, `/detective-debug`, etc.) as the entry point.
 
 ### Adding to an existing project
 
 ```bash
-git submodule add https://github.com/mekaripaper/software-dev-agentic software-dev-agentic
-
+git submodule add https://github.com/mekari-engineering/software-dev-agentic software-dev-agentic
 software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-# or
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
 ```
 
 The script wires symlinks, copies `CLAUDE.md`, and sets up `settings.local.json`. Re-running is safe — existing files and local overrides are never overwritten.
 
----
-
-## Keeping up to date
+### Keeping up to date
 
 ```bash
 software-dev-agentic/scripts/sync.sh --platform=<platform>

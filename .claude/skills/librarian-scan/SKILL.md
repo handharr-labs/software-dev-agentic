@@ -27,7 +27,7 @@ Parse `$ARGUMENTS`: extract the first non-flag token as the feature name. If it 
 
 Extract repo paths from flags: `--ios`, `--android`, `--flutter`. Absent flags → empty string.
 
-Derive default Feature Doc path: `.claude/reference/feature-docs/<kebab-case-name>.md`.
+Derive default Feature Doc path: `lib/core/reference/feature-docs/<kebab-case-name>.md`.
 
 ### 2 — Resolve repo paths
 
@@ -106,7 +106,7 @@ Show the draft (or diff against existing doc if updating) and audit findings.
 
 ### 9 — Write on approval
 
-Write the draft to `.claude/reference/feature-docs/<name>.md`.
+Write the draft to `lib/core/reference/feature-docs/<name>.md`.
 
 Confirm: "Feature Doc written to `<path>`."
 
