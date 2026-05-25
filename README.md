@@ -40,7 +40,7 @@ Commit this file — it declares the marketplace and auto-installs the right plu
     }
   },
   "enabledPlugins": {
-    "sda-flutter-mobile-talenta": "sda"
+    "sda-flutter-mobile-talenta@sda": true
   }
 }
 ```
