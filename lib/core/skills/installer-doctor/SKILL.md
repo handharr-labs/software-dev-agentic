@@ -119,11 +119,11 @@ Check `.claude/settings.json` for `extraKnownMarketplaces.sda`:
 ### 3. No stale symlinks
 
 ```bash
-find .claude/agents .claude/skills -type l 2>/dev/null | wc -l
+find .claude/agents .claude/skills .claude/reference -type l 2>/dev/null | wc -l
 ```
 
 - Pass: 0 symlinks (plugin path uses no symlinks)
-- Warn: symlinks found — leftover from submodule migration; run: `find .claude/agents .claude/skills -type l -delete`
+- Warn: symlinks found — leftover from submodule migration; run: `find .claude/agents .claude/skills .claude/reference -type l -delete`
 
 ### 4. skillListingBudgetFraction set
 
