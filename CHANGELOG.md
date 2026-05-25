@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.28.0] — 2026-05-25
+
+### Added
+- `lib/core/reference/feature-docs/` — Feature Docs now ship downstream via submodule (previously written to `.claude/reference/`, which was internal-only)
+- `timeoff` Feature Doc — full three-platform scan (iOS pre-Clean hybrid, Android pre-Clean MVP+Clean hybrid, Flutter Clean BLoC); covers API contracts, data model, HLD diagram, six data flow paths, artifacts table, platform variants, and gotchas
+- `scripts/build-plugin.sh` — builds Claude Code plugins per platform from `lib/`; used in CI and release flow
+- `.claude-plugin/marketplace.json` — plugin registry for marketplace distribution (flutter-mobile-talenta, flutter-mobile-jurnal, flutter-qontak-chat, flutter-qontak-crm, ios-talenta, android-talenta, web)
+
+### Changed
+- `librarian-scan` skill — Feature Doc output path updated from `.claude/reference/feature-docs/` to `lib/core/reference/feature-docs/` so docs are accessible to downstream projects
+- `release` skill — Step 4 now runs `scripts/build-plugin.sh --platform=all` before committing, so `dist/plugins/` is always in sync with the release
+
+---
+
 ## [7.27.0] — 2026-05-25
 
 ### Added
