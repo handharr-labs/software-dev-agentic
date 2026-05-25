@@ -9,6 +9,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [7.27.0] — 2026-05-25
 
+### Added
+- `librarian` persona — internal KMS toolkit (`.claude/` only, not shipped downstream)
+  - `librarian-feature-orchestrator` — plan-scan brain: reads `[pending-scan]` markers, resolves repo paths from flags, decides which platform workers to spawn
+  - `librarian-synthesizer-worker` — merges PRD content or platform scan findings into a Feature Doc draft conforming to the schema
+  - `librarian-audit-worker` (haiku) — validates draft against `docs/principles/feature-doc-principles.md`; violations block publish, warnings surface to reviewer
+  - `librarian-ios-worker` — scans local iOS repo; discovers ViewControllers, Services, bridges; detects `[pre-Clean]`/`[Clean]`
+  - `librarian-android-worker` — scans local Android repo; discovers Fragments, ViewModels, UseCases, Repositories; detects `[pre-Clean]`/`[Clean]`
+  - `librarian-flutter-worker` — scans local Flutter module; discovers BLoC, UseCase, Repository, DataSource, Widget; always `[Clean]`
+  - `librarian-scan` skill — backfills Feature Docs from code; repos passed as `--ios/--android/--flutter=<path>` flags; incremental `[pending-scan]` expansion
+  - `librarian-generate` skill — generates Feature Doc from PRD file, Confluence URL, or Jira ticket ID; mmpa-optional with paste fallback
+  - `librarian-merge` skill — consolidates 2+ Feature Docs; applies per-section merge strategies; archives originals on request
+  - `librarian-explain` skill — read-only inline explanation; `--aspect` and `--for` flags; no agent spawn
+- `docs/principles/feature-doc-principles.md` — canonical Feature Doc reference: schema, scoping model, mandatory sections, quality rules, structural rules, audit criteria, design decisions
+
 ### Changed
 - `builder-feature-orchestrator` — G1a now enforces `AskUserQuestion` unconditionally; added "never infer" guard with explicit trigger-word examples ("re-work", "redo", "continue"). Added `New run directory` option to G1b so users can create a fresh run directory for an existing feature without abandoning it entirely.
 
