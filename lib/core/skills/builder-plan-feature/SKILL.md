@@ -241,6 +241,18 @@ Spawn `builder-feature-orchestrator` with mode `process-findings`:
 >
 > Round: <N>
 > Visited layers: <comma-separated list from visited set>
+> run_dir: <run_dir>
+> update_mode: <true | false>
+>
+> <if update_mode is true, include:>
+> **existing_plan:**
+> \<content of the archived plan-vN.md — re-read from disk if not already in context\>
+>
+> **existing_context:**
+> \<content of the archived context-vN.md — re-read from disk if not already in context\>
+>
+> **completed_artifacts:** \<comma-separated list\>
+> \<end if\>
 >
 > **Accumulated Findings:**
 > <paste full all_findings content>
@@ -248,13 +260,15 @@ Spawn `builder-feature-orchestrator` with mode `process-findings`:
 Wait for the orchestrator's decision block.
 
 - **`Decision: spawn-planners`** → increment `round`, go back to 2a
-- **`Decision: converged`** → proceed to Step 3
+- **`Decision: synthesized`** → plan.md and context.md are already written; skip Step 3 and proceed directly to Step 4
 - **`Decision: blocked`** → present the orchestrator's question to the user via `AskUserQuestion`, send the answer back to orchestrator as a follow-up `process-findings` call, then re-evaluate
 
 **Max rounds guard:** If `round` reaches 4 without convergence, stop the loop and surface to the user:
 > "Planning could not converge after 3 rounds. Open questions: <list from last blocked decision>. Please clarify before retrying."
 
-## Step 3 — Synthesize Plan
+## Step 3 — Synthesize Plan (fallback only)
+
+> **When reached:** This step is only reached if the orchestrator returned `Decision: synthesized` is NOT yet used — e.g., in a future `discuss-more` re-synthesis triggered from Step 4. The normal convergence path skips here because `Decision: synthesized` from Step 2b means plan.md and context.md are already on disk.
 
 **If `update_mode` is true** — archive the current plan before synthesizing:
 

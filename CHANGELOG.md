@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.28.7] — 2026-05-26
+
+### Changed
+- `builder-feature-orchestrator` — `process-findings` mode now synthesizes plan.md + context.md inline on convergence and returns `Decision: synthesized`, eliminating the separate `synthesize` round-trip spawn
+- `builder-plan-feature` — Step 2b passes `run_dir` and `update_mode` context to `process-findings`; routes `Decision: synthesized` directly to Step 4, skipping Step 3
+
+---
+
 ## [7.28.6] — 2026-05-26
 
 ### Fixed

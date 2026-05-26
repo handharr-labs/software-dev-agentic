@@ -76,12 +76,12 @@ Returned when the user wants to discard an interrupted planning run:
 run_dir: <absolute path to run directory>
 ```
 
-### Decision: converged
+### Decision: synthesized
 
-Returned when all findings are sufficient to synthesize the plan:
+Returned when findings have converged and plan.md + context.md have already been written inline during `process-findings`. The entry skill skips Step 3 and proceeds directly to Step 4 (Approve).
 
 ```
-## Decision: converged
+## Decision: synthesized
 summary:
   - <artifact 1> → <layer> / <status>
   - <artifact 2> → <layer> / <status>
@@ -283,7 +283,7 @@ Otherwise load the layer contracts reference (Grep for relevant sections) then r
 
 ## Mode: process-findings
 
-Called after each planner round with accumulated findings from all completed rounds.
+Called after each planner round with accumulated findings from all completed rounds. The entry skill also passes `run_dir`, `update_mode`, and (when `update_mode: true`) `existing_plan`, `existing_context`, and `completed_artifacts` — use these only when proceeding to inline synthesis below.
 
 **Step 1 — Read impact recommendations**
 
@@ -293,13 +293,38 @@ For each planner finding block, extract its `### Impact Recommendations` section
 
 The entry skill passes which layers have already been explored (visited set). A recommendation for a layer already in the visited set is resolved — do not re-spawn it unless new open questions emerged from the current round's findings.
 
-**Step 3 — Decide: more rounds or converged?**
+**Step 3 — Decide: more rounds or synthesize?**
 
 If any `required` impact recommendation points to an unvisited layer → return `Decision: spawn-planners` for the next round listing only unvisited layers.
 
-If all required recommendations are covered by the visited set (or there are no recommendations) → return `Decision: converged` with the artifact summary.
+If all required recommendations are covered by the visited set (or there are no recommendations) → **do not return `Decision: converged`**. Instead, proceed directly to inline synthesis (Step 4 below).
 
 **Max rounds:** If the entry skill reports round 3 is complete and open questions remain, return `Decision: blocked` with a targeted question for the user rather than requesting a round 4.
+
+**Step 4 — Inline synthesis (convergence path only)**
+
+Execute all steps from `Mode: synthesize` directly, using the findings already in context and the `run_dir` / `update_mode` / `existing_plan` / `existing_context` / `completed_artifacts` passed by the entry skill. If `update_mode: true`, archive the existing plan before writing:
+
+```bash
+N=$(ls "<run_dir>/plan-v"*.md 2>/dev/null | wc -l | tr -d ' ')
+N=$((N + 1))
+mv "<run_dir>/plan.md"    "<run_dir>/plan-v${N}.md"
+mv "<run_dir>/context.md" "<run_dir>/context-v${N}.md"
+```
+
+Then write plan.md and context.md as specified in `Mode: synthesize` Steps 2–5.
+
+Return `Decision: synthesized` instead of `Decision: converged`:
+
+```
+## Decision: synthesized
+summary:
+  - <artifact 1> → <layer> / <status>
+  - <artifact 2> → <layer> / <status>
+  ...
+```
+
+The entry skill will skip its Step 3 spawn and proceed directly to Step 4 (Approve).
 
 ## Mode: synthesize
 
