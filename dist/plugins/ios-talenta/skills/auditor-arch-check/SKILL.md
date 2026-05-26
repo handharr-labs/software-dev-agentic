@@ -2,7 +2,7 @@
 name: auditor-arch-check
 description: Check iOS-specific Clean Architecture rules for a Swift/UIKit project — layer import direction, module structure, legacy folder usage, and naming conventions. Called by auditor-arch-review-worker.
 user-invocable: false
-tools: Read, Glob, Grep
+allowed-tools: Read, Glob, Grep
 ---
 
 Check the provided files against iOS-specific architecture rules. Report violations with file path, line number, and fix.

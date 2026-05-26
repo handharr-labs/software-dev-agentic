@@ -12,7 +12,7 @@ argument-hint: 'Describe the knowledge task: generate, compare, or query. Option
 Extract dartdoc documentation from any Dart project, convert it to
 structured Markdown, chunk it, and embed it into a local ChromaDB
 vector store. The resulting knowledge base is queried by the
-`dart-knowledge-query` and `dart-knowledge-auditor` agents.
+`dart-knowledge-query` agent.
 
 **Pipeline:** Dart source → dartdoc JSON → Markdown → Chunks → ChromaDB
 

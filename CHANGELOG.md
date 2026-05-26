@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [7.28.6] — 2026-05-26
+
+### Fixed
+- 13 skill files across `lib/core/skills/` and platform contract skills — corrected frontmatter `tools:` → `allowed-tools:` so skills load correctly in plugin context
+- `builder-groom-orchestrator` — removed Phase 4 inline execution of `tracker-adjust-ticket` (agents cannot invoke skills); orchestrator now returns grooming summary and delegates ticket update to the calling skill
+- `builder-groom-orchestrator` — updated description to reflect correct responsibility boundary
+- `dart-repo-knowledge` — removed stale reference to non-existent `dart-knowledge-auditor` agent
+
+---
+
 ## [7.28.5] — 2026-05-26
 
 ### Fixed

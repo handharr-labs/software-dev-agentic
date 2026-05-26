@@ -35,7 +35,7 @@ Spawn `builder-groom-orchestrator` with mode `detect-scope`:
 
 Wait for the orchestrator to return a `Decision: spawn-planners` or `Decision: blocked`.
 
-- **`Decision: blocked`** → surface the orchestrator's question to the user via `AskUserQuestion`, then stop or retry based on the answer.
+- **`Decision: blocked`** → surface the orchestrator's question to the user via `AskUserQuestion`. Then re-spawn `builder-groom-orchestrator` in `detect-scope` mode with the original prompt **plus** the user's clarification appended. Do NOT use `SendMessage` to resume the blocked agent.
 - **`Decision: spawn-planners`** → extract `spawn`, `reason`, and `skipped` from the block. Call `AskUserQuestion`:
 
   ```
@@ -88,4 +88,6 @@ Spawn `builder-groom-orchestrator` with mode `synthesize`:
 > **Planner Findings:**
 > <paste all planner findings blocks>
 
-The orchestrator produces the grooming summary and chains to `tracker-adjust-ticket` to update the ticket.
+The orchestrator produces the grooming summary and returns it.
+
+Once the orchestrator completes, invoke `tracker-adjust-ticket` directly with the ticket path — pass the grooming summary as session context so the skill can write the Session Adjustment section without asking the user again.

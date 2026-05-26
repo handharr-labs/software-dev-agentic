@@ -2,7 +2,7 @@
 name: tracker-adjust-ticket
 description: Adjust a locally fetched Jira ticket (.md file) based on session discussion. Updates only the Session Adjustment section — never touches any other content.
 user-invocable: true
-tools: Read, Edit, AskUserQuestion
+allowed-tools: Read, Edit, AskUserQuestion
 ---
 
 ## Arguments

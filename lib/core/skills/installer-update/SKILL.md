@@ -2,7 +2,7 @@
 name: installer-update
 description: Sync software-dev-agentic to the latest version and verify the full installation — runs sync.sh then checks submodule, symlinks, CLAUDE.md markers, settings, and GitHub CLI auth.
 user-invocable: true
-tools: Bash, Read, Glob
+allowed-tools: Bash, Read, Glob
 ---
 
 You are a self-contained update runner. Execute every step below in order without stopping. Collect all results, then print a single combined report at the end.

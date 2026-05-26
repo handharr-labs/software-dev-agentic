@@ -2,7 +2,7 @@
 name: installer-setup-project
 description: Configure an iOS project that has already wired the software-dev-agentic submodule. Copies the iOS CLAUDE-template.md, prompts for placeholder values, and creates an agents.local stub.
 user-invocable: false
-tools: Read, Bash
+allowed-tools: Read, Bash
 ---
 
 Configure a freshly wired iOS project for software-dev-agentic. Called by `installer-setup`.

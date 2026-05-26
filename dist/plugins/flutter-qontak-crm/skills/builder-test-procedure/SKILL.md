@@ -2,7 +2,7 @@
 name: builder-test-procedure
 description: Four-step unit test creation procedure — create or extend a test file, determine if mocks are needed, generate missing mocks using the platform-specific procedure, then verify correctness of all test cases.
 user-invocable: false
-tools: Read, Write, Edit, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Inputs

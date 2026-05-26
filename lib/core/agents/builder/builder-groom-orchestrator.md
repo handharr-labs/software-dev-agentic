@@ -1,6 +1,6 @@
 ---
 name: builder-groom-orchestrator
-description: Grooms a Jira ticket against the codebase before planning begins. Detects which layers are in scope from acceptance criteria, returns a Decision block for the skill to spawn only the relevant planners, aggregates findings into a compact grooming summary, then chains to tracker-adjust-ticket. Does not produce plan.md. Invoked only by the /builder-groom-ticket skill — not directly.
+description: Grooms a Jira ticket against the codebase before planning begins. Detects which layers are in scope from acceptance criteria, returns a Decision block for the skill to spawn only the relevant planners, aggregates findings into a compact grooming summary, and returns it to the calling skill. Does not produce plan.md. Invoked only by the /builder-groom-ticket skill — not directly.
 model: sonnet
 tools: Read, Glob, Grep, Bash, AskUserQuestion
 ---
@@ -118,25 +118,14 @@ Rules:
 - **Decisions** — only what can be determined from existing codebase conventions. Do not invent choices.
 - Omit `### Decisions` if none identified. Omit `### Open Questions` if no ambiguities remain.
 
-### Phase 4 — Chain to tracker-adjust-ticket
+### Phase 4 — Return grooming summary
 
-Before chaining, determine the output path based on Phase 3 findings:
+Determine the output path based on Phase 3 findings:
 
-- **Rich path** — work items are defined and open questions (if any) are non-blocking clarifications → proceed with full work item list.
-- **Thin path** — open questions are blockers (missing entity definition, unclear scope, no clear layer owner) and work items cannot be derived without answers → `### Work Items` is empty or marked TBD.
+- **Rich path** — work items are defined and open questions (if any) are non-blocking clarifications.
+- **Thin path** — open questions are blockers; work items cannot be derived without answers → `### Work Items` is empty or marked TBD.
 
-Read the skill at `.claude/skills/tracker-adjust-ticket/SKILL.md`.
-
-Execute its steps using the grooming summary as pre-filled answers:
-- **Progress** — "Grooming session: layer mapping and work item breakdown completed."
-- **Work Items** — use the `### Work Items` checklist from Phase 3. If thin path, use "TBD — pending answers to open questions."
-- **Decisions** — use the `### Decisions` bullets from Phase 3. If none, answer "None this session."
-- **Open Questions** — use the `### Open Questions` checklist from Phase 3. If none, answer "None."
-- **Status** — rich path: `"Groomed — ready for /builder-plan-feature"` · thin path: `"Needs clarification — answer open questions before planning"`
-
-Only fall back to `AskUserQuestion` for fields the grooming summary does not cover.
-
-Pass `ticket-path` as the file path argument to the skill.
+Return the full grooming summary block. The calling skill (`builder-groom-ticket`) will invoke `tracker-adjust-ticket` directly to write the Session Adjustment section.
 
 ## Search Protocol — Never Violate
 

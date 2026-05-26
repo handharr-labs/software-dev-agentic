@@ -2,7 +2,7 @@
 name: detective-debug-add-logs
 description: Add strategic debug logs to a Flutter/Dart codebase using debugPrint with [DebugTest] prefix.
 user-invocable: false
-tools: Read, Edit, Glob, Grep
+allowed-tools: Read, Edit, Glob, Grep
 ---
 
 Add debug instrumentation logs using `debugPrint` with `[DebugTest]` prefix.

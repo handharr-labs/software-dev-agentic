@@ -54,10 +54,10 @@ rm -rf .git/modules/software-dev-agentic
 ## Step 4 — Remove symlinks
 
 ```bash
-find .claude/agents .claude/skills -type l -delete 2>/dev/null || true
+find .claude/agents .claude/skills .claude/reference -type l -delete 2>/dev/null || true
 ```
 
-Report how many symlinks were removed.
+Report how many symlinks were removed. Do not touch `agents.local/`, `skills.local/`, or `reference.local/` — those are project-specific overrides.
 
 ## Step 5 — Install plugin
 

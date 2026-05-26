@@ -2,7 +2,7 @@
 name: builder-clear-runs
 description: Remove all orchestrator run state from .claude/agentic-state/runs/. Clears stale state.json and stateholder-contract.md artifacts left by feature-orchestrator and other orchestrators.
 user-invocable: true
-tools: Bash
+allowed-tools: Bash
 ---
 
 Remove all run state artifacts from `.claude/agentic-state/runs/`.

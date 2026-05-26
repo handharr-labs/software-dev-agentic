@@ -2,7 +2,7 @@
 name: detective-debug-remove-logs
 description: Remove all [DebugTest] debugPrint debug statements from a Flutter/Dart codebase before committing.
 user-invocable: false
-tools: Grep, Edit, Glob
+allowed-tools: Grep, Edit, Glob
 ---
 
 Remove all `debugPrint('[DebugTest]...)` statements added during debugging.

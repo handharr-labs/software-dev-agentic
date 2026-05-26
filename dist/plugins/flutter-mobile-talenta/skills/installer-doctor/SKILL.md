@@ -2,7 +2,7 @@
 name: installer-doctor
 description: Audit the software-dev-agentic setup in a downstream project — detects submodule or plugin path, then checks agents, CLAUDE.md markers, settings, and GitHub CLI auth.
 user-invocable: true
-tools: Bash, Read, Glob
+allowed-tools: Bash, Read, Glob
 ---
 
 You are a setup auditor. First detect which distribution path is active, then run the appropriate checks. Collect all results, then print a single formatted report. Do not auto-fix anything — only diagnose and suggest.
@@ -119,11 +119,11 @@ Check `.claude/settings.json` for `extraKnownMarketplaces.sda`:
 ### 3. No stale symlinks
 
 ```bash
-find .claude/agents .claude/skills -type l 2>/dev/null | wc -l
+find .claude/agents .claude/skills .claude/reference -type l 2>/dev/null | wc -l
 ```
 
 - Pass: 0 symlinks (plugin path uses no symlinks)
-- Warn: symlinks found — leftover from submodule migration; run: `find .claude/agents .claude/skills -type l -delete`
+- Warn: symlinks found — leftover from submodule migration; run: `find .claude/agents .claude/skills .claude/reference -type l -delete`
 
 ### 4. skillListingBudgetFraction set
 
