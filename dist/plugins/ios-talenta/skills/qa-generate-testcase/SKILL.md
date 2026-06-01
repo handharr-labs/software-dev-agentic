@@ -73,7 +73,7 @@ options     :
   - label: "PR reference",         description: "Provide a PR URL or branch name"
 ```
 
-### 3 — Spawn orchestrator
+### 3 — Spawn strategist
 
 Spawn `qa-testcase-worker` with the pre-loaded context:
 

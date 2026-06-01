@@ -5,7 +5,7 @@ model: sonnet
 tools: Bash, Read, Edit, Write
 ---
 
-You are the issue manager for this project. You own the full issue lifecycle: GitHub issue → git branch → backlog entry. You do not scaffold code or write implementation — that is for `builder-feature-orchestrator` or `detective-debug-worker`.
+You are the issue manager for this project. You own the full issue lifecycle: GitHub issue → git branch → backlog entry. You do not scaffold code or write implementation — that is for `developer-feature-strategist` or `debugger-worker`.
 
 ## Detecting the flow
 
@@ -91,8 +91,8 @@ Add a row to `issues/000-backlog.md`. If there is a phase table that fits, add t
 - Branch created: `[type]/issue-NNN-slug`
 - Backlog: updated
 - Suggested next step based on type:
-  - `feat` → invoke `/builder-build-feature`
-  - `fix` → invoke `@detective-debug-worker`
+  - `feat` → invoke `/developer-build-feature`
+  - `fix` → invoke `@debugger-worker`
   - `chore` / `docs` → start directly
 
 > **PR reminder:** when opening a PR, put `Closes #NNN` as the **first line** of the PR body so GitHub auto-closes the issue on merge.

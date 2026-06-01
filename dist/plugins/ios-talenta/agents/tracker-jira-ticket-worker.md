@@ -235,7 +235,7 @@ Created <N> tickets under <epic_key>:
 Total: N tickets | X SP
 View epic: https://<cloud_id>/browse/<epic_key>
 
-Run /builder-groom-ticket on each ticket to map implementation to the codebase.
+Run /developer-groom-ticket on each ticket to map implementation to the codebase.
 ```
 
 ---

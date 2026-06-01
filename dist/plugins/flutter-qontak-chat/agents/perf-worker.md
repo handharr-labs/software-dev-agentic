@@ -61,11 +61,11 @@ Score each dimension **1–10**. Provide a one-line justification for each score
 
 ### D1 — Orchestration Quality
 
-*Did orchestrators (builder-feature-orchestrator, builder-backend-orchestrator) coordinate correctly?*
+*Did strategists (developer-feature-strategist, developer-backend-strategist) coordinate correctly?*
 
-- **N/A (8/10)** if no orchestrators were spawned — inline work is often correct per P9
-- Check `agent_spawns` for orchestrator types
-- Deduct if an orchestrator spawned sub-agents instead of calling skills directly
+- **N/A (8/10)** if no strategists were spawned — inline work is often correct per P9
+- Check `agent_spawns` for strategist types
+- Deduct if a strategist spawned sub-agents instead of calling skills directly
 - Deduct if it accumulated worker outputs unnecessarily
 - Deduct if it passed file contents instead of paths
 
@@ -82,9 +82,9 @@ Score each dimension **1–10**. Provide a one-line justification for each score
 
 | Work category | Expected executor |
 |---|---|
-| Entity / repository interface / use case / data layer | `builder-feature-worker` or `builder-backend-orchestrator` (via skills) |
-| View / screen / component | `builder-ui-worker` |
-| Debugging | `detective-debug-worker` via `detective-debug-orchestrator` |
+| Entity / repository interface / use case / data layer | `developer-feature-worker` or `developer-backend-strategist` (via skills) |
+| View / screen / component | `developer-ui-worker` |
+| Debugging | `debugger-worker` via `debugger-strategist` |
 | Architecture review | `auditor-arch-review-worker` |
 
 - Deduct `-2` if domain or data artifacts were written without corresponding skill calls (skills bypassed)
@@ -96,9 +96,9 @@ Score each dimension **1–10**. Provide a one-line justification for each score
 - Deduct `-2` if data skills appear before domain skills (entity/repository interface must exist first)
 - Deduct `-1` if UI skills appear before presentation skills (StateHolder contract must exist first)
 
-**Input quality** — orchestrators must pass file path lists only, never file contents:
+**Input quality** — strategists must pass file path lists only, never file contents:
 
-- Deduct `-1` if orchestrator's spawn prompt (inferred from description context) shows signs of passing file contents rather than paths (e.g. descriptions mention "here is the entity code" vs "entity at path/to/entity.ts")
+- Deduct `-1` if strategist's spawn prompt (inferred from description context) shows signs of passing file contents rather than paths (e.g. descriptions mention "here is the entity code" vs "entity at path/to/entity.ts")
 
 ### D3 — Skill Execution
 
@@ -128,26 +128,26 @@ If the session is **mixed** (e.g. flag removal + file restoration), apply skill 
 
 | Artifact created | Expected skill |
 |---|---|
-| Entity | `builder-domain-create-entity` |
-| Repository interface | `builder-domain-create-repository` |
-| Use case | `builder-domain-create-usecase` |
-| Domain service | `builder-domain-create-service` |
+| Entity | `developer-domain-create-entity` |
+| Repository interface | `developer-domain-create-repository` |
+| Use case | `developer-domain-create-usecase` |
+| Domain service | `developer-domain-create-service` |
 
 *Data layer:*
 
 | Artifact created | Expected skill |
 |---|---|
-| DTO / mapper | `builder-data-create-mapper` |
-| DataSource interface + impl | `builder-data-create-datasource` |
-| Repository implementation | `builder-data-create-repository-impl` |
+| DTO / mapper | `developer-data-create-mapper` |
+| DataSource interface + impl | `developer-data-create-datasource` |
+| Repository implementation | `developer-data-create-repository-impl` |
 
 *Presentation layer:*
 
 | Artifact created | Expected skill |
 |---|---|
-| New StateHolder | `builder-pres-create-stateholder` |
+| New StateHolder | `developer-pres-create-stateholder` |
 
-- Deduct `-1` per skill call that doesn't match the expected skill for the artifact inferred from its context (e.g. `builder-domain-create-usecase` called when a repository interface was needed)
+- Deduct `-1` per skill call that doesn't match the expected skill for the artifact inferred from its context (e.g. `developer-domain-create-usecase` called when a repository interface was needed)
 - Deduct `-2` if a write to `write_paths` produced a domain/data/presentation artifact with **no corresponding skill call** — this means the worker bypassed skills and wrote directly (anti-pattern)
 
 **Intra-layer skill sequencing** — check the order of skill calls within each layer:
@@ -156,9 +156,9 @@ If the session is **mixed** (e.g. flag removal + file restoration), apply skill 
 *Data order (remote API):* mapper → datasource → repository-impl
 *Data order (local DB):* db-record → db-datasource → db-mapper → db-repository-impl
 
-- Deduct `-1` if `builder-domain-create-usecase` appears in `skill_calls` before `builder-domain-create-repository` for the same feature (precondition: repository interface must exist first)
-- Deduct `-1` if `builder-data-create-repository-impl` appears before `builder-data-create-datasource` (datasource interface must exist first)
-- Deduct `-1` if `builder-data-create-*` skills appear in `skill_calls` before any `builder-domain-create-*` skills (cross-layer precondition violation)
+- Deduct `-1` if `developer-domain-create-usecase` appears in `skill_calls` before `developer-domain-create-repository` for the same feature (precondition: repository interface must exist first)
+- Deduct `-1` if `developer-data-create-repository-impl` appears before `developer-data-create-datasource` (datasource interface must exist first)
+- Deduct `-1` if `developer-data-create-*` skills appear in `skill_calls` before any `developer-domain-create-*` skills (cross-layer precondition violation)
 
 ### D4 — Token Efficiency
 
@@ -189,7 +189,7 @@ Start at 10 and deduct:
   - `chore/` → maintenance
   - `design/` or `style/` → UI/design work
 - Check `skill_calls[0].args` — did the issue title match the branch type chosen?
-- Check `agent_spawns` subagent types — were Explore agents used for exploration (correct), builder-feature-worker or builder-backend-orchestrator for build work, etc.?
+- Check `agent_spawns` subagent types — were Explore agents used for exploration (correct), developer-feature-worker or developer-backend-strategist for build work, etc.?
 - Deduct if branch prefix mismatches task type (e.g. design work on `fix/` branch)
 - Deduct if wrong worker type was spawned for the work category
 
@@ -287,12 +287,12 @@ Include the exact agent file path inferred from the `agent_spawns` subagent type
 
 | Subagent type | Agent file |
 |---|---|
-| builder-feature-orchestrator | builder-feature-orchestrator |
-| builder-feature-worker | builder-feature-worker |
-| builder-backend-orchestrator | builder-backend-orchestrator |
-| builder-ui-worker | builder-ui-worker |
-| builder-test-worker | builder-test-worker |
-| detective-debug-worker | detective-debug-worker |
+| developer-feature-strategist | developer-feature-strategist |
+| developer-feature-worker | developer-feature-worker |
+| developer-backend-strategist | developer-backend-strategist |
+| developer-ui-worker | developer-ui-worker |
+| developer-test-worker | developer-test-worker |
+| debugger-worker | debugger-worker |
 
 ## Step 6 — Write the report
 
