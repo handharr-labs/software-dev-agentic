@@ -1,6 +1,6 @@
 # Builder — Skill Contract
 
-Platform-contract skills called by `builder` persona workers. Every platform must implement all **Required** skills under `lib/platforms/<platform>/skills/contract/<name>/SKILL.md`.
+Platform-contract skills called by `developer` persona workers. Every platform must implement all **Required** skills under `lib/platforms/<platform>/skills/contract/<name>/SKILL.md`.
 
 ---
 
@@ -8,16 +8,16 @@ Platform-contract skills called by `builder` persona workers. Every platform mus
 
 | Skill | Required |
 |---|---|
-| `builder-domain-create-entity` | Yes |
-| `builder-domain-create-repository` | Yes |
-| `builder-domain-create-usecase` | Yes |
-| `builder-domain-create-service` | Yes |
-| `builder-data-create-mapper` | Yes |
-| `builder-data-create-datasource` | Yes |
-| `builder-data-create-repository-impl` | Yes |
-| `builder-pres-create-stateholder` | Yes |
-| `builder-pres-create-screen` | Yes |
-| `builder-pres-create-component` | Optional — omit when the platform has no reusable component abstraction |
+| `developer-domain-create-entity` | Yes |
+| `developer-domain-create-repository` | Yes |
+| `developer-domain-create-usecase` | Yes |
+| `developer-domain-create-service` | Yes |
+| `developer-data-create-mapper` | Yes |
+| `developer-data-create-datasource` | Yes |
+| `developer-data-create-repository-impl` | Yes |
+| `developer-pres-create-stateholder` | Yes |
+| `developer-pres-create-screen` | Yes |
+| `developer-pres-create-component` | Optional — omit when the platform has no reusable component abstraction |
 
 ---
 
@@ -25,7 +25,7 @@ Platform-contract skills called by `builder` persona workers. Every platform mus
 
 | Skill | Required |
 |---|---|
-| `builder-test-create-domain` | Yes |
-| `builder-test-create-data` | Yes |
-| `builder-test-create-presentation` | Yes |
-| `builder-test-create-mock` | Yes |
+| `developer-test-create-domain` | Yes |
+| `developer-test-create-data` | Yes |
+| `developer-test-create-presentation` | Yes |
+| `developer-test-create-mock` | Yes |

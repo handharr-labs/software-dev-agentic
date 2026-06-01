@@ -57,7 +57,7 @@ Invariants:
 
 ## StateHolder Contract <!-- 11 -->
 
-Before `builder-ui-worker` writes the ViewController, `builder-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
+Before `developer-ui-worker` writes the ViewController, `developer-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
 - ViewModel class name and file path
 - `State` fields (name, type, purpose)
 - `Event` cases (name, payload if any)
@@ -69,7 +69,7 @@ Before `builder-ui-worker` writes the ViewController, `builder-feature-worker` p
 ## Creation Order <!-- 10 -->
 
 ```
-Use Cases → ViewModel (StateHolder) → StateHolder contract → ViewController (builder-ui-worker)
+Use Cases → ViewModel (StateHolder) → StateHolder contract → ViewController (developer-ui-worker)
 ```
 
 Never write the ViewController before the StateHolder contract exists.

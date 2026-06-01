@@ -57,7 +57,7 @@ Invariants:
 
 ## StateHolder Contract <!-- 11 -->
 
-Before `builder-ui-worker` writes the Activity/Fragment, `builder-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
+Before `developer-ui-worker` writes the Activity/Fragment, `developer-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
 - Presenter class name and file path
 - Contract.View interface methods (name, parameter types)
 - Contract.Presenter interface methods (name, parameter types)
@@ -69,7 +69,7 @@ Before `builder-ui-worker` writes the Activity/Fragment, `builder-feature-worker
 ## Creation Order <!-- 10 -->
 
 ```
-Use Cases → Presenter (StateHolder) → MVP Contract → StateHolder contract → Activity/Fragment (builder-ui-worker)
+Use Cases → Presenter (StateHolder) → MVP Contract → StateHolder contract → Activity/Fragment (developer-ui-worker)
 ```
 
 Never write the Activity/Fragment before the StateHolder contract exists.

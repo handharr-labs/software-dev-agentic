@@ -70,7 +70,7 @@ Read:Grep ratio: 0.4 (target < 3 — excellent; Grep-first discipline well appli
 - **[D7]** The second `feature-orchestrator` spawn (moving the call from `handlePostCICOValidateLocationSuccess` to `.viewDidLoadEvent`) was a rework spawn — the first execution placed the call in the wrong location. This added ~2 minutes of orchestration overhead for a single-line relocation. The planning step did not specify where in `CICOLocationViewModel` the call should land, allowing the misplacement.
 - **[D7]** The delegation guard fired mid-session, requiring user intervention. While the agent handled it correctly (stopped and asked), the guard triggering was a direct consequence of re-entering `feature-orchestrator` for a single-layer correction — which re-wrote `delegation.json` unnecessarily.
 
-> **Low score on D7?** Review `.claude/software-dev-agentic/lib/core/agents/builder/feature-orchestrator.md` — two fixes needed: (1) the plan spec should include the target insertion point in the ViewModel (which `emitEvent` case, which MARK section); (2) single-layer corrections after a completed phase should bypass the full orchestration stack and spawn the layer worker directly with exact coordinates from `state.json`.
+> **Low score on D7?** Review `.claude/software-dev-agentic/lib/core/agents/developer/feature-orchestrator.md` — two fixes needed: (1) the plan spec should include the target insertion point in the ViewModel (which `emitEvent` case, which MARK section); (2) single-layer corrections after a completed phase should bypass the full orchestration stack and spawn the layer worker directly with exact coordinates from `state.json`.
 
 ## Recommendations
 

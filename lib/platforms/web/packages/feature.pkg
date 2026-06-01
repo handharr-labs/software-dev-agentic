@@ -1,4 +1,4 @@
 name=feature
 description=Full-stack feature scaffolding across domain, data, and presentation layers
-agents=builder-feature-orchestrator domain-worker data-worker presentation-worker builder-test-worker
+agents=developer-feature-strategist domain-worker data-worker presentation-worker developer-test-worker
 skills=domain-create-entity domain-create-usecase domain-create-repository domain-create-service data-create-mapper data-create-datasource data-create-repository-impl pres-create-server-action pres-wire-di pres-ssr-check pres-create-screenmodel pres-create-screen test-create-mock test-create-domain test-create-data test-create-presentation

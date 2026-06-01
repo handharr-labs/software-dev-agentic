@@ -1,6 +1,6 @@
 ---
 name: scaffold
-description: Design and scaffold a new agentic component — skill, worker, orchestrator, or persona. Runs agent-scaffold-worker then verifies the new file with arch-review-worker.
+description: Design and scaffold a new agentic component — skill, worker, strategist, or persona. Runs agent-scaffold-worker then verifies the new file with arch-review-worker.
 user-invocable: true
 tools: Agent
 ---

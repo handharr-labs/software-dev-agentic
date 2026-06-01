@@ -13,9 +13,9 @@ Clean Architecture · DRY · SOLID — apply to all new code.
 
 ## Workflow
 
-Use trigger skills as entry points — `/builder-build-feature`, `/auditor-arch-review`, `/detective-debug`, etc.
+Use trigger skills as entry points — `/developer-build-feature`, `/auditor-arch-review`, `/debugger-debug`, etc.
 
-**Feature work → always start with `/builder-build-feature`, never inline.**
+**Feature work → always start with `/developer-build-feature`, never inline.**
 
 ## Dart Knowledge
 

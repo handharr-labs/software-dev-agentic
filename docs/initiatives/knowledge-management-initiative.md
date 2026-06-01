@@ -105,7 +105,7 @@ Feature Group     → HLD only, no implementation detail
 
 ### Persona: `librarian`
 
-A new standalone persona — separate from `builder`. Distinct workflow (document existing features) vs builder (implement new ones). Feature Docs produced by `librarian` are consumed by `builder` — same relationship as `tracker` → `builder`.
+A new standalone persona — separate from `developer`. Distinct workflow (document existing features) vs builder (implement new ones). Feature Docs produced by `librarian` are consumed by `developer` — same relationship as `tracker` → `developer`.
 
 **Agent roster** (internal — lives in `.claude/`, not shipped downstream):
 
@@ -207,12 +207,12 @@ Omitted platforms are marked `[pending-scan]`, not an error. Run the skill again
 
 **Risk:** Code grepping gives *what exists*, not *why*. Human review before publish is a hard gate, not optional.
 
-### `builder-plan-feature` integration
+### `developer-plan-feature` integration
 
-Feature Docs can be passed directly as input to `builder-plan-feature`, closing the loop between the KMS and the builder:
+Feature Docs can be passed directly as input to `developer-plan-feature`, closing the loop between the KMS and the builder:
 
 ```
-/builder-plan-feature .claude/reference/feature-docs/time-off.md
+/developer-plan-feature .claude/reference/feature-docs/time-off.md
 ```
 
 **How it fits:** The skill's Step 0 already handles local file paths — it passes them as `raw_paths` to the orchestrator. A Feature Doc path is classified as type `knowledge` — distinct from a PRD (requirements) or Figma (design). The orchestrator treats it as existing architecture context, not new requirements.
@@ -221,14 +221,14 @@ Feature Docs can be passed directly as input to `builder-plan-feature`, closing 
 
 | Planner | What it gets from the Feature Doc |
 |---|---|
-| `builder-domain-planner` | Data model — knows what entities already exist |
-| `builder-data-planner` | Data flow + API contracts — skips rediscovery round |
-| `builder-pres-planner` | Artifacts per platform — knows existing class names |
-| `builder-app-planner` | HLD layer map — knows current wiring |
+| `developer-domain-planner` | Data model — knows what entities already exist |
+| `developer-data-planner` | Data flow + API contracts — skips rediscovery round |
+| `developer-pres-planner` | Artifacts per platform — knows existing class names |
+| `developer-app-planner` | HLD layer map — knows current wiring |
 
 For feature modifications (not greenfield), planners skip the first discovery round entirely — they already know what's locked vs. what needs changing. This reduces planning rounds and improves artifact accuracy.
 
-**Step 0 extension required in `builder-plan-feature`:**
+**Step 0 extension required in `developer-plan-feature`:**
 
 | Pattern | Type | Action |
 |---|---|---|
@@ -358,7 +358,7 @@ Feature Docs live in the downstream project repo under `.claude/reference/featur
 Benefits over Confluence:
 - Git-versioned — every change is reviewable via PR
 - Directly readable by agents via `Read`/`Grep` — no MCP call needed
-- `builder-plan-feature` reads Feature Docs as local files, not remote fetches
+- `developer-plan-feature` reads Feature Docs as local files, not remote fetches
 - `librarian-audit-worker` can lint on every PR
 
 Skill output: `librarian-generate` and `librarian-merge` write to `.claude/reference/feature-docs/` via `Write` tool. No `mmpa_save_confluence_page` needed.

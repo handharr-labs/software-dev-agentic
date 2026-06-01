@@ -1,6 +1,6 @@
 # Detective — Skill Contract
 
-Platform-contract skills called by `detective` persona workers. Every platform must implement all **Required** skills under `lib/platforms/<platform>/skills/contract/<name>/SKILL.md`.
+Platform-contract skills called by `debugger` persona workers. Every platform must implement all **Required** skills under `lib/platforms/<platform>/skills/contract/<name>/SKILL.md`.
 
 ---
 
@@ -8,5 +8,5 @@ Platform-contract skills called by `detective` persona workers. Every platform m
 
 | Skill | Required |
 |---|---|
-| `detective-debug-add-logs` | Yes |
-| `detective-debug-remove-logs` | Yes |
+| `debugger-add-logs` | Yes |
+| `debugger-remove-logs` | Yes |

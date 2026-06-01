@@ -291,7 +291,7 @@ deeplinkStream?.deeplinkData
 
 ## Planner Search Patterns <!-- 15 -->
 
-Consumed by `builder-app-planner`. `{Feature}` = PascalCase, `{feature}` = camelCase per iOS convention.
+Consumed by `developer-app-planner`. `{Feature}` = PascalCase, `{feature}` = camelCase per iOS convention.
 
 | Scope key | Glob / Path | Grep hint |
 |---|---|---|

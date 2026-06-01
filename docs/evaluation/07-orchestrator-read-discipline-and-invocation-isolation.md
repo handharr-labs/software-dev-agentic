@@ -38,7 +38,7 @@ This correctly mandates delegation but says nothing about how the orchestrator s
 
 ## Changes Made
 
-### Updated: `lib/core/agents/builder/feature-orchestrator.md`
+### Updated: `lib/core/agents/developer/feature-orchestrator.md`
 
 Added "Search Protocol — Never Violate" section above the Constraints block:
 

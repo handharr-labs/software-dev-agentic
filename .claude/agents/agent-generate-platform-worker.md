@@ -133,7 +133,7 @@ Target: `lib/platforms/<platform>/skills/contract/<skill-name>/SKILL.md`
 2. Study existing contract skill examples:
    - `lib/platforms/flutter-mobile-talenta/skills/contract/`
    - `lib/platforms/ios-talenta/skills/contract/` (if present)
-3. `builder-pres-create-component` — only generate if Pass 1 observed a reusable component abstraction (e.g. widget base class, component protocol, shared UI primitive)
+3. `developer-pres-create-component` — only generate if Pass 1 observed a reusable component abstraction (e.g. widget base class, component protocol, shared UI primitive)
 4. Each `SKILL.md` is a Type P procedure skill that references the impl files written in Pass 2
 5. Always write/overwrite — no diff or approval gate (derived output)
 

@@ -192,7 +192,7 @@ Two separate primitives map to our skill types:
 **Work needed:**
 - Extend `scripts/setup-ai.sh` to symlink `lib/platforms/<platform>/skills/` into `.agents/skills/`
 - Add TOML generation for Type T/U skills into `.gemini/commands/`
-- Test a subset (e.g. `builder-domain-create-entity`, `builder-data-create-mapper`) before full rollout
+- Test a subset (e.g. `developer-domain-create-entity`, `developer-data-create-mapper`) before full rollout
 
 #### GitHub Copilot
 

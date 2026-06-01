@@ -73,11 +73,11 @@ Read:Grep ratio: 8.0 (target < 3 — high ratio signals full-file reads over tar
 
 > **Low score on D4?** Run `prompt-debug-worker` with this report + the agent's .md file
 > to surface ambiguous instructions that caused this behavior.
-> Agent file: `lib/core/agents/builder/feature-orchestrator.md`
+> Agent file: `lib/core/agents/developer/feature-orchestrator.md`
 
 > **Low score on D6?** Run `prompt-debug-worker` with this report + the agent's .md file
 > to surface ambiguous instructions that caused this behavior.
-> Agent file: `lib/core/agents/builder/feature-orchestrator.md`
+> Agent file: `lib/core/agents/developer/feature-orchestrator.md`
 
 ## Recommendations
 

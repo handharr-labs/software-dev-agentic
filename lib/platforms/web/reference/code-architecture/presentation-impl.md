@@ -57,7 +57,7 @@ Invariants:
 
 ## StateHolder Contract <!-- 10 -->
 
-Before `builder-ui-worker` writes the View component, `builder-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
+Before `developer-ui-worker` writes the View component, `developer-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
 - Hook name and file path (e.g. `useEmployeeListViewModel`)
 - State fields returned by the hook (name, type, purpose)
 - Handler functions returned by the hook (name, parameter types)
@@ -68,7 +68,7 @@ Before `builder-ui-worker` writes the View component, `builder-feature-worker` p
 ## Creation Order <!-- 10 -->
 
 ```
-Use Cases → ViewModel Hook (StateHolder) → StateHolder contract → View Component (builder-ui-worker)
+Use Cases → ViewModel Hook (StateHolder) → StateHolder contract → View Component (developer-ui-worker)
 ```
 
 Never write the View component before the StateHolder contract exists.

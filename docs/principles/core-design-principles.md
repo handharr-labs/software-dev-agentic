@@ -17,7 +17,7 @@ A coding assistant where Claude autonomously routes, decides, and executes — w
 2. **Easy to maintain** — update once, all projects get it
 3. **Open contribution model** — all engineers can explore, create, and PR new agents/skills
 4. **Context efficiency** — no wasted tokens on irrelevant content
-5. **Encouraging initiatives** — low barrier to propose new "personas" (orchestrators)
+5. **Encouraging initiatives** — low barrier to propose new "personas" (strategists)
 
 ---
 
@@ -35,8 +35,8 @@ Every persona must have exactly one primary entry agent. That agent must have a 
 
 | Role | Has trigger skill? | Spawned by |
 |---|---|---|
-| Persona entry agent (orchestrator, or single worker if no orchestrator) | Yes — required | User via trigger skill |
-| Workers inside a persona | No | Orchestrator only |
+| Persona entry agent (strategist, or single worker if no strategist) | Yes — required | User via trigger skill |
+| Workers inside a persona | No | Strategist only |
 
 The trigger skill owns three responsibilities before spawning the agent:
 1. **Routing** — detect existing runs (resume vs new call) and ask the user when ambiguous
@@ -45,9 +45,9 @@ The trigger skill owns three responsibilities before spawning the agent:
 
 The agent detects the `Pre-loaded context` block in its prompt and jumps directly to the first pending phase. Without it, the agent warns that direct invocation is unsupported.
 
-**Multiple workflow skills per persona are allowed** — as long as they all route through the same primary entry agent. Example: the builder persona has three Type W skills: `builder-build-feature` (direct build or resume), `builder-plan-feature` (planning-first workflow that runs a convergence planning loop → user approval → `feature-worker`), and `builder-build-from-ticket` (non-interactive CI/remote path — fetches a Jira ticket, runs the planning loop automatically, then `feature-worker` without any user prompts). All converge on the same executor; the rule guards against direct-invocation bypasses, not workflow variations.
+**Multiple workflow skills per persona are allowed** — as long as they all route through the same primary entry agent. Example: the developer persona has three Type W skills: `developer-build-feature` (direct build or resume), `developer-plan-feature` (planning-first workflow that runs a convergence planning loop → user approval → `feature-worker`), and `developer-build-from-ticket` (non-interactive CI/remote path — fetches a Jira ticket, runs the planning loop automatically, then `feature-worker` without any user prompts). All converge on the same executor; the rule guards against direct-invocation bypasses, not workflow variations.
 
-A sub-agent used only as a step inside a workflow skill (e.g. `feature-planner` inside `builder-plan-feature`) does not need its own standalone trigger skill.
+A sub-agent used only as a step inside a workflow skill (e.g. `feature-planner` inside `developer-plan-feature`) does not need its own standalone trigger skill.
 
 > **Adding a new persona:** create the entry agent + its trigger skill together. A persona without a trigger skill is incomplete.
 
@@ -64,9 +64,9 @@ Agents are intelligent specialists, not task executors. Each agent:
 
 Agents stay lean — they don't embed step-by-step instructions. That belongs in skills.
 
-**Orchestrators — Brain-Only Decision Makers:**
+**Strategists — Brain-Only Decision Makers:**
 
-Orchestrators are pure reasoning agents — they decide what to do and return structured decision blocks to the calling skill. The skill executes: it spawns agents, accumulates results, and loops. Key rules:
+Strategists are pure reasoning agents — they decide what to do and return structured decision blocks to the calling skill. The skill executes: it spawns agents, accumulates results, and loops. Key rules:
 
 - Return structured decision blocks (`Decision: spawn-planners`, `Decision: converged`, `Decision: spawn-worker`, `Decision: blocked`) — never spawn agents directly
 - Never write or edit files — all writes go through workers spawned by the skill
@@ -78,19 +78,19 @@ Orchestrators are pure reasoning agents — they decide what to do and return st
 Agents have a second axis — where they live and what they know.
 
 - **Core** (`lib/core/agents/`) — platform-agnostic. Work on any platform. Add here when the behaviour is identical across all platforms.
-- **Platform-specific** (`lib/platforms/<platform>/agents/`) — exist only when the workflow diverges enough from core to need its own agent. Examples: iOS `test-orchestrator` (knows `xcodebuild`), iOS `pr-review-worker` (knows Swift/UIKit conventions). Do not add a platform agent unless a core agent + platform skills cannot handle it.
+- **Platform-specific** (`lib/platforms/<platform>/agents/`) — exist only when the workflow diverges enough from core to need its own agent. Examples: iOS `test-strategist` (knows `xcodebuild`), iOS `pr-review-worker` (knows Swift/UIKit conventions). Do not add a platform agent unless a core agent + platform skills cannot handle it.
 
 > For the full agent roster, see [persona-builder.md](persona/builder.md).
 
 **DI at Skill Level:**
 
-Workers are platform-agnostic protocol-definers. Skills are the platform-specific implementations of that protocol. A `domain-worker` calls `builder-domain-create-entity` by name — on iOS that creates a Swift struct, on web a TypeScript interface. The worker never knows which platform it's on and doesn't need to.
+Workers are platform-agnostic protocol-definers. Skills are the platform-specific implementations of that protocol. A `domain-worker` calls `developer-domain-create-entity` by name — on iOS that creates a Swift struct, on web a TypeScript interface. The worker never knows which platform it's on and doesn't need to.
 
 **Skills are create-only.** Platform-contract skills cover new artifact creation only (`create-*`). There are no update or fix skills — workers handle modifications to existing artifacts via direct `Read` + `Edit` with reference docs. Workers invoke a skill only when the target artifact does not yet exist.
 
 | Role | Protocol analogy | Platform-aware? |
 |---|---|---|
-| Orchestrators | Interface contract | No |
+| Strategists | Interface contract | No |
 | Planners | Requirements analysis | No |
 | Workers | Use-case logic | No |
 | Skills | Concrete implementation | Yes |
@@ -102,9 +102,9 @@ Layer isolation is enforced at the **planner** level, not the worker level. `fea
 - Each layer planner (`domain-planner`, `data-planner`, `pres-planner`, `app-planner`) is restricted to read-only tools (`Glob`, `Grep`, `Read`) — it physically cannot write files
 - Each planner's glob patterns and instructions scope it to its own layer's directories and artifact types
 - Cross-layer knowledge (shared contracts, interfaces) lives in reference docs and skills, not in planner bodies
-- Planners report `### Impact Recommendations` — which other layers their findings affect and why. The orchestrator uses these to decide whether additional planner rounds are needed
+- Planners report `### Impact Recommendations` — which other layers their findings affect and why. The strategist uses these to decide whether additional planner rounds are needed
 
-The calling skill (not the orchestrator) spawns planners based on the orchestrator's decision. This convergence loop continues until all impact recommendations are resolved or the round cap is reached.
+The calling skill (not the strategist) spawns planners based on the strategist's decision. This convergence loop continues until all impact recommendations are resolved or the round cap is reached.
 
 `feature-worker` executes all layers in a fixed order (domain → data → presentation → UI) using skills as the platform-specific hands. Layer correctness in the worker comes from following `plan.md` and calling the right skill per artifact type — not from a boundary enforcement mechanism.
 
@@ -125,12 +125,12 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | Reference docs | 1 Grep call per section needed | Grep-first in worker body |
 | `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
 | Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
-| Orchestrator context accumulation | Minimal — file paths only | Workers return paths, not content; state file prevents re-reads |
-| Context relay (trigger skills) | Zero pre-flight reads in the spawned agent | Skill reads `plan.md`, `context.md`, and `state.json` from the runs directory on disk, inlines all three into the spawn prompt; orchestrator detects the pre-loaded block and skips pre-flight file reads entirely |
+| Strategist context accumulation | Minimal — file paths only | Workers return paths, not content; state file prevents re-reads |
+| Context relay (trigger skills) | Zero pre-flight reads in the spawned agent | Skill reads `plan.md`, `context.md`, and `state.json` from the runs directory on disk, inlines all three into the spawn prompt; strategist detects the pre-loaded block and skips pre-flight file reads entirely |
 
 **Context relay pattern:**
 
-When a trigger skill spawns an orchestrator on resume, it reads `plan.md`, `context.md`, and `state.json` from `.claude/agentic-state/runs/<feature>/` and inlines their contents directly into the spawn prompt. The orchestrator receives context on its first token and jumps directly to the next pending phase — it never reads those files itself.
+When a trigger skill spawns an strategist on resume, it reads `plan.md`, `context.md`, and `state.json` from `.claude/agentic-state/runs/<feature>/` and inlines their contents directly into the spawn prompt. The strategist receives context on its first token and jumps directly to the next pending phase — it never reads those files itself.
 
 This works in both same-session and new-session resumes — the files are on disk, so the trigger skill always reads them regardless of cache state. The spawned agent pays zero pre-flight read cost in either case. Disk is the authoritative source; the trigger skill is the bridge.
 
@@ -152,7 +152,7 @@ Agents validate preconditions before executing procedures — they never guess o
 - Does each file contain the expected primary class or function? (`Grep`)
 - Only list paths that pass both checks
 
-**Orchestrators check after each worker spawn:**
+**Strategists check after each worker spawn:**
 - Does the worker response contain an `## Output` section?
 - Do all listed paths exist on disk?
 - If either check fails: STOP — do not proceed to the next phase
@@ -171,9 +171,9 @@ When any check fails: return a clear, actionable message — never partially exe
 
 | Type | Suffix | Example |
 |---|---|---|
-| Orchestrator | `-orchestrator` | `builder-feature-orchestrator.md`, `builder-groom-orchestrator.md` |
-| Planner | `-planner` | `builder-feature-planner.md`, `builder-domain-planner.md` |
-| Worker | `-worker` | `builder-feature-worker.md`, `detective-debug-worker.md` |
+| Strategist | `-strategist` | `developer-feature-strategist.md`, `developer-groom-strategist.md` |
+| Planner | `-planner` | `developer-feature-planner.md`, `developer-domain-planner.md` |
+| Worker | `-worker` | `developer-feature-worker.md`, `debugger-worker.md` |
 
 Format: `<persona>-<domain>-<role>.md`
 
@@ -181,7 +181,7 @@ Every agent that belongs to a persona must be prefixed with the persona name. Th
 
 | Pattern | Example | When to use |
 |---|---|---|
-| `<persona>-<domain>-<role>` | `builder-feature-orchestrator`, `detective-debug-worker` | Agent inside a persona folder (`lib/core/agents/<persona>/`) |
+| `<persona>-<domain>-<role>` | `developer-feature-strategist`, `debugger-worker` | Agent inside a persona folder (`lib/core/agents/<persona>/`) |
 | `<domain>-<role>` | `perf-worker`, `prompt-debug-worker` | Flat agent with no persona yet (`lib/core/agents/`) — prefix added when a persona is assigned |
 
 > The filename now tells you the persona AND the agent type instantly — no need to open the file.
@@ -213,8 +213,8 @@ Every Type W skill that is the entry point for a persona must be prefixed with t
 
 | Pattern | Example | When to use |
 |---|---|---|
-| `<persona>-<action>` | `builder-build-feature`, `detective-debug`, `auditor-arch-review` | Type W workflow skill that enters a persona workflow |
-| `<persona>-<layer>-<action>-<target>` | `builder-domain-create-entity`, `builder-data-create-mapper` | Type P procedure skill called by a worker |
+| `<persona>-<action>` | `developer-build-feature`, `debugger-debug`, `auditor-arch-review` | Type W workflow skill that enters a persona workflow |
+| `<persona>-<layer>-<action>-<target>` | `developer-domain-create-entity`, `developer-data-create-mapper` | Type P procedure skill called by a worker |
 
 > Exception: standalone utility skills with no persona owner (e.g. `release`, `agentic-perf-review`) are named descriptively without a prefix until a persona is assigned.
 
@@ -383,11 +383,11 @@ A named group of related agents serving a coherent workflow.
 
 Requirements:
 - Lives in `lib/core/agents/<persona>/`
-- Has at least one worker or orchestrator
+- Has at least one worker or strategist
 - Agents within the group relate to and can depend on each other
 - Requires a `.pkg` file for selective installation
 
-Shared to all downstream projects via symlink. Current personas: `builder`, `detective`, `tracker`, `auditor`, `installer`.
+Shared to all downstream projects via symlink. Current personas: `developer`, `debugger`, `tracker`, `auditor`, `installer`.
 
 > A persona is not just a folder. It represents a coherent workflow. Do not group unrelated agents into a persona subdirectory.
 
@@ -397,17 +397,17 @@ Shared to all downstream projects via symlink. Current personas: `builder`, `det
 
 | Role | Subordinates | Can write files? | Has `agents` field? | Has `skills` field? |
 |---|---|---|---|---|
-| Orchestrator | None — returns Decision blocks to the calling skill | Plan artifacts only (`plan.md`, `context.md`) in synthesize mode — never source files | No | No |
+| Strategist | None — returns Decision blocks to the calling skill | Plan artifacts only (`plan.md`, `context.md`) in synthesize mode — never source files | No | No |
 | Planner | None — spawned by the entry skill, reports findings back to skill | No writes — read-only tools only (`Glob`, `Grep`, `Read`) | No | No |
 | Worker | Skills via `related_skills` | Yes — source files only | No | Yes — skills injected at startup |
 
-**Orchestrator — brain-only decision maker:**
+**Strategist — brain-only decision maker:**
 
-An orchestrator is a pure reasoning agent. It decides what to do and returns structured Decision blocks — it never spawns agents or writes source files directly.
+An strategist is a pure reasoning agent. It decides what to do and returns structured Decision blocks — it never spawns agents or writes source files directly.
 
 - Accepts modes from the calling skill: `gather-intent`, `gather-intent-prefilled`, `process-findings`, `synthesize`, `execute-approved-plan`, `resume`
 - Returns `Decision: spawn-planners` (which layers, why), `Decision: converged`, `Decision: spawn-worker`, or `Decision: blocked`
-- In `synthesize` mode: writes `plan.md` and `context.md` to the runs directory — the only files an orchestrator may write
+- In `synthesize` mode: writes `plan.md` and `context.md` to the runs directory — the only files an strategist may write
 - The calling skill owns all agent spawning, the convergence loop, and user interaction
 
 **Planner — layer explorer:**
@@ -417,11 +417,11 @@ A planner explores one CLEAN layer and returns structured findings. It is always
 - Restricted to read-only tools (`Glob`, `Grep`, `Read`) — it physically cannot write files
 - Scoped to its own layer's directories and artifact types
 - Returns findings including `### Impact Recommendations` — which other layers are affected and why
-- Spawned by the entry skill (not the orchestrator) based on the orchestrator's Decision block
+- Spawned by the entry skill (not the strategist) based on the strategist's Decision block
 
 Sub-planners are all leaf agents: they explore, report, and return. No further spawning.
 
-> Orchestrators may spawn other orchestrators when the inner orchestrator represents a fully bounded sub-workflow. The outer orchestrator owns the top-level state file and final report.
+> Strategists may spawn other strategists when the inner strategist represents a fully bounded sub-workflow. The outer strategist owns the top-level state file and final report.
 
 #### By Scope
 
@@ -456,7 +456,7 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 | **Project skill** | `.claude/skills.local/` | No — project-owned, not in this repo. |
 | **Repo skill** | `.claude/skills/` | No — internal tooling only. Used by this repo's internal agents; never symlinked to downstream projects. |
 
-> "Core-dependency skill" used in earlier sections of this doc refers to platform-contract skills — skills all platforms must implement under the same name (`builder-domain-create-entity`, `builder-data-create-mapper`, etc.).
+> "Core-dependency skill" used in earlier sections of this doc refers to platform-contract skills — skills all platforms must implement under the same name (`developer-domain-create-entity`, `developer-data-create-mapper`, etc.).
 
 #### Valid Type × Scope Combinations
 
@@ -498,14 +498,14 @@ User
 Workflow Skill (Type W)     — routes (resume vs new), pre-loads context, builds spawn prompt, owns convergence loop, spawns agents, approval
  │
  ▼  (gather-intent / decision round)
-Orchestrator               — brain only; returns Decision blocks; never spawns agents or writes files
+Strategist               — brain only; returns Decision blocks; never spawns agents or writes files
  │
  │  Decision: spawn-planners
  ▼
 Trigger Skill              — spawns planners in parallel per round; accumulates findings
  │
  ▼  (sends findings back each round)
-Orchestrator               — reads impact recommendations; decides: more rounds or converged?
+Strategist               — reads impact recommendations; decides: more rounds or converged?
  │
  │  Decision: converged → Trigger Skill synthesizes plan → user approval
  │  Decision: spawn-worker
@@ -519,15 +519,15 @@ Worker                     — reads plan, calls skills, writes source files, va
 Skill(s)                   — concrete platform implementation (one per artifact type)
 ```
 
-Not every persona uses all layers. A simple persona may have only a trigger skill + worker. A complex one adds an orchestrator, planners, and multiple workers. The anatomy is the same regardless of how many layers are present.
+Not every persona uses all layers. A simple persona may have only a trigger skill + worker. A complex one adds an strategist, planners, and multiple workers. The anatomy is the same regardless of how many layers are present.
 
 **Handoff contracts — what each layer passes to the next:**
 
 | From → To | What is passed | What is never passed |
 |---|---|---|
-| Trigger Skill → Orchestrator | Intent / mode + accumulated findings (per round) | Raw file reads from the main session |
-| Orchestrator → Trigger Skill | Structured Decision block (`spawn-planners`, `converged`, `spawn-worker`, `blocked`) | Agent spawns or file writes |
-| Trigger Skill → Planner | Feature name, platform, module-path + mode instruction | Orchestrator's internal reasoning |
+| Trigger Skill → Strategist | Intent / mode + accumulated findings (per round) | Raw file reads from the main session |
+| Strategist → Trigger Skill | Structured Decision block (`spawn-planners`, `converged`, `spawn-worker`, `blocked`) | Agent spawns or file writes |
+| Trigger Skill → Planner | Feature name, platform, module-path + mode instruction | Strategist's internal reasoning |
 | Planner → Trigger Skill | Structured findings block including `### Impact Recommendations` | Source file paths or contents |
 | Trigger Skill → Worker | `plan.md` + `context.md` injected inline | File paths only (contents always inlined) |
 | Worker → Skill | Artifact name, target path, reference doc path | Cross-layer context |
@@ -537,7 +537,7 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 
 | File | Written by | Read by | Purpose |
 |---|---|---|---|
-| `state.json` | Orchestrator (after each phase) | Trigger skill (resume routing) | Phase completion + `next_phase` pointer |
+| `state.json` | Strategist (after each phase) | Trigger skill (resume routing) | Phase completion + `next_phase` pointer |
 | `plan.md` | Planner | Worker | Per-artifact execution instructions |
 | `context.md` | Planner | Trigger skill (context relay) | Key symbols, conventions, existing artifacts |
 
@@ -550,7 +550,7 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 | Situation | Where it goes |
 |---|---|
 | New CLEAN-layer behaviour, same on all platforms | Core worker |
-| New orchestration flow, same on all platforms | Core orchestrator |
+| New orchestration flow, same on all platforms | Core strategist |
 | New code generation pattern for one platform | Platform-contract skill (same name, platform implements) → `lib/platforms/<platform>/skills/contract/` |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
 | Architecture reference knowledge (any topic) | `lib/core/reference/code-architecture/<topic>-theory.md` (what/why) + `lib/platforms/<platform>/reference/code-architecture/<topic>-impl.md` (how) — both land at `.claude/reference/code-architecture/` downstream |
@@ -578,7 +578,7 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 
 | Goal | How it's achieved |
 |---|---|
-| Token efficiency | Isolated context; Search Protocol decision gate; Haiku for mechanical workers; file paths only between phases; orchestrator state files prevent mid-run re-reads; context relay — skill reads runs context from disk and inlines into spawn prompt, spawned agent pays zero pre-flight read cost |
+| Token efficiency | Isolated context; Search Protocol decision gate; Haiku for mechanical workers; file paths only between phases; strategist state files prevent mid-run re-reads; context relay — skill reads runs context from disk and inlines into spawn prompt, spawned agent pays zero pre-flight read cost |
 | Modular knowledge | Skills preloaded, not embedded |
 | Single source of truth | `reference/` Grep-accessed, never duplicated |
 | Safe destructive operations | Use hooks in `settings.json` for automated bash execution without model involvement |

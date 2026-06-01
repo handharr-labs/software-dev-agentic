@@ -64,10 +64,10 @@ Read:Grep ratio: 4 (target < 3 — high ratio signals full-file reads over targe
 - **[D4]** Average billed tokens per turn is ~5,002 — at the boundary of the Poor threshold (>5K). The large cache-creation cost (188,889 tokens) for a relatively small fix session suggests context was loaded that may not have been necessary.
 
 > **Low score on D5?** Run `prompt-debug-worker` with this report + the agent's .md file to surface ambiguous instructions that caused this behavior.
-> Agent file: `lib/core/agents/builder/feature-orchestrator.md`
+> Agent file: `lib/core/agents/developer/feature-orchestrator.md`
 
 > **Low score on D6?** Run `prompt-debug-worker` with this report + the agent's .md file to surface ambiguous instructions that caused this behavior.
-> Agent file: `lib/core/agents/builder/feature-orchestrator.md`
+> Agent file: `lib/core/agents/developer/feature-orchestrator.md`
 
 ## Recommendations
 

@@ -38,11 +38,11 @@ Split D6 checks into two tiers:
 
 Scorer must read the project's CLAUDE.md before applying any D6 check. If no issue workflow is mentioned, skip both conditional checks entirely — do not penalise.
 
-### `lib/core/agents/builder/feature-orchestrator.md` — Path Verification Rule
+### `lib/core/agents/developer/feature-orchestrator.md` — Path Verification Rule
 
 Added to Search Protocol: before any `Read` call, verify the exact path from the most recent Grep output — never infer a path from module naming conventions or directory structure guesses. The rule includes a concrete counter-example (TalentaTM vs TalentaDashboard) to make the failure mode unambiguous.
 
-### `lib/core/agents/builder/feature-orchestrator.md` — Callsite Analysis Rule
+### `lib/core/agents/developer/feature-orchestrator.md` — Callsite Analysis Rule
 
 Added to Search Protocol: for symbol/flag impact analysis, use `Grep --context=N <symbol> **/*.<ext>` as a single discovery call. Only escalate to `Read` if the Grep context is genuinely insufficient for a specific line — and only after re-confirming the path from that Grep output. This directly addresses the 7-Read loop pattern observed in this session.
 

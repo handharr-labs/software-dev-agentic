@@ -288,7 +288,7 @@ private fun redirect{Feature}(uri: Uri) {
 
 ## Planner Search Patterns <!-- 15 -->
 
-Consumed by `builder-app-planner`. `{Feature}` = PascalCase, `{feature}` = snake_case per Android convention.
+Consumed by `developer-app-planner`. `{Feature}` = PascalCase, `{feature}` = snake_case per Android convention.
 
 | Scope key | Glob / Path | Grep hint |
 |---|---|---|

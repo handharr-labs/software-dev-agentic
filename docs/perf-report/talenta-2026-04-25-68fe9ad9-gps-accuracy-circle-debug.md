@@ -83,9 +83,9 @@ Read:Grep ratio: 22 (target < 3 — high ratio signals full-file reads over targ
 
 - **[D3]** `tracker-adjust-ticket` was called twice with identical arguments (`temp-dir/TE-14691.md`). The second call was redundant and added unnecessary overhead.
 
-> **Low score on D1?** Review `lib/core/agents/builder/feature-orchestrator.md` — look for missing precondition checks that distinguish debug tasks from feature tasks, and whether the orchestrator should gate on `debug-orchestrator` output before spawning feature-planner.
+> **Low score on D1?** Review `lib/core/agents/developer/feature-orchestrator.md` — look for missing precondition checks that distinguish debug tasks from feature tasks, and whether the orchestrator should gate on `debug-orchestrator` output before spawning feature-planner.
 
-> **Low score on D2?** Review `lib/core/agents/builder/feature-worker.md` — look for ambiguous scope that allows it to be invoked for bug-fix work, and add a precondition guard: if the issue describes a rendering defect rather than a new capability, route to `debug-worker` instead.
+> **Low score on D2?** Review `lib/core/agents/developer/feature-worker.md` — look for ambiguous scope that allows it to be invoked for bug-fix work, and add a precondition guard: if the issue describes a rendering defect rather than a new capability, route to `debug-worker` instead.
 
 > **Low score on D4?** The Read tool was used exclusively where Grep would have sufficed. Review agent prompts to enforce the search protocol: Grep for specific symbols first, Read only if the full file structure is required.
 

@@ -68,9 +68,9 @@ Read:Grep ratio: 0.88 (target < 3 — excellent; most investigation was done via
 
 > **Low score on D5?** Review the agent routing logic. The session was classified as setup/feature work but the actual work was debugging/RCA. Consider adding a routing check at session start: if the user's first message references an RCA, incident, or spike, the session should be classified as a `debug-orchestrator` task regardless of the current branch.
 
-> **Low score on D6?** Review `lib/core/agents/builder/feature-orchestrator.md` — ensure it includes explicit guidance for whether pure investigation/RCA sessions are exempt from the delegation requirement, or should delegate to `debug-orchestrator`.
+> **Low score on D6?** Review `lib/core/agents/developer/feature-orchestrator.md` — ensure it includes explicit guidance for whether pure investigation/RCA sessions are exempt from the delegation requirement, or should delegate to `debug-orchestrator`.
 
-> **Low score on D7?** Review `lib/core/agents/detective/debug-worker.md` — look for guidance on file re-read limits. A debug worker should cache key function signatures locally in its working context rather than re-reading the same large ViewModel file 6 times.
+> **Low score on D7?** Review `lib/core/agents/debugger/debug-worker.md` — look for guidance on file re-read limits. A debug worker should cache key function signatures locally in its working context rather than re-reading the same large ViewModel file 6 times.
 
 ## Recommendations
 

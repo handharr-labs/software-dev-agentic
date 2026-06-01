@@ -30,7 +30,7 @@ Read-once rule: never re-read the same file in a single session.
 Accept one of:
 - A file path — audit that single file
 - A directory path — audit all `*.md` files (agents) or `SKILL.md` files (skills) within it
-- A persona name (`builder`, `detective`, `tracker`, `auditor`) — audit `lib/core/agents/<persona>/`
+- A persona name (`developer`, `debugger`, `tracker`, `auditor`) — audit `lib/core/agents/<persona>/`
 - `lib/core` — audit `lib/core/agents/**` and `lib/core/skills/**`
 - `lib/platforms/<platform>` — audit three targets:
   1. `lib/platforms/<platform>/agents/` — all agent `.md` files

@@ -120,4 +120,4 @@ The `### Design System Bindings` block in the skill prompt maps UI element descr
 | Text field / input | `MpTextField` |
 | Icon | `MpIcon` |
 
-**Catalog:** `builder-pres-resolve-design` resolves symbols from `.claude/reference/design-system/mekari-pixel-flutter-catalog.md` — place the catalog there in downstream projects.
+**Catalog:** `developer-pres-resolve-design` resolves symbols from `.claude/reference/design-system/mekari-pixel-flutter-catalog.md` — place the catalog there in downstream projects.

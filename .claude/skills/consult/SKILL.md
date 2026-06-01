@@ -11,7 +11,7 @@ tools: Agent
 /consult [subject]
 ```
 
-- `subject` — optional. A persona name (`builder`, `detective`), a file path, or a plain description of the area. If omitted, the worker will ask.
+- `subject` — optional. A persona name (`developer`, `debugger`), a file path, or a plain description of the area. If omitted, the worker will ask.
 
 ## Steps
 

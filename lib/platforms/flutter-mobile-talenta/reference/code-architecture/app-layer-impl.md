@@ -198,7 +198,7 @@ Grep "featureFlag\|FeatureFlag\|feature_flag" in lib/src/
 
 ## Planner Search Patterns <!-- 15 -->
 
-Consumed by `builder-app-planner`. `{Feature}` = PascalCase, `{feature}` = snake_case per Dart convention.
+Consumed by `developer-app-planner`. `{Feature}` = PascalCase, `{feature}` = snake_case per Dart convention.
 
 | Scope key | Glob / Path | Grep hint |
 |---|---|---|

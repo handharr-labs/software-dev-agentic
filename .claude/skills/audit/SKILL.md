@@ -11,7 +11,7 @@ tools: Agent, AskUserQuestion
 /audit [scope]
 ```
 
-- `scope` — optional. A persona name (`builder`, `detective`), a file path, or `full`. If omitted, ask the user.
+- `scope` — optional. A persona name (`developer`, `debugger`), a file path, or `full`. If omitted, ask the user.
 
 ## Steps
 
@@ -19,7 +19,7 @@ tools: Agent, AskUserQuestion
 
 If `scope` was not provided, ask:
 
-> "What scope to audit? Options: a persona name (`builder`, `detective`, `tracker`, `auditor`, `installer`), a specific file path, or `full`."
+> "What scope to audit? Options: a persona name (`developer`, `debugger`, `tracker`, `auditor`, `installer`), a specific file path, or `full`."
 
 ### 2 — Run in parallel
 

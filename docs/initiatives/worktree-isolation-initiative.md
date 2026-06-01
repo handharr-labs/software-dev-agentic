@@ -18,7 +18,7 @@ Long-running epics (multi-session, large artifact count) currently execute direc
 
 ## Proposed Solution
 
-When `builder-plan-feature` is approved, create a dedicated git worktree for the feature before handing off to `builder-feature-worker`. The worker operates entirely inside that worktree. On completion, the caller merges or raises a PR from the worktree branch.
+When `developer-plan-feature` is approved, create a dedicated git worktree for the feature before handing off to `developer-feature-worker`. The worker operates entirely inside that worktree. On completion, the caller merges or raises a PR from the worktree branch.
 
 The `EnterWorktree` / `ExitWorktree` tools already exist in the platform — the plumbing is available.
 
@@ -30,9 +30,9 @@ The `EnterWorktree` / `ExitWorktree` tools already exist in the platform — the
 
 | Step | Actor | Action |
 |---|---|---|
-| Plan approved | `builder-plan-feature` skill | Call `EnterWorktree` → creates branch `feature/<name>` + isolated worktree |
-| Execution | `builder-feature-worker` | Operates entirely within the worktree path |
-| Completion | `builder-plan-feature` skill | Call `ExitWorktree` → returns worktree path + branch name to user |
+| Plan approved | `developer-plan-feature` skill | Call `EnterWorktree` → creates branch `feature/<name>` + isolated worktree |
+| Execution | `developer-feature-worker` | Operates entirely within the worktree path |
+| Completion | `developer-plan-feature` skill | Call `ExitWorktree` → returns worktree path + branch name to user |
 | Merge / PR | User | Merges the worktree branch manually or raises PR |
 
 ### Branch naming
@@ -62,16 +62,16 @@ On context compaction or session interruption, the worker reads state.json to id
 
 | File | Change |
 |---|---|
-| `lib/core/skills/builder-plan-feature/SKILL.md` | Add `EnterWorktree` call after plan approval (Step 5), `ExitWorktree` after worker completes |
-| `lib/core/agents/builder/builder-feature-worker.md` | Accept worktree root path as input; use it to resolve all Write/Edit paths |
-| `lib/core/skills/builder-build-feature/SKILL.md` | Same `EnterWorktree` / `ExitWorktree` framing as above |
+| `lib/core/skills/developer-plan-feature/SKILL.md` | Add `EnterWorktree` call after plan approval (Step 5), `ExitWorktree` after worker completes |
+| `lib/core/agents/developer/developer-feature-worker.md` | Accept worktree root path as input; use it to resolve all Write/Edit paths |
+| `lib/core/skills/developer-build-feature/SKILL.md` | Same `EnterWorktree` / `ExitWorktree` framing as above |
 
 ---
 
 ## Open Questions
 
 1. **Parallel features** — if two features are in-flight simultaneously, each gets its own worktree branch. Are there any DI or code-gen conflicts that arise from diverged branches modifying the same service locator file?
-2. **Cleanup policy** — who owns `ExitWorktree` on discard? The discard path in `builder-plan-feature` already runs `rm -rf runs/<feature>`. Should it also destroy the worktree branch?
+2. **Cleanup policy** — who owns `ExitWorktree` on discard? The discard path in `developer-plan-feature` already runs `rm -rf runs/<feature>`. Should it also destroy the worktree branch?
 3. **Code generation** — `melos run generate` / `build_runner` runs in the worktree. Does the worktree need its own `pubspec` resolution or does it inherit the parent workspace?
 
 ---
@@ -79,5 +79,5 @@ On context compaction or session interruption, the worker reads state.json to id
 ## Dependencies
 
 - `EnterWorktree` / `ExitWorktree` tools available in current platform
-- `builder-plan-feature` skill refactor to own the worktree lifecycle
+- `developer-plan-feature` skill refactor to own the worktree lifecycle
 - Checkpoint fix (`next_artifact` written at artifact start) should land first — worktree isolation is most valuable when combined with reliable resume

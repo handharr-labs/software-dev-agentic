@@ -68,7 +68,7 @@ echo "  - Delegate: invoke feature-orchestrator (recommended)"
 
 Comment updated: `# Block — ask Claude to present a choice to the user` → `# Block — agent must stop and surface to user; must not resolve autonomously`
 
-### Updated: `lib/core/agents/builder/feature-orchestrator.md`
+### Updated: `lib/core/agents/developer/feature-orchestrator.md`
 
 `isolation: worktree` moved from the Constraints section into each Phase spawn directive:
 

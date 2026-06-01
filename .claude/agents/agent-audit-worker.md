@@ -24,12 +24,12 @@ Read-once rule: never Read a file when Grep can extract the value. Never re-read
 ## Scope
 
 Accept one of:
-- `<persona>` (e.g. `builder`, `detective`) — audit the full persona: pkg, directory, agents, skills, hooks
+- `<persona>` (e.g. `developer`, `debugger`) — audit the full persona: pkg, directory, agents, skills, hooks
 - `<file path>` — audit that single agent or skill file's cross-references only
 - `full` — audit all personas in `packages/` and all agents in `lib/core/agents/` and `agents/`
 
 If scope is not provided, ask:
-> "What scope to audit? Options: a persona name (`builder`, `detective`, `tracker`, `auditor`, `installer`), a specific file path, or `full`."
+> "What scope to audit? Options: a persona name (`developer`, `debugger`, `tracker`, `auditor`, `installer`), a specific file path, or `full`."
 
 ## Checks
 
@@ -56,9 +56,9 @@ For each worker `.md` file in scope:
    - Glob `skills/<name>/SKILL.md` — fallback for repo skills
    - BROKEN if none found; WARNING if only one platform has it (expected: all platforms)
 
-### Agent cross-reference checks (orchestrator)
+### Agent cross-reference checks (strategist)
 
-For each orchestrator `.md` file (has `agents:` frontmatter field) in scope:
+For each strategist `.md` file (has `agents:` frontmatter field) in scope:
 
 5. **Spawned agents exist** — Grep the file for `agents:` block; for each agent name listed:
    - Glob `lib/core/agents/**/<name>.md`

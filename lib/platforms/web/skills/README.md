@@ -16,26 +16,26 @@ Copy to `.claude/skills/` in the actual project (or symlink via submodule).
 ### Domain layer
 | Skill | What it does |
 |-------|-------------|
-| `builder-domain-create-entity` | Create a domain entity interface |
-| `builder-domain-create-usecase` | Create a use case interface + implementation |
-| `builder-domain-create-repository` | Create a domain repository interface |
-| `builder-domain-create-service` | Create a pure domain service |
+| `developer-domain-create-entity` | Create a domain entity interface |
+| `developer-domain-create-usecase` | Create a use case interface + implementation |
+| `developer-domain-create-repository` | Create a domain repository interface |
+| `developer-domain-create-service` | Create a pure domain service |
 
 ### Data layer
 | Skill | What it does |
 |-------|-------------|
-| `builder-data-create-mapper` | Create a DTO + mapper (interface + Impl) |
-| `builder-data-create-datasource` | Create a remote data source interface + Axios impl |
-| `builder-data-create-repository-impl` | Create a remote repository implementation |
+| `developer-data-create-mapper` | Create a DTO + mapper (interface + Impl) |
+| `developer-data-create-datasource` | Create a remote data source interface + Axios impl |
+| `developer-data-create-repository-impl` | Create a remote repository implementation |
 | `data-create-db-datasource` | Create a DB record, DB data source interface + ORM stub impl |
 | `data-create-db-repository` | Create a DB mapper + DB repository implementation |
 
 ### Presentation layer
 | Skill | What it does |
 |-------|-------------|
-| `builder-pres-create-stateholder` | Create a StateHolder hook or pure function |
-| `builder-pres-create-screen` | Create a View component + App Router page |
-| `builder-pres-create-component` | Create a reusable UI sub-component |
+| `developer-pres-create-stateholder` | Create a StateHolder hook or pure function |
+| `developer-pres-create-screen` | Create a View component + App Router page |
+| `developer-pres-create-component` | Create a reusable UI sub-component |
 | `pres-create-server-action` | Create a next-safe-action Server Action |
 | `pres-wire-di` | Wire use case and deps into DI containers |
 | `pres-ssr-check` | Determine Server vs Client Component decision |
@@ -44,9 +44,9 @@ Copy to `.claude/skills/` in the actual project (or symlink via submodule).
 | Skill | What it does |
 |-------|-------------|
 | `test-create-mock` | Scaffold a Mock class with vi.fn() for every interface method |
-| `builder-test-create-domain` | Unit tests for use cases and domain services |
-| `builder-test-create-data` | Mapper unit tests + repository integration tests |
-| `builder-test-create-presentation` | StateHolder hook tests + View component tests |
+| `developer-test-create-domain` | Unit tests for use cases and domain services |
+| `developer-test-create-data` | Mapper unit tests + repository integration tests |
+| `developer-test-create-presentation` | StateHolder hook tests + View component tests |
 
 ## Type B — User-Triggered (explicit invocation only)
 

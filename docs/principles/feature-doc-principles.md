@@ -13,7 +13,7 @@ A Feature Doc is a structured Markdown file describing a single sub-feature — 
 
 They are consumed by:
 - `librarian-audit-worker` — validates on every write
-- `builder-plan-feature` — reads as `knowledge` type (existing architecture context)
+- `developer-plan-feature` — reads as `knowledge` type (existing architecture context)
 - Engineers — canonical reference per feature
 
 ---

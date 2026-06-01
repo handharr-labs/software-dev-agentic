@@ -69,7 +69,7 @@ No Skill tool calls were recorded at the main session level. Skills are expected
 - **[D6]** No PR creation was observed in the session. CLAUDE.md does not explicitly mandate a PR workflow, so this is noted but not penalized.
 - **[D2]** The main session only shows two agent spawns (feature-planner, feature-orchestrator). The feature-orchestrator's internal sub-agent spawns (domain-worker, data-worker, presentation-worker) are not visible in this trace. This makes cross-layer ordering and layer-to-worker mapping unverifiable. Scored at 7 rather than 9 due to this observability gap.
 
-> **Low score on D3?** Review `lib/core/agents/builder/feature-orchestrator.md` — check whether it instructs workers to call skills for artifact *updates* (not just new creation). The rubric requires skill invocations for updates to existing domain/data/presentation artifacts, and the main session trace shows zero skill calls.
+> **Low score on D3?** Review `lib/core/agents/developer/feature-orchestrator.md` — check whether it instructs workers to call skills for artifact *updates* (not just new creation). The rubric requires skill invocations for updates to existing domain/data/presentation artifacts, and the main session trace shows zero skill calls.
 
 > **Low score on D6?** Review `.claude/software-dev-agentic/scripts/extract-session.sh` — the script uses a path-encoding heuristic for the Claude projects directory that fails when the user's home directory contains a compound username (e.g. `puras.handharmahuamekari.com`). The expected path slug does not match the actual Claude projects folder name on this machine.
 

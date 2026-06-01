@@ -106,8 +106,8 @@ A **Design System** is a curated component library that UI artifacts must prefer
 - Design system components follow the same dependency rule — UI layer only; never import into domain or data
 
 **Resolution flow:**
-1. `builder-feature-worker` calls `builder-pres-resolve-design` before each Screen or Component artifact
+1. `developer-feature-worker` calls `developer-pres-resolve-design` before each Screen or Component artifact
 2. Skill queries the project's design system RAG collection and returns a binding table
 3. `pres-create-screen` / `pres-create-component` apply the binding table when writing widget code
 
-**When design system is not configured:** `builder-pres-resolve-design` soft-fails with an empty table — proceed with framework primitives as normal.
+**When design system is not configured:** `developer-pres-resolve-design` soft-fails with an empty table — proceed with framework primitives as normal.

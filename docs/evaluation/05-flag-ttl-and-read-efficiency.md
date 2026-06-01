@@ -67,7 +67,7 @@ fi
 
 Block message updated: `(not found or stale > 4h)`.
 
-### Updated: `lib/core/agents/builder/feature-orchestrator.md`
+### Updated: `lib/core/agents/developer/feature-orchestrator.md`
 
 Pre-flight flag creation changed from `touch` (empty file) to writing the current epoch:
 
@@ -79,7 +79,7 @@ touch "$(git rev-parse --show-toplevel)/.claude/.delegated-$(git branch --show-c
 date +%s > "$(git rev-parse --show-toplevel)/.claude/.delegated-$(git branch --show-current | tr '/' '-')"
 ```
 
-### Updated: `lib/core/agents/builder/pres-orchestrator.md`
+### Updated: `lib/core/agents/developer/pres-orchestrator.md`
 
 Phase 0 guidance and Constraints updated to Grep-first:
 

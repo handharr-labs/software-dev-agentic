@@ -955,7 +955,7 @@ Total widgets: 228
 ### MpLaunchScreen
 - **Category:** `pages/launch_screen`
 - **Description:** Mekari Mobile Kit - Launch Screen.
-- **Key params:** `nextRoute`, `builder`, `color`, `progress`, `onAnimationFinished`, `semantics`, `nextRoute`, `progress`
+- **Key params:** `nextRoute`, `developer`, `color`, `progress`, `onAnimationFinished`, `semantics`, `nextRoute`, `progress`
 - **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5973%3A56054&mode=design&t=HA35ty2rlKN988PI-1
 
 ### MpLaunchScreenProgress

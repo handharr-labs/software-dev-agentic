@@ -79,9 +79,9 @@ Read:Grep ratio: 8:0 (no Grep tool used — target < 3; grep was performed via B
 - **[D7]** Login expired twice mid-session, requiring 2 manual `SendMessage` resumes. The orchestrator was interrupted once by the user ("Request interrupted by user") and once by a permission denial loop — both broke the automation flow.
 - **[D6]** No `git commit` or `git push` calls were found in the session. It is unclear whether changes were committed to the feature branch.
 
-> **Low score on D3?** Review `lib/core/agents/builder/data-worker.md` and `lib/core/agents/builder/presentation-worker.md` — look for missing precondition checks requiring skill invocation before file writes. The workers may lack explicit enforcement that `data-create-datasource` / `pres-create-stateholder` skills must be called before any Write/Edit to those artifact types.
+> **Low score on D3?** Review `lib/core/agents/developer/data-worker.md` and `lib/core/agents/developer/presentation-worker.md` — look for missing precondition checks requiring skill invocation before file writes. The workers may lack explicit enforcement that `data-create-datasource` / `pres-create-stateholder` skills must be called before any Write/Edit to those artifact types.
 
-> **Low score on D2?** Review `lib/core/agents/builder/feature-orchestrator.md` — check whether the routing rules distinguish between build work (delegate to domain/data/pres workers) and test work (must delegate to test-worker). The current agent description for test creation used `feature-orchestrator` incorrectly.
+> **Low score on D2?** Review `lib/core/agents/developer/feature-orchestrator.md` — check whether the routing rules distinguish between build work (delegate to domain/data/pres workers) and test work (must delegate to test-worker). The current agent description for test creation used `feature-orchestrator` incorrectly.
 
 ## Recommendations
 

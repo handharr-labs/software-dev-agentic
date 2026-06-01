@@ -7,19 +7,19 @@ Flutter · Clean Architecture + BLoC · get_it/injectable
 ```
 lib/platforms/flutter-mobile-talenta/
   skills/
-    builder-domain-create-entity/       # @freezed entity, no fromJson
-    builder-domain-create-repository/   # abstract class, Either returns
-    builder-domain-create-usecase/      # UseCase<T, P>, Params class
-    builder-domain-create-service/      # pure sync business logic
-    builder-data-create-mapper/         # Model (freezed+json) + BaseMapper impl
-    builder-data-create-datasource/     # abstract + Dio impl, throws AppException
-    builder-data-create-repository-impl/# catches AppException → Left(failure)
-    builder-pres-create-stateholder/    # BLoC: Event + State + BLoC class
-    builder-pres-create-screen/         # Screen (BlocProvider) + View (BlocBuilder)
-    builder-pres-create-component/      # reusable presentational Widget
-    builder-test-create-domain/         # UseCase + Service tests
-    builder-test-create-data/           # Mapper + RepositoryImpl tests
-    builder-test-create-presentation/   # BLoC tests with bloc_test
+    developer-domain-create-entity/       # @freezed entity, no fromJson
+    developer-domain-create-repository/   # abstract class, Either returns
+    developer-domain-create-usecase/      # UseCase<T, P>, Params class
+    developer-domain-create-service/      # pure sync business logic
+    developer-data-create-mapper/         # Model (freezed+json) + BaseMapper impl
+    developer-data-create-datasource/     # abstract + Dio impl, throws AppException
+    developer-data-create-repository-impl/# catches AppException → Left(failure)
+    developer-pres-create-stateholder/    # BLoC: Event + State + BLoC class
+    developer-pres-create-screen/         # Screen (BlocProvider) + View (BlocBuilder)
+    developer-pres-create-component/      # reusable presentational Widget
+    developer-test-create-domain/         # UseCase + Service tests
+    developer-test-create-data/           # Mapper + RepositoryImpl tests
+    developer-test-create-presentation/   # BLoC tests with bloc_test
   reference/
     domain.md              # Entities, repository interfaces, use cases, services, Failure
     data.md                # Models, payloads, mappers, datasources, repository impls
@@ -34,21 +34,21 @@ lib/platforms/flutter-mobile-talenta/
 
 ## How It Fits Into the Core Orchestrator
 
-The core workers (`lib/core/agents/builder/`) are platform-agnostic. When invoked on a Flutter project, they call the skills in this platform folder:
+The core workers (`lib/core/agents/developer/`) are platform-agnostic. When invoked on a Flutter project, they call the skills in this platform folder:
 
 ```
-builder-feature-orchestrator
-  └─ domain-worker           →  skills/builder-domain-create-entity
-                             →  skills/builder-domain-create-repository
-                             →  skills/builder-domain-create-usecase
-  └─ data-worker             →  skills/builder-data-create-mapper
-                             →  skills/builder-data-create-datasource
-                             →  skills/builder-data-create-repository-impl
-  └─ presentation-worker     →  skills/builder-pres-create-stateholder
-  └─ builder-ui-worker       →  skills/builder-pres-create-screen
-  └─ builder-test-worker     →  skills/builder-test-create-domain
-                             →  skills/builder-test-create-data
-                             →  skills/builder-test-create-presentation
+developer-feature-strategist
+  └─ domain-worker           →  skills/developer-domain-create-entity
+                             →  skills/developer-domain-create-repository
+                             →  skills/developer-domain-create-usecase
+  └─ data-worker             →  skills/developer-data-create-mapper
+                             →  skills/developer-data-create-datasource
+                             →  skills/developer-data-create-repository-impl
+  └─ presentation-worker     →  skills/developer-pres-create-stateholder
+  └─ developer-ui-worker       →  skills/developer-pres-create-screen
+  └─ developer-test-worker     →  skills/developer-test-create-domain
+                             →  skills/developer-test-create-data
+                             →  skills/developer-test-create-presentation
 ```
 
 ## Key Patterns

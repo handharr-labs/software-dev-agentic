@@ -34,10 +34,10 @@ Some workflows may benefit from keeping an agent alive across multiple turns rat
 
 ## Prerequisite
 
-Agent must explicitly pause (via `AskUserQuestion` or equivalent) for `SendMessage` to be useful. Agents that run straight to completion cannot be resumed — attempting to `SendMessage` a finished agent causes an error (observed in builder-plan-feature logs, 2026-05-21).
+Agent must explicitly pause (via `AskUserQuestion` or equivalent) for `SendMessage` to be useful. Agents that run straight to completion cannot be resumed — attempting to `SendMessage` a finished agent causes an error (observed in developer-plan-feature logs, 2026-05-21).
 
 ---
 
 ## Next Step
 
-Identify a concrete workflow in the builder persona where re-spawn overhead is measurably costly, then prototype a paused-agent pattern there first.
+Identify a concrete workflow in the developer persona where re-spawn overhead is measurably costly, then prototype a paused-agent pattern there first.

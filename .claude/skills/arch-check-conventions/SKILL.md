@@ -14,10 +14,10 @@ For each `.md` agent file:
 **Frontmatter (required fields)**
 - [ ] `name` present
 - [ ] `description` present and specific enough for routing
-- [ ] `model` present — `haiku` for mechanical workers (domain, data, test), `sonnet` for orchestrators and reasoning-heavy workers
+- [ ] `model` present — `haiku` for mechanical workers (domain, data, test), `sonnet` for strategists and reasoning-heavy workers
 - [ ] `tools` present
 
-**Orchestrators** (files with `agents:` frontmatter field)
+**Strategists** (files with `agents:` frontmatter field)
 - [ ] `agents:` field lists only workers it actually spawns
 - [ ] Body passes only file path lists between phases — never file contents
 - [ ] No Phase 2 codebase reads on behalf of workers
@@ -40,8 +40,8 @@ How to check: `Grep` the file for any of the above patterns. A match in the body
 > **Why:** `lib/core/` agents are consumed by all platforms via symlink. Platform-specific rules embedded in a core worker silently mislead workers on other platforms (iOS, Flutter) that call the same agent.
 
 **All agents**
-- [ ] Filename follows `<domain>-orchestrator.md` or `<domain>-worker.md` convention
-- [ ] If in a persona subdir (`builder/`, `detective/`, `tracker/`, `auditor/`), the persona assignment is correct
+- [ ] Filename follows `<domain>-strategist.md` or `<domain>-worker.md` convention
+- [ ] If in a persona subdir (`builder/`, `debugger/`, `tracker/`, `auditor/`), the persona assignment is correct
 
 ## Skill Checklist
 

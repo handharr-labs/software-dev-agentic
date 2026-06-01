@@ -1,7 +1,7 @@
 # App-Planner Initiative
 
 **Status:** Planning
-**Goal:** Extend the builder persona to cover app-layer wiring — DI registration, route registration, and module registration — which currently has no planner and falls through as unplanned work.
+**Goal:** Extend the developer persona to cover app-layer wiring — DI registration, route registration, and module registration — which currently has no planner and falls through as unplanned work.
 
 ---
 
@@ -18,7 +18,7 @@ This work currently has no planner. It either falls to `feature-worker` to handl
 
 ## Solution
 
-Add an `app-planner` agent to `lib/core/agents/builder/` that explores app-layer wiring patterns for a feature. `feature-planner` spawns it in parallel alongside `domain-planner`, `data-planner`, and `pres-planner`. Its findings land in a new `## App Layer` section in `plan.md`.
+Add an `app-planner` agent to `lib/core/agents/developer/` that explores app-layer wiring patterns for a feature. `feature-planner` spawns it in parallel alongside `domain-planner`, `data-planner`, and `pres-planner`. Its findings land in a new `## App Layer` section in `plan.md`.
 
 ---
 
@@ -101,7 +101,7 @@ Sections:
 
 ### 4. App-Planner Agent
 
-**`lib/core/agents/builder/app-planner.md`**
+**`lib/core/agents/developer/app-planner.md`**
 
 Frontmatter:
 ```
@@ -127,7 +127,7 @@ Structure mirrors `domain-planner.md`:
 
 ### 5. Updates to Existing Files
 
-**`lib/core/agents/builder/feature-planner.md`**
+**`lib/core/agents/developer/feature-planner.md`**
 
 Phase 2 — spawn `app-planner` alongside the three layer planners (four in parallel).
 
@@ -145,7 +145,7 @@ Phase 3 — aggregate `## App Findings` into plan.md.
 | Module Registration | `path/to/module-manager` | update | register AuthModule |
 ```
 
-**`lib/core/agents/builder/feature-worker.md`**
+**`lib/core/agents/developer/feature-worker.md`**
 
 Add App Layer step after Presentation Layer execution:
 - Read `plan.md` App Layer section
@@ -160,10 +160,10 @@ Add App Layer step after Presentation Layer execution:
 1. Write `lib/core/reference/code-architecture/app-layer.md` (core theory)
 2. Write `lib/platforms/ios-talenta/reference/contract/builder/app-layer.md`
 3. Write `lib/platforms/flutter-mobile-talenta/reference/contract/builder/app-layer.md`
-4. Write `lib/core/agents/builder/app-planner.md`
-5. Update `lib/core/agents/builder/feature-planner.md` — add app-planner to Phase 2 spawn + Phase 3 aggregation
+4. Write `lib/core/agents/developer/app-planner.md`
+5. Update `lib/core/agents/developer/feature-planner.md` — add app-planner to Phase 2 spawn + Phase 3 aggregation
 6. Update plan.md format in feature-planner (Phase 4 — Write plan.md)
-7. Update `lib/core/agents/builder/feature-worker.md` — add App Layer execution step
+7. Update `lib/core/agents/developer/feature-worker.md` — add App Layer execution step
 8. Update `docs/principles/core-design-principles.md` — Layer Isolation section now correctly references app-planner alongside the three layer planners
 9. Commit + release
 

@@ -1,6 +1,6 @@
 ---
 name: agent-scaffold-worker
-description: Design and scaffold new agentic components — consults on whether the need calls for a skill, worker, orchestrator, or persona, then generates correctly structured file(s). Internal tooling only.
+description: Design and scaffold new agentic components — consults on whether the need calls for a skill, worker, strategist, or persona, then generates correctly structured file(s). Internal tooling only.
 model: sonnet
 user-invocable: false
 tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
@@ -54,9 +54,9 @@ After the answer, check which signals are still unclear. For each unclear signal
 Grep `.claude/reference/agent-conventions.md` for `## Component Types` to load the decision tree, `## Skill Invocation Types` and `## Skill Scopes` for skill classification, and `## Valid Type × Scope Combinations` to confirm the chosen type × scope pair is valid.
 
 Apply the decision tree to the four signals. Determine:
-- Component type: Skill / Worker / Orchestrator / New Persona
+- Component type: Skill / Worker / Strategist / New Persona
 - If Skill: invocation type (P / W) and scope
-- If Worker or Orchestrator: scope (Persona agent / Platform agent / Repo agent)
+- If Worker or Strategist: scope (Persona agent / Platform agent / Repo agent)
 - Persona fit: which existing persona, or new persona needed
 
 ## Step 3 — Recommend
@@ -73,7 +73,7 @@ Branching: <none — linear | conditional logic | phase coordination>
 
 RECOMMENDATION
 ──────────────
-Type:     <Skill Type P/W | Worker | Orchestrator | New Persona>
+Type:     <Skill Type P/W | Worker | Strategist | New Persona>
 Scope:    <Toolkit | Platform-contract | Platform-only | Repo | Persona agent | Platform agent>
 Location: <exact target path>
 Reason:   <one sentence — why this type fits>
@@ -93,7 +93,7 @@ Use `AskUserQuestion` for each detail — one question at a time. Do not bundle 
 
 **All types — ask in this order:**
 
-1. > "What should this be named?" (Conventions: `<layer>-<action>-<target>` for skills; `<domain>-worker` or `<domain>-orchestrator` for agents)
+1. > "What should this be named?" (Conventions: `<layer>-<action>-<target>` for skills; `<domain>-worker` or `<domain>-strategist` for agents)
 2. > "How would you describe it in one sentence? This is used for routing — use vocabulary developers naturally say."
 
 **Worker — ask additionally, one at a time:**
@@ -104,12 +104,12 @@ Use `AskUserQuestion` for each detail — one question at a time. Do not bundle 
 6. > "Any skills to preload (`related_skills`)? List names, or say TBD."
 7. > "Should it be user-invocable? (`true` / `false`)"
 
-**Orchestrator — ask additionally, one at a time:**
+**Strategist — ask additionally, one at a time:**
 
 3. > "What tools does it need?"
 4. > "Which agents will it spawn?"
 5. > "How many phases does it have, and what does each phase do?"
-6. > "Is this standalone or a sub-orchestrator of an existing one?"
+6. > "Is this standalone or a sub-strategist of an existing one?"
 
 **Skill — ask additionally, one at a time:**
 
@@ -202,7 +202,7 @@ After completing, check for `.claude/agents.local/extensions/<name>.md` — if i
 
 ---
 
-### Orchestrator template
+### Strategist template
 
 ```
 ---
@@ -215,7 +215,7 @@ agents:
   - <worker2>
 ---
 
-You are the <domain> orchestrator. You coordinate <workers> to <goal>. You never write code directly — workers execute.
+You are the <domain> strategist. You coordinate <workers> to <goal>. You never write code directly — workers execute.
 
 ## Search Protocol — Never Violate
 
@@ -307,7 +307,7 @@ description=<one-line description of workflow>
 agents=<agent1> <agent2>
 skills=
 ```
-3. Scaffold each agent using the worker/orchestrator template above
+3. Scaffold each agent using the worker/strategist template above
 4. Remind the user: run `setup-symlinks.sh --platform=<platform>` to pick up the new persona in downstream projects
 
 ---
@@ -330,7 +330,7 @@ Next steps:
   - Fill in the <Domain> Rules section with your specific constraints
   - <If worker: implement the skills listed in related_skills>
   - <If new persona: run setup-symlinks.sh --platform=<platform> in downstream projects to pick it up>
-  - Run arch-review-orchestrator to validate conventions
+  - Run arch-review-strategist to validate conventions
 ```
 
 ## Extension Point

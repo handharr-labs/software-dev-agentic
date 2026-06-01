@@ -44,7 +44,7 @@ Naming pattern: `<layer>-<action>-<artifact>` (e.g. `<layer>-create-<artifact>`)
 
 **Decision:** Agents in `lib/core/agents/` are grouped into persona subdirectories. Each persona represents a coherent workflow — agents within a group relate to and can depend on each other. Ungrouped agents (no peers yet) remain flat at `lib/core/agents/`.
 
-Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/orchestrators, create `packages/<persona>.pkg`. The installer picks it up automatically — no script changes needed.
+Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/strategists, create `packages/<persona>.pkg`. The installer picks it up automatically — no script changes needed.
 
 **Rationale:** Grouping by persona makes the directory self-documenting and enables selective installation. Engineers understand which agents serve their workflow before opening a single file.
 
@@ -52,7 +52,7 @@ Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/orchest
 
 ### 3. Setup-Time Platform Resolution — No `.claude/platform` File
 
-**Decision:** The correct platform skill files are linked at project setup time via the `--platform=` flag. There is no `.claude/platform` file — platform identity is baked into the symlinks themselves. At runtime, orchestrators also pass `platform` explicitly in every worker spawn prompt so workers can resolve skill paths without relying solely on symlink structure.
+**Decision:** The correct platform skill files are linked at project setup time via the `--platform=` flag. There is no `.claude/platform` file — platform identity is baked into the symlinks themselves. At runtime, strategists also pass `platform` explicitly in every worker spawn prompt so workers can resolve skill paths without relying solely on symlink structure.
 
 **Rationale:** With workers being platform-agnostic files in `lib/core/agents/`, and skills being the platform-specific layer, setup-time symlinks wire the right skill implementations into `.claude/skills/`. Workers resolve skills via the symlinked path `.claude/skills/<name>/SKILL.md` — no runtime platform path construction needed. The runtime platform parameter (`web`/`ios`/`flutter`/`android`) is still passed in every spawn prompt for workers that need to reference platform-specific conventions, but skill execution always goes through the downstream symlink.
 
@@ -141,7 +141,7 @@ software-dev-agentic enforces its own conventions through an automated internal 
 
 | Reviewer | Location | Audits |
 |---|---|---|
-| `arch-review-orchestrator` + `arch-review-worker` | `.claude/agents/` | Agent `.md` files and `SKILL.md` files in this repo — convention compliance |
+| `arch-review-strategist` + `arch-review-worker` | `.claude/agents/` | Agent `.md` files and `SKILL.md` files in this repo — convention compliance |
 | `arch-review-worker` | `lib/core/agents/auditor/` | Application code in downstream projects — CLEAN Architecture violations |
 
 > Why separate locations? `.claude/agents/` and `.claude/skills/` are this repo's internal tooling — they are NOT symlinked into downstream projects. `lib/core/agents/` and `lib/core/skills/` ARE symlinked. The distinction prevents internal review tooling from polluting downstream project contexts.
@@ -151,13 +151,13 @@ software-dev-agentic enforces its own conventions through an automated internal 
 | Category | Rules | Severity |
 |---|---|---|
 | Frontmatter | `name`, `description`, `model`, `tools` required; `model: sonnet` for all workers (haiku only for truly mechanical leaf tasks) | 🔴 Critical / 🟡 Warning |
-| Orchestrators | `agents:` lists only spawned workers; body passes only file paths between phases; writes state file after each phase; no Phase 2 codebase reads; no direct Edit or Write — file changes always through workers; explicit output validation after each spawn — STOP if `## Output` missing or paths don't exist | 🔴 Critical |
+| Strategists | `agents:` lists only spawned workers; body passes only file paths between phases; writes state file after each phase; no Phase 2 codebase reads; no direct Edit or Write — file changes always through workers; explicit output validation after each spawn — STOP if `## Output` missing or paths don't exist | 🔴 Critical |
 | Workers | `## Input` section with required params table and `MISSING INPUT` STOP condition; `## Scope Boundary` section with owned-layer declaration and delegation table; `## Task Assessment` section — skill vs direct edit gate; `## Skill Execution` section — platform path resolution, Read SKILL.md, follow; `## Search Protocol` with decision gate table; `## Output` section with Glob + Grep verification before listing paths; `## Extension Point` at end; no "Read ... completely" on reference docs | 🔴 Critical / 🟡 Warning |
 | Core agent platform-agnosticism | No hardcoded platform paths (`src/domain/`, `Talenta/Module/`, `lib/`, `app/`); no platform framework references as rules (`React`, `Next.js`, `RxSwift`, `UIKit`, `BLoC`, `axios`); no platform language syntax as rules (`'use client'`, `readonly`, `BehaviorRelay`); platform knowledge delegated to a skill | 🔴 Critical |
 | Skill frontmatter | `name`, `description`, `user-invocable: false` present | 🔴 Critical |
 | Reference reads in skills | Grep-first; no "Read completely"; all referenced paths match actual filenames | 🔴 Critical |
 | Fix G | Template files contain only code generation hints — no explanatory/instructional comments | 🟡 Warning |
-| Naming | `-orchestrator.md` / `-worker.md`; skill dirs follow `<layer>-<action>-<target>`; persona assignment correct | 🟢 Info |
+| Naming | `-strategist.md` / `-worker.md`; skill dirs follow `<layer>-<action>-<target>`; persona assignment correct | 🟢 Info |
 | Prompt Clarity | No ambiguous scope ("create the X" without specifying interface vs implementation); no instructions spanning two CLEAN layers without a stop condition; no contradicting rules; failure paths specified. For deeper runtime reasoning analysis, run `prompt-debug-worker`. | 🟡 Warning |
 
 **Severity levels:**
@@ -189,14 +189,14 @@ software-dev-agentic enforces its own conventions through an automated internal 
 
 | Content | Location | Reason |
 |---|---|---|
-| Core orchestrators | `software-dev-agentic/lib/core/agents/<persona>/` | Platform-agnostic coordination protocol, grouped by persona |
+| Core strategists | `software-dev-agentic/lib/core/agents/<persona>/` | Platform-agnostic coordination protocol, grouped by persona |
 | Core workers | `software-dev-agentic/lib/core/agents/<persona>/` | Platform-agnostic CLEAN layer brains, grouped by persona |
 | Tracker agents | `software-dev-agentic/lib/core/agents/tracker/` | Issue lifecycle management |
 | Auditor agents | `software-dev-agentic/lib/core/agents/auditor/` | Architecture review — platform-agnostic CLEAN checker; delegates platform rules to skills |
 | Installer agents | `software-dev-agentic/lib/core/agents/installer/` | Platform-agnostic project setup + onboarding; delegates mechanical steps to platform setup skills |
-| Meta/observability agents | `software-dev-agentic/lib/core/agents/detective/` | Performance analysis + agent prompt debugging |
+| Meta/observability agents | `software-dev-agentic/lib/core/agents/debugger/` | Performance analysis + agent prompt debugging |
 | Internal repo tooling | `software-dev-agentic/agents/` | Convention reviewer — NOT symlinked to downstream projects |
-| Platform-specific agents (`test-orchestrator`, `pr-review-worker`) | `software-dev-agentic/lib/platforms/<platform>/agents/` | Agent itself is inherently platform-specific |
+| Platform-specific agents (`test-strategist`, `pr-review-worker`) | `software-dev-agentic/lib/platforms/<platform>/agents/` | Agent itself is inherently platform-specific |
 | Core skills | `software-dev-agentic/lib/core/skills/` | Identical across platforms |
 | Platform-contract skills | `software-dev-agentic/lib/platforms/<platform>/skills/contract/` | Same name on all platforms, platform-specific implementation; create-only (`create-*`) — no update skills; lands flat in `.claude/skills/<name>/` downstream |
 | Platform-only skills | `software-dev-agentic/lib/platforms/<platform>/skills/` (flat) | Called by platform agents only |

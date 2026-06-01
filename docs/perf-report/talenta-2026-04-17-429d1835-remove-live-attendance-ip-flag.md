@@ -75,7 +75,7 @@ No skills were invoked. The feature-flag removal was handled entirely via a dire
 
 > **Low score on D3?** Run `prompt-debug-worker` with this report + the agent's .md file
 > to surface ambiguous instructions that caused this behavior.
-> Agent file: `lib/core/agents/builder/feature-orchestrator.md`
+> Agent file: `lib/core/agents/developer/feature-orchestrator.md`
 
 ## Recommendations
 

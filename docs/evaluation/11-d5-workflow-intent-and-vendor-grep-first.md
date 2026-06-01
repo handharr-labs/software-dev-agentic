@@ -31,7 +31,7 @@ The Explore Agent Grep-First rule in `feature-orchestrator.md` instructed agents
 
 ## Changes Made
 
-### `lib/core/agents/detective/debug-worker.md` — Third-Party Library Investigation rule
+### `lib/core/agents/debugger/debug-worker.md` — Third-Party Library Investigation rule
 
 Added a dedicated subsection under the Search Protocol for vendor/node_modules investigation:
 
@@ -39,7 +39,7 @@ Added a dedicated subsection under the Search Protocol for vendor/node_modules i
 - If the pattern is unknown, Grep for a related symbol from the error message first to narrow the target directory
 - Never navigate a vendor directory speculatively with directory listings
 
-### `lib/core/agents/builder/feature-orchestrator.md` — Dynamic pattern exception
+### `lib/core/agents/developer/feature-orchestrator.md` — Dynamic pattern exception
 
 Extended the Explore Agent Grep-First Rule with an explicit exception:
 

@@ -4,7 +4,7 @@ Internal tooling for maintaining this repo — convention review and component s
 
 | Agent | Purpose |
 |---|---|
-| `arch-review-orchestrator` | Audit all agents and skills in this repo against the convention checklist |
+| `arch-review-strategist` | Audit all agents and skills in this repo against the convention checklist |
 | `arch-review-worker` | Review a specific scope (agent file, skill dir) for convention violations |
 | `scaffold-worker` | Consult on and scaffold new agents, skills, or personas for this repo |
 
@@ -13,23 +13,23 @@ Internal tooling for maintaining this repo — convention review and component s
 ## Orchestration Model (current)
 
 ```
-builder-feature-orchestrator  ← top-level, full-stack entry point
+developer-feature-strategist  ← top-level, full-stack entry point
   ├── domain-worker           Phase 1 — Domain layer
   ├── data-worker             Phase 2 — Data layer
-  └── pres-orchestrator       Phase 3 — Presentation + UI (sub-orchestrator)
+  └── pres-strategist       Phase 3 — Presentation + UI (sub-strategist)
         ├── presentation-worker   StateHolder
-        └── builder-ui-worker     UI binding
+        └── developer-ui-worker     UI binding
 
-builder-backend-orchestrator  ← backend-only entry point
+developer-backend-strategist  ← backend-only entry point
   ├── domain-worker
   └── data-worker
 
-pres-orchestrator             ← standalone entry point (when backend already exists)
+pres-strategist             ← standalone entry point (when backend already exists)
   ├── presentation-worker
-  └── builder-ui-worker
+  └── developer-ui-worker
 
-detective-debug-orchestrator  ← debug entry point
-  └── detective-debug-worker
+debugger-strategist  ← debug entry point
+  └── debugger-worker
 ```
 
 Workers are resolved by name at runtime from `.claude/agents/`. The correct platform implementation is wired by `setup-symlinks.sh --platform=<platform>` at project setup time.

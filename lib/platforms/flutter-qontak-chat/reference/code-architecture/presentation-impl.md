@@ -61,7 +61,7 @@ Invariants:
 
 ## StateHolder Contract <!-- 11 -->
 
-Before `builder-ui-worker` writes the Screen, `builder-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
+Before `developer-ui-worker` writes the Screen, `developer-feature-worker` produces `.claude/runs/<feature>/stateholder-contract.md` containing:
 - BLoC/Cubit class name and file path
 - `State` fields (name, type, purpose)
 - `Event` cases or Cubit method signatures (name, payload if any)
@@ -73,7 +73,7 @@ Before `builder-ui-worker` writes the Screen, `builder-feature-worker` produces 
 ## Creation Order <!-- 10 -->
 
 ```
-Use Cases → BLoC/Cubit (StateHolder) → StateHolder contract → Screen (builder-ui-worker)
+Use Cases → BLoC/Cubit (StateHolder) → StateHolder contract → Screen (developer-ui-worker)
 ```
 
 Never write the Screen before the StateHolder contract exists.

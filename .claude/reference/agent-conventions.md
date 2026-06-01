@@ -12,9 +12,9 @@ Decision tree — apply in order:
 
 **Worker** — specialist in one domain or CLEAN layer. Sequences skills, handles branching and edge cases, enforces preconditions. No coordination of other agents.
 
-**Orchestrator** — coordinates multiple workers across phases. Never writes files directly — all writes go through workers. Has `agents:` frontmatter field.
+**Strategist** — coordinates multiple workers across phases. Never writes files directly — all writes go through workers. Has `agents:` frontmatter field.
 
-**New Persona** — multiple related agents forming a coherent new workflow category not covered by existing personas (`builder`, `detective`, `tracker`, `auditor`, `installer`). Requires: new subdirectory + `.pkg` file + at least one worker or orchestrator.
+**New Persona** — multiple related agents forming a coherent new workflow category not covered by existing personas (`developer`, `debugger`, `tracker`, `auditor`, `installer`). Requires: new subdirectory + `.pkg` file + at least one worker or strategist.
 
 ---
 
@@ -67,7 +67,7 @@ Decision tree — apply in order:
 
 **Workers additionally:** `user-invocable: true|false`
 
-**Orchestrators additionally:** `agents:` listing only the workers actually spawned
+**Strategists additionally:** `agents:` listing only the workers actually spawned
 
 **Skills:** `name`, `description`, `user-invocable: false` (or omit only for user-facing skills)
 
@@ -77,7 +77,7 @@ Decision tree — apply in order:
 
 | Role | Model | When |
 |---|---|---|
-| Orchestrator | `sonnet` | Always |
+| Strategist | `sonnet` | Always |
 | Worker | `sonnet` | Default — any reasoning, decision-making, or architectural judgment |
 | Worker | `haiku` | Only for truly mechanical leaf tasks with no architectural judgment |
 
@@ -98,7 +98,7 @@ Workers must also:
 
 ---
 
-## Orchestrator Required Sections <!-- 13 -->
+## Strategist Required Sections <!-- 13 -->
 
 | Section | Purpose |
 |---|---|
@@ -107,7 +107,7 @@ Workers must also:
 | Output validation | Glob each worker output path — STOP if missing |
 | `## Extension Point` | Hook at end |
 
-Orchestrators never use Edit, Write, or file-writing Bash — zero inline work.
+Strategists never use Edit, Write, or file-writing Bash — zero inline work.
 
 ---
 
@@ -116,7 +116,7 @@ Orchestrators never use Edit, Write, or file-writing Bash — zero inline work.
 | Type | Pattern | Example |
 |---|---|---|
 | Worker | `<domain>-worker.md` | `agent-scaffold-worker.md` |
-| Orchestrator | `<domain>-orchestrator.md` | `arch-review-orchestrator.md` |
+| Strategist | `<domain>-strategist.md` | `arch-review-strategist.md` |
 | Skill directory | `<layer>-<action>-<target>` | `domain-create-entity` |
 
 ---

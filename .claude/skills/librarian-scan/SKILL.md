@@ -33,9 +33,9 @@ Derive default Feature Doc path: `lib/core/reference/feature-docs/<kebab-case-na
 
 No CLAUDE.md config required. Use only the paths passed as flags. If a path is provided but does not exist on disk, warn the user and treat that platform as `[pending-scan]`.
 
-### 3 — Spawn orchestrator
+### 3 — Spawn strategist
 
-Spawn `librarian-feature-orchestrator` in plan-scan mode:
+Spawn `librarian-feature-strategist` in plan-scan mode:
 
 > **Mode: plan-scan**
 >
@@ -52,7 +52,7 @@ Capture the decision block.
 
 **`Decision: converged`** — no workers needed. Show note to user and stop.
 
-**`Decision: blocked`** — surface question to user via `AskUserQuestion`, then re-invoke orchestrator with the answer.
+**`Decision: blocked`** — surface question to user via `AskUserQuestion`, then re-invoke strategist with the answer.
 
 **`Decision: spawn-workers`** — proceed to Step 5.
 

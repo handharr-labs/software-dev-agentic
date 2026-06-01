@@ -27,7 +27,7 @@ Read-once rule: start with Glob to understand shape, Grep to extract specifics, 
 
 Ask if not already provided:
 
-> "What persona, agent, or skill would you like to discuss? You can name a persona (`builder`, `detective`), a specific agent file, a skill, or describe the area you're confused about."
+> "What persona, agent, or skill would you like to discuss? You can name a persona (`developer`, `debugger`), a specific agent file, a skill, or describe the area you're confused about."
 
 Once identified, Glob the relevant directory or file to confirm it exists and understand its shape:
 - Persona → Glob `lib/core/agents/<persona>/`, `packages/<persona>.pkg`, related skills
@@ -41,7 +41,7 @@ Read what is needed to reason about the subject. Form a one-paragraph mental mod
 - What does this component do?
 - What does it own and what does it delegate?
 - What are its dependencies (agents it spawns, skills it calls, references it reads)?
-- Does it fit cleanly into the taxonomy (worker / orchestrator / skill / persona)?
+- Does it fit cleanly into the taxonomy (worker / strategist / skill / persona)?
 
 Do not present this paragraph to the engineer — it is your internal reasoning base.
 

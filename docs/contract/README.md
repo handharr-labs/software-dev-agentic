@@ -1,6 +1,6 @@
 # docs/contract/
 
-Contracts that define the base spec for platform resources. Each file specifies what a platform must implement — consumed by both the **builder** persona (grep targets when reading reference files) and the **auditor** persona (enforcement via `arch-check-conventions`).
+Contracts that define the base spec for platform resources. Each file specifies what a platform must implement — consumed by both the **developer** persona (grep targets when reading reference files) and the **auditor** persona (enforcement via `arch-check-conventions`).
 
 ## Files
 
