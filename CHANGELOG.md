@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [8.0.0] — 2026-06-01
+
+### Changed
+- **Reasoning agents renamed: `orchestrator` → `strategist`** — all `-orchestrator` agent files renamed to `-strategist`; `name:` frontmatter, skill spawn references, principle docs, and internal tooling updated throughout
+- **Persona renamed: `builder` → `developer`** — directory, all 12 agent files, 10 core skills, and ~97 platform contract skill directories renamed across 6 platforms; slash commands now `/developer-build-feature`, `/developer-plan-feature`, `/developer-build-from-ticket`, etc.
+- **Persona renamed: `detective` → `debugger`** — directory and 3 agent files renamed; agent names simplified (`detective-debug-*` → `debugger-*`); entry skill `detective-debug` → `debugger-debug`; platform contract skills `detective-debug-add-logs` / `detective-debug-remove-logs` → `debugger-add-logs` / `debugger-remove-logs`
+
+### Removed
+- All `builder-*` agent files, skill directories, and platform contract skill directories (superseded by `developer-*` equivalents)
+- All `detective-*` agent files and skill directories (superseded by `debugger-*` equivalents)
+
+---
+
 ## [7.28.7] — 2026-05-26
 
 ### Changed
