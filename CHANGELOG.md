@@ -7,6 +7,32 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [8.2.0] — 2026-06-01
+
+### Added
+- **Principle: Orchestrator skill runtime environment** — explicit documentation that the Orchestrator skill runs in the main context window; covers 200K limit, compaction consequence, parallel spawning capability, and convergence loop capability
+- **Principle: Orchestrator design checklist** — 4-question guide (Output → Input → Process → Budget) for building a new Orchestrator skill
+- **Principle: Persona → SDLC role mapping** — table connecting each persona to its SDLC phase and real-world role; developer (Implementation/SE) and qa (Testing/QA) live; others research
+- **Principle: Limitations — Why Not End-to-End** — new section covering context window, token billing, supervision, and gaps as current constraints on cross-persona automation; each framed as a research problem
+- **Deck: agent anatomy deep-dive slide** (s8-agent-anatomy) — annotated agent file with per-slot explanation; positioned after the "why this anatomy" slide
+- **Deck: Orchestrator skill intro slide** (s8-flow-intro) — high-level owns/delegates/constraint framing before the low-level detail slide
+- **Deck: Orchestrator skill anatomy slide** (s8-flow) — three panels: parallel agents, convergence loop, context window constraint with compaction warning
+- **Deck: design evolution slide** (s11-evolution) — origin story from raw skill through 4 problems and their solutions
+- **Deck: Orchestrator design checklist slide** (s11-design) — 4-question checklist as a presentation slide
+- **Deck: Persona = SDLC role slide** (s11-persona) — Persona→role mapping table + concrete Orchestrator skill examples per persona
+- **Deck: Why not end-to-end slide** (s11-e2e) — 4 limitations as red cards; each framed as a research problem
+
+### Changed
+- **Persona docs renamed** — `docs/persona/builder.md` → `developer.md`; `docs/persona/detective.md` → `debugger.md`; headings, counts, and cross-references updated
+- **developer-feature-strategist** — `run_dir` now resolves to `runs/developer/<feature>`; `process-findings` reads findings from `<run_dir>/findings/` via `find` + `Read` instead of receiving inline content
+- **developer-plan-feature** — preflight `find` paths updated to `runs/developer/`; removed `restore_findings` handling; `run_dir` now passed to each planner spawn
+- **All four planners** — aligned to disk-write findings pattern (write `<run_dir>/findings/<layer>-findings.md`, return short acknowledgment)
+- **Deck slide 7** — agent card "Role examples" replaced with 5-part anatomy (Input / Knowledge / Reasoning / Output / Modes)
+- **Deck slide 19** — distribution slide right panel updated from "Evaluating Monorepo" to shipped Claude Plugin path with install command and `enabledPlugins` format
+- **submodule-repo-structure.md** — Delivery Mechanism note updated to document both supported distribution paths (submodule + Claude plugin)
+
+---
+
 ## [8.1.0] — 2026-06-01
 
 ### Changed
