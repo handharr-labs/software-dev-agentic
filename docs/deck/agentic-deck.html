@@ -756,6 +756,13 @@
           <div class="roadmap-item">
             <div class="roadmap-num" style="color: var(--muted);">C</div>
             <div class="roadmap-text">
+              <strong>Knowledge Architecture &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(139,148,158,0.15); color: var(--muted); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">backlog</span></strong>
+              <span>How does the knowledge base scale as agents and platforms grow? Reference doc structure, authoring conventions, versioning, and retrieval — from static Grep-loaded files toward a queryable, maintainable knowledge layer.</span>
+            </div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num" style="color: var(--muted);">D</div>
+            <div class="roadmap-text">
               <strong>Expansion &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(139,148,158,0.15); color: var(--muted); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">backlog</span></strong>
               <span>How do we extend specialized agents to every SDLC process? From Implementation-only today to Requirement, Design, Testing, and Delivery.</span>
             </div>
@@ -778,6 +785,14 @@
     <div class="label">Phase 01 — Foundation · Anatomy</div>
     <h2 class="headline" style="margin-bottom: 16px;">Five components. <em>Each with one clear responsibility.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px;">
+
+      <div class="code-panel">
+        <div class="code-panel-header neutral">Reference — The Knowledge</div>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Persistent instruction files Claude loads into its context. CLAUDE.md is always loaded project-wide. Any other file can be read on demand — bringing targeted knowledge into the session when needed.</p>
+          <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"CLAUDE.md files give Claude persistent instructions for a project. Keep it to facts Claude should hold in every session." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--muted);">code.claude.com/docs/en/memory</span></div>
+        </div>
+      </div>
 
       <div class="code-panel">
         <div class="code-panel-header good">Skill — The Hands</div>
@@ -809,14 +824,6 @@
           </div>
           <div class="caption" style="margin-top: 0; font-size: 11.5px;">Skills reach the codebase. MCP reaches everything else.</div>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"MCP servers give Claude Code access to your tools, databases, and APIs. Once connected, Claude can read and act on that system directly instead of working from what you paste." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#D2A8FF;">code.claude.com/docs/en/mcp</span></div>
-        </div>
-      </div>
-
-      <div class="code-panel">
-        <div class="code-panel-header neutral">Reference — The Knowledge</div>
-        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Persistent instruction files Claude loads into its context. CLAUDE.md is always loaded project-wide. Any other file can be read on demand — bringing targeted knowledge into the session when needed.</p>
-          <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"CLAUDE.md files give Claude persistent instructions for a project. Keep it to facts Claude should hold in every session." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--muted);">code.claude.com/docs/en/memory</span></div>
         </div>
       </div>
 
@@ -854,10 +861,10 @@
         <thead>
           <tr>
             <th style="width: 200px; border-right: 1px solid var(--border);">Capability</th>
+            <th style="text-align: center; color: var(--muted);">Reference</th>
             <th style="text-align: center; color: var(--accent);">Skill</th>
             <th style="text-align: center; color: var(--blue);">Agent</th>
             <th style="text-align: center; color: #D2A8FF;">MCP</th>
-            <th style="text-align: center; color: var(--muted);">Reference</th>
             <th style="text-align: center; color: #FFA657;">Hooks</th>
           </tr>
         </thead>
@@ -865,64 +872,64 @@
           <tr>
             <td style="border-right: 1px solid var(--border);">LLM reasoning</td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Isolated context window</td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Runs in caller's context</td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Uses Claude tools</td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Writes source files</td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Multiple invocation modes</td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Spawns agents</td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Calls skills</td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
@@ -930,16 +937,16 @@
             <td style="border-right: 1px solid var(--border);">Bridges external systems</td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
-            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
             <td style="border-right: 1px solid var(--border);">Grep-addressable knowledge</td>
-            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
-            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
-            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
@@ -964,7 +971,7 @@
        SLIDE — PERSONA = SDLC PHASE
   ════════════════════════════════════════════ -->
   <section class="slide" id="s11-persona">
-    <div class="label">Phase 01 — Foundation · Output · Persona</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Persona</div>
     <h2 class="headline" style="margin-bottom: 16px;">A Persona mirrors a role. <em>An Orchestrator skill mirrors what that role does.</em></h2>
 
     <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px;">
@@ -1040,10 +1047,103 @@
   </section>
 
   <!-- ═══════════════════════════════════════════
+       SLIDE — IN PRACTICE (EXAMPLE)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s-example">
+    <div class="label">Phase 01 — Foundation · In Practice</div>
+    <h2 class="headline" style="margin-bottom: 20px;">One request. <em>The whole system in motion.</em></h2>
+
+    <div style="display: flex; flex-direction: column; gap: 0;">
+
+      <div style="padding-bottom: 8px;">
+        <span style="font-family: var(--mono); font-size: 12px; color: var(--accent); background: var(--accent-bg); border: 1px solid var(--accent-bd); border-radius: 6px; padding: 6px 16px;">engineer: /developer-plan-feature "OTP Login"</span>
+      </div>
+      <div style="color: var(--muted); font-size: 15px; padding: 2px 0 2px 80px; line-height: 1;">↓</div>
+
+      <div style="display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; padding: 4px 0;">
+        <div style="background: var(--accent-bg); border: 1px solid var(--accent-bd); border-radius: 8px; padding: 11px 15px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);">Skill</div>
+          <div style="font-size: 11.5px; font-family: var(--mono); color: var(--text); margin-top: 4px;">developer-plan-feature</div>
+        </div>
+        <div style="font-size: 13.5px; color: var(--muted); padding-top: 10px; line-height: 1.5;">Owns the session — routes the request, manages approval gates, loops until converged</div>
+      </div>
+      <div style="color: var(--muted); font-size: 15px; padding: 2px 0 2px 80px; line-height: 1;">↓ spawns</div>
+
+      <div style="display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; padding: 4px 0;">
+        <div style="background: rgba(121,192,255,0.06); border: 1px solid rgba(121,192,255,0.25); border-radius: 8px; padding: 11px 15px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue);">Agents</div>
+          <div style="font-size: 11.5px; font-family: var(--mono); color: var(--text); margin-top: 4px;">strategist · 3× planners</div>
+        </div>
+        <div style="font-size: 13.5px; color: var(--muted); padding-top: 10px; line-height: 1.5;">Each in its own isolated context — strategist decides scope, planners reason per layer (domain · data · presentation) in parallel</div>
+      </div>
+      <div style="color: var(--muted); font-size: 15px; padding: 2px 0 2px 80px; line-height: 1;">↓ grep</div>
+
+      <div style="display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; padding: 4px 0;">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px 15px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);">Knowledge</div>
+          <div style="font-size: 11.5px; font-family: var(--mono); color: var(--text); margin-top: 4px;">reference/</div>
+        </div>
+        <div style="font-size: 13.5px; color: var(--muted); padding-top: 10px; line-height: 1.5;">Agents load only the pattern sections their layer needs — domain contracts, data models, UI conventions. Nothing more.</div>
+      </div>
+      <div style="color: var(--muted); font-size: 15px; padding: 2px 0 2px 80px; line-height: 1;">↓</div>
+
+      <div style="display: grid; grid-template-columns: 200px 1fr auto; gap: 16px; align-items: center; padding: 4px 0;">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px 15px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);">Output</div>
+          <div style="font-size: 11.5px; font-family: var(--mono); color: var(--text); margin-top: 4px;">plan → code</div>
+        </div>
+        <div style="font-size: 13.5px; color: var(--muted); line-height: 1.5;">Plan reviewed and approved by engineer → feature worker writes all layers across every platform</div>
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); white-space: nowrap;">shipped ✓</div>
+      </div>
+
+    </div>
+
+    <div class="caption" style="margin-top: 18px;">
+      The engineer describes what to build. <strong>Skill, agents, and knowledge each do exactly one job — nothing more.</strong>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — WHY NOT END-TO-END
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s11-e2e">
+    <div class="label">Phase 01 — Foundation · Design Principle · Limitations</div>
+    <h2 class="headline" style="margin-bottom: 16px;">Why not end-to-end? <em>Four reasons human review still matters.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px;">
+
+      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
+        <div class="card-label" style="color: var(--bad);">01</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Context window</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">A full end-to-end workflow — across multiple roles and hand-offs — fills the main context. Once compacted, the session reasons on a lossy summary. Quality at the final step is lower than at the first.</p>
+      </div>
+
+      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
+        <div class="card-label" style="color: var(--bad);">02</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Token billing</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">A billing cap or timeout mid-workflow orphans the Orchestrator skill. There is no clean auto-recovery — a human has to re-enter, re-read state, and decide how to continue. The longer the chain, the higher the risk.</p>
+      </div>
+
+      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
+        <div class="card-label" style="color: var(--bad);">03</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Supervision</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Agents aren't mature enough to run unsupervised across team boundaries. Each hand-off is a decision point — does the RFC accurately reflect the Epic? Does the plan match the RFC? A human eye at each gate catches drift early.</p>
+      </div>
+
+      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
+        <div class="card-label" style="color: var(--bad);">04</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Gaps</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">There is no agreed input/output contract between Product → Design → Developer → QA yet. We're still mapping what each team produces and what the next team needs. Agents can't bridge a gap that hasn't been defined.</p>
+      </div>
+
+    </div>
+    <div class="caption">Each limitation is a research problem, not a dead end. Context efficiency, resume protocols, maturity metrics, and cross-team I/O contracts are all active work.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
        SLIDE — DESIGN EVOLUTION
   ════════════════════════════════════════════ -->
   <section class="slide" id="s11-evolution">
-    <div class="label">Phase 01 — Foundation · Output · Evolution</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Evolution</div>
     <h2 class="headline" style="margin-bottom: 16px;">We didn't design it all at once. <em>Each problem taught us the next piece.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px;">
 
@@ -1065,21 +1165,21 @@
 
       <div class="card" style="padding: 16px 14px;">
         <div class="card-label" style="color: var(--bad);">Problem 2</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Agents bloat</div>
-        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Agents accumulate every pattern and convention — unscoped. They hit their own context limit. Too much knowledge, not enough relevance.</p>
-        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
-          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Reference docs + Grep.</strong> Agents load only the sections their task needs. Multiple scoped agents — each expert in one layer.</p>
-        </div>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label" style="color: var(--bad);">Problem 3</div>
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">One pass isn't enough</div>
         <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Domain, data, and presentation layers depend on each other. A single agent pass misses cross-layer impact. Output is incomplete.</p>
         <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
           <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
           <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Convergence loop.</strong> Planners report cross-layer impact. Strategist decides: more rounds or converged? Loop until stable.</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 16px 14px;">
+        <div class="card-label" style="color: var(--bad);">Problem 3</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Knowledge Coupling + Bloated Agent</div>
+        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Embedding knowledge inside agents causes three problems: agents bloat and hit context limits, the same patterns get duplicated across multiple agents, and updating a convention risks breaking every agent that inlined it.</p>
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Knowledge directory + Grep.</strong> Knowledge lives in one place, versioned independently. Agents grep only the section their task needs — nothing more.</p>
         </div>
       </div>
 
@@ -1130,46 +1230,120 @@
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE — WHY NOT END-TO-END
+       SLIDE — REFERENCE (HIGH LEVEL)
   ════════════════════════════════════════════ -->
-  <section class="slide" id="s11-e2e">
-    <div class="label">Phase 01 — Foundation · Output · Limitations</div>
-    <h2 class="headline" style="margin-bottom: 16px;">Why not end-to-end? <em>Four reasons human review still matters.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px;">
+  <section class="slide" id="s10-intro">
+    <div class="label">Phase 01 — Foundation · Design Principle · Reference</div>
+    <h2 class="headline">Knowledge lives in one place. <em>Agents stay focused on their job.</em></h2>
 
-      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
-        <div class="card-label" style="color: var(--bad);">01</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Context window</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">A full end-to-end workflow — across multiple roles and hand-offs — fills the main context. Once compacted, the session reasons on a lossy summary. Quality at the final step is lower than at the first.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+
+      <div class="card" style="border-color: var(--accent-bd); background: var(--accent-bg); padding: 20px 18px;">
+        <div class="card-label">Knowledge Directory</div>
+        <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.3;">What the system knows</div>
+        <ul class="bullets" style="gap: 10px;">
+          <li>Architecture patterns, layer contracts, platform conventions</li>
+          <li>Centralized in <code style="font-family:var(--mono);font-size:11px;">reference/</code></li>
+          <li>Versioned and owned independently of any agent or skill</li>
+        </ul>
       </div>
 
-      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
-        <div class="card-label" style="color: var(--bad);">02</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Token billing</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">A billing cap or timeout mid-workflow orphans the Orchestrator skill. There is no clean auto-recovery — a human has to re-enter, re-read state, and decide how to continue. The longer the chain, the higher the risk.</p>
+      <div class="card" style="padding: 20px 18px;">
+        <div class="card-label">Agents &amp; Skills</div>
+        <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.3;">What the system does</div>
+        <ul class="bullets" style="gap: 10px;">
+          <li>Scoped to one concern: thinking, routing, reasoning, orchestrating</li>
+          <li>Load only what their task needs — grep a section, not the full file</li>
+          <li>Contain no domain knowledge of their own</li>
+        </ul>
       </div>
 
-      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
-        <div class="card-label" style="color: var(--bad);">03</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Supervision</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Agents aren't mature enough to run unsupervised across team boundaries. Each hand-off is a decision point — does the RFC accurately reflect the Epic? Does the plan match the RFC? A human eye at each gate catches drift early.</p>
-      </div>
-
-      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
-        <div class="card-label" style="color: var(--bad);">04</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Gaps</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">There is no agreed input/output contract between Product → Design → Developer → QA yet. We're still mapping what each team produces and what the next team needs. Agents can't bridge a gap that hasn't been defined.</p>
+      <div class="card" style="padding: 20px 18px;">
+        <div class="card-label">The Result</div>
+        <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.3;">Concerns separated</div>
+        <ul class="bullets" style="gap: 10px;">
+          <li>Update a pattern → change one knowledge file, zero agents</li>
+          <li>Add a platform → add a new impl file, no agent rewrite</li>
+          <li>Debug a wrong output → check knowledge or agent independently</li>
+        </ul>
       </div>
 
     </div>
-    <div class="caption">Each limitation is a research problem, not a dead end. Context efficiency, resume protocols, maturity metrics, and cross-team I/O contracts are all active work.</div>
+
+    <div class="caption">
+      Agents and skills are logic. The knowledge directory is data. <strong>They change for different reasons, at different times, by different people — so they live apart.</strong>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 10 — REFERENCE ARCHITECTURE
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s10">
+    <div class="label">Phase 01 — Foundation · Design Principle · Reference &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: none; vertical-align: middle;">Low-Level</span></div>
+    <h2 class="headline">Topic. Term. <em>Three reference types. One grep key.</em></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-bottom: 12px;">
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="tree" style="font-size: 12px; line-height: 1.8;">
+<span class="dm">Process</span>   <span class="dm">Implementation · Design · Requirement · …</span>
+  <span class="dm">│</span>
+  <span class="ac">Topic</span>     <span class="dm">domain · data · presentation · design-system · …</span>
+  <span class="dm">│            one reference file per topic per platform</span>
+  <span class="dm">│</span>
+  <span class="rl">Term</span>      <span class="dm">UseCase · Entity · Repository · MpButton · …</span>
+  <span class="dm">│            one ## heading per term, same name everywhere</span>
+  <span class="dm">│</span>
+  ├── <span class="ac">-theory.md</span>   <span class="dm">what it IS · platform-agnostic</span>
+  ├── <span class="ac">-impl.md</span>     <span class="dm">how to build it in this language</span>
+  └── <span class="ac">-catalog.md</span>  <span class="dm">queryable symbol inventory (### per entry)</span></div>
+
+        <div class="cache-box stable" style="font-size: 12.5px;">
+          <div class="cache-label">The Term is the grep key</div>
+          One Term = one canonical name = one <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">##</code> heading, everywhere.<br><br>
+          Catalog entries use <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">###</code> per symbol — agents grep the symbol name directly, read 8 lines. No full-file load, ever.
+        </div>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel-header neutral">Three types — theory · impl · catalog</div>
+        <pre style="font-size: 11.5px;"><span class="cm">domain-theory.md  — WHAT and WHY</span>
+<span class="ac">## UseCase <!-- 28 --></span>
+A use case encapsulates one business operation.
+Invariants: no framework imports, single execute()...
+
+<span class="cm">domain-impl.md  — HOW in Swift</span>
+<span class="ac">## UseCase <!-- 31 --></span>  <span class="dm">← same Term, Swift body</span>
+final class GetUserUseCase: UseCase {
+  func execute(_ params: Params) async throws
+
+
+<span class="cm">mekari-pixel-flutter-catalog.md  — WHAT EXISTS</span>
+<span class="ac">## Atoms <!-- 146 --></span>
+
+<span class="ac">### MpButton</span>
+- <span class="dm">Category:</span> <span class="ac">`atoms/button`</span>
+- <span class="dm">Description:</span> Mekari Mobile Kit Button.
+- <span class="dm">Key params:</span> `label`, `icon`, `onPressed`, `size`
+- <span class="dm">Variants:</span> `MpButton.primary()`, `.secondary()`
+
+<span class="ac">### MpTextField</span>
+- <span class="dm">Key params:</span> `controller`, `label`, `onChanged`</pre>
+      </div>
+
+    </div>
+
+    <div class="caption">
+      <strong>-theory</strong> answers what and why. <strong>-impl</strong> answers how in that language. <strong>-catalog</strong> answers what exists — a queryable inventory of available symbols.
+      Agents grep the symbol name directly in a catalog; no full-file load needed.
+    </div>
   </section>
 
   <!-- ═══════════════════════════════════════════
        SLIDE — SKILLS (HIGH LEVEL)
   ════════════════════════════════════════════ -->
   <section class="slide" id="s8-intro">
-    <div class="label">Phase 01 — Foundation · Output · Skills</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Skills</div>
     <h2 class="headline" style="margin-bottom: 16px;">Two skill types. <em>Type O is the workflow. Type P is a step inside it.</em></h2>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
@@ -1224,7 +1398,7 @@
        SLIDE — ORCHESTRATOR SKILL ANATOMY
   ════════════════════════════════════════════ -->
   <section class="slide" id="s8-flow">
-    <div class="label">Phase 01 — Foundation · Output · Orchestrator Skill</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Orchestrator Skill &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: none; vertical-align: middle;">Low-Level</span></div>
     <h2 class="headline" style="margin-bottom: 20px;">The Orchestrator skill runs in your context window. <em>Three things it can do — and one constraint that shapes all of them.</em></h2>
 
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px;">
@@ -1277,7 +1451,7 @@ Agent(pres-planner,   <span class="ac">background: true</span>)
        SLIDE 9 (was 8) — SKILL TYPES IN DEPTH
   ════════════════════════════════════════════ -->
   <section class="slide" id="s8">
-    <div class="label">Phase 01 — Foundation · Output · Skills</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Skills &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: none; vertical-align: middle;">Low-Level</span></div>
     <h2 class="headline">Two types. <em>Each with a different job, a different caller.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
 
@@ -1352,7 +1526,7 @@ Create entity from reference pattern
        SLIDE — AGENTS (HIGH LEVEL)
   ════════════════════════════════════════════ -->
   <section class="slide" id="s9-intro">
-    <div class="label">Phase 01 — Foundation · Output · Agents</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Agents</div>
     <h2 class="headline">Five parts. <em>Every agent is built from the same anatomy.</em></h2>
 
     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; margin-bottom: 16px;">
@@ -1399,7 +1573,7 @@ Create entity from reference pattern
        SLIDE 9 — WHY THIS ANATOMY
   ════════════════════════════════════════════ -->
   <section class="slide" id="s9">
-    <div class="label">Phase 01 — Foundation · Output · Agents</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Agents</div>
     <h2 class="headline">Why this anatomy. <em>Agents aren't black boxes — every behavior traces back to one part.</em></h2>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px;">
@@ -1467,7 +1641,7 @@ Create entity from reference pattern
        SLIDE — AGENT ANATOMY (LOW LEVEL)
   ════════════════════════════════════════════ -->
   <section class="slide" id="s8-agent-anatomy">
-    <div class="label">Phase 01 — Foundation · Output · Agents</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · Agents &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: none; vertical-align: middle;">Low-Level</span></div>
     <h2 class="headline">One file. Five slots. <em>Each with one clear job.</em></h2>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 12px;">
 
@@ -1527,111 +1701,10 @@ Handle ambiguity: overlapping modules, uncertain scope.</span>
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE — REFERENCE (HIGH LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s10-intro">
-    <div class="label">Phase 01 — Foundation · Output · Reference</div>
-    <h2 class="headline">One source of truth. <em>Every agent reads it. Nobody copies it.</em></h2>
-    <div class="divider"></div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card" style="border-color: var(--bad-bd); background: var(--bad-bg);">
-          <div class="card-label" style="color: var(--bad);">Without reference docs</div>
-          <ul class="bullets" style="margin-top: 6px;">
-            <li>Architecture patterns embedded inside every agent</li>
-            <li>One convention change → update 40 files</li>
-            <li>Agents drift from each other over time</li>
-            <li>New platform means rewriting agent bodies</li>
-          </ul>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card" style="border-color: var(--accent-bd); background: var(--accent-bg);">
-          <div class="card-label">With reference docs</div>
-          <ul class="bullets" style="margin-top: 6px;">
-            <li>Patterns live in one file per topic per platform</li>
-            <li>Agents grep exactly the section they need — nothing more</li>
-            <li>Update once → every agent that reads it gets the update</li>
-            <li>New platform adds a new impl file — no agent changes</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="caption">
-      Reference docs are the team's shared knowledge base — the architectural decisions your team has made, written once, applied consistently by every agent on every session.
-      <strong>It's what makes the system teachable and maintainable at scale.</strong>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 10 — REFERENCE ARCHITECTURE
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s10">
-    <div class="label">Phase 01 — Foundation · Output · Reference</div>
-    <h2 class="headline">Topic. Term. <em>Three reference types. One grep key.</em></h2>
-
-    <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-bottom: 12px;">
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <div class="tree" style="font-size: 12px; line-height: 1.8;">
-<span class="dm">Process</span>   <span class="dm">Implementation · Design · Requirement · …</span>
-  <span class="dm">│</span>
-  <span class="ac">Topic</span>     <span class="dm">domain · data · presentation · design-system · …</span>
-  <span class="dm">│            one reference file per topic per platform</span>
-  <span class="dm">│</span>
-  <span class="rl">Term</span>      <span class="dm">UseCase · Entity · Repository · MpButton · …</span>
-  <span class="dm">│            one ## heading per term, same name everywhere</span>
-  <span class="dm">│</span>
-  ├── <span class="ac">-theory.md</span>   <span class="dm">what it IS · platform-agnostic</span>
-  ├── <span class="ac">-impl.md</span>     <span class="dm">how to build it in this language</span>
-  └── <span class="ac">-catalog.md</span>  <span class="dm">queryable symbol inventory (### per entry)</span></div>
-
-        <div class="cache-box stable" style="font-size: 12.5px;">
-          <div class="cache-label">The Term is the grep key</div>
-          One Term = one canonical name = one <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">##</code> heading, everywhere.<br><br>
-          Catalog entries use <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">###</code> per symbol — agents grep the symbol name directly, read 8 lines. No full-file load, ever.
-        </div>
-      </div>
-
-      <div class="code-panel">
-        <div class="code-panel-header neutral">Three types — theory · impl · catalog</div>
-        <pre style="font-size: 11.5px;"><span class="cm">domain-theory.md  — WHAT and WHY</span>
-<span class="ac">## UseCase <!-- 28 --></span>
-A use case encapsulates one business operation.
-Invariants: no framework imports, single execute()...
-
-<span class="cm">domain-impl.md  — HOW in Swift</span>
-<span class="ac">## UseCase <!-- 31 --></span>  <span class="dm">← same Term, Swift body</span>
-final class GetUserUseCase: UseCase {
-  func execute(_ params: Params) async throws
-
-
-<span class="cm">mekari-pixel-flutter-catalog.md  — WHAT EXISTS</span>
-<span class="ac">## Atoms <!-- 146 --></span>
-
-<span class="ac">### MpButton</span>
-- <span class="dm">Category:</span> <span class="ac">`atoms/button`</span>
-- <span class="dm">Description:</span> Mekari Mobile Kit Button.
-- <span class="dm">Key params:</span> `label`, `icon`, `onPressed`, `size`
-- <span class="dm">Variants:</span> `MpButton.primary()`, `.secondary()`
-
-<span class="ac">### MpTextField</span>
-- <span class="dm">Key params:</span> `controller`, `label`, `onChanged`</pre>
-      </div>
-
-    </div>
-
-    <div class="caption">
-      <strong>-theory</strong> answers what and why. <strong>-impl</strong> answers how in that language. <strong>-catalog</strong> answers what exists — a queryable inventory of available symbols.
-      Agents grep the symbol name directly in a catalog; no full-file load needed.
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
        SLIDE — MCP (HIGH LEVEL)
   ════════════════════════════════════════════ -->
   <section class="slide" id="s11-intro">
-    <div class="label">Phase 01 — Foundation · Output · MCP</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · MCP</div>
     <h2 class="headline">Agents reach your tools. <em>You stop pasting.</em></h2>
     <div class="divider"></div>
     <div class="t-table" style="margin-bottom: 24px;">
@@ -1662,7 +1735,7 @@ final class GetUserUseCase: UseCase {
        SLIDE 11 — Phase 01: Foundation · MCP
        ═══════════════════════════════════════════ -->
   <section class="slide" id="s11">
-    <div class="label">Phase 01 — Foundation · Output · MCP</div>
+    <div class="label">Phase 01 — Foundation · Design Principle · MCP &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.06em; text-transform: none; vertical-align: middle;">Low-Level</span></div>
     <h2 class="headline">Skills reach the codebase. <em>MCP reaches everything else.</em></h2>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px;">
 
@@ -1792,10 +1865,46 @@ curl -fsSL <span class="ac">.../install-plugin.sh</span> | bash -s \
   </section>
 
   <!-- ═══════════════════════════════════════════
+       SLIDE — Research Track C: Knowledge Architecture
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s-knowledge-arch">
+    <div class="label">Research Track C — Knowledge Architecture</div>
+    <h2 class="headline">One source of truth. <em>How does it scale?</em></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px;">
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label" style="margin-bottom: 2px;">Where we are today</div>
+        <div class="tree" style="font-size: 12px; line-height: 1.8;">
+<span class="ac">Topic</span>  domain · data · presentation · design-system
+  <span class="dm">│  one reference file per topic per platform</span>
+  <span class="dm">│</span>
+  ├── <span class="ac">-theory.md</span>   <span class="dm">what it IS · platform-agnostic</span>
+  ├── <span class="ac">-impl.md</span>     <span class="dm">how to build it in this language</span>
+  └── <span class="ac">-catalog.md</span>  <span class="dm">queryable symbol inventory</span>
+
+<span class="dm">Retrieval: Grep-first · section offset · never full-file</span></div>
+        <div class="caption" style="margin-top: 0;">Works well at current scale. Each agent greps only what it needs — precise, fast, no full-file load. The question is what breaks as the system grows.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="card-label" style="margin-bottom: 2px;">Open Questions</div>
+        <ul class="bullets">
+          <li><strong>Authoring conventions</strong> — how do we keep Term headings and file structure consistent as more teams add docs?</li>
+          <li><strong>Versioning</strong> — when a platform pattern changes, how does the reference file track the old and new versions without breaking agents that haven't migrated?</li>
+          <li><strong>Retrieval at scale</strong> — Grep works today. At what point does a vector index, catalog service, or structured query replace it?</li>
+          <li><strong>Cross-platform knowledge</strong> — some patterns are shared across platforms. Where does that live, and how do agents load it without duplicating it?</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
        SLIDE 14 — Phase 04: Expansion
        ═══════════════════════════════════════════ -->
   <section class="slide" id="s14">
-    <div class="label">Research Track C — Expansion</div>
+    <div class="label">Research Track D — Expansion</div>
     <h2 class="headline">From Implementation to <em>every process.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 8px;">
       <div class="card" style="opacity: 0.4;">

@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [8.3.1] — 2026-06-01
+
+### Changed
+- **Deck: Slide 8 (In Practice) moved after Persona slide** — reordered from position 8 to after slide 10 (Persona = SDLC Phase); the concrete example now follows the persona model rather than preceding the capability matrix
+- **Deck: Evolution slide P2/P3 swapped** — "One pass isn't enough" (convergence loop) moved to Problem 2; "Knowledge Coupling + Bloated Agent" moved to Problem 3; progression now follows naturally from the multi-agent setup
+- **Deck: Problem 3 expanded** — renamed from "Agents bloat" to "Knowledge Coupling + Bloated Agent"; body now covers all three root causes: agent bloat, knowledge duplication across agents, and brittle updates when knowledge is inlined
+
+---
+
 ## [8.3.0] — 2026-06-01
 
 ### Changed
