@@ -22,8 +22,8 @@ Never read source files, search the codebase, or write code. All exploration, pl
 ## Preflight — Detect Existing Runs
 
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs" -maxdepth 2 -name "plan.md" 2>/dev/null
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs" -maxdepth 2 -name "figma-groups.json" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/developer" -maxdepth 2 -name "plan.md" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/developer" -maxdepth 2 -name "figma-groups.json" 2>/dev/null
 ```
 
 Collect results as `found_plans` and `found_figma`. **Do not route yet.** Pass them to Step 1 so the strategist sees the user's intent alongside any existing runs before making a routing decision.
@@ -103,7 +103,7 @@ Wait for the strategist to return. Route based on the Decision block:
 
   **Continue as-is** → proceed to Step 5 (Execute).  
   **Start from beginning** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or start fresh.
-- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Extract `restore_findings: true/false`. Initialize `visited = []`, `round = 1`. If `restore_findings: true` restore `all_findings` from `findings-round-*.json` in `run_dir` — otherwise `all_findings = []`. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
+- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1`. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty)
 
@@ -208,7 +208,7 @@ From the current `Decision: spawn-planners` block, read the `spawn:` list. Spawn
 - `developer-pres-planner` — if `pres` is in the spawn list
 - `developer-app-planner` — if `app` is in the spawn list
 
-Pass to each planner: feature name, platform, module-path (from strategist's gather-intent or review-resume output).
+Pass to each planner: feature name, platform, module-path, run_dir (from strategist's gather-intent or review-resume output).
 
 **If `update_mode` is true** (resume path with new intent), also pass:
 - `open_questions` — the user's stated issues from the Decision block, verbatim. Planners use these to focus on what needs fixing rather than doing a full greenfield sweep.
@@ -219,19 +219,7 @@ For `developer-pres-planner` specifically — if `figma_groups` was established 
 
 Wait for all planners in this round to complete.
 
-Add each spawned layer to `visited`. Append each planner's full findings block to `all_findings`.
-
-**Persist findings to disk** — write after every round completes:
-
-```bash
-cat > "<run_dir>/findings-round-<N>.json" << 'EOF'
-{
-  "round": <N>,
-  "visited": [<visited list>],
-  "findings": "<all_findings for this round, escaped>"
-}
-EOF
-```
+Add each spawned layer to `visited`. Each planner writes its own findings file to `<run_dir>/findings/` — no further action needed from the SKILL.
 
 ### 2b — Send findings to strategist
 
@@ -254,8 +242,7 @@ Spawn `developer-feature-strategist` with mode `process-findings`:
 > **completed_artifacts:** \<comma-separated list\>
 > \<end if\>
 >
-> **Accumulated Findings:**
-> <paste full all_findings content>
+> findings_dir: <run_dir>/findings/
 
 Wait for the strategist's decision block.
 
@@ -295,8 +282,7 @@ Spawn `developer-feature-strategist` with mode `synthesize`:
 > **completed_artifacts:** \<comma-separated list\>
 > \<end if\>
 >
-> **All Accumulated Findings:**
-> \<paste full all_findings content\>
+> findings_dir: <run_dir>/findings/
 
 Wait for the strategist to return the plan summary and write plan.md + context.md.
 
@@ -321,7 +307,7 @@ options     :
 **Discard** → delete the most recent run directory:
 
 ```bash
-rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>"
+rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/developer/<feature>"
 ```
 
 Stop.

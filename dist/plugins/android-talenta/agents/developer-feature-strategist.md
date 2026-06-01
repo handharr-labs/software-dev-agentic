@@ -212,7 +212,7 @@ For `spawn-planners` with `restore_findings: true` — also read `figma-groups.j
 
 Resolve `run_dir`:
 - Resume path → already set from Step G1
-- Fresh path → `<project_root>/.claude/agentic-state/runs/<feature>`
+- Fresh path → `<project_root>/.claude/agentic-state/runs/developer/<feature>`
 
 Return a `Decision: spawn-planners` block. Always include `run_dir`, `pending_figma_urls` (from `figma_urls` collected in Step G0, or empty list), and `restore_findings`. Include `update_mode: true`, `completed_artifacts`, `open_questions`, and `figma_groups` only on the resume path.
 
@@ -283,7 +283,13 @@ Otherwise load the layer contracts reference (Grep for relevant sections) then r
 
 ## Mode: process-findings
 
-Called after each planner round with accumulated findings from all completed rounds. The entry skill also passes `run_dir`, `update_mode`, and (when `update_mode: true`) `existing_plan`, `existing_context`, and `completed_artifacts` — use these only when proceeding to inline synthesis below.
+Called after each planner round. The entry skill passes `run_dir`, `update_mode`, and (when `update_mode: true`) `existing_plan`, `existing_context`, and `completed_artifacts`. Read all findings files from `<run_dir>/findings/` — findings are not passed inline.
+
+```bash
+find "<run_dir>/findings" -name "*-findings.md" | sort
+```
+
+Read each file in full before proceeding.
 
 **Step 1 — Read impact recommendations**
 
@@ -303,7 +309,7 @@ If all required recommendations are covered by the visited set (or there are no 
 
 **Step 4 — Inline synthesis (convergence path only)**
 
-Execute all steps from `Mode: synthesize` directly, using the findings already in context and the `run_dir` / `update_mode` / `existing_plan` / `existing_context` / `completed_artifacts` passed by the entry skill. If `update_mode: true`, archive the existing plan before writing:
+Execute all steps from `Mode: synthesize` directly, reading findings from `<run_dir>/findings/` (glob `*-findings.md`) and using the `run_dir` / `update_mode` / `existing_plan` / `existing_context` / `completed_artifacts` passed by the entry skill. If `update_mode: true`, archive the existing plan before writing:
 
 ```bash
 N=$(ls "<run_dir>/plan-v"*.md 2>/dev/null | wc -l | tr -d ' ')
@@ -328,7 +334,13 @@ The entry skill will skip its Step 3 spawn and proceed directly to Step 4 (Appro
 
 ## Mode: synthesize
 
-Called after the entry skill receives `Decision: converged`. The entry skill passes all accumulated findings inline.
+Called after the entry skill receives `Decision: converged`. Read all findings files from `<run_dir>/findings/` — findings are not passed inline.
+
+```bash
+find "<run_dir>/findings" -name "*-findings.md" | sort
+```
+
+Read each file in full before proceeding.
 
 Two variants — the entry skill signals which applies:
 
@@ -346,13 +358,13 @@ git rev-parse --show-toplevel
 **Step 3 — Create run directory:**
 
 ```bash
-mkdir -p <root>/.claude/agentic-state/runs/<feature>
+mkdir -p <root>/.claude/agentic-state/runs/developer/<feature>
 ```
 
 **Step 4 — Write plan.md:**
 
 ```
-<root>/.claude/agentic-state/runs/<feature>/plan.md
+<root>/.claude/agentic-state/runs/developer/<feature>/plan.md
 ```
 
 Format:
@@ -399,7 +411,7 @@ separate-ui-layer: true | false
 Before writing, check all planner findings blocks for a `### Figma Alignment` section. If found, extract the full table — it will be embedded in `## Figma Alignment` below. This must happen before writing, not after.
 
 ```
-<root>/.claude/agentic-state/runs/<feature>/context.md
+<root>/.claude/agentic-state/runs/developer/<feature>/context.md
 ```
 
 Format:
