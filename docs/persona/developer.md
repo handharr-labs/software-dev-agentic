@@ -1,6 +1,6 @@
 > Related: Core Design Principles · Shared Agentic Submodule Architecture
 
-## What is the Builder Persona?
+## What is the Developer Persona?
 
 The **developer** persona is the primary feature-building workflow. It handles the full CLEAN Architecture build cycle — from domain layer through presentation — across all platforms.
 
@@ -144,7 +144,6 @@ All other referenced types — injected dependencies, pass-throughs, unrelated a
 | Worker | `developer-feature-worker` | Plan-driven executor — reads plan.md, calls skills in layer order, validates each artifact |
 | Worker | `developer-test-worker` | Test generation across all layers |
 | Worker | `developer-rfc-writer` | RFC document generation from feature intent or existing plan |
-| Worker | `auditor-arch-review-worker` | CLEAN Architecture violation review (downstream projects) |
 
 **Deprecated (absorbed into strategist + entry skills):**
 
@@ -225,8 +224,8 @@ These skills cover **artifact creation only**. Workers handle modifications to e
 
 | Category | `lib/core/agents/` | `lib/platforms/ios-talenta/agents/` | `lib/platforms/web/agents/` |
 |---|---|---|---|
-| Strategists | 3 in `builder/` + 1 in `debugger/` | 1 (`test-strategist`) | — |
-| Workers | 3 in `builder/` + 2 in `debugger/` + 2 in `tracker/` + 1 in `auditor/` + 1 in `installer/` + 1 flat (`perf-worker`) | 1 (`pr-review-worker`) | — |
+| Strategists | 3 in `developer/` + 1 in `debugger/` | 1 (`test-strategist`) | — |
+| Workers | 3 in `developer/` + 2 in `debugger/` + 2 in `tracker/` + 1 in `auditor/` + 1 in `installer/` + 1 flat (`perf-worker`) | 1 (`pr-review-worker`) | — |
 | Skills (Type A / contract) | — | 18 | 18 |
 | Skills (Type B / platform-only) | — | 4 (`migrate-presentation`, `migrate-usecase`, `review-pr`, `sonar-check`) | 0 |
 
@@ -238,7 +237,7 @@ Platform skill counts: Flutter 18 · Android 17 · flutter-qontak 0 (uses flutte
 
 ## Execution Examples
 
-### Builder flows
+### Developer flows
 
 **Direct action** — "Add import RxSwift to this file" → single-line edit, no agent needed
 
@@ -281,7 +280,7 @@ pr-review-worker       (iOS platform worker)   ← iOS-specific workflow
 
 ### Other persona flows
 
-**Debug flow** *(detective)* — "Why is form submission silently failing?"
+**Debug flow** *(debugger)* — "Why is form submission silently failing?"
 → `debugger-strategist` gathers context, spawns `debugger-worker`
 
 **Agent prompt debugging** *(detective)* — "Why did the worker create an implementation instead of an interface?"

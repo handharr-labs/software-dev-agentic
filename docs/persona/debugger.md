@@ -1,6 +1,6 @@
 > Related: Core Design Principles · Shared Agentic Submodule Architecture · debugger-agent-design.md
 
-## What is the Detective Persona?
+## What is the Debugger Persona?
 
 The **debugger** persona is the root cause investigation workflow. It applies the scientific debugging method to find and surface bugs — without fixing them.
 
