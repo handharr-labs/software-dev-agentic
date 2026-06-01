@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [8.4.0] — 2026-06-01
+
+### Added
+- **Principles: System Components section** — overview table and capability matrix covering all five components (Reference, Skill, Agent, MCP, Hooks); inserted before Core Design Principles; mirrors the anatomy and capability matrix slides in the deck
+- **Principles: Principle 4 — MCP = Reach** — dedicated principle covering the codebase/external boundary, MCP servers in use, and when to use MCP vs skills
+- **Principles: Principle 5 — Hooks = Automation** — dedicated principle covering four lifecycle events and the hooks vs skills decision table
+
+### Changed
+- **Principles: Principles renumbered** — former Principle 4 (Official Docs Compliance) → 6; former Principle 5 (Convention Enforcement) → 7
+
+---
+
 ## [8.3.1] — 2026-06-01
 
 ### Changed

@@ -21,6 +21,38 @@ A coding assistant where Claude autonomously routes, decides, and executes — w
 
 ---
 
+## System Components
+
+Five building blocks compose every agentic workflow. Each has one defined job — no component does another's work.
+
+| Component | Role | One-line rule |
+|---|---|---|
+| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded on demand via Grep. Never embedded in agents or skills. |
+| **Skill** | The Hands | Procedural instructions that run in the caller's session. Type O owns the entry workflow; Type P is a thin create-step called by agents. |
+| **Agent** | The Brain | Isolated reasoning in its own context window. Handles ambiguity, makes decisions, returns structured output to the caller. |
+| **MCP** | The Reach | Structured tool calls into external systems — Jira, Figma, IDE, build tools. Agents call MCP tools directly; no copy-paste relay. |
+| **Hooks** | The Automation | Shell commands that fire on lifecycle events with no model involvement. For logic that must always run regardless of agent decisions. |
+
+**Capability summary:**
+
+| Capability | Reference | Skill | Agent | MCP | Hooks |
+|---|---|---|---|---|---|
+| LLM reasoning | — | — | ✓ | — | — |
+| Isolated context window | — | — | ✓ | — | — |
+| Runs in caller's context | — | ✓ | — | — | — |
+| Uses Claude tools | — | ✓ | ✓ | — | — |
+| Writes source files | — | ✓ | ✓ | — | — |
+| Multiple invocation modes | — | — | ✓ | — | — |
+| Spawns agents | — | ✓ | ✓ | — | — |
+| Calls skills | — | ✓ | ✓ | — | — |
+| Bridges external systems | — | — | — | ✓ | — |
+| Grep-addressable knowledge | ✓ | — | — | — | — |
+| Shell execution (no model) | — | — | — | — | ✓ |
+
+Skills and Agents share tool access and file writes. What sets Agent apart is LLM reasoning and context isolation. Hooks and MCP are orthogonal — neither reasons nor reads files; they reach outward (MCP to external systems, Hooks to the local shell).
+
+---
+
 ## Core Design Principles
 
 ### 1. Skill-First Entry
@@ -320,7 +352,62 @@ Reference docs are override-only (no extension mechanism) — they are structure
 
 ---
 
-### 4. Official Docs Compliance
+### 4. MCP = Reach (External Systems)
+
+MCP turns external tools into first-class agent inputs. Agents call MCP tool functions directly — no copy-paste, no stale screenshots, no information lost in relay.
+
+**The boundary:** Skills reach the codebase. MCP reaches everything else.
+
+| Before MCP | With MCP |
+|---|---|
+| "Paste the Jira ticket so I can understand the requirements." | Agent fetches the ticket directly — description, AC, linked issues, comments. |
+| "Paste the Figma design or take a screenshot of each screen." | Agent pulls design data, component specs, and layout files from Figma directly. |
+| "Run the build and paste the error so I can see what's failing." | Agent triggers the build, reads the result, and acts on it — no relay needed. |
+
+**MCP servers in use today:**
+
+| Server | Reaches into |
+|---|---|
+| `Atlassian` | Jira tickets · Confluence pages · Bitbucket PRs |
+| `ide` | Live diagnostics · in-editor code execution |
+| `Figma` | Design data · component specs · asset export |
+| `XcodeBuildMCP` | Build · test · simulate · screenshot on iOS |
+
+**When to use MCP vs skills:**
+- **MCP** — when the agent needs data or actions from an external system (Jira, Figma, CI, IDE diagnostics). No file in the repo can provide it.
+- **Skills** — when the agent needs to read or write the codebase, load reference patterns, or call platform-specific create procedures.
+
+MCP tools are just tool calls — any agent with the right server configured can reach any external system, with no special wiring in the agent body.
+
+---
+
+### 5. Hooks = Automation (No Model)
+
+Hooks are shell commands that execute at defined lifecycle events — with no model involvement. They enforce logic that must always run regardless of what the agent decides to do.
+
+**Four events:**
+
+| Event | Fires when |
+|---|---|
+| `PreToolUse` | Before a tool call executes — can intercept or block |
+| `PostToolUse` | After a tool call completes — can react or validate |
+| `Stop` | When the agent session ends |
+| `Notification` | On agent lifecycle notifications |
+
+**When to use hooks vs skills:**
+
+| Use hooks when… | Use skills when… |
+|---|---|
+| Logic must always run, regardless of agent decisions | Logic is part of the agent's workflow |
+| No LLM reasoning needed — pure shell | Reasoning, branching, or tool calls are required |
+| Validation or safety guard on every tool call | A procedure triggered explicitly by the agent |
+| Enforcing conventions the agent shouldn't bypass | Generating or modifying artifacts |
+
+> Hooks are configured in `settings.json` — they are not part of the agent or skill file. A skill that should "always run" is the wrong tool; use a hook.
+
+---
+
+### 6. Official Docs Compliance
 
 Every design decision must comply with Claude Code's official documentation.
 
@@ -334,7 +421,7 @@ Confirmed undocumented field: `agents` — not in the official spec (verified ag
 
 ---
 
-### 5. Convention Enforcement — Self-Auditing Architecture
+### 7. Convention Enforcement — Self-Auditing Architecture
 
 The agentic system enforces its own conventions through automated review — the same principle applied recursively. Convention compliance tooling audits agent and skill files for structural violations before they reach downstream consumers.
 
