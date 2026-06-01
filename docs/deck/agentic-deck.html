@@ -694,40 +694,80 @@
   ════════════════════════════════════════════ -->
   <section class="slide" id="s6">
     <div class="label">Roadmap</div>
-    <h2 class="headline">Four phases. <em>From foundation to every process.</em></h2>
-    <div class="roadmap">
-      <div class="roadmap-item">
-        <div class="roadmap-num">01</div>
-        <div class="roadmap-text">
-          <strong>Foundation &nbsp;<span style="font-size: 10px; font-weight: 700; background: var(--accent); color: #000; border-radius: 4px; padding: 2px 8px; vertical-align: middle;">in progress</span></strong>
-          <span>Is the anatomy right? Does it hold across AI platforms? Agent and skill structure is validated on Claude Code across iOS · Flutter · Android · Web. Remaining: port and compare across Codex, Gemini CLI, and other runtimes.</span>
+    <h2 class="headline" style="margin-bottom: 20px;">A continuous cycle. <em>Core loop + three parallel research tracks.</em></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+
+      <div>
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px;">Core Loop — repeating cycle</div>
+        <div class="roadmap">
+          <div class="roadmap-item">
+            <div class="roadmap-num">01</div>
+            <div class="roadmap-text">
+              <strong>Foundation</strong>
+              <span>Validate the anatomy. Does it hold across AI platforms and real codebases?</span>
+              <span style="display: block; margin-top: 6px; font-size: 13px;"><span style="color: var(--accent); font-weight: 600;">→ Output:</span> <span style="color: var(--text);">Design Principles</span> — stable agent and skill design documented and ready to build against.</span>
+            </div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num">02</div>
+            <div class="roadmap-text">
+              <strong>Build</strong>
+              <span>Construct agents, personas, and orchestrator skills against the stable design. Prioritized by team need and readiness.</span>
+              <span style="display: block; margin-top: 6px; font-size: 13px;"><span style="color: var(--accent); font-weight: 600;">→ Output:</span> <span style="color: var(--text);">Implementation</span> — agents, skills, and personas shipped into <code style="font-family: var(--mono); font-size: 11px;">lib/</code> (core · platforms · ai-platforms).</span>
+            </div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num">03</div>
+            <div class="roadmap-text">
+              <strong>Release</strong>
+              <span>Package and distribute a versioned, stable toolkit to all consuming projects.</span>
+              <span style="display: block; margin-top: 6px; font-size: 13px;"><span style="color: var(--accent); font-weight: 600;">→ Output:</span> <span style="color: var(--text);">Distribution</span> — plugin, submodule, or symlink install across every platform project.</span>
+            </div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num">04</div>
+            <div class="roadmap-text">
+              <strong>Evaluation</strong>
+              <span>Measure effectiveness from real usage. Identify gaps, regressions, or assumptions invalidated by new AI tooling.</span>
+              <span style="display: block; margin-top: 6px; font-size: 13px;"><span style="color: var(--accent); font-weight: 600;">→ Output:</span> <span style="color: var(--text);">Report</span> — performance findings against measurable dimensions. <span style="color: var(--bad);">Dimensions TBD.</span></span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="roadmap-item">
-        <div class="roadmap-num">02</div>
-        <div class="roadmap-text">
-          <strong>Collaboration &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">research &amp; prototyping</span></strong>
-          <span>How do multiple teams contribute improvements without breaking each other? Covers: contribution workflow, ownership model, versioning, and review process.</span>
+
+      <div>
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px;">Research Tracks — parallel</div>
+        <div class="roadmap">
+          <div class="roadmap-item">
+            <div class="roadmap-num" style="color: var(--muted);">A</div>
+            <div class="roadmap-text">
+              <strong>Collaboration &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">research &amp; prototyping</span></strong>
+              <span>How do multiple teams contribute without breaking each other? Contribution workflow, ownership model, versioning, and review process.</span>
+            </div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num" style="color: var(--muted);">B</div>
+            <div class="roadmap-text">
+              <strong>Distribution &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">research &amp; prototyping</span></strong>
+              <span>How does the toolkit reach every project reliably? Submodule + symlinks vs. monorepo vs. plugin — each with different trade-offs.</span>
+            </div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num" style="color: var(--muted);">C</div>
+            <div class="roadmap-text">
+              <strong>Expansion &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(139,148,158,0.15); color: var(--muted); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">backlog</span></strong>
+              <span>How do we extend specialized agents to every SDLC process? From Implementation-only today to Requirement, Design, Testing, and Delivery.</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="roadmap-item">
-        <div class="roadmap-num">03</div>
-        <div class="roadmap-text">
-          <strong>Distribution &nbsp;<span style="font-size: 10px; font-weight: 700; background: rgba(121,192,255,0.15); color: var(--blue); border-radius: 4px; padding: 2px 8px; vertical-align: middle;">research &amp; prototyping</span></strong>
-          <span>How does the toolkit reach every project, reliably? Two approaches to evaluate: submodule + symlinks (current, proven for iOS · Flutter · Android · Web) vs. monorepo with all products and the agentic repo as parent.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <div class="roadmap-num">04</div>
-        <div class="roadmap-text">
-          <strong>Expansion</strong>
-          <span>How do we extend specialized agents to every process in the SDLC? This closes the loop — from Implementation-only today to Requirement, Design, Testing, and Delivery.</span>
-        </div>
-      </div>
+
     </div>
-    <div class="caption">
-      Phase 4 connects back to the end-to-end vision. Each phase builds on the last —
-      <strong>distribution is meaningless without a solid foundation, and expansion is meaningless without distribution.</strong>
+
+    <div class="caption" style="margin-top: 16px;">
+      Foundation → Build repeats as a cycle — <strong>each time AI tooling evolves significantly, Foundation assumptions may need revalidation before the next Build round.</strong>
+      Research tracks run in parallel and feed findings back into the loop continuously.
     </div>
   </section>
 
@@ -742,15 +782,7 @@
       <div class="code-panel">
         <div class="code-panel-header good">Skill — The Hands</div>
         <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Procedural instructions executed in the caller's context. The Type O skill is the only supported entry point — it owns routing, context relay, and the convergence loop.</p>
-          <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px;">Two types</div>
-            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
-              <span style="color: var(--text); font-weight: 600;">O · Orchestrator</span> — user entry; owns the session or does its own work<br>
-              <span style="color: var(--text); font-weight: 600;">P · Procedure</span> — agent-called; thin, non-interactive, no branching
-            </div>
-          </div>
-          <div class="caption" style="margin-top: 0; font-size: 11.5px;">A persona without a Type O skill is incomplete.</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Procedural instructions that run in the caller's active session. A named SKILL.md file — Claude reads it and executes the steps as part of the conversation. Has full access to Claude tools, including spawning agents and calling other skills.</p>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"Skills extend what Claude can do. Create a SKILL.md file with instructions, and Claude adds it to its toolkit." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--accent);">code.claude.com/docs/en/skills</span></div>
         </div>
       </div>
@@ -758,18 +790,7 @@
       <div class="code-panel">
         <div class="code-panel-header" style="color: var(--blue); background: rgba(121,192,255,0.06); border-color: rgba(121,192,255,0.25); border-bottom-color: var(--border);">Agent — The Brain</div>
         <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Reasoning specialist in its own isolated context window. Assesses, decides, and returns structured output. Never spawns agents directly — that belongs to the calling skill.</p>
-          <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 6px;">Anatomy</div>
-            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
-              <span style="color: var(--text); font-weight: 600;">Input</span> — declared params; fail fast on missing<br>
-              <span style="color: var(--text); font-weight: 600;">Knowledge</span> — Grep-loaded on demand; specialization by loading<br>
-              <span style="color: var(--text); font-weight: 600;">Reasoning</span> — LLM thinking, deciding, branching<br>
-              <span style="color: var(--text); font-weight: 600;">Output</span> — structured; Glob+Grep verified<br>
-              <span style="color: var(--text); font-weight: 600;">Modes</span> — one body, multiple lean invocation contexts
-            </div>
-          </div>
-          <div class="caption" style="margin-top: 0; font-size: 11.5px;">Platform-agnostic. Workers call skills — skills know the platform.</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">A specialized AI assistant spawned in its own isolated context window. Has its own system prompt, tool access, and permissions — fully independent from the session that spawned it. Can call skills and spawn further agents. Supports multiple named modes in a single file — each invocation loads only the relevant instruction block. Returns its result to the caller when done.</p>
           <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"Subagents are specialized AI assistants that handle specific types of tasks. Each runs in its own context window with a custom system prompt, specific tool access, and independent permissions." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--blue);">code.claude.com/docs/en/sub-agents</span></div>
         </div>
       </div>
@@ -794,17 +815,8 @@
       <div class="code-panel">
         <div class="code-panel-header neutral">Reference — The Knowledge</div>
         <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Deep knowledge loaded on demand via Grep — never embedded in agent bodies. Update one reference file, every agent that reads it gets the update automatically.</p>
-          <div>
-            <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">Three tiers</div>
-            <div style="font-size: 12px; color: var(--muted); line-height: 1.7;">
-              <span style="color: var(--text); font-weight: 600;">CLAUDE.md</span> — universal rules, always loaded<br>
-              <span style="color: var(--text); font-weight: 600;">Agent body</span> — decision logic for that agent only<br>
-              <span style="color: var(--text); font-weight: 600;">Reference docs</span> — deep knowledge, one Grep per section
-            </div>
-          </div>
-          <div class="caption" style="margin-top: 0; font-size: 11.5px;">Core = what. Platform = how in that language.</div>
-          <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"CLAUDE.md files give Claude persistent instructions for a project. Keep it to facts Claude should hold in every session." No official doc for deep reference docs — this pattern extends the memory system. <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--muted);">code.claude.com/docs/en/memory</span></div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.6;">Persistent instruction files Claude loads into its context. CLAUDE.md is always loaded project-wide. Any other file can be read on demand — bringing targeted knowledge into the session when needed.</p>
+          <div style="font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; line-height: 1.55;">"CLAUDE.md files give Claude persistent instructions for a project. Keep it to facts Claude should hold in every session." <span style="display:block;margin-top:3px;font-style:normal;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--muted);">code.claude.com/docs/en/memory</span></div>
         </div>
       </div>
 
@@ -891,6 +903,30 @@
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
           </tr>
           <tr>
+            <td style="border-right: 1px solid var(--border);">Multiple invocation modes</td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Spawns agents</td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
+            <td style="border-right: 1px solid var(--border);">Calls skills</td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--accent); font-weight: 700;">✓</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+            <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
+          </tr>
+          <tr>
             <td style="border-right: 1px solid var(--border);">Bridges external systems</td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
             <td style="text-align: center;"><span style="color: var(--muted);">—</span></td>
@@ -925,732 +961,10 @@
   </section>
 
   <!-- ═══════════════════════════════════════════
-       SLIDE — SKILLS (HIGH LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s8-intro">
-    <div class="label">Phase 01 — Foundation · Skills</div>
-    <h2 class="headline">Claude follows instructions. <em>Skills are those instructions.</em></h2>
-    <div class="divider"></div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-      <div class="card">
-        <div class="card-label">Type O — Orchestrator</div>
-        <div style="font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em;">The entry point</div>
-        <p style="font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 14px;">Triggered by the engineer. Owns the full session — routing, approval gates, and coordinating agents. Simple workflows do their own work. Complex ones delegate.</p>
-        <p style="font-size: 13px; color: var(--accent);">Example: <code style="font-family:var(--mono);">/developer-plan-feature</code></p>
-      </div>
-      <div class="card">
-        <div class="card-label">Type P — Procedure</div>
-        <div style="font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em;">A thin step</div>
-        <p style="font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 14px;">Called by agents, never by users. Creates one artifact — a file, a class, a config entry — using the right conventions for the platform. No decisions. No branching. Just execution.</p>
-        <p style="font-size: 13px; color: var(--accent);">Example: <code style="font-family:var(--mono);">developer-domain-create-entity</code></p>
-      </div>
-    </div>
-    <div class="caption">
-      A skill is what makes Claude's behavior <strong>consistent and repeatable</strong> — the same workflow runs the same way every time, every engineer, every platform.
-      Without a Type O skill, there is no guardrailed workflow — just a raw AI session.
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — ORCHESTRATOR SKILL (HIGH LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s8-flow-intro">
-    <div class="label">Phase 01 — Foundation · Orchestrator Skill</div>
-    <h2 class="headline">The Orchestrator skill <em>is</em> the workflow. <em>Agents are just steps it coordinates.</em></h2>
-    <div class="divider"></div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-      <div class="card">
-        <div class="card-label">It owns</div>
-        <div style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em;">The session</div>
-        <p style="font-size: 14px; color: var(--muted); line-height: 1.7;">Routing — resume vs new. Context pre-loading. Approval gates. The loop that drives agents forward. The engineer interacts with the skill, not the agents.</p>
-      </div>
-      <div class="card">
-        <div class="card-label">It delegates</div>
-        <div style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em;">The thinking + writing</div>
-        <p style="font-size: 14px; color: var(--muted); line-height: 1.7;">Decisions go to the Strategist. Code generation goes to the Worker. Each agent runs in its own isolated context — the skill only sees the structured result.</p>
-      </div>
-      <div class="card" style="background: var(--bad-bg); border-color: var(--bad-bd);">
-        <div class="card-label" style="color: var(--bad);">Its constraint</div>
-        <div style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em;">The main context</div>
-        <p style="font-size: 14px; color: var(--muted); line-height: 1.7;">The skill runs in your session — the same context window you're in. Every round of agent results lands here. Design to keep rounds low.</p>
-      </div>
-    </div>
-    <div class="caption">A persona without a Type O skill is incomplete — there is no guardrailed entry, no routing, no approval gate. Just a raw agent call.</div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — ORCHESTRATOR SKILL ANATOMY
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s8-flow">
-    <div class="label">Phase 01 — Foundation · Orchestrator Skill</div>
-    <h2 class="headline" style="margin-bottom: 20px;">The Orchestrator skill runs in your context window. <em>Three things it can do — and one constraint that shapes all of them.</em></h2>
-
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px;">
-
-      <div class="code-panel">
-        <div class="code-panel-header good">Capability 1 — Parallel agents</div>
-        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">One skill step can spawn N agents simultaneously. Each runs in its own isolated context and returns findings. Same wall-clock time as spawning one.</p>
-          <pre style="font-size: 11px; margin-top: 4px;"><span class="cm"># spawn domain + data + pres planners</span>
-<span class="cm"># in the same skill step</span>
-Agent(domain-planner, <span class="ac">background: true</span>)
-Agent(data-planner,   <span class="ac">background: true</span>)
-Agent(pres-planner,   <span class="ac">background: true</span>)
-<span class="dm">← all three run in parallel</span></pre>
-        </div>
-      </div>
-
-      <div class="code-panel">
-        <div class="code-panel-header good">Capability 2 — Convergence loop</div>
-        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">The skill owns the loop. It spawns agents, collects decisions, and loops back until the strategist signals convergence. Each agent call is self-contained.</p>
-          <pre style="font-size: 11px; margin-top: 4px;"><span class="dm">while not converged:</span>
-  result = Agent(strategist, findings)
-  <span class="cm"># Decision: spawn-planners</span>
-  findings = spawn_planners_parallel()
-  <span class="cm"># Decision: converged</span>
-  <span class="ac">→ break</span></pre>
-        </div>
-      </div>
-
-      <div class="code-panel">
-        <div class="code-panel-header" style="color: var(--bad); background: var(--bad-bg); border-color: var(--bad-bd); border-bottom-color: var(--border);">Constraint — Main context window</div>
-        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
-          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Every agent result returns to the skill — which lives in your main session. Each round adds more history. When context fills, Claude compacts it into a summary.</p>
-          <div style="border: 1px solid var(--bad-bd); background: var(--bad-bg); border-radius: 6px; padding: 10px 12px;">
-            <div style="font-size: 11.5px; color: var(--bad); line-height: 1.6;"><strong>Compaction = reduced quality.</strong> The summary loses detail. Subsequent rounds reason on a lossy view of earlier decisions.</div>
-          </div>
-          <div style="font-size: 12px; color: var(--muted); line-height: 1.55;">Design for minimal rounds. Write findings to disk — pass paths, not content. Every byte returned to the skill is a byte closer to compaction.</div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="caption">
-      Agents run in isolated contexts — they never see the main session. But the skill does, and every call back to it has a cost. Parallel spawning and disk-based findings are how we keep the round count low.
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 9 (was 8) — SKILL TYPES IN DEPTH
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s8">
-    <div class="label">Phase 01 — Foundation · Skills</div>
-    <h2 class="headline">Two types. <em>Each with a different job, a different caller.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
-
-      <div class="code-panel">
-        <div class="code-panel-header good">O · Orchestrator — user entry, owns the session</div>
-        <pre style="font-size: 11px;"><span class="cm">--- developer-plan-feature ---</span>
-<span class="ac">user-invocable: true</span>
-<span class="ac">allowed-tools: Agent, AskUserQuestion, Read</span>
-
-<span class="cm"># Step 1 — Gather Intent</span>
-Spawn strategist <span class="bl">(gather-intent)</span>
-→ returns <span class="ac">Decision: spawn-planners</span>
-
-<span class="cm"># Step 2 — Convergence Loop</span>
-Spawn planners <span class="bl">in parallel</span> per round
-Send findings → strategist
-<span class="dm">Loop until converged or blocked</span>
-
-<span class="cm"># Step 3 — Synthesize</span>
-Spawn strategist <span class="bl">(synthesize)</span>
-→ writes plan.md + context.md
-
-<span class="cm"># Step 4 — Approve</span>
-<span class="ac">AskUserQuestion</span>
-  Approve  → execute
-  Discuss  → revise → re-approve
-  Discard  → delete run, stop
-
-<span class="cm"># Step 5 — Execute</span>
-Spawn feature-worker
-  plan.md + context.md <span class="bl">inlined</span>
-
-<span class="cm"># Simple Type O skills do their own work</span>
-<span class="dm">(no Agent tool needed — Read, Edit, Ask)</span></pre>
-      </div>
-
-      <div class="code-panel">
-        <div class="code-panel-header neutral">P · Procedure — agent calls, thin and non-interactive</div>
-        <pre style="font-size: 11px;"><span class="cm">--- developer-domain-create-entity ---</span>
-<span class="bd">user-invocable: false</span>
-<span class="ac">allowed-tools: Read, Grep, Bash</span>
-<span class="dm">(no AskUserQuestion — no branching logic)</span>
-
-<span class="cm"># Input</span>
-entity_name, target_path, module
-
-<span class="cm"># Step 1 — Load reference (Grep-first)</span>
-Grep <span class="ac">"^## Entity"</span> in domain.md
-Read offset + limit <span class="dm">← section only</span>
-<span class="dm">Never the full file</span>
-
-<span class="cm"># Step 2 — Check preconditions</span>
-Glob target path
-<span class="bd">STOP if file already exists</span>
-
-<span class="cm"># Step 3 — Write</span>
-Create entity from reference pattern
-<span class="dm">Logic belongs in the worker — not here</span>
-
-<span class="cm"># Output</span>
-<span class="ac">Glob + Grep verified path only</span></pre>
-      </div>
-
-    </div>
-    <div class="caption" style="margin-top: 12px;">
-      Start with <strong>Type O</strong> (Orchestrator) for any user-facing entry — simple ones do their own work, complex ones delegate to agents.
-      <strong>Type P</strong> when an agent needs a non-user-invocable, thin step with no branching or runtime complexity — logic belongs in the worker, not the skill.
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — AGENTS (HIGH LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s9-intro">
-    <div class="label">Phase 01 — Foundation · Agents</div>
-    <h2 class="headline">Five parts. <em>Every agent is built from the same anatomy.</em></h2>
-
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; margin-bottom: 16px;">
-
-      <div class="card" style="padding: 18px 16px;">
-        <div class="card-label">01</div>
-        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Input</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">What the agent receives to start — mode, feature name, platform, file paths. Declared explicitly. Missing input = immediate stop.</p>
-      </div>
-
-      <div class="card" style="padding: 18px 16px;">
-        <div class="card-label">02</div>
-        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Knowledge</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Reference docs and patterns loaded on demand. Each agent greps only what its task needs — nothing more. Specialization is a loading decision.</p>
-      </div>
-
-      <div class="card" style="padding: 18px 16px; background: var(--accent-bg); border-color: var(--accent-bd);">
-        <div class="card-label">03</div>
-        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Reasoning</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">The LLM applies thinking, deciding, and branching to everything it has loaded. This is the part no fixed script can replace — it handles ambiguity and edge cases.</p>
-      </div>
-
-      <div class="card" style="padding: 18px 16px;">
-        <div class="card-label">04</div>
-        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Output</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Declared and structured — a <code style="font-family:var(--mono);font-size:11px;">Decision:</code> block, a <code style="font-family:var(--mono);font-size:11px;">## Findings</code> section, verified file paths. The caller routes on it without ambiguity.</p>
-      </div>
-
-      <div class="card" style="padding: 18px 16px;">
-        <div class="card-label">05</div>
-        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Modes</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">One agent, many invocation contexts. Each mode loads only its own instruction block. The agent never reads instructions for modes it isn't in.</p>
-      </div>
-
-    </div>
-
-    <div class="caption">
-      Isolated context window keeps all five parts — and everything they touch — out of your main session.
-      <strong>The main session only ever sees the structured output.</strong>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 9 — WHY THIS ANATOMY
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s9">
-    <div class="label">Phase 01 — Foundation · Agents</div>
-    <h2 class="headline">Why this anatomy. <em>Agents aren't black boxes — every behavior traces back to one part.</em></h2>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px;">
-
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">If the agent behaves wrong — check which part</div>
-        <div class="t-table">
-          <div class="t-head">
-            <div class="t-head-cell">Symptom</div>
-            <div class="t-head-cell">Where to look</div>
-          </div>
-          <div class="t-row">
-            <div class="t-cell prob" style="font-size: 13px;">Agent starts wrong, misses context, or acts on wrong scope</div>
-            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Input</div>
-          </div>
-          <div class="t-row">
-            <div class="t-cell prob" style="font-size: 13px;">Agent doesn't know the right patterns or uses wrong conventions</div>
-            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Knowledge</div>
-          </div>
-          <div class="t-row">
-            <div class="t-cell prob" style="font-size: 13px;">Agent makes wrong decisions or draws wrong conclusions</div>
-            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Reasoning</div>
-          </div>
-          <div class="t-row">
-            <div class="t-cell prob" style="font-size: 13px;">Agent returns incomplete, unparseable, or unexpected result</div>
-            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Output</div>
-          </div>
-          <div class="t-row">
-            <div class="t-cell prob" style="font-size: 13px;">Agent behaves inconsistently across different invocations</div>
-            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Mode</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">Each part is independently replaceable</div>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Input</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Add a new source — Jira, Figma, local file — without changing reasoning or output.</div>
-          </div>
-          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Knowledge</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Swap Grep-loaded docs for vector search, a database, or a catalog — same slot, richer retrieval.</div>
-          </div>
-          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Reasoning</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Today: LLM. Tomorrow: a deterministic rule engine for the same decision slot, if the logic is well-understood enough.</div>
-          </div>
-          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Output</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Change the schema the caller expects without rewriting the agent's reasoning.</div>
-          </div>
-          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Mode</div>
-            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Add a new invocation context — a new mode — without affecting existing ones.</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — AGENT ANATOMY (LOW LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s8-agent-anatomy">
-    <div class="label">Phase 01 — Foundation · Agents</div>
-    <h2 class="headline">One file. Five slots. <em>Each with one clear job.</em></h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 12px;">
-
-      <div class="code-panel">
-        <div class="code-panel-header" style="color: var(--blue); background: rgba(121,192,255,0.06); border-color: rgba(121,192,255,0.25); border-bottom-color: var(--border);">developer-feature-strategist (abbreviated)</div>
-        <pre style="font-size: 11px;"><span class="cm">--- frontmatter ---</span>
-model: claude-sonnet-4-6
-tools: Read, Glob, Grep
-
-<span class="cm">## Input                        ← (1) Input</span>
-mode: <span class="ac">gather-intent</span> | process-findings | synthesize | resume
-feature_name: &lt;string&gt;
-<span class="dm">Missing input → MISSING INPUT: &lt;param&gt;  (stop immediately)</span>
-
-<span class="cm">## Knowledge                    ← (2) Knowledge</span>
-<span class="bl">Grep</span> reference/domain-theory.md <span class="ac">^## UseCase</span>
-<span class="dm">One targeted section loaded — never the full file</span>
-
-<span class="cm">## Reasoning                    ← (3) Reasoning</span>
-<span class="dm">Assess existing runs. Decide which layers need planners.
-Handle ambiguity: overlapping modules, uncertain scope.</span>
-
-<span class="cm">## Output                       ← (4) Output</span>
-<span class="ac">Decision: spawn-planners [domain, data, pres]</span>
-<span class="dm">Structured block — caller routes without parsing</span>
-
-<span class="cm">## Modes                        ← (5) Modes</span>
-[gather-intent]     load only when mode=gather-intent
-[process-findings]  load only when mode=process-findings
-<span class="dm">One body — each call loads only its mode's instruction block</span></pre>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 10px; justify-content: center;">
-        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
-          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">01 Input</div>
-          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Declared explicitly. Missing input stops the agent immediately with a clear message — no guessing, no partial execution.</div>
-        </div>
-        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
-          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">02 Knowledge</div>
-          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Grep-targeted. One section per task — not the whole file. Change what it loads, change what it knows.</div>
-        </div>
-        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start; background: var(--accent-bg); border-color: var(--accent-bd);">
-          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">03 Reasoning</div>
-          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">The only part that can't be scripted. Handles ambiguity — and the only slot that could one day be a deterministic engine.</div>
-        </div>
-        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
-          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">04 Output</div>
-          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Structured and declared. The calling skill routes on a <code style="font-family:var(--mono);font-size:11px;">Decision:</code> block — no parsing, no inference.</div>
-        </div>
-        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
-          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">05 Modes</div>
-          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">One agent file, many invocation contexts. Each mode is a named section — only that block is read per call.</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — REFERENCE (HIGH LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s10-intro">
-    <div class="label">Phase 01 — Foundation · Reference</div>
-    <h2 class="headline">One source of truth. <em>Every agent reads it. Nobody copies it.</em></h2>
-    <div class="divider"></div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card" style="border-color: var(--bad-bd); background: var(--bad-bg);">
-          <div class="card-label" style="color: var(--bad);">Without reference docs</div>
-          <ul class="bullets" style="margin-top: 6px;">
-            <li>Architecture patterns embedded inside every agent</li>
-            <li>One convention change → update 40 files</li>
-            <li>Agents drift from each other over time</li>
-            <li>New platform means rewriting agent bodies</li>
-          </ul>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card" style="border-color: var(--accent-bd); background: var(--accent-bg);">
-          <div class="card-label">With reference docs</div>
-          <ul class="bullets" style="margin-top: 6px;">
-            <li>Patterns live in one file per topic per platform</li>
-            <li>Agents grep exactly the section they need — nothing more</li>
-            <li>Update once → every agent that reads it gets the update</li>
-            <li>New platform adds a new impl file — no agent changes</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="caption">
-      Reference docs are the team's shared knowledge base — the architectural decisions your team has made, written once, applied consistently by every agent on every session.
-      <strong>It's what makes the system teachable and maintainable at scale.</strong>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 10 — REFERENCE ARCHITECTURE
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s10">
-    <div class="label">Phase 01 — Foundation · Reference</div>
-    <h2 class="headline">Topic. Term. <em>Three reference types. One grep key.</em></h2>
-
-    <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-bottom: 12px;">
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <div class="tree" style="font-size: 12px; line-height: 1.8;">
-<span class="dm">Process</span>   <span class="dm">Implementation · Design · Requirement · …</span>
-  <span class="dm">│</span>
-  <span class="ac">Topic</span>     <span class="dm">domain · data · presentation · design-system · …</span>
-  <span class="dm">│            one reference file per topic per platform</span>
-  <span class="dm">│</span>
-  <span class="rl">Term</span>      <span class="dm">UseCase · Entity · Repository · MpButton · …</span>
-  <span class="dm">│            one ## heading per term, same name everywhere</span>
-  <span class="dm">│</span>
-  ├── <span class="ac">-theory.md</span>   <span class="dm">what it IS · platform-agnostic</span>
-  ├── <span class="ac">-impl.md</span>     <span class="dm">how to build it in this language</span>
-  └── <span class="ac">-catalog.md</span>  <span class="dm">queryable symbol inventory (### per entry)</span></div>
-
-        <div class="cache-box stable" style="font-size: 12.5px;">
-          <div class="cache-label">The Term is the grep key</div>
-          One Term = one canonical name = one <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">##</code> heading, everywhere.<br><br>
-          Catalog entries use <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">###</code> per symbol — agents grep the symbol name directly, read 8 lines. No full-file load, ever.
-        </div>
-      </div>
-
-      <div class="code-panel">
-        <div class="code-panel-header neutral">Three types — theory · impl · catalog</div>
-        <pre style="font-size: 11.5px;"><span class="cm">domain-theory.md  — WHAT and WHY</span>
-<span class="ac">## UseCase <!-- 28 --></span>
-A use case encapsulates one business operation.
-Invariants: no framework imports, single execute()...
-
-<span class="cm">domain-impl.md  — HOW in Swift</span>
-<span class="ac">## UseCase <!-- 31 --></span>  <span class="dm">← same Term, Swift body</span>
-final class GetUserUseCase: UseCase {
-  func execute(_ params: Params) async throws
-
-
-<span class="cm">mekari-pixel-flutter-catalog.md  — WHAT EXISTS</span>
-<span class="ac">## Atoms <!-- 146 --></span>
-
-<span class="ac">### MpButton</span>
-- <span class="dm">Category:</span> <span class="ac">`atoms/button`</span>
-- <span class="dm">Description:</span> Mekari Mobile Kit Button.
-- <span class="dm">Key params:</span> `label`, `icon`, `onPressed`, `size`
-- <span class="dm">Variants:</span> `MpButton.primary()`, `.secondary()`
-
-<span class="ac">### MpTextField</span>
-- <span class="dm">Key params:</span> `controller`, `label`, `onChanged`</pre>
-      </div>
-
-    </div>
-
-    <div class="caption">
-      <strong>-theory</strong> answers what and why. <strong>-impl</strong> answers how in that language. <strong>-catalog</strong> answers what exists — a queryable inventory of available symbols.
-      Agents grep the symbol name directly in a catalog; no full-file load needed.
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — MCP (HIGH LEVEL)
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s11-intro">
-    <div class="label">Phase 01 — Foundation · MCP</div>
-    <h2 class="headline">Agents reach your tools. <em>You stop pasting.</em></h2>
-    <div class="divider"></div>
-    <div class="t-table" style="margin-bottom: 24px;">
-      <div class="t-head">
-        <div class="t-head-cell">Before MCP</div>
-        <div class="t-head-cell">With MCP</div>
-      </div>
-      <div class="t-row">
-        <div class="t-cell prob">"Paste the Jira ticket so I can understand the requirements."</div>
-        <div class="t-cell sol">Agent fetches the ticket directly — description, AC, linked issues, comments.</div>
-      </div>
-      <div class="t-row">
-        <div class="t-cell prob">"Paste the Figma design or take a screenshot of each screen."</div>
-        <div class="t-cell sol">Agent pulls design data, component specs, and layout files from Figma directly.</div>
-      </div>
-      <div class="t-row">
-        <div class="t-cell prob">"Run the build and paste the error so I can see what's failing."</div>
-        <div class="t-cell sol">Agent triggers the build, reads the result, and acts on it — no relay needed.</div>
-      </div>
-    </div>
-    <div class="caption">
-      MCP turns external tools into first-class inputs. The agent's context is always fresh and complete —
-      <strong>no copy-paste, no stale screenshots, no information lost in translation.</strong>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 11 — Phase 01: Foundation · MCP
-       ═══════════════════════════════════════════ -->
-  <section class="slide" id="s11">
-    <div class="label">Phase 01 — Foundation · MCP</div>
-    <h2 class="headline">Skills reach the codebase. <em>MCP reaches everything else.</em></h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px;">
-
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card-label">Two directions of reach</div>
-        <div class="compare" style="grid-template-columns: 1fr; gap: 12px;">
-          <div class="code-panel">
-            <div class="code-panel-header good">Via Skill — into the codebase</div>
-            <pre style="font-size: 12px;"><span class="cm"># Worker calls a platform-contract skill</span>
-call developer-domain-create-entity
-  feature: GetUser
-  platform: ios
-
-<span class="ac">→ creates GetUserUseCase.swift</span></pre>
-          </div>
-          <div class="code-panel">
-            <div class="code-panel-header" style="color: #D2A8FF; background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.25); border-bottom-color: var(--border);">Via MCP — into external systems</div>
-            <pre style="font-size: 12px;"><span class="cm"># Agent calls an MCP tool directly</span>
-mcp__atlassian__get_jira_issue(
-  issue_key: "PROJ-42"
-)
-
-<span style="color:#D2A8FF;">→ returns ticket, context, acceptance criteria</span></pre>
-          </div>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card-label">MCP servers in use today</div>
-        <table>
-          <thead><tr><th>Server</th><th>Reaches into</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">Atlassian</code></td>
-              <td>Jira tickets · Confluence pages · Bitbucket PRs</td>
-            </tr>
-            <tr>
-              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">ide</code></td>
-              <td>Live diagnostics · in-editor code execution</td>
-            </tr>
-            <tr>
-              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">Figma</code></td>
-              <td>Design data · component specs · asset export</td>
-            </tr>
-            <tr>
-              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">XcodeBuildMCP</code></td>
-              <td>Build · test · simulate · screenshot on iOS</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="caption">MCP tools are just tool calls — no special wiring in the agent. Any agent with the right MCP server configured can reach any external system.</div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 12 — Phase 02: Collaboration
-       ═══════════════════════════════════════════ -->
-  <section class="slide" id="s12">
-    <div class="label">Phase 02 — Collaboration · Research &amp; Prototyping</div>
-    <h2 class="headline">One repo. <em>All agents, skills, and references.</em></h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 8px;">
-      <div>
-        <div class="card-label" style="margin-bottom: 12px;">Current Approach</div>
-        <div class="tree">software-dev-agentic/
-├── <span class="ac">lib/core/</span>          <span class="dm">← shared agents + skills</span>
-├── <span class="ac">lib/platforms/</span>     <span class="dm">← web · ios · flutter · android</span>
-│   ├── web/
-│   ├── ios/
-│   ├── flutter/
-│   └── android/
-└── <span class="rl">docs/principles/</span>   <span class="dm">← reference docs</span></div>
-        <div class="caption" style="margin-top: 14px;">Single source of truth — one PR, one version, all platforms.</div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card-label">Open Questions</div>
-        <ul class="bullets">
-          <li><strong>Contribution workflow</strong> — who reviews what, across platforms?</li>
-          <li><strong>Ownership model</strong> — core team vs. platform teams?</li>
-          <li><strong>Versioning</strong> — per platform or a single version for all?</li>
-          <li><strong>Review process</strong> — how do changes get validated before merge?</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE 13 — Phase 03: Distribution
-       ═══════════════════════════════════════════ -->
-  <section class="slide" id="s13">
-    <div class="label">Phase 03 — Distribution</div>
-    <h2 class="headline">Two paths. <em>Each project picks the one that fits.</em></h2>
-    <div class="compare" style="margin-top: 8px;">
-      <div class="code-panel">
-        <div class="code-panel-header good">Path A — Submodule + Symlinks</div>
-        <pre>project-root/
-├── software-dev-agentic/  <span class="cm"># git submodule</span>
-└── .claude/
-    ├── agents → <span class="ac">../software-dev-agentic/lib/</span>
-    └── skills → <span class="ac">../software-dev-agentic/lib/</span>
-
-<span class="ac">✓</span> Proven on iOS · Flutter · Android · Web
-<span class="ac">✓</span> Each project pins a commit
-<span class="ac">✓</span> Works offline, no build step</pre>
-      </div>
-      <div class="code-panel">
-        <div class="code-panel-header good">Path B — Claude Plugin</div>
-        <pre><span class="cm"># One command to install</span>
-curl -fsSL <span class="ac">.../install-plugin.sh</span> | bash -s \
-  -- --platform=flutter-mobile
-
-<span class="cm"># Auto-patched into .claude/settings.json</span>
-{
-  <span class="ac">"enabledPlugins"</span>: {
-    <span class="bl">"sda-flutter-mobile@sda"</span>: true
-  },
-  <span class="ac">"skillListingBudgetFraction"</span>: 0.03
-}
-
-<span class="ac">✓</span> No submodule or symlinks
-<span class="ac">✓</span> Project-scoped — no cross-platform conflicts
-<span class="ac">✓</span> Auto-updates on every /release</pre>
-      </div>
-    </div>
-    <div class="caption">Both paths are supported. Submodule fits repos that already manage dependencies via git. Plugin fits new projects — one command, zero manual wiring.</div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — DESIGN EVOLUTION
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s11-evolution">
-    <div class="label">Phase 04 — Expansion · Design Evolution</div>
-    <h2 class="headline" style="margin-bottom: 16px;">We didn't design it all at once. <em>Each problem taught us the next piece.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px;">
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label">Origin</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Raw Skill</div>
-        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">SKILL.md in the main context. Engineer types, skill runs. No agents, no isolation. Worked fine for simple, bounded tasks.</p>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label" style="color: var(--bad);">Problem 1</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Context fills</div>
-        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">As the skill grows, the main context fills. Quality degrades. The skill can't reason well on a compacted history.</p>
-        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
-          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;">Split to <strong style="color:var(--text);">Agents</strong> — isolated context windows. Skill orchestrates; agent reasons. Only the result returns to main context.</p>
-        </div>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label" style="color: var(--bad);">Problem 2</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Agents bloat</div>
-        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Agents accumulate every pattern and convention — unscoped. They hit their own context limit. Too much knowledge, not enough relevance.</p>
-        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
-          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Reference docs + Grep.</strong> Agents load only the sections their task needs. Multiple scoped agents — each expert in one layer.</p>
-        </div>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label" style="color: var(--bad);">Problem 3</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">One pass isn't enough</div>
-        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Domain, data, and presentation layers depend on each other. A single agent pass misses cross-layer impact. Output is incomplete.</p>
-        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
-          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Convergence loop.</strong> Planners report cross-layer impact. Strategist decides: more rounds or converged? Loop until stable.</p>
-        </div>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label" style="color: var(--bad);">Problem 4</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Repeating ourselves</div>
-        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Agents writing the same create-entity boilerplate inline, per platform. No reuse. Update the pattern → update every agent.</p>
-        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
-          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
-          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Type P skills</strong> called by agents — not the Orchestrator. Platform-specific. One definition, updated once.</p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       SLIDE — BUILDING AN ORCHESTRATOR
-  ════════════════════════════════════════════ -->
-  <section class="slide" id="s11-design">
-    <div class="label">Phase 04 — Expansion · Building an Orchestrator</div>
-    <h2 class="headline" style="margin-bottom: 16px;">Four questions. <em>Answer them before writing a single instruction.</em></h2>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px;">
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label">01</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">What's the goal?</div>
-        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px;">→ Output</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Define the structured result before writing any instructions. What does the skill expect back from agents? Decision blocks, findings format, verified file paths. Declare it first — the routing logic depends on it.</p>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label">02</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">What does it need?</div>
-        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px;">→ Input</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">What must the engineer provide? Mode, feature name, platform, file paths. Declare every required parameter explicitly. Missing input = <code style="font-family:var(--mono);font-size:11px;">MISSING INPUT: &lt;param&gt;</code> immediately — no guessing, no defaults.</p>
-      </div>
-
-      <div class="card" style="padding: 16px 14px;">
-        <div class="card-label">03</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">How does it run? Who's involved?</div>
-        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px;">→ Agents + Loop</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Do you need a convergence loop? Which agents reason about what? Define each agent's modes, knowledge scope, and how they communicate — <strong style="color:var(--text);">Decision blocks in, findings files on disk out.</strong> Never pass content inline between rounds.</p>
-      </div>
-
-      <div class="card" style="padding: 16px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
-        <div class="card-label" style="color: var(--bad);">04</div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">Will 200K hold?</div>
-        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bad); margin-bottom: 8px;">→ Context budget</div>
-        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Pro context is 200K tokens. Estimate: rounds × agent output size. If the workflow needs many rounds or returns large results, <strong style="color:var(--text);">split into a second Orchestrator.</strong> One skill's structured output becomes the next one's input.</p>
-      </div>
-
-    </div>
-    <div class="caption">The order matters: Output → Input → Process → Budget. Designing output first prevents the skill from becoming a black box that returns whatever the agent feels like.</div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
        SLIDE — PERSONA = SDLC PHASE
   ════════════════════════════════════════════ -->
   <section class="slide" id="s11-persona">
-    <div class="label">Phase 04 — Expansion · Persona</div>
+    <div class="label">Phase 01 — Foundation · Output · Persona</div>
     <h2 class="headline" style="margin-bottom: 16px;">A Persona mirrors a role. <em>An Orchestrator skill mirrors what that role does.</em></h2>
 
     <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px;">
@@ -1726,10 +1040,100 @@ curl -fsSL <span class="ac">.../install-plugin.sh</span> | bash -s \
   </section>
 
   <!-- ═══════════════════════════════════════════
+       SLIDE — DESIGN EVOLUTION
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s11-evolution">
+    <div class="label">Phase 01 — Foundation · Output · Evolution</div>
+    <h2 class="headline" style="margin-bottom: 16px;">We didn't design it all at once. <em>Each problem taught us the next piece.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px;">
+
+      <div class="card" style="padding: 16px 14px;">
+        <div class="card-label">Origin</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Raw Skill</div>
+        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">SKILL.md in the main context. Engineer types, skill runs. No agents, no isolation. Worked fine for simple, bounded tasks.</p>
+      </div>
+
+      <div class="card" style="padding: 16px 14px;">
+        <div class="card-label" style="color: var(--bad);">Problem 1</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Context fills</div>
+        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">As the skill grows, the main context fills. Quality degrades. The skill can't reason well on a compacted history.</p>
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;">Split to <strong style="color:var(--text);">Agents</strong> — isolated context windows. Skill orchestrates; agent reasons. Only the result returns to main context.</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 16px 14px;">
+        <div class="card-label" style="color: var(--bad);">Problem 2</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Agents bloat</div>
+        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Agents accumulate every pattern and convention — unscoped. They hit their own context limit. Too much knowledge, not enough relevance.</p>
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Reference docs + Grep.</strong> Agents load only the sections their task needs. Multiple scoped agents — each expert in one layer.</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 16px 14px;">
+        <div class="card-label" style="color: var(--bad);">Problem 3</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">One pass isn't enough</div>
+        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Domain, data, and presentation layers depend on each other. A single agent pass misses cross-layer impact. Output is incomplete.</p>
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Convergence loop.</strong> Planners report cross-layer impact. Strategist decides: more rounds or converged? Loop until stable.</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 16px 14px;">
+        <div class="card-label" style="color: var(--bad);">Problem 4</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3;">Repeating ourselves</div>
+        <p style="font-size: 12px; color: var(--muted); line-height: 1.65;">Agents writing the same create-entity boilerplate inline, per platform. No reuse. Update the pattern → update every agent.</p>
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Solution</div>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.55;"><strong style="color:var(--text);">Type P skills</strong> called by agents — not the Orchestrator. Platform-specific. One definition, updated once.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 14px 0 10px;">So when building a new orchestrator — answer these four questions first</div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+
+      <div class="card" style="padding: 14px 14px;">
+        <div class="card-label">01</div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">What's the goal?</div>
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px;">→ Output</div>
+        <p style="font-size: 11.5px; color: var(--muted); line-height: 1.6;">Define the structured result before writing any instructions. Declare it first — the routing logic depends on it.</p>
+      </div>
+
+      <div class="card" style="padding: 14px 14px;">
+        <div class="card-label">02</div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">What does it need?</div>
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px;">→ Input</div>
+        <p style="font-size: 11.5px; color: var(--muted); line-height: 1.6;">Declare every required parameter explicitly. Missing input = <code style="font-family:var(--mono);font-size:10px;">MISSING INPUT</code> immediately — no guessing.</p>
+      </div>
+
+      <div class="card" style="padding: 14px 14px;">
+        <div class="card-label">03</div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">How does it run?</div>
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px;">→ Agents + Loop</div>
+        <p style="font-size: 11.5px; color: var(--muted); line-height: 1.6;">Convergence loop or not? Decision blocks in, findings files on disk out. Never pass content inline between rounds.</p>
+      </div>
+
+      <div class="card" style="padding: 14px 14px; background: var(--bad-bg); border-color: var(--bad-bd);">
+        <div class="card-label" style="color: var(--bad);">04</div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3;">Will 200K hold?</div>
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bad); margin-bottom: 6px;">→ Context budget</div>
+        <p style="font-size: 11.5px; color: var(--muted); line-height: 1.6;">Estimate rounds × output size. If too large, split into a second Orchestrator — one's output becomes the next's input.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
        SLIDE — WHY NOT END-TO-END
   ════════════════════════════════════════════ -->
   <section class="slide" id="s11-e2e">
-    <div class="label">Phase 04 — Expansion · Limitations</div>
+    <div class="label">Phase 01 — Foundation · Output · Limitations</div>
     <h2 class="headline" style="margin-bottom: 16px;">Why not end-to-end? <em>Four reasons human review still matters.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px;">
 
@@ -1762,10 +1166,636 @@ curl -fsSL <span class="ac">.../install-plugin.sh</span> | bash -s \
   </section>
 
   <!-- ═══════════════════════════════════════════
+       SLIDE — SKILLS (HIGH LEVEL)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s8-intro">
+    <div class="label">Phase 01 — Foundation · Output · Skills</div>
+    <h2 class="headline" style="margin-bottom: 16px;">Two skill types. <em>Type O is the workflow. Type P is a step inside it.</em></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+
+      <div class="card" style="padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <div class="card-label">Type O — Orchestrator</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px;">The entry point</div>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 8px;">Triggered by the engineer. Owns the full session — routing, approval gates, and coordinating agents. Simple workflows do their own work. Complex ones delegate.</p>
+          <p style="font-size: 12px; color: var(--accent);">Example: <code style="font-family:var(--mono);">/developer-plan-feature</code></p>
+        </div>
+        <div style="border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); padding-top: 2px;">Owns</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Routing · approval gates · the loop. The engineer talks to the skill, not the agents.</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); padding-top: 2px;">Delegates</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">For decisions or code generation, delegate to dedicated agents — each isolated, each specialized for one job.</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); padding-top: 2px;">Parallel spawn</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">One skill step can spawn N agents simultaneously — same wall-clock time as spawning one.</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); padding-top: 2px;">Convergence</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">The skill loops — spawns agents, collects decisions, re-spawns — until the strategist signals converged.</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bad); padding-top: 2px;">Constraint</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Runs in your session — every agent result lands here. Context fills. Design to keep rounds low.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 16px 18px;">
+        <div class="card-label">Type P — Procedure</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">A thin step</div>
+        <p style="font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 10px;">Called by agents, never by users. Creates one artifact using the right platform conventions. No decisions. No branching. Just execution.</p>
+        <p style="font-size: 12px; color: var(--accent);">Example: <code style="font-family:var(--mono);">developer-domain-create-entity</code></p>
+      </div>
+
+    </div>
+
+    <div class="caption">
+      A skill makes Claude's behavior <strong>consistent and repeatable</strong> — same workflow, every engineer, every platform.
+      Without a Type O, there is no guardrailed entry, no approval gate. Just a raw AI session.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — ORCHESTRATOR SKILL ANATOMY
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s8-flow">
+    <div class="label">Phase 01 — Foundation · Output · Orchestrator Skill</div>
+    <h2 class="headline" style="margin-bottom: 20px;">The Orchestrator skill runs in your context window. <em>Three things it can do — and one constraint that shapes all of them.</em></h2>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px;">
+
+      <div class="code-panel">
+        <div class="code-panel-header good">Capability 1 — Parallel agents</div>
+        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">One skill step can spawn N agents simultaneously. Each runs in its own isolated context and returns findings. Same wall-clock time as spawning one.</p>
+          <pre style="font-size: 11px; margin-top: 4px;"><span class="cm"># spawn domain + data + pres planners</span>
+<span class="cm"># in the same skill step</span>
+Agent(domain-planner, <span class="ac">background: true</span>)
+Agent(data-planner,   <span class="ac">background: true</span>)
+Agent(pres-planner,   <span class="ac">background: true</span>)
+<span class="dm">← all three run in parallel</span></pre>
+        </div>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel-header good">Capability 2 — Convergence loop</div>
+        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">The skill owns the loop. It spawns agents, collects decisions, and loops back until the strategist signals convergence. Each agent call is self-contained.</p>
+          <pre style="font-size: 11px; margin-top: 4px;"><span class="dm">while not converged:</span>
+  result = Agent(strategist, findings)
+  <span class="cm"># Decision: spawn-planners</span>
+  findings = spawn_planners_parallel()
+  <span class="cm"># Decision: converged</span>
+  <span class="ac">→ break</span></pre>
+        </div>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel-header" style="color: var(--bad); background: var(--bad-bg); border-color: var(--bad-bd); border-bottom-color: var(--border);">Constraint — Main context window</div>
+        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.65;">Every agent result returns to the skill — which lives in your main session. Each round adds more history. When context fills, Claude compacts it into a summary.</p>
+          <div style="border: 1px solid var(--bad-bd); background: var(--bad-bg); border-radius: 6px; padding: 10px 12px;">
+            <div style="font-size: 11.5px; color: var(--bad); line-height: 1.6;"><strong>Compaction = reduced quality.</strong> The summary loses detail. Subsequent rounds reason on a lossy view of earlier decisions.</div>
+          </div>
+          <div style="font-size: 12px; color: var(--muted); line-height: 1.55;">Design for minimal rounds. Write findings to disk — pass paths, not content. Every byte returned to the skill is a byte closer to compaction.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="caption">
+      Agents run in isolated contexts — they never see the main session. But the skill does, and every call back to it has a cost. Parallel spawning and disk-based findings are how we keep the round count low.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 9 (was 8) — SKILL TYPES IN DEPTH
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s8">
+    <div class="label">Phase 01 — Foundation · Output · Skills</div>
+    <h2 class="headline">Two types. <em>Each with a different job, a different caller.</em></h2>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
+
+      <div class="code-panel">
+        <div class="code-panel-header good">O · Orchestrator — user entry, owns the session</div>
+        <pre style="font-size: 11px;"><span class="cm">--- developer-plan-feature ---</span>
+<span class="ac">user-invocable: true</span>
+<span class="ac">allowed-tools: Agent, AskUserQuestion, Read</span>
+
+<span class="cm"># Step 1 — Gather Intent</span>
+Spawn strategist <span class="bl">(gather-intent)</span>
+→ returns <span class="ac">Decision: spawn-planners</span>
+
+<span class="cm"># Step 2 — Convergence Loop</span>
+Spawn planners <span class="bl">in parallel</span> per round
+Send findings → strategist
+<span class="dm">Loop until converged or blocked</span>
+
+<span class="cm"># Step 3 — Synthesize</span>
+Spawn strategist <span class="bl">(synthesize)</span>
+→ writes plan.md + context.md
+
+<span class="cm"># Step 4 — Approve</span>
+<span class="ac">AskUserQuestion</span>
+  Approve  → execute
+  Discuss  → revise → re-approve
+  Discard  → delete run, stop
+
+<span class="cm"># Step 5 — Execute</span>
+Spawn feature-worker
+  plan.md + context.md <span class="bl">inlined</span>
+
+<span class="cm"># Simple Type O skills do their own work</span>
+<span class="dm">(no Agent tool needed — Read, Edit, Ask)</span></pre>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel-header neutral">P · Procedure — agent calls, thin and non-interactive</div>
+        <pre style="font-size: 11px;"><span class="cm">--- developer-domain-create-entity ---</span>
+<span class="bd">user-invocable: false</span>
+<span class="ac">allowed-tools: Read, Grep, Bash</span>
+<span class="dm">(no AskUserQuestion — no branching logic)</span>
+
+<span class="cm"># Input</span>
+entity_name, target_path, module
+
+<span class="cm"># Step 1 — Load reference (Grep-first)</span>
+Grep <span class="ac">"^## Entity"</span> in domain.md
+Read offset + limit <span class="dm">← section only</span>
+<span class="dm">Never the full file</span>
+
+<span class="cm"># Step 2 — Check preconditions</span>
+Glob target path
+<span class="bd">STOP if file already exists</span>
+
+<span class="cm"># Step 3 — Write</span>
+Create entity from reference pattern
+<span class="dm">Logic belongs in the worker — not here</span>
+
+<span class="cm"># Output</span>
+<span class="ac">Glob + Grep verified path only</span></pre>
+      </div>
+
+    </div>
+    <div class="caption" style="margin-top: 12px;">
+      Start with <strong>Type O</strong> (Orchestrator) for any user-facing entry — simple ones do their own work, complex ones delegate to agents.
+      <strong>Type P</strong> when an agent needs a non-user-invocable, thin step with no branching or runtime complexity — logic belongs in the worker, not the skill.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — AGENTS (HIGH LEVEL)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s9-intro">
+    <div class="label">Phase 01 — Foundation · Output · Agents</div>
+    <h2 class="headline">Five parts. <em>Every agent is built from the same anatomy.</em></h2>
+
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; margin-bottom: 16px;">
+
+      <div class="card" style="padding: 18px 16px;">
+        <div class="card-label">01</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Input</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">What the agent receives to start — mode, feature name, platform, file paths. Declared explicitly. Missing input = immediate stop.</p>
+      </div>
+
+      <div class="card" style="padding: 18px 16px;">
+        <div class="card-label">02</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Knowledge</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Reference docs and patterns loaded on demand. Each agent greps only what its task needs — nothing more. Specialization is a loading decision.</p>
+      </div>
+
+      <div class="card" style="padding: 18px 16px; background: var(--accent-bg); border-color: var(--accent-bd);">
+        <div class="card-label">03</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Reasoning</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">The LLM applies thinking, deciding, and branching to everything it has loaded. This is the part no fixed script can replace — it handles ambiguity and edge cases.</p>
+      </div>
+
+      <div class="card" style="padding: 18px 16px;">
+        <div class="card-label">04</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Output</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">Declared and structured — a <code style="font-family:var(--mono);font-size:11px;">Decision:</code> block, a <code style="font-family:var(--mono);font-size:11px;">## Findings</code> section, verified file paths. The caller routes on it without ambiguity.</p>
+      </div>
+
+      <div class="card" style="padding: 18px 16px;">
+        <div class="card-label">05</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Modes</div>
+        <p style="font-size: 12.5px; color: var(--muted); line-height: 1.65;">One agent, many invocation contexts. Each mode loads only its own instruction block. The agent never reads instructions for modes it isn't in.</p>
+      </div>
+
+    </div>
+
+    <div class="caption">
+      Isolated context window keeps all five parts — and everything they touch — out of your main session.
+      <strong>The main session only ever sees the structured output.</strong>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 9 — WHY THIS ANATOMY
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s9">
+    <div class="label">Phase 01 — Foundation · Output · Agents</div>
+    <h2 class="headline">Why this anatomy. <em>Agents aren't black boxes — every behavior traces back to one part.</em></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">If the agent behaves wrong — check which part</div>
+        <div class="t-table">
+          <div class="t-head">
+            <div class="t-head-cell">Symptom</div>
+            <div class="t-head-cell">Where to look</div>
+          </div>
+          <div class="t-row">
+            <div class="t-cell prob" style="font-size: 13px;">Agent starts wrong, misses context, or acts on wrong scope</div>
+            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Input</div>
+          </div>
+          <div class="t-row">
+            <div class="t-cell prob" style="font-size: 13px;">Agent doesn't know the right patterns or uses wrong conventions</div>
+            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Knowledge</div>
+          </div>
+          <div class="t-row">
+            <div class="t-cell prob" style="font-size: 13px;">Agent makes wrong decisions or draws wrong conclusions</div>
+            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Reasoning</div>
+          </div>
+          <div class="t-row">
+            <div class="t-cell prob" style="font-size: 13px;">Agent returns incomplete, unparseable, or unexpected result</div>
+            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Output</div>
+          </div>
+          <div class="t-row">
+            <div class="t-cell prob" style="font-size: 13px;">Agent behaves inconsistently across different invocations</div>
+            <div class="t-cell sol" style="font-size: 13px; font-weight: 700;">Mode</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">Each part is independently replaceable</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Input</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Add a new source — Jira, Figma, local file — without changing reasoning or output.</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Knowledge</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Swap Grep-loaded docs for vector search, a database, or a catalog — same slot, richer retrieval.</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Reasoning</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Today: LLM. Tomorrow: a deterministic rule engine for the same decision slot, if the logic is well-understood enough.</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Output</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Change the schema the caller expects without rewriting the agent's reasoning.</div>
+          </div>
+          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent);">Mode</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Add a new invocation context — a new mode — without affecting existing ones.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — AGENT ANATOMY (LOW LEVEL)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s8-agent-anatomy">
+    <div class="label">Phase 01 — Foundation · Output · Agents</div>
+    <h2 class="headline">One file. Five slots. <em>Each with one clear job.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 12px;">
+
+      <div class="code-panel">
+        <div class="code-panel-header" style="color: var(--blue); background: rgba(121,192,255,0.06); border-color: rgba(121,192,255,0.25); border-bottom-color: var(--border);">developer-feature-strategist (abbreviated)</div>
+        <pre style="font-size: 11px;"><span class="cm">--- frontmatter ---</span>
+model: claude-sonnet-4-6
+tools: Read, Glob, Grep
+
+<span class="cm">## Input                        ← (1) Input</span>
+mode: <span class="ac">gather-intent</span> | process-findings | synthesize | resume
+feature_name: &lt;string&gt;
+<span class="dm">Missing input → MISSING INPUT: &lt;param&gt;  (stop immediately)</span>
+
+<span class="cm">## Knowledge                    ← (2) Knowledge</span>
+<span class="bl">Grep</span> reference/domain-theory.md <span class="ac">^## UseCase</span>
+<span class="dm">One targeted section loaded — never the full file</span>
+
+<span class="cm">## Reasoning                    ← (3) Reasoning</span>
+<span class="dm">Assess existing runs. Decide which layers need planners.
+Handle ambiguity: overlapping modules, uncertain scope.</span>
+
+<span class="cm">## Output                       ← (4) Output</span>
+<span class="ac">Decision: spawn-planners [domain, data, pres]</span>
+<span class="dm">Structured block — caller routes without parsing</span>
+
+<span class="cm">## Modes                        ← (5) Modes</span>
+[gather-intent]     load only when mode=gather-intent
+[process-findings]  load only when mode=process-findings
+<span class="dm">One body — each call loads only its mode's instruction block</span></pre>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; justify-content: center;">
+        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">01 Input</div>
+          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Declared explicitly. Missing input stops the agent immediately with a clear message — no guessing, no partial execution.</div>
+        </div>
+        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">02 Knowledge</div>
+          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Grep-targeted. One section per task — not the whole file. Change what it loads, change what it knows.</div>
+        </div>
+        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start; background: var(--accent-bg); border-color: var(--accent-bd);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">03 Reasoning</div>
+          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">The only part that can't be scripted. Handles ambiguity — and the only slot that could one day be a deterministic engine.</div>
+        </div>
+        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">04 Output</div>
+          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">Structured and declared. The calling skill routes on a <code style="font-family:var(--mono);font-size:11px;">Decision:</code> block — no parsing, no inference.</div>
+        </div>
+        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: start;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent);">05 Modes</div>
+          <div style="font-size: 12.5px; color: var(--muted); line-height: 1.55;">One agent file, many invocation contexts. Each mode is a named section — only that block is read per call.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — REFERENCE (HIGH LEVEL)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s10-intro">
+    <div class="label">Phase 01 — Foundation · Output · Reference</div>
+    <h2 class="headline">One source of truth. <em>Every agent reads it. Nobody copies it.</em></h2>
+    <div class="divider"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card" style="border-color: var(--bad-bd); background: var(--bad-bg);">
+          <div class="card-label" style="color: var(--bad);">Without reference docs</div>
+          <ul class="bullets" style="margin-top: 6px;">
+            <li>Architecture patterns embedded inside every agent</li>
+            <li>One convention change → update 40 files</li>
+            <li>Agents drift from each other over time</li>
+            <li>New platform means rewriting agent bodies</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card" style="border-color: var(--accent-bd); background: var(--accent-bg);">
+          <div class="card-label">With reference docs</div>
+          <ul class="bullets" style="margin-top: 6px;">
+            <li>Patterns live in one file per topic per platform</li>
+            <li>Agents grep exactly the section they need — nothing more</li>
+            <li>Update once → every agent that reads it gets the update</li>
+            <li>New platform adds a new impl file — no agent changes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="caption">
+      Reference docs are the team's shared knowledge base — the architectural decisions your team has made, written once, applied consistently by every agent on every session.
+      <strong>It's what makes the system teachable and maintainable at scale.</strong>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 10 — REFERENCE ARCHITECTURE
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s10">
+    <div class="label">Phase 01 — Foundation · Output · Reference</div>
+    <h2 class="headline">Topic. Term. <em>Three reference types. One grep key.</em></h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-bottom: 12px;">
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="tree" style="font-size: 12px; line-height: 1.8;">
+<span class="dm">Process</span>   <span class="dm">Implementation · Design · Requirement · …</span>
+  <span class="dm">│</span>
+  <span class="ac">Topic</span>     <span class="dm">domain · data · presentation · design-system · …</span>
+  <span class="dm">│            one reference file per topic per platform</span>
+  <span class="dm">│</span>
+  <span class="rl">Term</span>      <span class="dm">UseCase · Entity · Repository · MpButton · …</span>
+  <span class="dm">│            one ## heading per term, same name everywhere</span>
+  <span class="dm">│</span>
+  ├── <span class="ac">-theory.md</span>   <span class="dm">what it IS · platform-agnostic</span>
+  ├── <span class="ac">-impl.md</span>     <span class="dm">how to build it in this language</span>
+  └── <span class="ac">-catalog.md</span>  <span class="dm">queryable symbol inventory (### per entry)</span></div>
+
+        <div class="cache-box stable" style="font-size: 12.5px;">
+          <div class="cache-label">The Term is the grep key</div>
+          One Term = one canonical name = one <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">##</code> heading, everywhere.<br><br>
+          Catalog entries use <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">###</code> per symbol — agents grep the symbol name directly, read 8 lines. No full-file load, ever.
+        </div>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel-header neutral">Three types — theory · impl · catalog</div>
+        <pre style="font-size: 11.5px;"><span class="cm">domain-theory.md  — WHAT and WHY</span>
+<span class="ac">## UseCase <!-- 28 --></span>
+A use case encapsulates one business operation.
+Invariants: no framework imports, single execute()...
+
+<span class="cm">domain-impl.md  — HOW in Swift</span>
+<span class="ac">## UseCase <!-- 31 --></span>  <span class="dm">← same Term, Swift body</span>
+final class GetUserUseCase: UseCase {
+  func execute(_ params: Params) async throws
+
+
+<span class="cm">mekari-pixel-flutter-catalog.md  — WHAT EXISTS</span>
+<span class="ac">## Atoms <!-- 146 --></span>
+
+<span class="ac">### MpButton</span>
+- <span class="dm">Category:</span> <span class="ac">`atoms/button`</span>
+- <span class="dm">Description:</span> Mekari Mobile Kit Button.
+- <span class="dm">Key params:</span> `label`, `icon`, `onPressed`, `size`
+- <span class="dm">Variants:</span> `MpButton.primary()`, `.secondary()`
+
+<span class="ac">### MpTextField</span>
+- <span class="dm">Key params:</span> `controller`, `label`, `onChanged`</pre>
+      </div>
+
+    </div>
+
+    <div class="caption">
+      <strong>-theory</strong> answers what and why. <strong>-impl</strong> answers how in that language. <strong>-catalog</strong> answers what exists — a queryable inventory of available symbols.
+      Agents grep the symbol name directly in a catalog; no full-file load needed.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE — MCP (HIGH LEVEL)
+  ════════════════════════════════════════════ -->
+  <section class="slide" id="s11-intro">
+    <div class="label">Phase 01 — Foundation · Output · MCP</div>
+    <h2 class="headline">Agents reach your tools. <em>You stop pasting.</em></h2>
+    <div class="divider"></div>
+    <div class="t-table" style="margin-bottom: 24px;">
+      <div class="t-head">
+        <div class="t-head-cell">Before MCP</div>
+        <div class="t-head-cell">With MCP</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell prob">"Paste the Jira ticket so I can understand the requirements."</div>
+        <div class="t-cell sol">Agent fetches the ticket directly — description, AC, linked issues, comments.</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell prob">"Paste the Figma design or take a screenshot of each screen."</div>
+        <div class="t-cell sol">Agent pulls design data, component specs, and layout files from Figma directly.</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell prob">"Run the build and paste the error so I can see what's failing."</div>
+        <div class="t-cell sol">Agent triggers the build, reads the result, and acts on it — no relay needed.</div>
+      </div>
+    </div>
+    <div class="caption">
+      MCP turns external tools into first-class inputs. The agent's context is always fresh and complete —
+      <strong>no copy-paste, no stale screenshots, no information lost in translation.</strong>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 11 — Phase 01: Foundation · MCP
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s11">
+    <div class="label">Phase 01 — Foundation · Output · MCP</div>
+    <h2 class="headline">Skills reach the codebase. <em>MCP reaches everything else.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px;">
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label">Two directions of reach</div>
+        <div class="compare" style="grid-template-columns: 1fr; gap: 12px;">
+          <div class="code-panel">
+            <div class="code-panel-header good">Via Skill — into the codebase</div>
+            <pre style="font-size: 12px;"><span class="cm"># Worker calls a platform-contract skill</span>
+call developer-domain-create-entity
+  feature: GetUser
+  platform: ios
+
+<span class="ac">→ creates GetUserUseCase.swift</span></pre>
+          </div>
+          <div class="code-panel">
+            <div class="code-panel-header" style="color: #D2A8FF; background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.25); border-bottom-color: var(--border);">Via MCP — into external systems</div>
+            <pre style="font-size: 12px;"><span class="cm"># Agent calls an MCP tool directly</span>
+mcp__atlassian__get_jira_issue(
+  issue_key: "PROJ-42"
+)
+
+<span style="color:#D2A8FF;">→ returns ticket, context, acceptance criteria</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label">MCP servers in use today</div>
+        <table>
+          <thead><tr><th>Server</th><th>Reaches into</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">Atlassian</code></td>
+              <td>Jira tickets · Confluence pages · Bitbucket PRs</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">ide</code></td>
+              <td>Live diagnostics · in-editor code execution</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">Figma</code></td>
+              <td>Design data · component specs · asset export</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:var(--mono);font-size:12px;color:#D2A8FF;">XcodeBuildMCP</code></td>
+              <td>Build · test · simulate · screenshot on iOS</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="caption">MCP tools are just tool calls — no special wiring in the agent. Any agent with the right MCP server configured can reach any external system.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 12 — Phase 02: Collaboration
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s12">
+    <div class="label">Research Track A — Collaboration</div>
+    <h2 class="headline">One repo. <em>All agents, skills, and references.</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 8px;">
+      <div>
+        <div class="card-label" style="margin-bottom: 12px;">Current Approach</div>
+        <div class="tree">software-dev-agentic/
+├── <span class="ac">lib/core/</span>          <span class="dm">← shared agents + skills</span>
+├── <span class="ac">lib/platforms/</span>     <span class="dm">← web · ios · flutter · android</span>
+│   ├── web/
+│   ├── ios/
+│   ├── flutter/
+│   └── android/
+└── <span class="rl">docs/principles/</span>   <span class="dm">← reference docs</span></div>
+        <div class="caption" style="margin-top: 14px;">Single source of truth — one PR, one version, all platforms.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-label">Open Questions</div>
+        <ul class="bullets">
+          <li><strong>Contribution workflow</strong> — who reviews what, across platforms?</li>
+          <li><strong>Ownership model</strong> — core team vs. platform teams?</li>
+          <li><strong>Versioning</strong> — per platform or a single version for all?</li>
+          <li><strong>Review process</strong> — how do changes get validated before merge?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SLIDE 13 — Phase 03: Distribution
+       ═══════════════════════════════════════════ -->
+  <section class="slide" id="s13">
+    <div class="label">Research Track B — Distribution</div>
+    <h2 class="headline">Two paths. <em>Each project picks the one that fits.</em></h2>
+    <div class="compare" style="margin-top: 8px;">
+      <div class="code-panel">
+        <div class="code-panel-header good">Path A — Submodule + Symlinks</div>
+        <pre>project-root/
+├── software-dev-agentic/  <span class="cm"># git submodule</span>
+└── .claude/
+    ├── agents → <span class="ac">../software-dev-agentic/lib/</span>
+    └── skills → <span class="ac">../software-dev-agentic/lib/</span>
+
+<span class="ac">✓</span> Proven on iOS · Flutter · Android · Web
+<span class="ac">✓</span> Each project pins a commit
+<span class="ac">✓</span> Works offline, no build step</pre>
+      </div>
+      <div class="code-panel">
+        <div class="code-panel-header good">Path B — Claude Plugin</div>
+        <pre><span class="cm"># One command to install</span>
+curl -fsSL <span class="ac">.../install-plugin.sh</span> | bash -s \
+  -- --platform=flutter-mobile
+
+<span class="cm"># Auto-patched into .claude/settings.json</span>
+{
+  <span class="ac">"enabledPlugins"</span>: {
+    <span class="bl">"sda-flutter-mobile@sda"</span>: true
+  },
+  <span class="ac">"skillListingBudgetFraction"</span>: 0.03
+}
+
+<span class="ac">✓</span> No submodule or symlinks
+<span class="ac">✓</span> Project-scoped — no cross-platform conflicts
+<span class="ac">✓</span> Auto-updates on every /release</pre>
+      </div>
+    </div>
+    <div class="caption">Both paths are supported. Submodule fits repos that already manage dependencies via git. Plugin fits new projects — one command, zero manual wiring.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
        SLIDE 14 — Phase 04: Expansion
        ═══════════════════════════════════════════ -->
   <section class="slide" id="s14">
-    <div class="label">Phase 04 — Expansion</div>
+    <div class="label">Research Track C — Expansion</div>
     <h2 class="headline">From Implementation to <em>every process.</em></h2>
     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 8px;">
       <div class="card" style="opacity: 0.4;">
@@ -1795,7 +1825,7 @@ curl -fsSL <span class="ac">.../install-plugin.sh</span> | bash -s \
       </div>
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;">
-      <div class="caption" style="margin-top: 0; align-self: start;">No progress yet — depends on Distribution being solved first. Expansion defines the <strong>end state</strong>: specialized agents across every SDLC process, not just Implementation.</div>
+      <div class="caption" style="margin-top: 0; align-self: start;">No progress yet — runs as a parallel research track. Expansion defines the <strong>end state</strong>: specialized agents across every SDLC process, not just Implementation.</div>
       <div>
         <div class="card-label" style="margin-bottom: 12px;">Open Questions</div>
         <ul class="bullets">
