@@ -93,7 +93,7 @@ The **StateHolder contract** is a written handoff artifact that `developer-featu
 ## Creation Order <!-- 10 -->
 
 ```
-Use Cases (from developer-backend-strategist) → StateHolder → StateHolder contract → Screen (developer-ui-worker)
+Use Cases (from developer-backend-worker) → StateHolder → StateHolder contract → Screen (developer-ui-worker)
 ```
 
 Never write the screen before the StateHolder contract exists.
