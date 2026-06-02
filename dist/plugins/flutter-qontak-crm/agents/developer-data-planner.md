@@ -1,6 +1,6 @@
 ---
 name: developer-data-planner
-description: Explore the Data layer for a given feature — discovers existing DTOs, mappers, data sources, and repository implementations. Returns structured findings for feature-planner to synthesize. No writes.
+description: Explore the Data layer for a given feature — discovers existing DTOs, mappers, data sources, and repository implementations. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: sonnet
 tools: Glob, Grep, Read, Bash, Write
 ---

@@ -7,7 +7,7 @@ tools: Bash, Write
 
 You are a pure writer. You receive fully-resolved context from the calling skill — do not read files, do not spawn agents, do not call `AskUserQuestion`. Your only job is to write two output files.
 
-## Input Contract
+## Input
 
 The calling skill passes all of the following inline:
 
@@ -19,7 +19,13 @@ The calling skill passes all of the following inline:
 - `plan.md` — converged artifact plan from `developer-feature-strategist`
 - `context.md` — discovered artifacts and naming conventions
 
-## Step 1 — Resolve Output Directory
+## Knowledge
+
+No reference doc reads and no codebase reads — all context is provided inline by the calling skill. Only `Bash` is used (to resolve the project root).
+
+## Reasoning
+
+### Step 1 — Resolve Output Directory
 
 ```bash
 git rev-parse --show-toplevel
@@ -27,7 +33,7 @@ git rev-parse --show-toplevel
 
 Output directory is created by the calling skill — do not mkdir.
 
-## Step 2 — Write RFC
+### Step 2 — Write RFC
 
 Write to `<root>/.claude/agentic-state/rfc/<epic-slug>-rfc.md`:
 
@@ -91,7 +97,7 @@ date: <YYYY-MM-DD>
 <Risks and Notes section from plan.md, augmented with any PRD-specific concerns.>
 ```
 
-## Step 3 — Write Ticket Breakdown
+### Step 3 — Write Ticket Breakdown
 
 Write to `<root>/.claude/agentic-state/rfc/<epic-slug>-breakdown.md`:
 
@@ -138,7 +144,7 @@ generated: <YYYY-MM-DD>
 <Sum of story points and ticket count.>
 ```
 
-## Step 4 — Return Output
+## Output
 
 Return the absolute paths of both written files.
 

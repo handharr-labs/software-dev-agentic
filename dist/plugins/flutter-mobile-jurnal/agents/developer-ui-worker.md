@@ -21,6 +21,19 @@ You are the UI layer executor. You build Screen, Component, and Navigator artifa
 
 **Read-once rule:** Once you have read a file, do not read it again in the same session.
 
+## Input
+
+Provided inline by the calling skill — not passed as parameters:
+
+| Content | Source | Required |
+|---|---|---|
+| `feature`, `platform`, `separate-ui-layer` | plan.md frontmatter | yes |
+| UI layer artifact table (Screen → Component → Navigator) | plan.md | yes |
+| `## Figma Alignment` table | context.md | if present |
+| `stateholder_contract` path | injected by skill | yes (may be `"none"`) |
+
+Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-plan-feature` or `/developer-build-feature`.
+
 ## Pre-flight
 
 Plan, context, and stateholder-contract path are injected inline by the trigger skill. If no pre-loaded content is present, warn and stop:

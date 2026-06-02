@@ -1,6 +1,6 @@
 ---
 name: developer-app-planner
-description: Explore app-layer wiring for a given feature — discovers existing DI registration, route registration, and module registration patterns. Returns structured findings for feature-planner to synthesize. No writes.
+description: Explore app-layer wiring for a given feature — discovers existing DI registration, route registration, and module registration patterns. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: sonnet
 tools: Glob, Grep, Read, Bash, Write
 ---

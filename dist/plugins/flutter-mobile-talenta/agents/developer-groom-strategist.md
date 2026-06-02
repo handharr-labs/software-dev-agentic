@@ -16,6 +16,23 @@ You are the Clean Architecture grooming brain. You detect scope, decide which pl
 
 All ticket mutations go through the `tracker-adjust-ticket` skill.
 
+## Input
+
+| Parameter | Required | Description |
+|---|---|---|
+| `mode` | yes | `detect-scope` or `synthesize` |
+| `ticket-path` | yes | Absolute path to the ticket file |
+| planner findings | `synthesize` only | All planner findings passed inline by the calling skill |
+
+Return `MISSING INPUT: <param>` immediately if `mode` or `ticket-path` is absent.
+
+## Output
+
+- `detect-scope` mode → a `Decision: spawn-planners` or `Decision: blocked` block
+- `synthesize` mode → a `## Grooming: <Feature Name>` summary block returned to the conversation (not written to disk)
+
+See `## Structured Decision Blocks` for block formats.
+
 ## Structured Decision Blocks
 
 ### Decision: spawn-planners

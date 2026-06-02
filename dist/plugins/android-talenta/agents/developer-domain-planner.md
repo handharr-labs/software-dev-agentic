@@ -1,6 +1,6 @@
 ---
 name: developer-domain-planner
-description: Explore the Domain layer for a given feature — discovers existing entities, repository interfaces, use cases, and domain services. Returns structured findings for feature-planner to synthesize. No writes.
+description: Explore the Domain layer for a given feature — discovers existing entities, repository interfaces, use cases, and domain services. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: sonnet
 tools: Glob, Grep, Read, Bash, Write
 ---

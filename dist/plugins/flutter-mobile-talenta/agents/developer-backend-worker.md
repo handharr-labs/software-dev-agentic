@@ -1,5 +1,5 @@
 ---
-name: developer-backend-strategist
+name: developer-backend-worker
 description: Build the Domain and Data layers for a feature — entities, repository interfaces, use cases, mappers, datasources, and repository implementations. Calls skills directly in layer order. No sub-agents.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash

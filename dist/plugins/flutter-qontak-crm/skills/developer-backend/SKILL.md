@@ -4,7 +4,7 @@ description: Build the Domain and Data layers for a feature — entities, reposi
 user-invocable: true
 ---
 
-Spawn the `developer-backend-strategist` agent with:
+Spawn the `developer-backend-worker` agent with:
 
 ```
 feature: $FEATURE

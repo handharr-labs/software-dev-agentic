@@ -61,7 +61,7 @@ Score each dimension **1–10**. Provide a one-line justification for each score
 
 ### D1 — Orchestration Quality
 
-*Did strategists (developer-feature-strategist, developer-backend-strategist) coordinate correctly?*
+*Did strategists (developer-feature-strategist, developer-backend-worker) coordinate correctly?*
 
 - **N/A (8/10)** if no strategists were spawned — inline work is often correct per P9
 - Check `agent_spawns` for strategist types
@@ -82,7 +82,7 @@ Score each dimension **1–10**. Provide a one-line justification for each score
 
 | Work category | Expected executor |
 |---|---|
-| Entity / repository interface / use case / data layer | `developer-feature-worker` or `developer-backend-strategist` (via skills) |
+| Entity / repository interface / use case / data layer | `developer-feature-worker` or `developer-backend-worker` (via skills) |
 | View / screen / component | `developer-ui-worker` |
 | Debugging | `debugger-worker` via `debugger-strategist` |
 | Architecture review | `auditor-arch-review-worker` |
@@ -189,7 +189,7 @@ Start at 10 and deduct:
   - `chore/` → maintenance
   - `design/` or `style/` → UI/design work
 - Check `skill_calls[0].args` — did the issue title match the branch type chosen?
-- Check `agent_spawns` subagent types — were Explore agents used for exploration (correct), developer-feature-worker or developer-backend-strategist for build work, etc.?
+- Check `agent_spawns` subagent types — were Explore agents used for exploration (correct), developer-feature-worker or developer-backend-worker for build work, etc.?
 - Deduct if branch prefix mismatches task type (e.g. design work on `fix/` branch)
 - Deduct if wrong worker type was spawned for the work category
 
@@ -289,7 +289,7 @@ Include the exact agent file path inferred from the `agent_spawns` subagent type
 |---|---|
 | developer-feature-strategist | developer-feature-strategist |
 | developer-feature-worker | developer-feature-worker |
-| developer-backend-strategist | developer-backend-strategist |
+| developer-backend-worker | developer-backend-worker |
 | developer-ui-worker | developer-ui-worker |
 | developer-test-worker | developer-test-worker |
 | debugger-worker | debugger-worker |
