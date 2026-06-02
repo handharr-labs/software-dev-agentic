@@ -39,6 +39,16 @@ How to check: `Grep` the file for any of the above patterns. A match in the body
 
 > **Why:** `lib/core/` agents are consumed by all platforms via symlink. Platform-specific rules embedded in a core worker silently mislead workers on other platforms (iOS, Flutter) that call the same agent.
 
+**Body structure (all agents)**
+- [ ] `## Input` section present — declares required parameters with a `MISSING INPUT:` guard
+- [ ] `## Output` section present — declares the structured result the agent returns
+- [ ] Knowledge slot present — `## Knowledge` or `## Search Protocol` section exists
+- [ ] Reasoning slot present — at least one of `## Reasoning`, `## Workflow`, `## Execution Order`, or `## Mode:` section exists
+
+How to check: `Grep` the file for `^## Input$`, `^## Output$`, `^## Knowledge`, `^## Search Protocol`, `^## Reasoning`, `^## Workflow`, `^## Execution Order`, `^## Mode:`. A slot with zero matches is a violation.
+
+Severity: **Warning** for missing `## Input` or `## Output`. **Info** for missing Knowledge or Reasoning slot (may be intentional for pure-write agents with no reference reads or branching logic).
+
 **All agents**
 - [ ] Filename follows `<persona>-[descriptive]-<role>.md` convention — role always last, persona prefix required, any role label allowed
 - [ ] If in a persona subdir (`developer/`, `debugger/`, `tracker/`, `auditor/`, `qa/`), the persona assignment is correct
@@ -114,8 +124,8 @@ Severity: Warning for any prompt clarity finding.
 ## Severity Levels
 
 - **Critical** — missing required frontmatter field, broken reference path, "Read completely" violation, platform-specific content in a `lib/core/agents/` file
-- **Warning** — wrong model for worker type, missing Search Rules, missing Extension Point, missing `reference/index.md` discovery hint on multi-file Reference lines, explanatory comments in template files
-- **Info** — naming convention deviation, description could be more specific
+- **Warning** — wrong model for worker type, missing Search Rules, missing Extension Point, missing `reference/index.md` discovery hint on multi-file Reference lines, explanatory comments in template files, missing `## Input` or `## Output` body section
+- **Info** — naming convention deviation, description could be more specific, missing Knowledge or Reasoning body section slot
 
 ## Output Format
 
