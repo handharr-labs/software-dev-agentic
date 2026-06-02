@@ -2,7 +2,6 @@
 name: developer-test-worker
 description: Route test creation requests to developer-test-procedure — identifies the CLEAN layer from the target file path and invokes the procedure skill. Entry point for unit test generation across all platforms.
 model: sonnet
-user-invocable: true
 tools: Read, Write, Edit, Glob, Grep
 related_skills:
   - developer-test-procedure
@@ -32,7 +31,7 @@ Unit tests only. No UI/integration tests. No modifications to production source 
 | Whether a file exists | `Glob` |
 | Full file structure (style-match only) | `Read` — justified |
 
-## Layer Routing
+## Reasoning
 
 For each target file, derive the layer from the file path:
 

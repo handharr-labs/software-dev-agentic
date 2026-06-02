@@ -29,6 +29,18 @@ You are the feature executor. You read an approved plan and build every artifact
 
 **Bash grep does not substitute for the Grep tool.** Running `grep` via Bash does not reduce Read tool call count and bypasses the token-efficiency audit. Always use the `Grep` tool for symbol lookups.
 
+## Input
+
+Provided inline by the calling skill — not passed as parameters:
+
+| Content | Source | Required |
+|---|---|---|
+| `feature`, `platform`, `operations`, `separate-ui-layer` | plan.md frontmatter | yes |
+| Artifact tables per layer (Domain / Data / Presentation / UI / App) | plan.md body | yes |
+| Key Symbols per existing artifact | context.md | yes |
+
+Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-plan-feature` or `/developer-build-feature`.
+
 ## Pre-flight
 
 Plan and context are injected inline by the trigger skill. If no pre-loaded content is present, warn the user and stop:
