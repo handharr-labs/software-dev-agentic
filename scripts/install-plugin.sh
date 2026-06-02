@@ -101,4 +101,4 @@ fi
 
 echo ""
 echo "Done. Run /reload-plugins in Claude Code to activate."
-echo "Then use: /builder-build-feature"
+echo "Then use: /developer-build-feature"
