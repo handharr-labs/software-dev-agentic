@@ -7,6 +7,23 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [8.6.0] — 2026-06-02
+
+### Added
+- **18 platform-agnostic core procedure skills** — `developer-data-create-{datasource,mapper,repository-impl}`, `developer-domain-create-{entity,repository,usecase,service}`, `developer-pres-create-{stateholder,screen,component}`, `developer-test-create-{mock,domain,data,presentation}`, `debugger-{add,remove}-logs`, `auditor-arch-check`, `installer-setup-project` — all under `lib/core/skills/`; each skill delegates pattern lookup to `.claude/reference/code-architecture/*-impl.md`
+- **`## Component` section** — added to `presentation-impl.md` on all 7 platforms with a reusable, state-management-unaware component pattern and path convention
+- **`## Logging` section** — added to `presentation-impl.md` on all 7 platforms with the platform's debug log format (`debugPrint`/`print`/`Log.d`/`console.log`) and `[DebugTest]` prefix rules
+- **`## StateHolder` section** — added to `flutter-qontak-crm` and `flutter-mobile-jurnal` `presentation-impl.md` (was missing)
+
+### Changed
+- **`presentation-impl.md` restructured on all 7 platforms** — `## StateHolder` now spans all implementation sub-sections as `###` children (BLoC/Presenter/ViewModel/Cubit patterns, State/Events/States, Layer Invariants) so a single `Read(file, offset, limit=N)` retrieves the full implementation; `## Screen Structure` is the canonical H2 for screen patterns (renamed from `## ViewController` on iOS, `## Activity / Fragment` on Android; added to web)
+- **Platform contract skill dirs removed** — 126 files across 7 platforms deleted; procedure logic now lives in the 18 core skills above
+
+### Removed
+- **`lib/platforms/*/skills/contract/`** — all 7 platform contract skill directories (18 skills × 7 platforms = 126 files) replaced by the 18 core skills
+
+---
+
 ## [8.5.0] — 2026-06-02
 
 ### Added
