@@ -137,9 +137,7 @@ Each invocation loads only its mode's instruction block. Without modes, all inst
 Strategists are pure reasoning agents — they decide what to do and return structured decision blocks to the calling skill. The skill executes: it spawns agents, accumulates results, and loops. Key rules:
 
 - Return structured decision blocks (`Decision: spawn-planners`, `Decision: converged`, `Decision: spawn-worker`, `Decision: blocked`) — never spawn agents directly
-- Never write or edit files — all writes go through workers spawned by the skill
-- Pass file paths between phases, never file contents
-- Never read codebase source files directly — planners and workers own their own context reads
+- Never write or edit source files — all writes go through agents spawned by the skill
 
 **Agent Scope — Core vs Platform-specific:**
 
@@ -154,7 +152,6 @@ Agents have a second axis — where they live and what they know.
 
 Workers are platform-agnostic protocol-definers. Skills are the platform-specific implementations of that protocol. A `domain-worker` calls `developer-domain-create-entity` by name — on iOS that creates a Swift struct, on web a TypeScript interface. The worker never knows which platform it's on and doesn't need to.
 
-**Skills are create-only.** Platform-contract skills cover new artifact creation only (`create-*`). There are no update or fix skills — workers handle modifications to existing artifacts via direct `Read` + `Edit` with reference docs. Workers invoke a skill only when the target artifact does not yet exist.
 
 | Role | Protocol analogy | Platform-aware? |
 |---|---|---|
@@ -163,18 +160,6 @@ Workers are platform-agnostic protocol-definers. Skills are the platform-specifi
 | Workers | Use-case logic | No |
 | Skills | Concrete implementation | Yes |
 
-**Layer Isolation — Bounded Knowledge and Authority:**
-
-Layer isolation is enforced at the **planner** level, not the worker level. `feature-worker` is a single executor that handles all CLEAN layers sequentially, guided by `plan.md`. The planners are what are layer-bounded:
-
-- Each layer planner (`domain-planner`, `data-planner`, `pres-planner`, `app-planner`) is restricted to read-only tools (`Glob`, `Grep`, `Read`) — it physically cannot write files
-- Each planner's glob patterns and instructions scope it to its own layer's directories and artifact types
-- Cross-layer knowledge (shared contracts, interfaces) lives in reference docs and skills, not in planner bodies
-- Planners report `### Impact Recommendations` — which other layers their findings affect and why. The strategist uses these to decide whether additional planner rounds are needed
-
-The calling skill (not the strategist) spawns planners based on the strategist's decision. This convergence loop continues until all impact recommendations are resolved or the round cap is reached.
-
-`feature-worker` executes all layers in a fixed order (domain → data → presentation → UI) using skills as the platform-specific hands. Layer correctness in the worker comes from following `plan.md` and calling the right skill per artifact type — not from a boundary enforcement mechanism.
 
 **Context Isolation = Efficiency:**
 
@@ -193,14 +178,11 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | Reference docs | 1 Grep call per section needed | Grep-first in worker body |
 | `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
 | Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
-| Strategist context accumulation | Minimal — file paths only | Workers return paths, not content; state file prevents re-reads |
-| Context relay (trigger skills) | Zero pre-flight reads in the spawned agent | Skill reads `plan.md`, `context.md`, and `state.json` from the runs directory on disk, inlines all three into the spawn prompt; strategist detects the pre-loaded block and skips pre-flight file reads entirely |
+| Strategist context accumulation | Minimal — disk-based hand-offs | Agents write findings to disk; skill passes paths not content; state file prevents re-reads |
 
-**Context relay pattern:**
+**Disk-First Inter-Agent Communication:**
 
-When a trigger skill spawns an strategist on resume, it reads `plan.md`, `context.md`, and `state.json` from `.claude/agentic-state/runs/<feature>/` and inlines their contents directly into the spawn prompt. The strategist receives context on its first token and jumps directly to the next pending phase — it never reads those files itself.
-
-This works in both same-session and new-session resumes — the files are on disk, so the trigger skill always reads them regardless of cache state. The spawned agent pays zero pre-flight read cost in either case. Disk is the authoritative source; the trigger skill is the bridge.
+Agents communicate via files on disk — never by passing content inline through the Orchestrator skill's context window. State, plans, and findings are written to disk between phases; the calling skill relays paths, not content. This keeps the main context clean regardless of how many rounds the workflow takes.
 
 **Fail-Fast Precondition Validation:**
 
@@ -227,37 +209,27 @@ Agents validate preconditions before executing procedures — they never guess o
 
 When any check fails: return a clear, actionable message — never partially execute or silently continue.
 
-**Agent Memory Governance:**
-
-**What to remember:** Confirmed patterns, module-specific conventions not in reference docs, recurring mistakes, user-confirmed preferences.
-
-**What NOT to remember:** Current task details, anything already in `CLAUDE.md` or `reference/`, unverified single-file observations, git history.
-
-**Hygiene rules:** Keep `MEMORY.md` under 200 lines; use topic files for detailed notes; review and prune stale memories.
-
 **Agent Naming Convention:**
 
-Format: `<persona>-<domain>-<role>.md`
+Format: `<persona>-[descriptive]-<role>.md`
 
-Every agent that belongs to a persona must be prefixed with the persona name. This makes the persona assignment explicit from the filename alone and prevents collisions as the agent roster grows.
+Every agent that belongs to a persona must be prefixed with the persona name. The role always comes last — it is a label for clarity, not a constraint. An optional freeform descriptive segment goes in the middle when the role alone is ambiguous within the persona.
 
-The role suffix describes what the agent does within the persona — it is a label for clarity, not a constraint. Use whatever suffix best describes the agent's function.
-
-| Suffix | What it signals | Example |
+| Segment | Rule | Example |
 |---|---|---|
-| `-strategist` | Reasons and decides — returns structured decisions to the calling skill | `developer-feature-strategist.md` |
-| `-planner` | Read-only exploration — explores one scope and returns findings | `developer-domain-planner.md` |
-| `-worker` | Execution — reads a plan, calls skills, writes files | `developer-feature-worker.md` |
-| `-writer` | Document generation | `developer-rfc-writer.md` |
+| `<persona>` | Required — persona name prefix | `developer`, `debugger` |
+| `[descriptive]` | Optional — freeform, added when the role alone doesn't distinguish agents | `feature`, `rfc`, `domain` |
+| `<role>` | Required — always last; describes the agent's function | `strategist`, `worker`, `writer` |
 
-These are common examples from existing personas, not an exhaustive list. A persona can introduce any role suffix that clearly describes the agent's function. Not every persona needs a strategist or planner — a simple persona may have only a trigger skill and a single worker.
+A persona can introduce any role label that clearly describes the agent's function.
 
 | Pattern | Example | When to use |
 |---|---|---|
-| `<persona>-<domain>-<role>` | `developer-feature-strategist`, `debugger-worker` | Agent inside a persona folder (`lib/core/agents/<persona>/`) |
-| `<domain>-<role>` | `perf-worker`, `prompt-debug-worker` | Flat agent with no persona yet (`lib/core/agents/`) — prefix added when a persona is assigned |
+| `<persona>-<descriptive>-<role>` | `developer-feature-strategist`, `developer-rfc-writer` | Agent inside a persona folder with multiple agents sharing the same role |
+| `<persona>-<role>` | `debugger-worker`, `auditor-worker` | Agent inside a persona folder where the role alone is unambiguous |
+| `<descriptive>-<role>` | `perf-worker`, `prompt-debug-worker` | Flat agent with no persona yet — persona prefix added when assigned |
 
-> The filename now tells you the persona AND the agent type instantly — no need to open the file.
+> The filename tells you the persona and the agent's function at a glance — no need to open the file.
 
 ---
 
@@ -407,21 +379,7 @@ Hooks are shell commands that execute at defined lifecycle events — with no mo
 
 ---
 
-### 6. Official Docs Compliance
-
-Every design decision must comply with Claude Code's official documentation.
-
-**Compliance checklist:**
-- Skill directories follow `.claude/skills/<name>/SKILL.md` convention
-- Agent files follow `.claude/agents/<name>.md` convention
-- Frontmatter fields use only documented keys
-- Memory scopes and permission modes use documented values
-
-Confirmed undocumented field: `agents` — not in the official spec (verified against official docs 2026-05-09). Claude likely treats unknown frontmatter keys as hints. Use with awareness that it may change or be ignored in future versions. Runtime delegation always happens via the `Agent` tool — `agents:` is a static declaration for human and tooling readability, not a guaranteed runtime mechanism.
-
----
-
-### 7. Convention Enforcement — Self-Auditing Architecture
+### 6. Convention Enforcement — Self-Auditing Architecture
 
 The agentic system enforces its own conventions through automated review — the same principle applied recursively. Convention compliance tooling audits agent and skill files for structural violations before they reach downstream consumers.
 
@@ -740,7 +698,7 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 
 | Goal | How it's achieved |
 |---|---|
-| Token efficiency | Isolated context; Search Protocol decision gate; Haiku for mechanical workers; file paths only between phases; strategist state files prevent mid-run re-reads; context relay — skill reads runs context from disk and inlines into spawn prompt, spawned agent pays zero pre-flight read cost |
+| Token efficiency | Isolated context; Search Protocol decision gate; disk-first inter-agent communication — findings written to disk, paths not content passed between phases, Orchestrator context stays clean across rounds |
 | Modular knowledge | Skills preloaded, not embedded |
 | Single source of truth | `reference/` Grep-accessed, never duplicated |
 | Safe destructive operations | Use hooks in `settings.json` for automated bash execution without model involvement |
