@@ -56,17 +56,17 @@ scripts/build-plugin.sh --platform=all
 
 This regenerates `dist/plugins/<platform>/` for every platform from `lib/`. The built output is committed so the marketplace serves the latest version.
 
-## Step 5 — Commit and tag
+## Step 5 — Commit, tag, and push
 
 Run:
 ```bash
 git add VERSION CHANGELOG.md dist/plugins/
 git commit -m "chore(release): vX.Y.Z"
 git tag vX.Y.Z
+git push && git push --tags
 ```
 
 Then tell the user:
 - The new version number
-- The git tag created
-- To push with: `git push && git push --tags`
+- The git tag pushed
 - Engineers with auto-update enabled will receive the plugin update automatically on next session
