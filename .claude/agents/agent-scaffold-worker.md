@@ -93,7 +93,7 @@ Use `AskUserQuestion` for each detail — one question at a time. Do not bundle 
 
 **All types — ask in this order:**
 
-1. > "What should this be named?" (Conventions: `<layer>-<action>-<target>` for skills; `<domain>-worker` or `<domain>-strategist` for agents)
+1. > "What should this be named?" (Conventions: `<layer>-<action>-<target>` for skills; `<persona>-[descriptive]-<role>` for agents — role always last)
 2. > "How would you describe it in one sentence? This is used for routing — use vocabulary developers naturally say."
 
 **Worker — ask additionally, one at a time:**
@@ -113,7 +113,7 @@ Use `AskUserQuestion` for each detail — one question at a time. Do not bundle 
 
 **Skill — ask additionally, one at a time:**
 
-3. > "What tools or `allowed-tools` does it need?"
+3. > "What tools does it need?"
 4. (Platform-contract or platform-only only) > "Which platform(s) does it target?"
 
 **New Persona — ask additionally, one at a time:**
@@ -209,7 +209,7 @@ After completing, check for `.claude/agents.local/extensions/<name>.md` — if i
 name: <name>
 description: <description>
 model: sonnet
-tools: Read, Glob, Grep, Bash, AskUserQuestion
+tools: Read, Glob, Grep
 agents:
   - <worker1>
   - <worker2>
@@ -275,7 +275,7 @@ tools: <tools>
 <procedure — one focused task, under 30 lines, no branching>
 ```
 
-**Type W (Workflow):**
+**Type O (Orchestrator):**
 ```
 ---
 name: <name>

@@ -40,8 +40,8 @@ How to check: `Grep` the file for any of the above patterns. A match in the body
 > **Why:** `lib/core/` agents are consumed by all platforms via symlink. Platform-specific rules embedded in a core worker silently mislead workers on other platforms (iOS, Flutter) that call the same agent.
 
 **All agents**
-- [ ] Filename follows `<domain>-strategist.md` or `<domain>-worker.md` convention
-- [ ] If in a persona subdir (`builder/`, `debugger/`, `tracker/`, `auditor/`), the persona assignment is correct
+- [ ] Filename follows `<persona>-[descriptive]-<role>.md` convention — role always last, persona prefix required, any role label allowed
+- [ ] If in a persona subdir (`developer/`, `debugger/`, `tracker/`, `auditor/`, `qa/`), the persona assignment is correct
 
 ## Skill Checklist
 
