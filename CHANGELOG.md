@@ -7,6 +7,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [8.5.0] — 2026-06-02
+
+### Added
+- **5-slot body structure (`## Input`, `## Output`, `## Knowledge`, `## Reasoning`)** — added to all six developer agents that were missing them: `developer-feature-strategist`, `developer-feature-worker`, `developer-groom-strategist`, `developer-ui-worker`, `developer-rfc-writer`, `developer-test-worker`
+- **`arch-check-conventions`** — new Body Structure check in the Agent Checklist verifies the four conceptual slots (Input, Output, Knowledge, Reasoning) are present in every agent file; Warning for missing Input/Output, Info for missing Knowledge/Reasoning
+
+### Changed
+- **`developer-backend-strategist` → `developer-backend-worker`** — renamed to correct role label; agent writes source files directly and is a worker, not a strategist; updated all cross-references (`developer-backend/SKILL.md`, `perf-worker.md`, `presentation-theory.md`)
+- **`developer-rfc-writer`** — `## Input Contract` renamed to `## Input`; Steps restructured under `## Reasoning` with `## Step 4` promoted to `## Output`
+- **`developer-test-worker`** — `## Layer Routing` renamed to `## Reasoning`; removed spurious `user-invocable: true` (skill-only field)
+- **Planner descriptions** — `developer-{domain,data,pres,app}-planner` descriptions updated from "No writes" to "Writes findings to run_dir only — no codebase writes"
+
+### Fixed
+- **`web/packages/feature.pkg`** — replaced non-existent agent names (`domain-worker`, `data-worker`, `presentation-worker`) with actual planner and worker agent names
+- **`web/packages/backend.pkg`** — replaced non-existent agent names (`developer-backend-orchestrator`, `domain-worker`, `data-worker`, `presentation-worker`) with `developer-backend-worker developer-test-worker`
+
+---
+
 ## [8.4.1] — 2026-06-02
 
 ### Fixed
