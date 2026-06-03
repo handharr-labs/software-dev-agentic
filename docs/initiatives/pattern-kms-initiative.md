@@ -44,8 +44,8 @@
 | `kms/scripts/seed_kms.py` — bootstrap: reads `lib/core/knowledge/` → upserts into ChromaDB; extracts summary from first sentence of `## Theory` | ⬜ Pending |
 | `build-plugin.sh` updated — run seed_kms.py, bundle `chroma/` dir + `kms/` Python package | ⬜ Pending |
 | Flutter base knowledge seeded as first collection | ⬜ Pending |
-| Update agent + skill `knowledge_scope:` — simplify from file paths to `discipline + platform` scope | ⬜ Pending |
-| Update agent Step 0 — replace direct `Read` calls with `kms_list` → reason → `kms_fetch` flow | ⬜ Pending |
+| Update agent + skill `knowledge_scope:` — simplify to `discipline + platform` scope only | ⬜ Pending |
+| Update agent Step 0 — primary: `kms_list` → reason → `kms_fetch`; fallback: `Read lib/core/knowledge/{platform}/engineering/{topic}/index.md` → Read pattern files | ⬜ Pending |
 
 ### Phase 2 — Scan Agent
 
@@ -135,6 +135,8 @@ MCP Server (application)
 **Runtime:** Python — MCP server and seed script both use the ChromaDB Python client. Single runtime, no cross-language friction.
 
 **Source of truth:** ChromaDB is authoritative after initial seed. `lib/core/knowledge/` `.md` files are the bootstrap source — seeded once into ChromaDB. Subsequent edits go through the dashboard → ChromaDB directly. `.md` files are not kept in sync after initial seed.
+
+**Agent fallback:** `lib/core/knowledge/` acts as a read-only fallback when the MCP server is unavailable. Agent Step 0: try `kms_list` → `kms_fetch` first; if KMS unavailable, fall back to `Read {topic}/index.md` → `Read {pattern}.md` directly.
 
 ### Directory structure
 
