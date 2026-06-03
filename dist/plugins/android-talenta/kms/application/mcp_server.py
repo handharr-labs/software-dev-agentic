@@ -22,14 +22,51 @@ from kms.domain.use_cases.upsert_knowledge import UpsertKnowledge
 from kms.domain.entities import KnowledgeNode
 
 _db_path = os.environ.get("KMS_DB_PATH", os.path.join(os.path.dirname(__file__), "..", "..", "chroma"))
-_repo = ChromaKnowledgeRepository(db_path=os.path.abspath(_db_path))
+_db_path_abs = os.path.abspath(_db_path)
+_repo = ChromaKnowledgeRepository(db_path=_db_path_abs)
 
 _list_uc = ListKnowledge(_repo)
 _fetch_uc = FetchKnowledge(_repo)
 _query_uc = QueryKnowledge(_repo)
 _upsert_uc = UpsertKnowledge(_repo)
 
+_knowledge_dir = os.environ.get("KMS_KNOWLEDGE_DIR", os.path.join(os.path.dirname(__file__), "..", "..", "knowledge"))
+_knowledge_dir_abs = os.path.abspath(_knowledge_dir)
+
 mcp = FastMCP("kms")
+
+
+@mcp.tool()
+def kms_info() -> dict:
+    """
+    Return diagnostic info about this KMS server instance.
+    Call this from kms-status to verify the plugin shipped correctly:
+    - db_path: ChromaDB directory the server is reading from
+    - db_exists: whether the chroma directory is present
+    - total_nodes: total node count in the DB
+    - knowledge_dir: fallback markdown directory shipped with the plugin
+    - knowledge_exists: whether the knowledge directory is present
+    - knowledge_files: count of pattern .md files (excludes index.md)
+    """
+    import glob as _glob
+    db_exists = os.path.isdir(_db_path_abs)
+    knowledge_exists = os.path.isdir(_knowledge_dir_abs)
+    knowledge_files = len([
+        f for f in _glob.glob(os.path.join(_knowledge_dir_abs, "**", "*.md"), recursive=True)
+        if os.path.basename(f) != "index.md"
+    ]) if knowledge_exists else 0
+    try:
+        total_nodes = _repo._col.count()
+    except Exception:
+        total_nodes = -1
+    return {
+        "db_path":         _db_path_abs,
+        "db_exists":       db_exists,
+        "total_nodes":     total_nodes,
+        "knowledge_dir":   _knowledge_dir_abs,
+        "knowledge_exists": knowledge_exists,
+        "knowledge_files": knowledge_files,
+    }
 
 
 @mcp.tool()
