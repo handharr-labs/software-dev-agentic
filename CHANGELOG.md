@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.1] — 2026-06-03
+
+### Fixed
+- **Agent fallback guard** — added explicit `NEVER read from .claude/reference/code-architecture/` prohibition to fallback instruction in all 6 developer agents; model was ignoring the written fallback path and reverting to deleted legacy paths when KMS MCP was unavailable
+
+---
+
 ## [9.2.0] — 2026-06-03
 
 ### Added

@@ -53,7 +53,7 @@ Primary — KMS MCP:
 2. From the TOC, identify nodes with `topic: app` or `topic: dependency_injection`
 3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope
 
-Fallback — if `kms_list` tool unavailable:
+Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
 ```
 software-dev-agentic/lib/core/knowledge/{platform}/engineering/app/index.md
 software-dev-agentic/lib/core/knowledge/{platform}/engineering/dependency_injection/index.md

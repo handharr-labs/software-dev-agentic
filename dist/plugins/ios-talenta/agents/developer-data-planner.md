@@ -39,7 +39,7 @@ Primary — KMS MCP:
 2. From the TOC, identify nodes with `topic: data`
 3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="data", pattern="{pattern}")` for each pattern in scope
 
-Fallback — if `kms_list` tool unavailable:
+Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
 ```
 software-dev-agentic/lib/core/knowledge/{platform}/engineering/data/index.md
 ```

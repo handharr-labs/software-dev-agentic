@@ -58,7 +58,7 @@ Primary — KMS MCP:
 1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md, `{platform}` from plan.md frontmatter
 2. `kms_fetch(...)` for `topic: syntax_conventions, pattern: conventions`, `topic: utilities` (relevant patterns), `topic: error_handling, pattern: failure_types`
 
-Fallback — if `kms_list` tool unavailable:
+Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
 ```
 software-dev-agentic/lib/core/knowledge/{platform}/engineering/syntax_conventions/conventions.md
 software-dev-agentic/lib/core/knowledge/{platform}/engineering/utilities/index.md
