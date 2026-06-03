@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.2] — 2026-06-03
+
+### Added
+- **`kms-status` skill** — user-invocable validation skill; calls `kms_list()` with no filters, groups by platform/project, reports node counts and topic coverage; surfaces KMS OFFLINE or empty-seed conditions
+
+---
+
 ## [9.2.1] — 2026-06-03
 
 ### Fixed
