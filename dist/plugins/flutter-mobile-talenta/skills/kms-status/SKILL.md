@@ -1,6 +1,7 @@
 ---
 name: kms-status
 description: Validate KMS MCP connectivity and summarize what's seeded — call kms_list, group by platform/project, report counts and topic coverage.
+user-invocable: true
 ---
 
 ## Purpose
