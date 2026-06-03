@@ -48,11 +48,20 @@ Extract from the inlined content:
 
 Read the stateholder contract from disk using the `Read` tool on the path from `stateholder_contract`. If the path is `"none"` or null, skip — UI wiring will use only the plan description.
 
-Load the UI-relevant sections of the presentation impl reference before writing any code:
+Load the UI-relevant presentation knowledge reference before writing any code:
 ```
-.claude/reference/code-architecture/presentation-impl.md
+lib/core/knowledge/{platform}/engineering/presentation/index.md
 ```
-Grep `^## ` to list headings. Load only sections relevant to Screen, Component, and Navigator. Do not load domain, data, or app sections.
+
+Then read specific pattern files by scope — do not load domain, data, or app patterns:
+
+| Scope | Pattern files |
+|---|---|
+| Screen | `presentation/screen_structure.md`, `presentation/bloc_listener.md` |
+| Component | `presentation/component.md` |
+| Navigator | `navigation/go_router.md` (flutter), `navigation/coordinator.md` (ios), `navigation/routes.md` (web) — pick by platform |
+
+Cascade: if `lib/core/knowledge/{project}/engineering/presentation/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value extracted from plan.md frontmatter.
 
 Check state.json to resume from a previous run:
 ```bash
@@ -103,7 +112,7 @@ If no catalog: skip to Level 2.
 **Level 2 — Project shared components**
 
 For each element in `## Custom Widgets` (or all elements if no catalog):
-- Grep `presentation-impl.md` for the `Shared Component Paths` section heading → read that section
+- Grep the presentation index file (`lib/core/knowledge/{platform}/engineering/presentation/index.md`) for the `Shared Component Paths` entry → read the referenced pattern file
 - For each path: Grep for keywords matching the element (e.g. "card", "list", "avatar")
 - ≥80% behavior match → **reuse**, remove from Custom Widgets
 - Partial match → **extend** via `Read` + `Edit`, remove from Custom Widgets

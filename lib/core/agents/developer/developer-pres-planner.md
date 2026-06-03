@@ -35,28 +35,27 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference**
 
-Always load:
+Knowledge — read indexes, then fetch by scope:
 ```
-.claude/reference/code-architecture/presentation-theory.md
-.claude/reference/code-architecture/presentation-impl.md
-```
-
-Load only when `scope` includes `screen`, `component`, or `navigator` (or scope is absent):
-```
-.claude/reference/code-architecture/ui-theory.md
-.claude/reference/code-architecture/navigation-impl.md
+lib/core/knowledge/{platform}/engineering/presentation/index.md
+lib/core/knowledge/{platform}/engineering/state_management/index.md
 ```
 
-Grep `^## ` in each file. For each heading that matches the scope and its prerequisites, read it immediately using the `<!-- N -->` line count as `limit`:
+For each pattern in scope, read the specific file:
+```
+lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md
+```
 
-| Scope key | Direct sections | Structural prerequisites |
-|---|---|---|
-| `stateholder` | `StateHolder`, `State`, `Event`, `BLoC`, `Cubit`, `ViewModel`, `Presenter` | — |
-| `screen` | `Screen` | StateHolder-related sections (screen binds to stateholder contract) |
-| `component` | `Component`, `Widget`, `Shared` | — |
-| `navigator` | all sections of `navigation.md` | — |
+Cascade: if `lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value from the `platform` input parameter.
 
-Always include `Dependency Rule`, `Creation Order`, and `Layer Invariants`. If scope is absent, read all sections.
+| Scope key | Pattern files |
+|---|---|
+| `stateholder` | `state_management/bloc.md` (or `state_management/cubit.md`) |
+| `screen` | `presentation/screen_structure.md`, `presentation/bloc_listener.md` |
+| `component` | `presentation/component.md` |
+| `navigator` | `navigation/go_router.md` (flutter), `navigation/coordinator.md` (ios), `navigation/routes.md` (web) — pick by platform |
+
+If scope is absent, read all pattern files listed above.
 
 **Step 0a — Consume Figma groups (skip if `figma_groups` not provided)**
 

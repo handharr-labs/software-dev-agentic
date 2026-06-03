@@ -2,13 +2,14 @@
 name: developer-test-create-data
 description: Create unit tests for repository implementations and mappers.
 user-invocable: false
+knowledge_scope: engineering/testing
 ---
 
-Create data layer tests following `.claude/reference/code-architecture/testing-impl.md ## Repository Tests` and `## Mapper Tests`.
+Create data layer tests following `lib/core/knowledge/{platform}/engineering/testing/repository_test.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/code-architecture/testing-impl.md` — locate `## Repository Tests` and `## Mapper Tests` for the canonical pattern
+1. **Read** `lib/core/knowledge/{platform}/engineering/testing/repository_test.md` for the canonical pattern. Check `lib/core/knowledge/{project}/engineering/testing/repository_test.md` first (project-specific override), fall back to `lib/core/knowledge/{platform}/engineering/testing/repository_test.md` (platform-base).
 2. **Read** the repository impl and mapper implementations completely
 3. **Identify** all code paths: data source success, data source error, mapping edge cases
 4. **Locate** path per the impl doc's test directory convention

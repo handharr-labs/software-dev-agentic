@@ -2,14 +2,15 @@
 name: developer-pres-create-screen
 description: Create the Screen / View that binds to the StateHolder and renders state.
 user-invocable: false
+knowledge_scope: engineering/presentation
 ---
 
-Create a Screen following `.claude/reference/code-architecture/presentation-impl.md ## Screen Structure`.
+Create a Screen following `lib/core/knowledge/{platform}/engineering/presentation/screen_structure.md`.
 
 ## Steps
 
 1. **Read** `.claude/runs/<feature>/stateholder-contract.md` completely — must match state fields and events exactly
-2. **Read** `.claude/reference/code-architecture/presentation-impl.md` — locate `## Screen Structure` for the canonical pattern and file path convention
+2. **Read** `lib/core/knowledge/{platform}/engineering/presentation/screen_structure.md` for the canonical pattern and file path convention. Check `lib/core/knowledge/{project}/engineering/presentation/screen_structure.md` first (project-specific override), fall back to `lib/core/knowledge/{platform}/engineering/presentation/screen_structure.md` (platform-base).
 3. **Locate** path per the impl doc's screen directory convention
 4. **Create** the screen file following the impl doc pattern
 5. **Register** route/navigation entry if required by the platform (see impl doc)

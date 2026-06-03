@@ -48,24 +48,28 @@ Skip all other steps entirely. Always run Step 1 (platform reference) regardless
 
 **Step 1 — Load reference**
 
+Knowledge — read indexes, then fetch by scope:
 ```
-.claude/reference/code-architecture/app-layer-theory.md
-.claude/reference/code-architecture/di-theory.md
-.claude/reference/code-architecture/app-layer-impl.md
-.claude/reference/code-architecture/di-impl.md
+lib/core/knowledge/{platform}/engineering/app/index.md
+lib/core/knowledge/{platform}/engineering/dependency_injection/index.md
 ```
 
-Grep `^## ` in each file. For each heading that matches the scope, read it immediately using the `<!-- N -->` line count as `limit`:
+For each pattern in scope, read the specific file:
+```
+lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md
+```
 
-| Scope key | Sections to prioritize |
+Cascade: if `lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value from the `platform` input parameter.
+
+| Scope key | Pattern files |
 |---|---|
-| `di` | All sections in `di.md`; `## DI`-related sections in `app-layer.md` and platform `contract/builder/di.md` |
-| `route` | `## Route` / `## Navigation` sections in `app-layer.md` |
-| `module` | `## Module` sections in `app-layer.md` |
-| `analytics` | `## Analytics` sections in `app-layer.md` |
-| `feature_flag` | `## Feature Flag` sections in `app-layer.md` |
+| `di` | `dependency_injection/get_it.md` (flutter), `dependency_injection/di_setup.md` (ios/web), `dependency_injection/registration_order.md` |
+| `route` | `app/{route_file}.md` — read from index |
+| `module` | `app/{module_file}.md` — read from index |
+| `analytics` | `app/analytics_constants.md` if exists |
+| `feature_flag` | `app/feature_flag_registration.md` if exists |
 
-Always include `## Planner Search Patterns` from `app-layer.md` — Steps 2–6 depend on it. If scope is absent, read all sections. Sections marked with a stub (`> No convention established yet`) have no wiring pattern to enforce — skip codebase discovery for those sections.
+Always include `## Planner Search Patterns` from the app index — Steps 2–6 depend on it. If scope is absent, read all pattern files listed above. Sections marked with a stub (`> No convention established yet`) have no wiring pattern to enforce — skip codebase discovery for those sections.
 
 **Step 2 — Locate DI registration files**
 

@@ -4,11 +4,11 @@ description: Set up the project environment following the platform's setup refer
 user-invocable: false
 ---
 
-Set up the project following `.claude/reference/project.md`.
+Set up the project following `lib/core/knowledge/{project}/engineering/project_structure/project_structure.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/project.md` completely — follow the setup instructions exactly
+1. **Read** `lib/core/knowledge/{project}/engineering/project_structure/project_structure.md` completely — follow the setup instructions exactly
 2. Execute each setup step in the order specified
 3. Verify the setup succeeded per the doc's verification section (if present)
 

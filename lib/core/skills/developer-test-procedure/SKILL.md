@@ -26,7 +26,7 @@ Unit tests only. No UI/integration tests. No modifications to production source 
 Before executing any step, load the platform implementation guide:
 
 ```
-.claude/reference/<platform>/testing-procedure-impl.md
+lib/core/knowledge/{platform}/engineering/testing/procedure.md
 ```
 
 Grep `^## ` to list all headings. Read only the sections relevant to the current step — do not read the full file upfront.

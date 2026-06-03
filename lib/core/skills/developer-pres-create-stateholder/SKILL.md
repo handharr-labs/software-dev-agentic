@@ -2,13 +2,14 @@
 name: developer-pres-create-stateholder
 description: Create the StateHolder (BLoC / ViewModel / Presenter) for a feature screen.
 user-invocable: false
+knowledge_scope: engineering/state_management
 ---
 
-Create the StateHolder following `.claude/reference/code-architecture/presentation-impl.md ## StateHolder`.
+Create the StateHolder following `lib/core/knowledge/{platform}/engineering/state_management/bloc.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/code-architecture/presentation-impl.md` — read `## StateHolder` and all `###` sub-sections for invariants and the platform-specific implementation pattern
+1. **Read** `lib/core/knowledge/{platform}/engineering/state_management/bloc.md` — read all sections for invariants and the platform-specific implementation pattern. Check `lib/core/knowledge/{project}/engineering/state_management/bloc.md` first (project-specific override), fall back to `lib/core/knowledge/{platform}/engineering/state_management/bloc.md` (platform-base).
 2. **Confirm** use cases exist in domain layer before proceeding
 3. **Locate** path per `### Creation Order` in the impl doc
 4. **Create** the StateHolder file(s) following the implementation pattern

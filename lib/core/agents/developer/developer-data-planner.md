@@ -34,21 +34,27 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference**
 
+Knowledge — read index, then fetch by scope:
 ```
-.claude/reference/code-architecture/data-theory.md
-.claude/reference/code-architecture/data-impl.md
+lib/core/knowledge/{platform}/engineering/data/index.md
 ```
 
-Grep `^## ` in each file. For each heading that matches the scope and its prerequisites, read it immediately using the `<!-- N -->` line count as `limit`:
+For each pattern in scope, read the specific file:
+```
+lib/core/knowledge/{platform}/engineering/data/{pattern}.md
+```
 
-| Scope key | Direct sections | Structural prerequisites |
-|---|---|---|
-| `dto` | `DTO`, `Payload` | — |
-| `mapper` | `Mapper` | `DTO`, `Entit` (mapper input and output shapes must be known) |
-| `datasource` | `Data Source` | — |
-| `repository_impl` | `Repository Implementation` | `Data Source`, `Mapper` |
+Cascade: if `lib/core/knowledge/{project}/engineering/data/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value from the `platform` input parameter.
 
-Always include `Dependency Rule`, `Creation Order`, and `Layer Invariants`. If scope is absent, read all sections.
+| Scope key | Pattern files |
+|---|---|
+| `dto` | `dto.md`, `payload.md` |
+| `mapper` | `mapper.md`, `dto.md` |
+| `datasource` | `data_source.md`, `http_client.md` |
+| `repository_impl` | `repository_impl.md`, `data_source.md`, `mapper.md` |
+| always | `dependency_rule.md`, `creation_order.md` |
+
+If scope is absent, read all pattern files listed above.
 
 **Step 1 — Locate and classify artifacts**
 

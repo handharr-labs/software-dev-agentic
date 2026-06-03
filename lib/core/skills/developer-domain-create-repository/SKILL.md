@@ -2,13 +2,14 @@
 name: developer-domain-create-repository
 description: Create a domain repository interface.
 user-invocable: false
+knowledge_scope: engineering/domain
 ---
 
-Create a Repository interface following `.claude/reference/code-architecture/domain-impl.md ## Repository Interfaces`.
+Create a Repository interface following `lib/core/knowledge/{platform}/engineering/domain/repository_interface.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/code-architecture/domain-impl.md` — locate `## Repository Interfaces` for the canonical pattern and path convention
+1. **Read** `lib/core/knowledge/{platform}/engineering/domain/repository_interface.md` for the canonical pattern and path convention. Check `lib/core/knowledge/{project}/engineering/domain/repository_interface.md` first (project-specific override), fall back to `lib/core/knowledge/{platform}/engineering/domain/repository_interface.md` (platform-base).
 2. **Identify** the data operations the feature needs
 3. **Locate** path per the impl doc's repository interface convention
 4. **Create** the interface file following the impl doc pattern

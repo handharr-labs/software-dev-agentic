@@ -2,13 +2,14 @@
 name: developer-pres-create-component
 description: Create a reusable presentational component that takes plain domain entities with no state-management awareness.
 user-invocable: false
+knowledge_scope: engineering/presentation
 ---
 
-Create a presentational component following `.claude/reference/code-architecture/presentation-impl.md ## Component`.
+Create a presentational component following `lib/core/knowledge/{platform}/engineering/presentation/component.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/code-architecture/presentation-impl.md` — locate `## Component` for the canonical pattern and path convention
+1. **Read** `lib/core/knowledge/{platform}/engineering/presentation/component.md` for the canonical pattern and path convention. Check `lib/core/knowledge/{project}/engineering/presentation/component.md` first (project-specific override), fall back to `lib/core/knowledge/{platform}/engineering/presentation/component.md` (platform-base).
 2. **Check** `## Shared Component Paths` for existing reusable components before creating a new one
 3. **Identify** the entity or data type the component displays
 4. **Locate** the path per the impl doc's component directory convention

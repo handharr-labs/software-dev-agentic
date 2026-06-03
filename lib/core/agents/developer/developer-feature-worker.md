@@ -52,16 +52,18 @@ Extract from the inlined content:
 - Artifact tables per layer (Domain / Data / Presentation / UI)
 - Key Symbols per existing artifact from context.md
 
-Load cross-cutting convention references before writing any code — impl files only, no theory:
+Load cross-cutting convention references before writing any code — knowledge files only, no theory:
 ```
-.claude/reference/code-architecture/syntax-conventions-impl.md
-.claude/reference/code-architecture/utilities-impl.md
-.claude/reference/code-architecture/error-handling-impl.md
+lib/core/knowledge/{platform}/engineering/syntax_conventions/conventions.md
+lib/core/knowledge/{platform}/engineering/utilities/index.md
+lib/core/knowledge/{platform}/engineering/error_handling/failure_types.md
 ```
 
-Grep `^## ` in each file to list all headings. From the artifact types present in plan.md, decide which sections are needed — load only those. Apply every loaded convention throughout all artifacts — this is not optional.
+From the artifact types present in plan.md, decide which utilities are needed — for utilities, read specific files from the index. Apply every loaded convention throughout all artifacts — this is not optional.
 
-Layer-specific impl references (`domain-impl.md`, `data-impl.md`, `presentation-impl.md`, `app-layer-impl.md`) are loaded **per-artifact** immediately before calling the relevant skill — not here. This keeps reference knowledge current after context compaction.
+Cascade: if `lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value extracted from plan.md frontmatter.
+
+Layer-specific knowledge references are loaded **per-artifact** immediately before calling the relevant skill — not here. This keeps reference knowledge current after context compaction.
 
 Check for a state file to resume from a previous run:
 ```bash
@@ -105,7 +107,7 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific impl reference for this artifact type (e.g. `domain-impl.md` for entities/use cases, `data-impl.md` for mappers/datasources, `presentation-impl.md` for stateholders/screens). Grep `^## ` to list headings, read only the section(s) relevant to this artifact type
+2. Load the layer-specific knowledge reference for this artifact type — read `lib/core/knowledge/{platform}/engineering/{topic}/index.md` (e.g. `domain/index.md` for entities/use cases, `data/index.md` for mappers/datasources, `state_management/index.md` for stateholders), then read only the pattern file(s) relevant to this artifact type
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):
    - Look up this artifact's name in the `Figma Alignment` table — read the `Figma Files` column directly to get the list of `.md` file paths. No Glob needed.
    - `Read` each listed `.md` file body only — extract `State` and `Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
@@ -145,11 +147,11 @@ The path is recorded in `state.json` under `stateholder_contract`. The calling s
 App layer wiring is always direct `Read` + `Edit` — no skill is needed. For each row in the `## App Layer` section of `plan.md`:
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
-2. Load the platform app-layer reference to confirm the exact pattern:
+2. Load the platform app-layer knowledge reference to confirm the exact pattern:
    ```
-   .claude/reference/code-architecture/app-layer-impl.md
+   lib/core/knowledge/{platform}/engineering/app/index.md
    ```
-   Grep for the section heading, then `Read` with `offset` + `limit`.
+   Read specific pattern files from the index as needed for this wiring entry.
 3. `Read` the target file using `offset` + `limit` around the insertion point (Grep for a known symbol or section marker first).
 4. Apply the targeted edit — add only what the plan specifies.
 5. Validate: `Grep` for the newly added symbol or registration call in the modified file.

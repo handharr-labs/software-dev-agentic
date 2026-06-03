@@ -2,13 +2,14 @@
 name: developer-test-create-domain
 description: Create unit tests for domain use cases and services.
 user-invocable: false
+knowledge_scope: engineering/testing
 ---
 
-Create domain tests following `.claude/reference/code-architecture/testing-impl.md ## Use Case Tests`.
+Create domain tests following `lib/core/knowledge/{platform}/engineering/testing/use_case_test.md`.
 
 ## Steps
 
-1. **Read** `.claude/reference/code-architecture/testing-impl.md` — locate `## Use Case Tests` (and `## Service Tests` if applicable) for the canonical pattern
+1. **Read** `lib/core/knowledge/{platform}/engineering/testing/use_case_test.md` for the canonical pattern. Check `lib/core/knowledge/{project}/engineering/testing/use_case_test.md` first (project-specific override), fall back to `lib/core/knowledge/{platform}/engineering/testing/use_case_test.md` (platform-base).
 2. **Read** the use case / service implementation completely
 3. **Identify** all code paths and edge cases to cover
 4. **Locate** path per the impl doc's test directory convention

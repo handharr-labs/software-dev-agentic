@@ -3,13 +3,14 @@ name: auditor-arch-check
 description: Audit a feature's code against the platform's layer dependency rules and invariants.
 user-invocable: false
 allowed-tools: Read, Glob, Grep
+knowledge_scope: engineering/*
 ---
 
-Audit the specified feature against `.claude/reference/code-architecture/` impl docs.
+Audit the specified feature against `lib/core/knowledge/{platform}/engineering/` knowledge docs.
 
 ## Steps
 
-1. **Read** each `*-impl.md` file — collect `## Dependency Rule` and `### Layer Invariants` (or `## Layer Invariants`) sections for each layer
+1. **Read** `lib/core/knowledge/{platform}/engineering/{topic}/index.md` for each topic under audit — collect `## Dependency Rule` and `### Layer Invariants` (or `## Layer Invariants`) sections for each layer
 2. **Grep** the feature's files for forbidden imports per each layer's dependency rule
 3. **Check** each layer's invariants against the actual code
 4. Report violations grouped by layer and file

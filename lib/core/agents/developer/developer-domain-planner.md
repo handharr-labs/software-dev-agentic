@@ -34,21 +34,27 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference**
 
+Knowledge — read index, then fetch by scope:
 ```
-.claude/reference/code-architecture/domain-theory.md
-.claude/reference/code-architecture/domain-impl.md
+lib/core/knowledge/{platform}/engineering/domain/index.md
 ```
 
-Grep `^## ` in each file. For each heading that matches the scope and its prerequisites, read it immediately using the `<!-- N -->` line count as `limit`:
+For each pattern in scope, read the specific file:
+```
+lib/core/knowledge/{platform}/engineering/domain/{pattern}.md
+```
 
-| Scope key | Direct sections | Structural prerequisites |
-|---|---|---|
-| `entity` | `Entit` | — |
-| `usecase` | `Use Case` | `Repository Interfaces`, `Entit` |
-| `repository` | `Repository Interfaces` | `Entit` |
-| `service` | `Domain Services` | — |
+Cascade: if `lib/core/knowledge/{project}/engineering/domain/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value from the `platform` input parameter.
 
-Always include `Dependency Rule` and `Creation Order`. If scope is absent, read all sections.
+| Scope key | Pattern files |
+|---|---|
+| `entity` | `entity.md` |
+| `usecase` | `use_case.md`, `repository_interface.md`, `entity.md` |
+| `repository` | `repository_interface.md`, `entity.md` |
+| `service` | `domain_service.md` |
+| always | `dependency_rule.md`, `creation_order.md` |
+
+If scope is absent, read all pattern files listed above.
 
 **Step 1 — Locate and classify artifacts**
 
