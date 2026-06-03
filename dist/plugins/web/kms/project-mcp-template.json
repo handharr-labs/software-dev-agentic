@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-web\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-web/$latest/kms/server.sh\""
+      ]
+    }
+  }
+}
