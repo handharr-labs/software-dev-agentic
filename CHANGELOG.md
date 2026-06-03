@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.8] — 2026-06-03
+
+### Removed
+- **`dart-repo-knowledge` skill + `dart-knowledge` agents** — unrelated to KMS; was a separate dartdoc RAG pipeline that caused the model to suggest it as a KMS fix
+
+### Fixed
+- **`kms-status` skill** — replaced open-ended empty-case instruction with an explicit output block; model was hallucinating `/dart-repo-knowledge` as the fix when nodes = 0; now outputs a fixed restart instruction instead
+
+---
+
 ## [9.2.7] — 2026-06-03
 
 ### Fixed

@@ -11,12 +11,22 @@ Confirm the KMS MCP server is reachable and show what knowledge is available in 
 ## Steps
 
 1. Call `kms_list()` with no filters — fetch the full TOC.
-2. If the call fails or the tool is unavailable: report **KMS OFFLINE** and stop.
+2. If the call fails or the tool is unavailable: output the OFFLINE block below and stop.
 3. Group results by `platform` → `project` → `discipline` → count of nodes.
 4. For each platform+project pair, list distinct topics covered.
-5. Output the summary below.
+5. Output the ONLINE block below. Do not add any text, suggestions, or next steps beyond the block.
 
-## Output
+## Output — OFFLINE
+
+```
+KMS Status: OFFLINE
+
+The kms_list tool is not available. To enable KMS:
+1. Ensure .mcp.json exists at your project root (see README Setup — Plugin).
+2. Restart Claude Code to apply MCP server changes.
+```
+
+## Output — ONLINE, nodes > 0
 
 ```
 KMS Status: ONLINE
@@ -30,5 +40,16 @@ ios            ios-talenta              {N}    domain, data, presentation, navig
 ...
 ```
 
-If any platform has 0 nodes: flag it as `⚠ empty`.
-If total nodes is 0: report **KMS ONLINE but empty — seed may be missing**.
+Flag any platform with 0 nodes as `⚠ empty`.
+
+## Output — ONLINE, nodes = 0
+
+```
+KMS Status: ONLINE
+Total nodes: 0
+
+⚠ KMS server is reachable but the knowledge store is empty.
+  This usually means the plugin was just installed or updated.
+  Try: restart Claude Code, then run /kms-status again.
+  If still empty after restart, the plugin chroma seed may be missing — rebuild the plugin.
+```
