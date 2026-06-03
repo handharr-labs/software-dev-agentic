@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.5] — 2026-06-03
+
+### Fixed
+- **`install-plugin.sh` KMS launcher** — replaced hardcoded versioned path with a version-agnostic `bash -c` command that resolves the latest installed plugin version at runtime (`ls -v ... | tail -1`); survives plugin updates without re-running `install-plugin.sh`
+
+---
+
 ## [9.2.4] — 2026-06-03
 
 ### Fixed

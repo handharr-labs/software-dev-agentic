@@ -98,32 +98,33 @@ with open('$CLAUDE_MD', 'w') as f:
 fi
 
 # ── KMS MCP server — write project-level .mcp.json ──────────────────────────
-# The plugin's .mcp.json uses ${CLAUDE_PLUGIN_ROOT} which bash receives
-# as a literal unexpanded string. Write an absolute path here so Claude Code
-# can start the KMS server without relying on variable expansion.
+# Claude Code does not process plugin .mcp.json for MCP server startup.
+# Write a version-agnostic project-level .mcp.json that resolves the latest
+# installed plugin version at runtime so it survives plugin updates.
 
 echo ""
 PLUGIN_CACHE="$HOME/.claude/plugins/cache/$MARKETPLACE/$PLUGIN_NAME"
 LATEST_VERSION="$(ls -v "$PLUGIN_CACHE" 2>/dev/null | tail -1)"
-KMS_SERVER="$PLUGIN_CACHE/$LATEST_VERSION/kms/server.sh"
 
-if [ -n "$LATEST_VERSION" ] && [ -f "$KMS_SERVER" ]; then
+if [ -n "$LATEST_VERSION" ] && [ -f "$PLUGIN_CACHE/$LATEST_VERSION/kms/server.sh" ]; then
   PROJECT_MCP="$PROJECT_ROOT/.mcp.json"
-  python3 - "$PROJECT_MCP" "$KMS_SERVER" <<'PYEOF'
+  # The command finds the latest installed version at launch time — survives updates.
+  KMS_CMD="latest=\$(ls -v \"$PLUGIN_CACHE\" 2>/dev/null | tail -1) && exec bash \"$PLUGIN_CACHE/\$latest/kms/server.sh\""
+  python3 - "$PROJECT_MCP" "$KMS_CMD" <<'PYEOF'
 import json, sys, os
-mcp_path, server_path = sys.argv[1], sys.argv[2]
+mcp_path, kms_cmd = sys.argv[1], sys.argv[2]
 data = {}
 if os.path.exists(mcp_path):
     with open(mcp_path) as f:
         data = json.load(f)
 data.setdefault("mcpServers", {})["kms"] = {
     "command": "bash",
-    "args": [server_path]
+    "args": ["-c", kms_cmd]
 }
 with open(mcp_path, "w") as f:
     json.dump(data, f, indent=2)
     f.write("\n")
-print(f"patch .mcp.json (kms → {server_path})")
+print(f"patch .mcp.json (kms → latest in {os.path.dirname(kms_cmd.split('exec bash')[-1].strip().strip('\"').rsplit('/',2)[0])})")
 PYEOF
 else
   echo "skip  .mcp.json (KMS server not found at $PLUGIN_CACHE/$LATEST_VERSION — rebuild plugin or re-run after install)"
