@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "kms": {
-      "command": "bash",
-      "args": ["-c", "exec \"$CLAUDE_PLUGIN_ROOT/kms/server.sh\""]
-    }
-  }
-}

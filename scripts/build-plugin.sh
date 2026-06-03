@@ -195,19 +195,6 @@ LAUNCHER
         echo "  kms          SKIP seed (chromadb not installed — run: pip install chromadb PyYAML)"
       fi
 
-      # Plugin-level .mcp.json — Claude Code does not process this for local MCP
-      # servers, but keep it for potential future support / HTTP server scenarios.
-      cat > "$out/.mcp.json" <<'MCP'
-{
-  "mcpServers": {
-    "kms": {
-      "command": "bash",
-      "args": ["-c", "exec \"$CLAUDE_PLUGIN_ROOT/kms/server.sh\""]
-    }
-  }
-}
-MCP
-
       # Project setup template — copy this to the downstream project root as .mcp.json
       # Uses $HOME so it's portable across machines.
       cat > "$out/kms/project-mcp-template.json" <<MCP_TEMPLATE

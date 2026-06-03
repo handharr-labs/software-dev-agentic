@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.10] — 2026-06-03
+
+### Fixed
+- **Plugin `.mcp.json` conflict** — removed plugin-level `.mcp.json` from the build entirely; Claude Code was loading it alongside the project-level `.mcp.json`, causing two "kms" servers to compete for the same name and producing `-32000` errors; project `.mcp.json` is the only source of truth
+
+---
+
 ## [9.2.9] — 2026-06-03
 
 ### Added
