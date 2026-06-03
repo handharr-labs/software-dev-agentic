@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.3] — 2026-06-03
+
+### Fixed
+- **`server.sh` dep check** — added `mcp` to the auto-install guard (`import chromadb, yaml, mcp`); previously only `chromadb` and `yaml` were checked so the `mcp` package was never installed on first run, causing `ModuleNotFoundError` and silently killing the MCP server
+- **`kms-status` skill** — removed `allowed-tools: mcp__kms__kms_list`; when KMS MCP is offline the tool doesn't exist, causing Claude Code to fail loading the skill entirely and showing "Unknown command"
+
+---
+
 ## [9.2.2] — 2026-06-03
 
 ### Added
