@@ -1,6 +1,6 @@
 # Pattern KMS Initiative
 
-**Status:** Phase 2 in progress — `agent-kms-scan-worker` built; sync-platform wired; flutter base + project scans pending
+**Status:** Phase 3 complete — dashboard built; Phase 2 flutter/project scans pending
 **Goal:** Replace static `lib/platforms/*/reference/*.md` files with a queryable SQLite-backed knowledge store — agents fetch implementation patterns via MCP instead of grepping flat files.
 
 ---
@@ -60,7 +60,7 @@
 
 | Task | Status |
 |---|---|
-| Local web UI — hierarchical nav + section editor | ⬜ Pending |
+| Local web UI — hierarchical nav + section editor | ✅ Done — `kms/dashboard/server.py` + `index.html`; launch via `scripts/kms-dashboard.sh` |
 
 ### Phase 4 — Extraction
 
@@ -533,9 +533,10 @@ pattern: use_case
 - [ ] Cover flutter base → project-specific (talenta, jurnal) → web → ios progressively
 
 ### Phase 3 — Dashboard (local web UI)
-- [ ] TypeScript/Node local server — `platform → discipline → topic → pattern` nav + section editor
-- [ ] Vector search UI — intent-based knowledge discovery across disciplines
-- [ ] After any `kms_upsert`: write `dashboard:{timestamp}` to `dist/.kms_seeds/.version` — release skill treats this as fresh and skips file-based reseed
+- [x] Python HTTP server — `kms/dashboard/server.py`; launcher `scripts/kms-dashboard.sh`
+- [x] `platform → discipline → topic → pattern` tree nav + section editor (`kms/dashboard/index.html`)
+- [x] Vector search UI — intent-based discovery across disciplines
+- [x] After any `kms_upsert`: write `dashboard:{timestamp}` to `dist/.kms_seeds/.version`
 
 ### Phase 4 — Extraction (when needed)
 - [ ] `RemoteChromaKnowledgeRepository` — points to hosted ChromaDB instance
