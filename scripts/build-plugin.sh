@@ -141,40 +141,55 @@ MANIFEST
       # Copy kms/ Python package into plugin.
       cp -r "$SUBMODULE/kms" "$out/kms"
 
-      # Self-locating launcher so the server works regardless of install path.
+      # Launcher — uses ${CLAUDE_PLUGIN_ROOT} injected by Claude Code at runtime.
+      # Falls back to dirname-based resolution for local --plugin-dir testing.
       cat > "$out/kms/server.sh" <<'LAUNCHER'
 #!/usr/bin/env bash
-DIR="$(cd "$(dirname "$0")" && pwd)"
-export KMS_DB_PATH="$DIR/../chroma"
-export PYTHONPATH="$DIR/.."
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+export KMS_DB_PATH="$PLUGIN_ROOT/chroma"
+export PYTHONPATH="$PLUGIN_ROOT"
 exec python3 -m kms.application.mcp_server
 LAUNCHER
       chmod +x "$out/kms/server.sh"
 
-      # Seed ChromaDB from lib/core/knowledge/.
-      echo "  kms          seeding ChromaDB from lib/core/knowledge/ ..."
-      if python3 -c "import chromadb" 2>/dev/null; then
+      # Seed ChromaDB — skip if lib/core/knowledge tree hash unchanged.
+      # Cache dir ($cache_dir) survives rm -rf $out so successive builds don't re-seed.
+      local cache_dir="$SUBMODULE/dist/.kms_seeds/$platform"
+      local marker="$cache_dir/.tree"
+      local tree_hash stored_hash=""
+      tree_hash="$(git -C "$SUBMODULE" rev-parse HEAD:lib/core/knowledge 2>/dev/null || echo "unknown")"
+      [ -f "$marker" ] && stored_hash="$(cat "$marker")"
+
+      if [ "$tree_hash" = "$stored_hash" ] && [ -d "$cache_dir/chroma" ]; then
+        cp -r "$cache_dir/chroma" "$out/chroma"
+        echo "  kms          seed skipped (lib/core/knowledge unchanged) — restored from cache"
+      elif python3 -c "import chromadb" 2>/dev/null; then
+        echo "  kms          seeding ChromaDB from lib/core/knowledge/ ..."
         PYTHONPATH="$SUBMODULE" python3 -m kms.scripts.seed_kms \
           --knowledge-dir "$knowledge_dir" \
           --db-path "$out/chroma" 2>&1 | sed 's/^/               /'
-        echo "  kms          seeded → chroma/"
+        mkdir -p "$cache_dir"
+        rm -rf "$cache_dir/chroma"
+        cp -r "$out/chroma" "$cache_dir/chroma"
+        echo "$tree_hash" > "$marker"
+        echo "  kms          seeded → chroma/ (cache updated)"
       else
         echo "  kms          SKIP seed (chromadb not installed — run: pip install chromadb PyYAML)"
       fi
 
-      # Wire MCP server into plugin settings.
-      mkdir -p "$out/.claude"
-      cat > "$out/.claude/settings.json" <<SETTINGS
+      # Wire MCP server via .mcp.json — auto-applied when plugin is active.
+      # ${CLAUDE_PLUGIN_ROOT} is injected by Claude Code at runtime.
+      cat > "$out/.mcp.json" <<'MCP'
 {
   "mcpServers": {
     "kms": {
       "command": "bash",
-      "args": ["kms/server.sh"]
+      "args": ["${CLAUDE_PLUGIN_ROOT}/kms/server.sh"]
     }
   }
 }
-SETTINGS
-      echo "  kms          settings.json → mcpServers.kms wired"
+MCP
+      echo "  kms          .mcp.json → mcpServers.kms wired (auto-applied on plugin enable)"
     fi
   else
     echo "  kms          SKIP (lib/core/knowledge/ not found)"
