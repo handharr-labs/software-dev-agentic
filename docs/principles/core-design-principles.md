@@ -27,7 +27,7 @@ Five building blocks compose every agentic workflow. Each has one defined job �
 
 | Component | Role | One-line rule |
 |---|---|---|
-| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded on demand via Grep. Never embedded in agents or skills. |
+| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded via KMS tools (`kms_list` → reason → `kms_fetch`) when MCP available; direct file read from `lib/core/knowledge/` as fallback. Never embedded in agents or skills. |
 | **Skill** | The Hands | Procedural instructions that run in the caller's session. Type O owns the entry workflow; Type P is a thin create-step called by agents. |
 | **Agent** | The Brain | Isolated reasoning in its own context window. Handles ambiguity, makes decisions, returns structured output to the caller. |
 | **MCP** | The Reach | Structured tool calls into external systems — Jira, Figma, IDE, build tools. Agents call MCP tools directly; no copy-paste relay. |
@@ -103,7 +103,7 @@ Every agent is built from the same five parts. Together they make agent behavior
 | Part | What it is | Why it matters |
 |---|---|---|
 | **Input** | Declared parameters the agent requires to start — mode, feature name, platform, file paths. Missing input → `MISSING INPUT: <param>` immediately. | Explicit inputs make agents predictable and debuggable. |
-| **Knowledge** | Reference docs and patterns loaded on demand via Grep. Each agent loads only the sections relevant to its task — never the full file. | Specialization is a loading decision — change what an agent loads, change what it knows. |
+| **Knowledge** | Patterns loaded via KMS (`kms_list` → reason → `kms_fetch`) or direct file read fallback from `lib/core/knowledge/`. Each agent declares a `knowledge_scope` (discipline + platform) and loads only what it needs. | Specialization is a loading decision — change what an agent loads, change what it knows. |
 | **Reasoning** | The LLM applies thinking, deciding, and branching to inputs and loaded knowledge. Handles ambiguity and edge cases that no fixed script can anticipate. | The part no deterministic tool can replace today — but the slot can be swapped in the future. |
 | **Output** | Declared and structured: `Decision:` blocks, `## Findings`, `## Output` with Glob+Grep-verified paths. The calling skill routes on it without ambiguity. | Structured output makes the calling skill's routing deterministic. |
 | **Modes** | An agent can be invoked in different modes. Each mode loads only the instruction lines relevant to that invocation — the rest are never read. | One agent body, multiple contexts of use, minimal per-invocation cost. |
@@ -175,7 +175,7 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | Core agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
 | Platform-specific agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
 | Preloaded skills | Loaded at worker startup only | `skills` field |
-| Reference docs | 1 Grep call per section needed | Grep-first in worker body |
+| Knowledge patterns | `kms_list` → reason → `kms_fetch`; fallback: Read `lib/core/knowledge/` | `knowledge_scope` in agent frontmatter |
 | `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
 | Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
 | Strategist context accumulation | Minimal — disk-based hand-offs | Agents write findings to disk; skill passes paths not content; state file prevents re-reads |
@@ -310,7 +310,7 @@ Downstream projects interact with shared agents, skills, and reference docs in o
 
 Extension files contain only the delta — not a full copy. Updates to the submodule are inherited automatically.
 
-Reference docs are override-only (no extension mechanism) — they are structured with `## Section` headers and line counts that agents Grep by offset. Appending to a reference doc would corrupt those offsets and break the Grep contract.
+Reference docs are override-only (no extension mechanism). Pattern knowledge lives in `lib/core/knowledge/` — agents load it via KMS tools or direct file read; the structure is the contract, not grep offsets.
 
 **Local directories and their scope:**
 
@@ -395,7 +395,7 @@ The agentic system enforces its own conventions through automated review — the
 |---|---|---|
 | 1 | `CLAUDE.md` | Universal rules applying to every task — naming, principles, build command. ~1 page max |
 | 2 | Agent body | Decision logic for that agent only — what to do, when to do it |
-| 3 | `.claude/reference/` | Shared deep reference — patterns, examples, conventions. Loaded on demand via Grep-first |
+| 3 | `lib/core/knowledge/` | Shared pattern knowledge — theory, definitions, code patterns. Loaded via `kms_list` → reason → `kms_fetch` (MCP); direct file read as fallback. |
 
 > Folder structure for reference docs: see [submodule-repo-structure.md](submodule-repo-structure.md).
 
@@ -403,18 +403,22 @@ The agentic system enforces its own conventions through automated review — the
 
 Reference docs are organized around two levels:
 
-- **Topic** — the subject area a reference file covers. Platform-agnostic. A Topic is not engineering-specific: `domain.md` covers the domain topic for engineering; a future `components.md` would cover the design components topic; a `user-stories.md` would cover a requirements topic. One reference file per topic per platform.
-- **Term** — the canonical name for one concept within a topic. Each `##` section heading is a Term. Terms are the agent's grep keys — one Term = one name = one `##` heading, everywhere across all platforms. If platform files use different headings for the same concept, the grep misses.
+- **Topic** — the subject area a knowledge directory covers. Not engineering-specific: `domain` covers domain layer patterns; `components` covers design components; `unit_testing` covers QA patterns. One topic directory per platform.
+- **Pattern** — one concrete concept within a topic. Each pattern is a self-contained `.md` file with `## Theory`, `## Definition`, `## Code Pattern` sections. The filename is the pattern key.
 
-| Level | Example | Rule |
+| Level | Example | Location |
 |---|---|---|
-| Topic | `domain` | One reference file pair per topic per platform |
-| Term | `UseCase` | Same `##` heading on every platform that implements it |
-| Theory file | what a UseCase IS | `lib/core/reference/code-architecture/<topic>-theory.md` |
-| Impl file | how to write a UseCase in Swift | `lib/platforms/<platform>/reference/code-architecture/<topic>-impl.md` |
-| Catalog file | queryable inventory of available symbols, components, or tokens | `lib/core/reference/<topic>/<name>-catalog.md` |
+| Platform-base | `flutter/engineering/domain/` | `lib/core/knowledge/flutter/` — shared across all flutter projects |
+| Project-specific | `flutter-mobile-talenta/engineering/domain/` | `lib/core/knowledge/flutter-mobile-talenta/` — deviations only |
+| Pattern file | `use_case.md` | Self-contained: theory + definition + code pattern in one file |
+| Catalog file | queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` |
 
-Theory lives in `lib/core/` — single source of truth, platform-agnostic. Impl lives per platform. Both land at `.claude/reference/code-architecture/` downstream via symlinks. The theory file answers *what* and *why*; the impl file answers *how* in that language and syntax. A worker Greps the theory file to understand the contract, then Greps the impl file to write the correct code. One Grep each. Never the full file.
+**Agent knowledge loading — canonical flow:**
+1. `kms_list(platform, discipline)` → scoped TOC, metadata only
+2. Agent reasons over TOC — selects relevant patterns
+3. `kms_fetch(platform, project, discipline, topic, pattern)` × N — cascade: project → platform → universal
+
+**Fallback (KMS unavailable):** Read `lib/core/knowledge/{platform}/engineering/{topic}/index.md` → Read specific pattern files directly.
 
 **Placement decision rule — reference vs agent body:**
 
@@ -429,59 +433,30 @@ Theory lives in `lib/core/` — single source of truth, platform-agnostic. Impl 
 
 **Search Protocol (decision gate):**
 
-Before any `Read` call, workers answer: "Do I need the full file, or just a specific symbol/section?"
-
 | What you need | Tool |
 |---|---|
-| A specific class, function, or type | `Grep` for the name |
-| A section of a reference doc | `Grep` for the section heading |
+| Implementation patterns (theory, code) | `kms_list` → reason → `kms_fetch`; fallback: Read `lib/core/knowledge/` |
+| A specific class, function, or type in source | `Grep` for the name |
 | The full file structure (style-matching a new file) | `Read` — justified |
 | Whether a file exists | `Glob` |
 
-Read a full file only when: (a) you need its complete structure to write a new matching file, or (b) Grep returned no results. Check `reference/index.md` first if uncertain which file covers a topic.
-
-> Read:Grep ratio should stay below 3. A ratio above 6 is a P6 violation.
-
-**`knowledge-query` — canonical two-step lookup:**
-
-The Grep → Read(offset, limit) sequence is the named pattern for all targeted lookups. Two flavors:
+**`symbol-query` — canonical source lookup:**
 
 | Flavor | Target | Mechanic |
 |---|---|---|
-| `section-query` | A `##` section in a reference doc | `Grep ^## <Term>` → `Read(offset=line, limit=N)` — N comes from the `<!-- N -->` annotation on the heading |
 | `symbol-query` | A class, function, or type in source | `Grep <SymbolName>` → `Read(offset=line-5, limit=60)` — expand only if the body exceeds the window |
 
-Agent files reference these flavors by name. The mechanics above are the authoritative definition — do not re-specify them in individual agent bodies.
+**Authoring rule — canonical pattern names (ubiquitous language):**
 
-**Authoring rule — section line counts:**
+Pattern filenames in `lib/core/knowledge/` are **Terms** — the canonical name for one concept within a topic. The same concept must use the same filename across all platforms.
 
-Every `##` section heading in a reference doc must carry a line-count comment: `## Section Name <!-- N -->` where N is the number of lines from this heading to the line before the next `##` heading (or EOF for the last section). This is not cosmetic — agents extract N as the `limit` in `Read(file, offset=heading_line, limit=N)` to read exactly one section without loading the whole file. A missing or non-integer `<!-- N -->` forces a full-file Read.
-
-```markdown
-## DTOs <!-- 35 -->        ← correct: integer line count
-## Mappers <!-- stub -->   ← wrong: agent cannot extract a limit
-## Data Sources            ← wrong: no comment at all
+```
+flutter/engineering/domain/use_case.md
+ios-talenta/engineering/domain/use_case.md   ← same name — agents resolve by platform
+web/engineering/domain/use_case.md
 ```
 
-`arch-check-conventions` enforces this — a missing integer is a Warning violation.
-
-**Authoring rule — canonical Terms (ubiquitous language):**
-
-Every `##` section heading in a cross-platform reference doc is a **Term** — the canonical name for one concept within a topic, and the exact grep key an agent searches for across all platforms. The heading must be identical across all platform files that cover the same concept.
-
-This is *Ubiquitous Language* from Domain-Driven Design applied to agent tooling. One concept = one Term = one `##` heading, everywhere. No synonyms at the `##` level. Platform-specific terminology belongs in the body, not the heading.
-
-```markdown
-## Repository Interfaces <!-- 31 -->
-In Swift, these are declared as protocols...   ← platform dialect lives here
-
-## Repository Protocols <!-- 31 -->            ← wrong: breaks agent grep across platforms
-```
-
-| Contract | Axis | Rule |
-|---|---|---|
-| Vertical (line count) | Within one file | `## Section <!-- N -->` — agents extract N as read limit |
-| Horizontal (canonical heading) | Across all platforms | Same `##` text for the same concept — agents grep once, find all platforms |
+One concept = one filename, everywhere. Platform-specific content lives inside the file, not in the filename.
 
 When adding a new section to a platform reference file, check whether the same concept exists in other platforms first. If it does, use that heading exactly. If it's net-new, choose a platform-agnostic term and apply it to all platforms that need it.
 
@@ -598,10 +573,10 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Core reference** | `lib/core/reference/code-architecture/` | Yes — all platforms. Contains `<topic>-theory.md` (what/why, platform-agnostic, single source of truth). |
-| **Core catalog** | `lib/core/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `section-query` or `symbol-query` these; never load in full. |
-| **Platform reference** | `lib/platforms/<platform>/reference/code-architecture/` | Yes — matching platform. Contains `<topic>-impl.md` (how in that language). |
-| **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides platform docs for project-specific conventions. |
+| **Platform-base knowledge** | `lib/core/knowledge/{platform}/engineering/` | Yes — matching platform. Theory + definition + code pattern per pattern file. Shared across all projects on that platform. |
+| **Project knowledge** | `lib/core/knowledge/{project}/engineering/` | Yes — matching platform. Project-specific deviations only — created only when real divergence exists. |
+| **Core catalog** | `lib/core/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. |
+| **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides for project-specific conventions not in KMS. |
 
 ---
 
@@ -673,9 +648,8 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 | New orchestration flow, same on all platforms | Core strategist |
 | New code generation pattern for one platform | Platform-contract skill (same name, platform implements) → `lib/platforms/<platform>/skills/contract/` |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
-| Architecture reference knowledge (any topic) | `lib/core/reference/code-architecture/<topic>-theory.md` (what/why) + `lib/platforms/<platform>/reference/code-architecture/<topic>-impl.md` (how) — both land at `.claude/reference/code-architecture/` downstream |
-| Architecture reference knowledge (platform-specific, no theory counterpart) | `lib/platforms/<platform>/reference/` (flat) |
-| Queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` — `## Section <!-- N -->` headings, `### Symbol` entries; agents section-query or grep for symbol name directly |
+| Architecture pattern knowledge (any topic) | `lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md` — theory + definition + code pattern in one file. Project-specific deviations at `lib/core/knowledge/{project}/` |
+| Queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` — `### Symbol` entries; agents `symbol-query` by name directly |
 
 **Planner vs Worker — when to use which:**
 
