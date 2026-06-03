@@ -1,6 +1,6 @@
 # Pattern KMS Initiative
 
-**Status:** Phase 0 complete — ready for Phase 1
+**Status:** Phase 1 complete — KMS Python package + MCP server built; agents and skills updated to KMS-first flow
 **Goal:** Replace static `lib/platforms/*/reference/*.md` files with a queryable SQLite-backed knowledge store — agents fetch implementation patterns via MCP instead of grepping flat files.
 
 ---
@@ -33,19 +33,19 @@
 
 | Task | Status |
 |---|---|
-| `kms/domain/entities.py` — `KnowledgeNode`, `KnowledgeSection` types | ⬜ Pending |
-| `kms/domain/repository.py` — `KnowledgeRepository` interface | ⬜ Pending |
-| `kms/domain/use_cases/list_knowledge.py` — merged TOC (project + platform + universal) | ⬜ Pending |
-| `kms/domain/use_cases/fetch_knowledge.py` — cascade fetch (project → platform → universal) | ⬜ Pending |
-| `kms/domain/use_cases/query_knowledge.py` — vector search + optional metadata filter | ⬜ Pending |
-| `kms/domain/use_cases/upsert_knowledge.py` | ⬜ Pending |
-| `kms/data/chroma_repository.py` — implements `KnowledgeRepository` via ChromaDB embedded | ⬜ Pending |
-| `kms/application/mcp_server.py` — `kms_list`, `kms_fetch`, `kms_query`, `kms_upsert` | ⬜ Pending |
-| `kms/scripts/seed_kms.py` — bootstrap: reads `lib/core/knowledge/` → upserts into ChromaDB; extracts summary from first sentence of `## Theory` | ⬜ Pending |
-| `build-plugin.sh` updated — run seed_kms.py, bundle `chroma/` dir + `kms/` Python package | ⬜ Pending |
-| Flutter base knowledge seeded as first collection | ⬜ Pending |
-| Update agent + skill `knowledge_scope:` — simplify to `discipline + platform` scope only | ⬜ Pending |
-| Update agent Step 0 — primary: `kms_list` → reason → `kms_fetch`; fallback: `Read lib/core/knowledge/{platform}/engineering/{topic}/index.md` → Read pattern files | ⬜ Pending |
+| `kms/domain/entities.py` — `KnowledgeNode`, `KnowledgeSection` types | ✅ Done |
+| `kms/domain/repository.py` — `KnowledgeRepository` interface | ✅ Done |
+| `kms/domain/use_cases/list_knowledge.py` — merged TOC (project + platform + universal) | ✅ Done |
+| `kms/domain/use_cases/fetch_knowledge.py` — cascade fetch (project → platform → universal) | ✅ Done |
+| `kms/domain/use_cases/query_knowledge.py` — vector search + optional metadata filter | ✅ Done |
+| `kms/domain/use_cases/upsert_knowledge.py` | ✅ Done |
+| `kms/data/chroma_repository.py` — implements `KnowledgeRepository` via ChromaDB embedded | ✅ Done |
+| `kms/application/mcp_server.py` — `kms_list`, `kms_fetch`, `kms_query`, `kms_upsert` | ✅ Done |
+| `kms/scripts/seed_kms.py` — bootstrap: reads `lib/core/knowledge/` → upserts into ChromaDB; extracts summary from first sentence of `## Theory` | ✅ Done |
+| `build-plugin.sh` updated — run seed_kms.py, bundle `chroma/` dir + `kms/` Python package | ✅ Done |
+| Flutter base knowledge seeded as first collection | ✅ Done — 207 nodes seeded; `chromadb` + `PyYAML` installed |
+| Update agent + skill `knowledge_scope:` — simplify to `discipline + platform` scope only | ✅ Done |
+| Update agent Step 0 — primary: `kms_list` → reason → `kms_fetch`; fallback: `Read lib/core/knowledge/{platform}/engineering/{topic}/index.md` → Read pattern files | ✅ Done |
 
 ### Phase 2 — Scan Agent
 

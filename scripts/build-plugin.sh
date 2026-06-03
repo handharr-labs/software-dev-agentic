@@ -132,6 +132,54 @@ MANIFEST
 
   echo "  → test: claude --plugin-dir $out"
 
+  # ── KMS — copy package, seed ChromaDB, wire MCP ──────────────────────────────
+  local knowledge_dir="$SUBMODULE/lib/core/knowledge"
+  if [ -d "$knowledge_dir" ]; then
+    if ! command -v python3 &>/dev/null; then
+      echo "  kms          SKIP (python3 not found — install Python 3 to enable KMS)"
+    else
+      # Copy kms/ Python package into plugin.
+      cp -r "$SUBMODULE/kms" "$out/kms"
+
+      # Self-locating launcher so the server works regardless of install path.
+      cat > "$out/kms/server.sh" <<'LAUNCHER'
+#!/usr/bin/env bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+export KMS_DB_PATH="$DIR/../chroma"
+export PYTHONPATH="$DIR/.."
+exec python3 -m kms.application.mcp_server
+LAUNCHER
+      chmod +x "$out/kms/server.sh"
+
+      # Seed ChromaDB from lib/core/knowledge/.
+      echo "  kms          seeding ChromaDB from lib/core/knowledge/ ..."
+      if python3 -c "import chromadb" 2>/dev/null; then
+        PYTHONPATH="$SUBMODULE" python3 -m kms.scripts.seed_kms \
+          --knowledge-dir "$knowledge_dir" \
+          --db-path "$out/chroma" 2>&1 | sed 's/^/               /'
+        echo "  kms          seeded → chroma/"
+      else
+        echo "  kms          SKIP seed (chromadb not installed — run: pip install chromadb PyYAML)"
+      fi
+
+      # Wire MCP server into plugin settings.
+      mkdir -p "$out/.claude"
+      cat > "$out/.claude/settings.json" <<SETTINGS
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": ["kms/server.sh"]
+    }
+  }
+}
+SETTINGS
+      echo "  kms          settings.json → mcpServers.kms wired"
+    fi
+  else
+    echo "  kms          SKIP (lib/core/knowledge/ not found)"
+  fi
+
   # ── Upsert marketplace.json entry ────────────────────────────────────────────
   local marketplace="$SUBMODULE/.claude-plugin/marketplace.json"
   local plugin_name="sda-${platform}"

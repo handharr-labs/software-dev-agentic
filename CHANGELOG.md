@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.1.0] — 2026-06-03
+
+### Added
+- **Pattern KMS — `kms/` Python package** — Clean Architecture implementation: `domain/entities.py` (`KnowledgeNode`), `domain/repository.py` (`KnowledgeRepository` interface), four use cases (`list_knowledge`, `fetch_knowledge`, `query_knowledge`, `upsert_knowledge`), `data/chroma_repository.py` (ChromaDB embedded), `application/mcp_server.py` (FastMCP — `kms_list`, `kms_fetch`, `kms_query`, `kms_upsert`), `scripts/seed_kms.py`
+- **ChromaDB embedded** — 207 knowledge nodes seeded from `lib/core/knowledge/`; `all-MiniLM-L6-v2` embeddings for semantic search; cascade resolution (project → platform-base → universal) in `FetchKnowledge` and `ListKnowledge`
+- **`build-plugin.sh` KMS step** — copies `kms/` package, generates self-locating `server.sh`, seeds ChromaDB, writes `.claude/settings.json` with `mcpServers.kms` entry
+
+### Changed
+- **17 core procedure skills** — `knowledge_scope:` simplified from `engineering/topic` → `engineering`; Step 1 now calls `kms_fetch(discipline, topic, pattern, platform, project)` with direct-Read fallback; `auditor-arch-check` uses `kms_list(platform, project, discipline)` instead of per-topic index reads
+
+---
+
 ## [9.0.0] — 2026-06-03
 
 ### Added
