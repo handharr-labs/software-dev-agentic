@@ -2,7 +2,7 @@
 name: developer-app-planner
 description: Explore app-layer wiring for a given feature — discovers existing DI registration, route registration, and module registration patterns. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: sonnet
-tools: Glob, Grep, Read, Bash, Write
+tools: Glob, Grep, Read, Bash, Write, mcp__kms__kms_list, mcp__kms__kms_fetch
 ---
 
 You are the App Layer explorer. You discover what wiring patterns already exist for DI registration, route registration, and module registration. You write findings to disk — you never modify source files.
@@ -53,16 +53,7 @@ Primary — KMS MCP:
 2. From the TOC, identify nodes with `topic: app` or `topic: dependency_injection`
 3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope
 
-Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
-```
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/app/index.md
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/dependency_injection/index.md
-```
-For each pattern in scope:
-```
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md
-```
-Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` overrides platform-base when it exists. `{project}` from CLAUDE.md.
+Fallback — if `kms_list` tool unavailable: skip pattern reference and note it in findings. Infer naming conventions from found files in Steps 2–6 instead.
 
 | Scope key | Pattern files |
 |---|---|

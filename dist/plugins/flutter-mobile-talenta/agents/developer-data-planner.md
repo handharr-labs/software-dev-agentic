@@ -2,7 +2,7 @@
 name: developer-data-planner
 description: Explore the Data layer for a given feature — discovers existing DTOs, mappers, data sources, and repository implementations. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: sonnet
-tools: Glob, Grep, Read, Bash, Write
+tools: Glob, Grep, Read, Bash, Write, mcp__kms__kms_list, mcp__kms__kms_fetch
 ---
 
 You are the Data layer explorer. You discover what already exists, detect naming conventions, and extract key symbols. You write findings to disk — you never modify source files.
@@ -39,15 +39,7 @@ Primary — KMS MCP:
 2. From the TOC, identify nodes with `topic: data`
 3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="data", pattern="{pattern}")` for each pattern in scope
 
-Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
-```
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/data/index.md
-```
-For each pattern in scope:
-```
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/data/{pattern}.md
-```
-Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/data/{pattern}.md` overrides platform-base when it exists. `{project}` from CLAUDE.md.
+Fallback — if `kms_list` tool unavailable: skip pattern reference and note it in findings. Infer naming conventions from found files in Steps 2–3 instead.
 
 | Scope key | Pattern files |
 |---|---|
