@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.12] — 2026-06-03
+
+### Changed
+- **Planner agents use KMS MCP as primary knowledge source** — added `mcp__kms__kms_list` and `mcp__kms__kms_fetch` to `tools:` frontmatter of all four planners (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) so KMS MCP tools are reachable and the primary path runs before any codebase search
+
+### Fixed
+- **Planner fallback no longer reads from `software-dev-agentic/` source** — previous fallback path coupled agents to submodule structure; primary distribution is Claude plugin, not submodule; fallback now skips pattern reference and infers naming conventions from found codebase files instead
+
+---
+
 ## [9.2.11] — 2026-06-03
 
 ### Fixed
