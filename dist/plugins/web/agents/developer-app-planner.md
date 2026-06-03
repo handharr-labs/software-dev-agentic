@@ -46,7 +46,7 @@ If `scope` is provided, only execute the steps below for the concerns listed in 
 
 Skip all other steps entirely. Always run Step 1 (platform reference) regardless of scope.
 
-**Step 1 — Load reference**
+**Step 1 — Load reference (always — run before any codebase search, regardless of scope or mode)**
 
 Primary — KMS MCP:
 1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md
