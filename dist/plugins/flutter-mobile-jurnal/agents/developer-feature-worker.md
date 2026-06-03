@@ -52,16 +52,21 @@ Extract from the inlined content:
 - Artifact tables per layer (Domain / Data / Presentation / UI)
 - Key Symbols per existing artifact from context.md
 
-Load cross-cutting convention references before writing any code — knowledge files only, no theory:
-```
-lib/core/knowledge/{platform}/engineering/syntax_conventions/conventions.md
-lib/core/knowledge/{platform}/engineering/utilities/index.md
-lib/core/knowledge/{platform}/engineering/error_handling/failure_types.md
-```
+Load cross-cutting convention references before writing any code — knowledge files only, no theory.
 
-From the artifact types present in plan.md, decide which utilities are needed — for utilities, read specific files from the index. Apply every loaded convention throughout all artifacts — this is not optional.
+Primary — KMS MCP:
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md, `{platform}` from plan.md frontmatter
+2. `kms_fetch(...)` for `topic: syntax_conventions, pattern: conventions`, `topic: utilities` (relevant patterns), `topic: error_handling, pattern: failure_types`
 
-Cascade: if `lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value extracted from plan.md frontmatter.
+Fallback — if `kms_list` tool unavailable:
+```
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/syntax_conventions/conventions.md
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/utilities/index.md
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/error_handling/failure_types.md
+```
+For utilities, read specific files from the index. Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` overrides platform-base when it exists.
+
+Apply every loaded convention throughout all artifacts — this is not optional.
 
 Layer-specific knowledge references are loaded **per-artifact** immediately before calling the relevant skill — not here. This keeps reference knowledge current after context compaction.
 
@@ -107,7 +112,7 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific knowledge reference for this artifact type — read `lib/core/knowledge/{platform}/engineering/{topic}/index.md` (e.g. `domain/index.md` for entities/use cases, `data/index.md` for mappers/datasources, `state_management/index.md` for stateholders), then read only the pattern file(s) relevant to this artifact type
+2. Load the layer-specific knowledge reference for this artifact type — primary: `kms_fetch(platform, project, discipline="engineering", topic="{topic}", pattern="{pattern}")` for the relevant pattern(s); fallback if KMS unavailable: read `software-dev-agentic/lib/core/knowledge/{platform}/engineering/{topic}/index.md` then the specific pattern file(s)
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):
    - Look up this artifact's name in the `Figma Alignment` table — read the `Figma Files` column directly to get the list of `.md` file paths. No Glob needed.
    - `Read` each listed `.md` file body only — extract `State` and `Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
@@ -147,11 +152,7 @@ The path is recorded in `state.json` under `stateholder_contract`. The calling s
 App layer wiring is always direct `Read` + `Edit` — no skill is needed. For each row in the `## App Layer` section of `plan.md`:
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
-2. Load the platform app-layer knowledge reference to confirm the exact pattern:
-   ```
-   lib/core/knowledge/{platform}/engineering/app/index.md
-   ```
-   Read specific pattern files from the index as needed for this wiring entry.
+2. Load the platform app-layer knowledge reference to confirm the exact pattern — primary: `kms_fetch(platform, project, discipline="engineering", topic="app", pattern="{pattern}")` for the relevant wiring pattern; fallback if KMS unavailable: read `software-dev-agentic/lib/core/knowledge/{platform}/engineering/app/index.md` then specific pattern files.
 3. `Read` the target file using `offset` + `limit` around the insertion point (Grep for a known symbol or section marker first).
 4. Apply the targeted edit — add only what the plan specifies.
 5. Validate: `Grep` for the newly added symbol or registration call in the modified file.

@@ -48,18 +48,21 @@ Skip all other steps entirely. Always run Step 1 (platform reference) regardless
 
 **Step 1 — Load reference**
 
-Knowledge — read indexes, then fetch by scope:
-```
-lib/core/knowledge/{platform}/engineering/app/index.md
-lib/core/knowledge/{platform}/engineering/dependency_injection/index.md
-```
+Primary — KMS MCP:
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md
+2. From the TOC, identify nodes with `topic: app` or `topic: dependency_injection`
+3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope
 
-For each pattern in scope, read the specific file:
+Fallback — if `kms_list` tool unavailable:
 ```
-lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/app/index.md
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/dependency_injection/index.md
 ```
-
-Cascade: if `lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value from the `platform` input parameter.
+For each pattern in scope:
+```
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md
+```
+Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` overrides platform-base when it exists. `{project}` from CLAUDE.md.
 
 | Scope key | Pattern files |
 |---|---|

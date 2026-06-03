@@ -48,12 +48,18 @@ Extract from the inlined content:
 
 Read the stateholder contract from disk using the `Read` tool on the path from `stateholder_contract`. If the path is `"none"` or null, skip — UI wiring will use only the plan description.
 
-Load the UI-relevant presentation knowledge reference before writing any code:
-```
-lib/core/knowledge/{platform}/engineering/presentation/index.md
-```
+Load the UI-relevant presentation knowledge reference before writing any code.
 
-Then read specific pattern files by scope — do not load domain, data, or app patterns:
+Primary — KMS MCP:
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md, `{platform}` from plan.md frontmatter
+2. From the TOC, identify nodes with `topic: presentation` or `topic: navigation`
+3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope — do not load domain, data, or app patterns
+
+Fallback — if `kms_list` tool unavailable:
+```
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/presentation/index.md
+```
+Then read specific pattern files by scope:
 
 | Scope | Pattern files |
 |---|---|
@@ -61,7 +67,7 @@ Then read specific pattern files by scope — do not load domain, data, or app p
 | Component | `presentation/component.md` |
 | Navigator | `navigation/go_router.md` (flutter), `navigation/coordinator.md` (ios), `navigation/routes.md` (web) — pick by platform |
 
-Cascade: if `lib/core/knowledge/{project}/engineering/presentation/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value extracted from plan.md frontmatter.
+Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/presentation/{pattern}.md` overrides platform-base when it exists. `{project}` from CLAUDE.md.
 
 Check state.json to resume from a previous run:
 ```bash
@@ -112,7 +118,7 @@ If no catalog: skip to Level 2.
 **Level 2 — Project shared components**
 
 For each element in `## Custom Widgets` (or all elements if no catalog):
-- Grep the presentation index file (`lib/core/knowledge/{platform}/engineering/presentation/index.md`) for the `Shared Component Paths` entry → read the referenced pattern file
+- Primary: `kms_fetch(platform, project, discipline="engineering", topic="presentation", pattern="screen_structure")` and check `Shared Component Paths`; fallback: Grep `software-dev-agentic/lib/core/knowledge/{platform}/engineering/presentation/index.md` for the `Shared Component Paths` entry → read the referenced pattern file
 - For each path: Grep for keywords matching the element (e.g. "card", "list", "avatar")
 - ≥80% behavior match → **reuse**, remove from Custom Widgets
 - Partial match → **extend** via `Read` + `Edit`, remove from Custom Widgets

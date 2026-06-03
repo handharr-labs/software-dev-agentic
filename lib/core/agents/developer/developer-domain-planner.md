@@ -34,17 +34,20 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference**
 
-Knowledge — read index, then fetch by scope:
-```
-lib/core/knowledge/{platform}/engineering/domain/index.md
-```
+Primary — KMS MCP:
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md
+2. From the TOC, identify nodes with `topic: domain`
+3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="domain", pattern="{pattern}")` for each pattern in scope
 
-For each pattern in scope, read the specific file:
+Fallback — if `kms_list` tool unavailable:
 ```
-lib/core/knowledge/{platform}/engineering/domain/{pattern}.md
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/domain/index.md
 ```
-
-Cascade: if `lib/core/knowledge/{project}/engineering/domain/{pattern}.md` exists (project-specific override — `{project}` from CLAUDE.md), it takes precedence over the platform-base file. `{platform}` is the value from the `platform` input parameter.
+For each pattern in scope:
+```
+software-dev-agentic/lib/core/knowledge/{platform}/engineering/domain/{pattern}.md
+```
+Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/domain/{pattern}.md` overrides platform-base when it exists. `{project}` from CLAUDE.md.
 
 | Scope key | Pattern files |
 |---|---|
