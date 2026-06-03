@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.6] — 2026-06-03
+
+### Added
+- **`kms/project-mcp-template.json`** — each plugin dist now includes a portable `.mcp.json` template; downstream projects copy it to their project root once to enable KMS; uses `$HOME` so it's portable across machines without running any scripts
+
+### Changed
+- **`install-plugin.sh` KMS step** — now writes a `$HOME`-based version-agnostic launcher instead of an absolute versioned path
+
+---
+
 ## [9.2.5] — 2026-06-03
 
 ### Fixed

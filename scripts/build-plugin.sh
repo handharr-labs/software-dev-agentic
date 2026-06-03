@@ -187,9 +187,8 @@ LAUNCHER
         echo "  kms          SKIP seed (chromadb not installed — run: pip install chromadb PyYAML)"
       fi
 
-      # Wire MCP server via .mcp.json — auto-applied when plugin is active.
-      # Use `bash -c` so the shell expands $CLAUDE_PLUGIN_ROOT from the env
-      # rather than passing it as a literal unexpanded arg to bash.
+      # Plugin-level .mcp.json — Claude Code does not process this for local MCP
+      # servers, but keep it for potential future support / HTTP server scenarios.
       cat > "$out/.mcp.json" <<'MCP'
 {
   "mcpServers": {
@@ -200,7 +199,23 @@ LAUNCHER
   }
 }
 MCP
-      echo "  kms          .mcp.json → mcpServers.kms wired (auto-applied on plugin enable)"
+
+      # Project setup template — copy this to the downstream project root as .mcp.json
+      # Uses $HOME so it's portable across machines.
+      cat > "$out/kms/project-mcp-template.json" <<MCP_TEMPLATE
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "latest=\$(ls -v \"\$HOME/.claude/plugins/cache/sda/sda-${platform}\" 2>/dev/null | tail -1) && exec bash \"\$HOME/.claude/plugins/cache/sda/sda-${platform}/\$latest/kms/server.sh\""
+      ]
+    }
+  }
+}
+MCP_TEMPLATE
+      echo "  kms          .mcp.json + kms/project-mcp-template.json (copy to project root)"
     fi
   else
     echo "  kms          SKIP (lib/core/knowledge/ not found)"

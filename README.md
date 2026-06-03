@@ -1,6 +1,6 @@
 # software-dev-agentic
 
-> Claude Code toolkit for Clean Architecture projects — v5.2.0
+> Claude Code toolkit for Clean Architecture projects — v9.2.6
 
 A multi-platform agentic toolkit — agents, skills, hooks, and architecture reference docs for Clean Architecture projects. Distributed as a **git submodule** or a **Claude Code plugin**.
 
@@ -45,7 +45,11 @@ Then run `/reload-plugins` in Claude Code to activate.
 
 ### Auto-install for teammates
 
-Commit `.claude/settings.json` — it declares the marketplace and auto-installs the right plugin for the repo. Engineers just trust the folder and Claude Code handles the rest.
+Two files to commit — that's the full setup. Teammates clone the repo, trust the folder, and both files are applied automatically.
+
+#### Step 1 — `.claude/settings.json`
+
+Declares the marketplace and enables the plugin. Claude Code auto-installs on first session.
 
 **Flutter (mobile-talenta):**
 ```json
@@ -72,6 +76,64 @@ Replace `enabledPlugins` with the plugin matching your project:
 | `sda-ios-talenta` | iOS / talenta |
 | `sda-android-talenta` | Android / talenta |
 | `sda-web` | Web / Next.js |
+
+#### Step 2 — `.mcp.json` (KMS)
+
+Wires the KMS MCP server so agents can query the knowledge store. Claude Code does not auto-start local MCP servers from plugin config — this file is required.
+
+Copy the snippet for your platform into `.mcp.json` at your project root:
+
+**Flutter / mobile-talenta**
+```json
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-talenta\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-talenta/$latest/kms/server.sh\""]
+    }
+  }
+}
+```
+
+**Flutter / mobile-jurnal**
+```json
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-jurnal\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-jurnal/$latest/kms/server.sh\""]
+    }
+  }
+}
+```
+
+**iOS / talenta**
+```json
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-ios-talenta\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-ios-talenta/$latest/kms/server.sh\""]
+    }
+  }
+}
+```
+
+**Android / talenta**
+```json
+{
+  "mcpServers": {
+    "kms": {
+      "command": "bash",
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-android-talenta\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-android-talenta/$latest/kms/server.sh\""]
+    }
+  }
+}
+```
+
+The launcher finds the latest installed version at runtime — survives plugin updates without changing this file. Commit it to the repo so teammates get it automatically.
+
+Verify with `/kms-status` (or `/sda-<platform>:kms-status`) after Claude Code restarts.
 
 ### Use trigger skills
 
