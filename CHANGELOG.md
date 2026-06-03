@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.0] — 2026-06-03
+
+### Added
+- **KMS Dashboard** — local web UI (`kms/dashboard/server.py` + `index.html`); pure-Python HTTP server reusing existing use cases; hierarchical `platform → discipline → topic → pattern` tree nav, per-section markdown editor, semantic vector search, new-node form; launcher `scripts/kms-dashboard.sh`; writes `dashboard:{timestamp}` to `dist/.kms_seeds/.version` on every upsert so `build-plugin.sh` skips file-based reseed
+
+### Changed
+- **6 developer agents** — `kms_list` → `kms_fetch` wired as primary knowledge source in `developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`, `developer-feature-worker`, `developer-ui-worker`
+
+### Fixed
+- **Agent fallback paths** — corrected `lib/core/knowledge/` → `software-dev-agentic/lib/core/knowledge/` in all 6 agents; the old path does not exist at downstream project root, causing planners to silently fall back to the legacy `.claude/reference/code-architecture` search
+
+---
+
 ## [9.1.0] — 2026-06-03
 
 ### Added
