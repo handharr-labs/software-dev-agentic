@@ -32,7 +32,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Workflow
 
-**Step 0 — Load reference**
+**Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
 Primary — KMS MCP:
 1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md
