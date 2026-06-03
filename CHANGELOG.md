@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.2.7] — 2026-06-03
+
+### Fixed
+- **`ListKnowledge.execute()` returns 0 nodes when called with no args** — unfiltered calls (e.g. `kms-status`) forced a `platform=null` equality filter that matched nothing, since all seeded nodes have an explicit platform; fixed by short-circuiting to an unfiltered `repo.list()` when no scope args are provided
+
+---
+
 ## [9.2.6] — 2026-06-03
 
 ### Added
