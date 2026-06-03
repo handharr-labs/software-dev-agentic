@@ -7,6 +7,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.0.0] — 2026-06-03
+
+### Added
+- **Pattern KMS — `lib/core/knowledge/`** — new knowledge root replacing `lib/platforms/*/reference/code-architecture/`. All implementation patterns now live as individual pattern files under `{platform}/engineering/{topic}/{pattern}.md` with frontmatter (`platform`, `project`, `discipline`, `topic`, `pattern`) and structured sections (`## Theory`, `## Definition`, `## Code Pattern`)
+- **8 platforms extracted** — `flutter`, `flutter-mobile-talenta`, `flutter-mobile-jurnal`, `flutter-qontak-chat`, `flutter-qontak-crm`, `ios-talenta`, `web`, `android-talenta` — all fully extracted with theory merged into pattern files
+- **Per-topic `index.md`** — 38+ index files across all platforms listing available patterns with descriptions; agents use these for intent-based discovery
+- **Cascade resolution convention** — agents resolve `{project}/engineering/{topic}/{pattern}.md` → `{platform}/engineering/{topic}/{pattern}.md`; procedure skills declare `knowledge_scope:` frontmatter key
+
+### Changed
+- **17 core procedure skills updated** — `developer-domain-*`, `developer-data-*`, `developer-pres-*`, `developer-test-*`, `debugger-*`, `auditor-arch-check` — all now reference `lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md` with cascade note; `knowledge_scope:` added to frontmatter
+- **6 developer planner agents updated** — `developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`, `developer-feature-worker`, `developer-ui-worker` — Step 0 now reads topic index then specific pattern files by scope; theory file references removed
+
+### Removed
+- **`lib/platforms/*/reference/code-architecture/`** — all `*-impl.md` files deleted across 7 platforms (content migrated to `lib/core/knowledge/`)
+- **`lib/core/reference/code-architecture/*-theory.md`** — all 11 theory files deleted (content merged into `## Theory` sections of pattern files)
+
+---
+
 ## [8.6.0] — 2026-06-02
 
 ### Added
