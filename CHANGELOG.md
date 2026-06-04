@@ -7,6 +7,36 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [9.3.0] — 2026-06-04
+
+### Added
+- **KMS stable architecture** — `kms/domain/schema.py` as single vocabulary contract (`SCOPE_VALUES`, `DISCIPLINE_VALUES`, `SOURCE_TYPE_OWNS`, `SEED_EXCLUDE_PATTERNS`, `SCHEMA_VERSION`)
+- **`DirectorySource` adapter** — primary seed source; derives all metadata (discipline, platform, scope, topic, pattern) from path conventions; no frontmatter required
+- **Project-specific knowledge convention** — `kms/knowledge-sources/projects/{repo-name}/` with `repo.yaml` (remote URL, platform, local_path); project name derived from remote URL
+- **`kms/knowledge-sources/` directory** — drop-in knowledge store organized by discipline; replaces `lib/core/knowledge/` as primary source
+- **Platform standard architecture docs** — `flutter-standard-architecture.md`, `ios-standard-architecture.md`, `android-standard-architecture.md` compiled from all platform pattern files
+- **`kms/sources.yaml`** — source registry; seed runner reads this manifest, never hardcodes sources
+- **`/kms-seed` skill** — seed ChromaDB from all sources, one source, by type, or add+register a new source
+- **`/kms-extract-codebase` skill** — scan a local project repo and extract project-reality docs (feature inventory, API endpoints, shared components, deviations, integrations)
+- **`kms-seed-orchestrator`**, **`kms-seed-worker`**, **`kms-source-detect-worker`** agents — agentic seeding workflow
+- **`kms-extract-orchestrator`**, **`kms-extract-worker`** agents — platform-aware codebase extraction for Flutter/iOS/Android/Web
+- **`docs/principles/kms-design-principles.md`** — full KMS design rationale, metadata schema, discipline vocabulary, cascade resolution rules
+- **`kms/README.md`** — source adapter contract, seeding CLI reference, metadata schema
+
+### Changed
+- **`KnowledgeNode`** — added `scope` and `content_hash` fields; `scope` replaces null-inference on platform+project for cascade resolution
+- **`UpsertKnowledge`** — enforces section ownership at domain layer; each source only writes its declared sections, merges with existing content
+- **`seed_kms.py`** — full rewrite as unified runner with `--source`, `--type`, `--add` flags; incremental via content hash; skip-on-unavailable
+- **`sync-platform` skill** — Step 3c updated from `agent-kms-scan-worker` to `/kms-extract-codebase`
+- **`release` skill** — KMS freshness check updated to read `sources.yaml` `last_seeded` instead of git hash on `lib/core/knowledge`
+- **Downstream skills** (`developer-*`, `auditor-*`, `debugger-*`) — fallback paths updated from `lib/core/knowledge/` to `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`
+
+### Removed
+- **`lib/core/knowledge/`** — replaced by `kms/knowledge-sources/`; all pattern files compiled into consolidated platform architecture docs
+- **`agent-kms-scan-worker`** — replaced by `kms-extract-worker` + `kms-extract-orchestrator`
+
+---
+
 ## [9.2.12] — 2026-06-03
 
 ### Changed
