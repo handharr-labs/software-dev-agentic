@@ -48,25 +48,24 @@ design       [platform={platform}]                      {N nodes | ⚠ no catalo
 
 After the load probe, fetch a brief snapshot of what the current project actually knows.
 
-Using the same `project` and `platform` derived in Step 6, call:
-
-```
-kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="project_structure")
-kms_fetch(platform="{platform}", project="{project}", discipline="product",     topic="feature_inventory")
-```
-
-For each call: if a node is returned, extract and display a 2–3 line excerpt (first meaningful sentences or bullet points). If no node is returned, show `—`.
+Using the same `project` and `platform` derived in Step 6:
+1. Take the **first two topics** returned from the engineering load probe (Step 6) for this project — do not hardcode topic names.
+2. For each topic, call:
+   ```
+   kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}")
+   ```
+3. If a node is returned, extract a 2–3 line excerpt (first meaningful sentences or bullet points from the body). If no node or empty body, show `⚠ empty body`.
 
 Output inline after the load probe:
 
 ```
 Project summary — {project}
 ────────────────────────────────────────────────────
-project_structure   {2–3 line excerpt | —}
-feature_inventory   {2–3 line excerpt | —}
+{topic_1}   {2–3 line excerpt | ⚠ empty body}
+{topic_2}   {2–3 line excerpt | ⚠ empty body}
 ```
 
-This confirms real content is retrievable for this project, not just that the node count is non-zero.
+`⚠ empty body` means the node was seeded but ChromaDB stored no content — re-seed and rebuild the plugin.
 
 ## Output — OFFLINE
 
