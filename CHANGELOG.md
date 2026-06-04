@@ -7,6 +7,22 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.5.0] — 2026-06-04
+
+### Added
+- **`sda-kms` dedicated plugin** — KMS MCP server now ships as its own plugin (`dist/plugins/kms/`); install once, shared across all platforms
+- **`build-plugin.sh --platform=kms`** — builds `sda-kms` standalone; `--platform=all` builds `sda-kms` first then all platform plugins
+
+### Changed
+- **Platform plugins** (`sda-flutter`, `sda-ios-swift`, `sda-android-kotlin`, `sda-web-nextjs`) — no longer bundle KMS; agents/skills/hooks only
+- **`project-mcp-template.json`** — now lives in `sda-kms`; points to `sda-kms` cache path (same config for all platforms)
+- **`README.md`** — added `sda-kms` to plugin table; unified `.mcp.json` example; bumped version to v10.4.0
+
+### Removed
+- **KMS duplication** — `kms/`, `chroma/`, `server.sh`, and `project-mcp-template.json` removed from all platform plugin outputs
+
+---
+
 ## [10.4.0] — 2026-06-04
 
 ### Fixed
