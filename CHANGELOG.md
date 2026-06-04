@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.2.0] — 2026-06-04
+
+### Added
+- **Discipline heading templates** — each discipline folder in `kms/knowledge-sources/` now has a `_template.md` (universal) and/or `{platform}-_template.md` (platform-specific) defining the canonical `##` heading vocabulary; covers all nine disciplines (`engineering`, `design`, `qa`, `devops`, `security`, `product`, `architecture`, `agile`) and all three engineering platforms (`flutter`, `ios`, `android`)
+- **`content_type` field on `KnowledgeNode`** — `"real"` (default) or `"stub"`; templates seed as stubs so agents can discover available topics before real content is written; persisted in ChromaDB metadata
+- **One-way seeding guard in `UpsertKnowledge`** — stubs never overwrite real nodes; re-seeding templates after real content exists is always a no-op
+
+### Changed
+- **`DirectorySource`** — detects `_template.md` / `{platform}-_template.md` files and marks all yielded nodes `content_type="stub"`
+- **`kms-design-principles.md`** — added discipline templates section (Principle 7), third path convention for template files, `content_type` added to metadata schema table
+- **`kms-knowledge-source-rules.md`** — file naming table updated with template filename patterns; Discipline-Specific Heading Templates section now points to template files; new **Template Files** section documents authoring rules and one-way seeding guarantees
+
+---
+
 ## [10.1.0] — 2026-06-04
 
 ### Added
