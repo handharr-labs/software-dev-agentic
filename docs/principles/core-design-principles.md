@@ -27,7 +27,7 @@ Five building blocks compose every agentic workflow. Each has one defined job �
 
 | Component | Role | One-line rule |
 |---|---|---|
-| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded via KMS tools (`kms_list` → reason → `kms_fetch`) when MCP available; direct file read from `lib/core/knowledge/` as fallback. Never embedded in agents or skills. |
+| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded via KMS tools (`kms_list` → `kms_query`). Agents fall back to minimal codebase exploration when KMS is unavailable. Never embedded in agents or skills. |
 | **Skill** | The Hands | Procedural instructions that run in the caller's session. Type O owns the entry workflow; Type P is a thin create-step called by agents. |
 | **Agent** | The Brain | Isolated reasoning in its own context window. Handles ambiguity, makes decisions, returns structured output to the caller. |
 | **MCP** | The Reach | Structured tool calls into external systems — Jira, Figma, IDE, build tools. Agents call MCP tools directly; no copy-paste relay. |
@@ -103,7 +103,7 @@ Every agent is built from the same five parts. Together they make agent behavior
 | Part | What it is | Why it matters |
 |---|---|---|
 | **Input** | Declared parameters the agent requires to start — mode, feature name, platform, file paths. Missing input → `MISSING INPUT: <param>` immediately. | Explicit inputs make agents predictable and debuggable. |
-| **Knowledge** | Patterns loaded via KMS (`kms_list` → reason → `kms_fetch`) or direct file read fallback from `lib/core/knowledge/`. Each agent declares a `knowledge_scope` (discipline + platform) and loads only what it needs. | Specialization is a loading decision — change what an agent loads, change what it knows. |
+| **Knowledge** | Patterns always loaded in two steps: `kms_list` → `kms_query` for theory and documented conventions; codebase explore (grep for the most complete existing implementation) for live code patterns. Both are mandatory. | Specialization is a loading decision — change what an agent loads, change what it knows. |
 | **Reasoning** | The LLM applies thinking, deciding, and branching to inputs and loaded knowledge. Handles ambiguity and edge cases that no fixed script can anticipate. | The part no deterministic tool can replace today — but the slot can be swapped in the future. |
 | **Output** | Declared and structured: `Decision:` blocks, `## Findings`, `## Output` with Glob+Grep-verified paths. The calling skill routes on it without ambiguity. | Structured output makes the calling skill's routing deterministic. |
 | **Modes** | An agent can be invoked in different modes. Each mode loads only the instruction lines relevant to that invocation — the rest are never read. | One agent body, multiple contexts of use, minimal per-invocation cost. |
@@ -175,7 +175,7 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | Core agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
 | Platform-specific agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
 | Preloaded skills | Loaded at worker startup only | `skills` field |
-| Knowledge patterns | `kms_list` → reason → `kms_fetch`; fallback: Read `lib/core/knowledge/` | `knowledge_scope` in agent frontmatter |
+| Knowledge patterns | `kms_list` → `kms_query` (theory + conventions) + codebase explore (live code) — always both | `knowledge_scope` in agent frontmatter |
 | `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
 | Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
 | Strategist context accumulation | Minimal — disk-based hand-offs | Agents write findings to disk; skill passes paths not content; state file prevents re-reads |
@@ -310,7 +310,7 @@ Downstream projects interact with shared agents, skills, and reference docs in o
 
 Extension files contain only the delta — not a full copy. Updates to the submodule are inherited automatically.
 
-Reference docs are override-only (no extension mechanism). Pattern knowledge lives in `lib/core/knowledge/` — agents load it via KMS tools or direct file read; the structure is the contract, not grep offsets.
+Reference docs are override-only (no extension mechanism). Pattern knowledge lives in `kms/knowledge-sources/` — agents load it via `kms_list` → `kms_query`; the structure is the contract, not grep offsets.
 
 **Local directories and their scope:**
 
@@ -395,7 +395,7 @@ The agentic system enforces its own conventions through automated review — the
 |---|---|---|
 | 1 | `CLAUDE.md` | Universal rules applying to every task — naming, principles, build command. ~1 page max |
 | 2 | Agent body | Decision logic for that agent only — what to do, when to do it |
-| 3 | `lib/core/knowledge/` | Shared pattern knowledge — theory, definitions, code patterns. Loaded via `kms_list` → reason → `kms_fetch` (MCP); direct file read as fallback. |
+| 3 | `kms/knowledge-sources/` | Shared pattern knowledge — theory, definitions, code patterns. Loaded via `kms_list` → `kms_query`. |
 
 > Folder structure for reference docs: see [submodule-repo-structure.md](submodule-repo-structure.md).
 
@@ -408,17 +408,17 @@ Reference docs are organized around two levels:
 
 | Level | Example | Location |
 |---|---|---|
-| Platform-base | `flutter/engineering/domain/` | `lib/core/knowledge/flutter/` — shared across all flutter projects |
-| Project-specific | `flutter-mobile-talenta/engineering/domain/` | `lib/core/knowledge/flutter-mobile-talenta/` — deviations only |
-| Pattern file | `use_case.md` | Self-contained: theory + definition + code pattern in one file |
+| Platform-base | `engineering/flutter-standard-architecture.md` | `kms/knowledge-sources/engineering/` — shared across all projects on that platform |
+| Project-specific | `projects/flutter-mobile-talenta/deviations.md` | `kms/knowledge-sources/projects/{name}/` — deviations only |
+| Pattern node | `use_case` under `topic=domain` | Stored in ChromaDB with `discipline`, `topic`, `pattern` metadata |
 | Catalog file | queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` |
 
-**Agent knowledge loading — canonical flow:**
-1. `kms_list(platform, discipline)` → scoped TOC, metadata only
-2. Agent reasons over TOC — selects relevant patterns
-3. `kms_fetch(platform, project, discipline, topic, pattern)` × N — cascade: project → platform → universal
+**Agent knowledge loading — canonical flow (always both):**
+1. `kms_list(platform, discipline)` → scoped TOC, metadata only — agent reasons over what topics exist
+2. `kms_query(text, platform, discipline, n_results)` → theory, definitions, and documented patterns with full content
+3. Codebase explore — `Grep` for existing implementations of the relevant pattern (e.g., `class.*UseCase`, `class.*RepositoryImpl`) excluding `test/` paths → read the most complete match as live code reference
 
-**Fallback (KMS unavailable):** Read `lib/core/knowledge/{platform}/engineering/{topic}/index.md` → Read specific pattern files directly.
+KMS provides theory and documented convention. Codebase provides the live ground truth. Both are loaded before any artifact decision.
 
 **Placement decision rule — reference vs agent body:**
 
@@ -435,7 +435,7 @@ Reference docs are organized around two levels:
 
 | What you need | Tool |
 |---|---|
-| Implementation patterns (theory, code) | `kms_list` → reason → `kms_fetch`; fallback: Read `lib/core/knowledge/` |
+| Implementation patterns (theory, code) | `kms_list` → `kms_query` (theory) + `Grep` codebase for most complete existing implementation (code) |
 | A specific class, function, or type in source | `Grep` for the name |
 | The full file structure (style-matching a new file) | `Read` — justified |
 | Whether a file exists | `Glob` |
@@ -448,17 +448,17 @@ Reference docs are organized around two levels:
 
 **Authoring rule — canonical pattern names (ubiquitous language):**
 
-Pattern filenames in `lib/core/knowledge/` are **Terms** — the canonical name for one concept within a topic. The same concept must use the same filename across all platforms.
+KMS `pattern` values are **Terms** — the canonical name for one concept within a topic. The same concept must use the same `pattern` key across all platforms.
 
 ```
-flutter/engineering/domain/use_case.md
-ios-talenta/engineering/domain/use_case.md   ← same name — agents resolve by platform
-web/engineering/domain/use_case.md
+discipline=engineering, topic=domain, pattern=use_case, platform=flutter
+discipline=engineering, topic=domain, pattern=use_case, platform=ios
+discipline=engineering, topic=domain, pattern=use_case, platform=web
 ```
 
-One concept = one filename, everywhere. Platform-specific content lives inside the file, not in the filename.
+One concept = one pattern key, everywhere. Platform-specific content lives in the node body, not in the key.
 
-When adding a new section to a platform reference file, check whether the same concept exists in other platforms first. If it does, use that heading exactly. If it's net-new, choose a platform-agnostic term and apply it to all platforms that need it.
+When adding a new node to the KMS, check whether the same concept exists for other platforms first. If it does, use that `pattern` key exactly. If it's net-new, choose a platform-agnostic term and apply it to all platforms that need it.
 
 ---
 
@@ -573,8 +573,8 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Platform-base knowledge** | `lib/core/knowledge/{platform}/engineering/` | Yes — matching platform. Theory + definition + code pattern per pattern file. Shared across all projects on that platform. |
-| **Project knowledge** | `lib/core/knowledge/{project}/engineering/` | Yes — matching platform. Project-specific deviations only — created only when real divergence exists. |
+| **Platform-base knowledge** | `kms/knowledge-sources/engineering/{platform}-*.md` | Yes — via pre-seeded ChromaDB bundled in plugin. Theory + definition + code pattern per node. Shared across all projects on that platform. |
+| **Project knowledge** | `kms/knowledge-sources/projects/{name}/` | Yes — via pre-seeded ChromaDB. Project-specific deviations only — created only when real divergence exists. |
 | **Core catalog** | `lib/core/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. |
 | **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides for project-specific conventions not in KMS. |
 
@@ -648,7 +648,7 @@ Not every persona uses all layers. A simple persona may have only a trigger skil
 | New orchestration flow, same on all platforms | Core strategist |
 | New code generation pattern for one platform | Platform-contract skill (same name, platform implements) → `lib/platforms/<platform>/skills/contract/` |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
-| Architecture pattern knowledge (any topic) | `lib/core/knowledge/{platform}/engineering/{topic}/{pattern}.md` — theory + definition + code pattern in one file. Project-specific deviations at `lib/core/knowledge/{project}/` |
+| Architecture pattern knowledge (any topic) | `kms/knowledge-sources/engineering/{platform}-*.md` — theory + definition + code pattern per `##` section, seeded as KMS nodes. Project-specific deviations in `kms/knowledge-sources/projects/{name}/` |
 | Queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` — `### Symbol` entries; agents `symbol-query` by name directly |
 
 **Planner vs Worker — when to use which:**

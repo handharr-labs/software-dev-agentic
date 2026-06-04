@@ -133,26 +133,18 @@ MANIFEST
   echo "  → test: claude --plugin-dir $out"
 
   # ── KMS — copy package, copy pre-seeded chroma, wire MCP ────────────────────
-  # Seeding is done separately via scripts/seed-kms.sh — build just packages the result.
-  local knowledge_dir="$SUBMODULE/lib/core/knowledge"
+  # Seeding is done separately via /kms-seed — build just packages the result.
   local shared_chroma="$SUBMODULE/dist/.kms_seeds/.shared/chroma"
 
-  if [ -d "$knowledge_dir" ]; then
+  if [ -d "$SUBMODULE/kms" ]; then
     # Copy kms/ Python package into plugin.
     cp -r "$SUBMODULE/kms" "$out/kms"
-
-    # Copy knowledge markdown files as fallback for agents when KMS MCP is offline.
-    cp -r "$knowledge_dir" "$out/knowledge"
-    local knowledge_count
-    knowledge_count=$(find "$out/knowledge" -name "*.md" ! -name "index.md" | wc -l | tr -d ' ')
-    echo "  knowledge    $knowledge_count pattern files → knowledge/"
 
     # Launcher — uses ${CLAUDE_PLUGIN_ROOT} injected by Claude Code at runtime.
     cat > "$out/kms/server.sh" <<'LAUNCHER'
 #!/usr/bin/env bash
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 export KMS_DB_PATH="$PLUGIN_ROOT/chroma"
-export KMS_KNOWLEDGE_DIR="$PLUGIN_ROOT/knowledge"
 export PYTHONPATH="$PLUGIN_ROOT"
 
 # Auto-install deps on first run — no-op if already satisfied.
@@ -166,12 +158,12 @@ exec python3 -m kms.application.mcp_server
 LAUNCHER
     chmod +x "$out/kms/server.sh"
 
-    # Copy pre-seeded ChromaDB — run scripts/seed-kms.sh first if missing.
+    # Copy pre-seeded ChromaDB — run /kms-seed first if missing.
     if [ -d "$shared_chroma" ]; then
       cp -r "$shared_chroma" "$out/chroma"
       echo "  kms          chroma bundled from dist/.kms_seeds/.shared/"
     else
-      echo "  kms          ⚠ no chroma found — run: bash scripts/seed-kms.sh"
+      echo "  kms          ⚠ no chroma found — run: /kms-seed"
     fi
 
     # Project setup template — copy to downstream project root as .mcp.json
@@ -190,7 +182,7 @@ LAUNCHER
 MCP_TEMPLATE
     echo "  kms          project-mcp-template.json written"
   else
-    echo "  kms          SKIP (lib/core/knowledge/ not found)"
+    echo "  kms          SKIP (kms/ package not found)"
   fi
 
   # ── Upsert marketplace.json entry ────────────────────────────────────────────

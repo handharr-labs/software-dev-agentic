@@ -1,6 +1,6 @@
 ---
 name: kms-extract-codebase
-description: Scan a local project codebase and extract project-reality knowledge into kms/knowledge-sources/projects/{repo-name}/. Produces feature inventory, API endpoints, shared components, deviations, and third-party integrations docs. Then seeds ChromaDB.
+description: Scan a local project codebase and extract project-reality knowledge into kms/knowledge-sources/projects/{repo-name}/. Produces feature inventory, API endpoints, shared components, deviations, and third-party integrations docs.
 user-invocable: true
 allowed-tools: Agent
 ---
@@ -73,16 +73,12 @@ repo_yaml:    kms/knowledge-sources/projects/{name}/repo.yaml
 doc_types:    {selected doc types from step 2}
 ```
 
-### 3 — Audit
+### 4 — Audit
 
-Run `/kms-audit projects/{name}/` to validate the extracted docs against `docs/principles/kms-knowledge-source-rules.md` before seeding.
+Run `/kms-audit projects/{name}/` to validate the extracted docs against `docs/principles/kms-knowledge-source-rules.md`.
 
-If any **Error**-severity findings are reported: surface them to the user and stop. Do not proceed to seeding until errors are resolved.
-
-### 4 — Seed
-
-After audit passes, run `/kms-seed` to seed the validated docs into ChromaDB.
+If any **Error**-severity findings are reported: surface them to the user and stop.
 
 ### 5 — Report
 
-Surface the orchestrator's extraction summary, audit result, and seed result to the user.
+Surface the orchestrator's extraction summary and audit result to the user. Remind the user to run `/kms-seed` manually when ready to load into ChromaDB.

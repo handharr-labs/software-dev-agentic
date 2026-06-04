@@ -96,16 +96,10 @@ echo "stored: $stored"
 echo "shared chroma: $([ -d "$shared_chroma" ] && echo present || echo MISSING)"
 ```
 
-Check `dist/.kms_seeds/.version` against the current `lib/core/knowledge` tree hash:
-
-```bash
-git rev-parse HEAD:lib/core/knowledge
-```
-
-If `.version` doesn't match the tree hash, or if `.shared/chroma` is missing: report stale.
+If `.shared/chroma` is missing or `.version` is empty: report stale.
 
   Ask: "KMS seed is stale — seed now? (yes / skip)"
-  - `yes` → run `bash scripts/seed-kms.sh` before continuing
+  - `yes` → run `/kms-seed` before continuing
   - `skip` → continue (plugin will bundle no chroma or an outdated one)
 
 ### 7 — Rebuild and commit all plugins

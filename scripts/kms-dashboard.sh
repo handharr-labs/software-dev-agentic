@@ -8,7 +8,7 @@
 # Writes dashboard:{timestamp} to dist/.kms_seeds/.version on every upsert,
 # signalling build-plugin.sh to skip file-based reseed.
 #
-# Run 'bash scripts/seed-kms.sh' first if the shared DB doesn't exist.
+# Run '/kms-seed' first if the shared DB doesn't exist.
 
 set -euo pipefail
 
@@ -20,7 +20,7 @@ SHARED_CHROMA="$REPO_ROOT/dist/.kms_seeds/.shared/chroma"
 
 if [ ! -d "$SHARED_CHROMA" ]; then
   echo "Shared ChromaDB not found at dist/.kms_seeds/.shared/chroma"
-  echo "Run: bash scripts/seed-kms.sh"
+  echo "Run: /kms-seed"
   exit 1
 fi
 
