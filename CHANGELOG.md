@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.0.2] — 2026-06-04
+
+### Added
+- **`/kms-status`** — Step 7: project knowledge summary — fetches `project_structure` and `feature_inventory` nodes for the current project and shows a 2–3 line excerpt to confirm real content is retrievable
+
+---
+
 ## [10.0.1] — 2026-06-04
 
 ### Added
