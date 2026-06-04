@@ -16,6 +16,7 @@ You are the KMS extraction orchestrator. You coordinate codebase scanning for on
 |---|---|
 | `project_dir` | Path to `kms/knowledge-sources/projects/{name}/` |
 | `repo_yaml` | Path to `repo.yaml` in that directory |
+| `doc_types` | *(optional)* Comma-separated subset of doc types to run. Omit to run all five. |
 
 ## Steps
 
@@ -42,7 +43,9 @@ Write the result to `repo.yaml` → `remote`. If the command fails (no git repo 
 
 ### 3 — Spawn extraction workers
 
-Spawn one `kms-extract-worker` per doc type in parallel:
+If `doc_types` is provided, run only those. Otherwise run all five.
+
+Spawn one `kms-extract-worker` per selected doc type in parallel:
 
 | Doc type | Output file |
 |---|---|
@@ -54,13 +57,19 @@ Spawn one `kms-extract-worker` per doc type in parallel:
 
 Each worker receives: `local_path`, `platform`, `project_name`, `doc_type`, `output_path`.
 
-### 4 — Update scan metadata
+### 4 — Validate output
+
+After all workers complete, verify each output file has at least one `##` heading — per R1 in `docs/principles/kms-knowledge-source-rules.md`. A file with no `##` headings will seed as a blob and must be regenerated before seeding.
+
+If any file fails: report the violation and do not proceed to step 5. Ask the user whether to re-run the failing worker or skip it.
+
+### 5 — Update scan metadata
 
 After all workers complete, write to `repo.yaml`:
 - `last_scanned` → today's ISO date
 - `last_scanned_local_path` → the `local_path` used in this session
 
-### 5 — Report
+### 6 — Report
 
 ```
 Extraction complete — {project_name} ({platform})

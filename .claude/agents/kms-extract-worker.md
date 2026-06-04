@@ -51,11 +51,18 @@ List all features/modules in the project.
 ```markdown
 # Feature Inventory — {project_name}
 
-| Feature | Module Path | Entry Point |
-|---|---|---|
-| Employee Management | features/employee/ | EmployeeBloc |
-| Leave Request | features/leave/ | LeaveBloc |
+## {FeatureName}
+
+- module_path: features/employee/
+- entry_point: EmployeeBloc
+
+## {FeatureName}
+
+- module_path: features/leave/
+- entry_point: LeaveBloc
 ```
+
+One `##` per feature. Heading = feature name exactly as it appears in the codebase. Each section is one searchable chunk.
 
 ---
 
@@ -75,11 +82,21 @@ List all real API endpoints called by the codebase.
 ```markdown
 # API Endpoints — {project_name}
 
-| Method | Path | Feature | File |
-|---|---|---|---|
-| GET | /api/v1/employees/:id | Employee | employee_remote_data_source.dart |
-| POST | /api/v1/leave-requests | Leave | leave_remote_data_source.dart |
+## {FeatureName}
+
+| Method | Path | File |
+|---|---|---|
+| GET | /api/v1/employees/:id | employee_remote_data_source.dart |
+| GET | /api/v1/employees | employee_remote_data_source.dart |
+
+## {FeatureName}
+
+| Method | Path | File |
+|---|---|---|
+| POST | /api/v1/leave-requests | leave_remote_data_source.dart |
 ```
+
+One `##` per feature/domain group. Group endpoints by the feature they belong to. Each section is one searchable chunk.
 
 ---
 
@@ -99,11 +116,18 @@ List reusable UI components available across features.
 ```markdown
 # Shared Components — {project_name}
 
-| Component | Path | Props / Parameters |
-|---|---|---|
-| EmployeeCard | shared/widgets/employee_card.dart | employee: EmployeeEntity |
-| LoadingButton | shared/widgets/loading_button.dart | label: String, onPressed: VoidCallback, isLoading: bool |
+## {ComponentName}
+
+- path: shared/widgets/employee_card.dart
+- params: employee: EmployeeEntity
+
+## {ComponentName}
+
+- path: shared/widgets/loading_button.dart
+- params: label: String, onPressed: VoidCallback, isLoading: bool
 ```
+
+One `##` per component. Heading = class/component name. Each section is one searchable chunk.
 
 ---
 
@@ -152,20 +176,34 @@ List all third-party SDKs and external services used.
 ```markdown
 # Third-Party Integrations — {project_name}
 
-| Integration | Package | Purpose | Layer used |
-|---|---|---|---|
-| Firebase Analytics | firebase_analytics | Event tracking | Presentation |
-| Dio | dio | HTTP client | Data |
-| Flagsmith | flagsmith | Feature flags | App layer |
+## {IntegrationName}
+
+- package: firebase_analytics
+- purpose: Event tracking
+- layer: Presentation
+
+## {IntegrationName}
+
+- package: dio
+- purpose: HTTP client
+- layer: Data
 ```
+
+One `##` per integration. Heading = SDK/service name. Each section is one searchable chunk.
 
 ---
 
 ## Writing Rules
 
+Rules are governed by `docs/principles/kms-knowledge-source-rules.md`. The non-negotiable constraints for this worker:
+
+- **Every doc must use `##` headings** (R1) — one `##` per entity (feature, endpoint group, component, integration, deviation). Files without `##` headings seed as a single unsearchable blob.
+- **One concept per `##`** (R2) — do not bundle multiple features or components under one heading.
+- **Heading names are retrieval keys** (R3) — use the exact name from the codebase, not generic labels like "Overview" or "Misc".
+- **No duplicate `##` headings within a file** (R4) — if two features share a name, disambiguate with a suffix.
 - Write only what you found — never invent or assume
-- If a section yields no results: state "None found" rather than omitting
-- Keep tables concise — paths relative to `local_path`
+- If a section yields no results: write a single line "None found" under a `## Summary` heading — do not omit the file
+- Keep content concise — paths relative to `local_path`
 - Do not include code snippets — paths and names only
 - Write to `output_path` using the Write tool
 

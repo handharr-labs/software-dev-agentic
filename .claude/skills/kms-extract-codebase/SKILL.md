@@ -15,23 +15,74 @@ allowed-tools: Agent
 
 ### 1 — Resolve project
 
-If `--project` provided: locate `kms/knowledge-sources/projects/{name}/repo.yaml`.
+**If `--project` provided:**
+- Look for `kms/knowledge-sources/projects/{name}/repo.yaml`
+- If not found: treat as a new project — go to **Bootstrap** below
 
-If not provided: list all directories under `kms/knowledge-sources/projects/` that contain a `repo.yaml` and ask the user which to scan.
+**If not provided:**
+- List all directories under `kms/knowledge-sources/projects/` that contain a `repo.yaml`
+- If any exist: ask the user which to scan, or offer "new project" as an option
+- If none exist: go to **Bootstrap** below
 
-### 2 — Spawn orchestrator
+**Bootstrap — new project:**
+
+Ask the user:
+1. Project name (used as directory name, e.g. `flutter-mobile-jurnal`)
+2. Platform: `flutter` | `ios` | `android` | `web`
+3. Absolute local path to the repo clone
+
+Create `kms/knowledge-sources/projects/{name}/` and write `repo.yaml`:
+```yaml
+name: {name}
+platform: {platform}
+remote: null
+last_scanned: null
+last_scanned_local_path: {local_path}
+```
+
+Then proceed — no existing docs, so step 2 check is skipped.
+
+### 2 — Check for existing docs
+
+Check which doc files already exist in `kms/knowledge-sources/projects/{name}/`:
+
+```
+feature-inventory.md  api-endpoints.md  shared-components.md
+deviations.md  third-party-integrations.md
+```
+
+If any exist, ask the user:
+
+> The following docs already exist: {list}. Re-extraction will overwrite them completely.
+> Choose:
+> - **overwrite-all** — regenerate all docs
+> - **missing-only** — only generate docs that don't exist yet
+> - **select** — choose which docs to regenerate
+
+Wait for the user's choice before proceeding. Pass the selected doc types to the orchestrator.
+
+If no docs exist: proceed without asking.
+
+### 3 — Spawn orchestrator
 
 Spawn `kms-extract-orchestrator` with:
 
 ```
-project_dir: kms/knowledge-sources/projects/{name}
-repo_yaml:   kms/knowledge-sources/projects/{name}/repo.yaml
+project_dir:  kms/knowledge-sources/projects/{name}
+repo_yaml:    kms/knowledge-sources/projects/{name}/repo.yaml
+doc_types:    {selected doc types from step 2}
 ```
 
-### 3 — Seed
+### 3 — Audit
 
-After extraction completes, run `/kms-seed` to seed the new docs into ChromaDB.
+Run `/kms-audit projects/{name}/` to validate the extracted docs against `docs/principles/kms-knowledge-source-rules.md` before seeding.
 
-### 4 — Report
+If any **Error**-severity findings are reported: surface them to the user and stop. Do not proceed to seeding until errors are resolved.
 
-Surface the orchestrator's extraction summary and seed result to the user.
+### 4 — Seed
+
+After audit passes, run `/kms-seed` to seed the validated docs into ChromaDB.
+
+### 5 — Report
+
+Surface the orchestrator's extraction summary, audit result, and seed result to the user.
