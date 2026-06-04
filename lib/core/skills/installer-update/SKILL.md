@@ -14,10 +14,11 @@ readlink .claude/skills/domain-create-entity 2>/dev/null
 ```
 
 Classify the output:
-- Contains `platforms/ios-talenta` → `ios`
-- Contains `platforms/web` → `web`
-- Contains `platforms/flutter-mobile-talenta` → `flutter`
-- No output or unknown → ask the user: "Which platform is this project? web / ios / flutter"
+- Contains `platforms/ios-swift` → `ios-swift`
+- Contains `platforms/web-nextjs` → `web-nextjs`
+- Contains `platforms/flutter` → `flutter`
+- Contains `platforms/android-kotlin` → `android-kotlin`
+- No output or unknown → ask the user: "Which platform is this project? flutter / ios-swift / android-kotlin / web-nextjs"
 
 ## Step 2 — Run sync
 

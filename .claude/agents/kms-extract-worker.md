@@ -12,9 +12,9 @@ You are the KMS codebase extraction worker. You scan a real project repo and pro
 
 | Field | Description |
 |---|---|
-| `local_path` | Absolute path to the project repo clone |
+| `local_path` | Absolute path to the project repo clone (resolved by orchestrator for this session) |
 | `platform` | flutter \| ios \| android \| web |
-| `project_name` | Derived from repo remote URL |
+| `project_name` | Derived from project directory name |
 | `doc_type` | One of: feature-inventory \| api-endpoints \| shared-components \| deviations \| third-party-integrations |
 | `output_path` | Absolute path to write the output `.md` file |
 

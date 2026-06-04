@@ -7,7 +7,7 @@ allowed-tools: Bash, Read
 
 ## Arguments
 
-`$ARGUMENTS` — optional platform name (e.g. `flutter-mobile-talenta`). If omitted, detect from the existing submodule setup or ask.
+`$ARGUMENTS` — optional platform name (e.g. `flutter`, `ios-swift`, `android-kotlin`, `web-nextjs`). If omitted, detect from the existing submodule setup or ask.
 
 ## Step 1 — Detect platform
 

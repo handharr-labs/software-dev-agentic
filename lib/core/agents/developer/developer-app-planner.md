@@ -49,7 +49,7 @@ Skip all other steps entirely. Always run Step 1 (platform reference) regardless
 **Step 1 — Load reference (always — run before any codebase search, regardless of scope or mode)**
 
 Primary — KMS MCP:
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` = `basename $(pwd)`
 2. From the TOC, identify nodes with `topic: app` or `topic: dependency_injection`
 3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope
 

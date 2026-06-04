@@ -3,7 +3,7 @@ name: kms-extract-orchestrator
 description: Orchestrates codebase extraction for one project — reads repo.yaml, resolves local_path, spawns kms-extract-worker for each doc type, and reports summary. Called by /kms-extract-codebase skill.
 model: sonnet
 user-invocable: false
-tools: Read, Glob, AskUserQuestion, Agent
+tools: Read, Glob, Bash, AskUserQuestion, Agent
 agents:
   - kms-extract-worker
 ---
@@ -23,14 +23,22 @@ You are the KMS extraction orchestrator. You coordinate codebase scanning for on
 
 Read `repo_yaml`. Extract:
 - `platform` — flutter | ios | android | web
-- `remote` — repo remote URL (derive project name from last URL segment)
-- `local_path` — local clone path; may be null
+- `last_scanned_local_path` — local clone path from last scan; may be null
 
-### 2 — Resolve local_path
+Derive `project_name` from the directory name of `project_dir` (i.e. `basename(project_dir)`), not from `remote`.
 
-If `local_path` is null or path does not exist on disk:
-- Ask the user: "What is the absolute local path to the `{repo-name}` repo clone?"
-- Write the provided path back to `repo.yaml` → `local_path`
+### 2 — Resolve local path and extract remote
+
+If `last_scanned_local_path` is null or the path does not exist on disk:
+- Ask the user: "What is the absolute local path to the `{project_name}` repo clone?"
+
+Use the confirmed path as `local_path` for this session.
+
+Once `local_path` is confirmed to exist, run:
+```
+git -C {local_path} remote get-url origin
+```
+Write the result to `repo.yaml` → `remote`. If the command fails (no git repo or no origin), skip silently — do not abort.
 
 ### 3 — Spawn extraction workers
 
@@ -46,9 +54,11 @@ Spawn one `kms-extract-worker` per doc type in parallel:
 
 Each worker receives: `local_path`, `platform`, `project_name`, `doc_type`, `output_path`.
 
-### 4 — Update last_scanned
+### 4 — Update scan metadata
 
-After all workers complete: write today's ISO date to `repo.yaml` → `last_scanned`.
+After all workers complete, write to `repo.yaml`:
+- `last_scanned` → today's ISO date
+- `last_scanned_local_path` → the `local_path` used in this session
 
 ### 5 — Report
 

@@ -41,9 +41,9 @@ Present the proposed entry to the user:
 
 ```
 Detected source:
-  name : flutter-mobile-talenta
+  name : flutter-talenta
   type : codebase
-  path : /path/to/flutter-mobile-talenta
+  path : /path/to/flutter-talenta
   owns : [code_pattern, source_file]
 
 Register and seed? [yes / no / rename]

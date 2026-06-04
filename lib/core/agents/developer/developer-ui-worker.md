@@ -51,7 +51,7 @@ Read the stateholder contract from disk using the `Read` tool on the path from `
 Load the UI-relevant presentation knowledge reference before writing any code.
 
 Primary — KMS MCP:
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md, `{platform}` from plan.md frontmatter
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` = `basename $(pwd)`, `{platform}` from plan.md frontmatter
 2. From the TOC, identify nodes with `topic: presentation` or `topic: navigation`
 3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope — do not load domain, data, or app patterns
 
@@ -67,7 +67,7 @@ Then read specific pattern files by scope:
 | Component | `presentation/component.md` |
 | Navigator | `navigation/go_router.md` (flutter), `navigation/coordinator.md` (ios), `navigation/routes.md` (web) — pick by platform |
 
-Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/presentation/{pattern}.md` overrides platform-base when it exists. `{project}` from CLAUDE.md.
+Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/presentation/{pattern}.md` overrides platform-base when it exists. `{project}` = `basename $(pwd)`.
 
 Check state.json to resume from a previous run:
 ```bash

@@ -3,7 +3,7 @@ name: debugger-worker
 description: Trace a runtime error or unexpected behavior through the Clean Architecture layers to its root cause. Use when you have an error, stack trace, or something not working as expected.
 model: sonnet
 user-invocable: true
-tools: Read, Glob, Grep
+tools: Read, Glob, Grep, mcp__kms__kms_list, mcp__kms__kms_fetch
 agents:
   - debugger-log-worker
 ---
@@ -35,6 +35,16 @@ When the root cause may lie in a third-party package (e.g. `node_modules`, Cocoa
 ```
 
 Never use `find`/`ls` to navigate a vendor directory speculatively. If the pattern is unknown, Grep for a related symbol from the error message first — that narrows the target directory before any Read.
+
+## Knowledge
+
+Derive: `project` = `basename $(pwd)`, `platform` from file paths in the error/stack trace.
+
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — scoped TOC
+2. Select error handling and architecture patterns relevant to the reported layer
+3. `kms_fetch(...)` for each — use to confirm expected behaviour vs actual
+
+Fallback — if `kms_list` unavailable: skip KMS and rely on source code reads only.
 
 ## Step 1 — Understand the Symptom
 

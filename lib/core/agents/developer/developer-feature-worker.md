@@ -54,9 +54,12 @@ Extract from the inlined content:
 
 Load cross-cutting convention references before writing any code — knowledge files only, no theory.
 
+Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
+
 Primary — KMS MCP:
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` from CLAUDE.md, `{platform}` from plan.md frontmatter
-2. `kms_fetch(...)` for `topic: syntax_conventions, pattern: conventions`, `topic: utilities` (relevant patterns), `topic: error_handling, pattern: failure_types`
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — scoped TOC
+2. From the TOC, select patterns under `topic: syntax_conventions`, `utilities`, and `error_handling`
+3. `kms_fetch(platform, project, discipline="engineering", topic="{topic}", pattern="{pattern}")` for each selected pattern
 
 Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
 ```

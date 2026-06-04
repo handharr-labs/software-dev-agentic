@@ -2,7 +2,7 @@
 name: developer-backend-worker
 description: Build the Domain and Data layers for a feature — entities, repository interfaces, use cases, mappers, datasources, and repository implementations. Calls skills directly in layer order. No sub-agents.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_list, mcp__kms__kms_fetch
 related_skills:
   - developer-domain-create-entity
   - developer-domain-create-repository
@@ -22,9 +22,19 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 | Parameter | Description |
 |---|---|
 | `feature` | Feature name |
-| `platform` | `web`, `ios`, or `flutter` |
+| `platform` | `flutter`, `ios-swift`, `android-kotlin`, or `web-nextjs` |
 | `operations` | Subset of: get-list, get-single, create, update, delete |
 | `backend-type` | `remote-api` (default) or `local-db` |
+
+## Knowledge
+
+Derive: `project` = `basename $(pwd)`, `platform` from spawn prompt.
+
+1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — scoped TOC
+2. Reason over TOC — select `domain` and `data` patterns relevant to the feature
+3. `kms_fetch(platform, project, discipline="engineering", topic="{topic}", pattern="{pattern}")` for each selected pattern
+
+Fallback — if `kms_list` unavailable: read `software-dev-agentic/lib/core/knowledge/{platform}/engineering/domain/index.md` and `data/index.md`, then fetch specific pattern files.
 
 ## Search Protocol — Never Violate
 

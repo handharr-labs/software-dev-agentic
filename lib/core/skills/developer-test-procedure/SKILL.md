@@ -12,7 +12,7 @@ Required — caller must supply all three:
 | Parameter | Description |
 |---|---|
 | `target` | Absolute path to the source artifact under test |
-| `platform` | `ios-talenta` / `android-talenta` / `flutter-mobile-talenta` / `flutter-qontak-crm` / `flutter-qontak-chat` |
+| `platform` | `ios-swift` / `android-kotlin` / `flutter` / `web-nextjs` |
 | `layer` | `domain` / `data` / `presentation` |
 
 Return `MISSING INPUT: <param>` immediately if any are absent.

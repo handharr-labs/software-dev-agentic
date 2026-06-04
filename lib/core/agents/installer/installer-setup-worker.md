@@ -39,7 +39,7 @@ If platform cannot be determined, ask: `"Which platform is this project? web / i
 Read and execute the appropriate skill file:
 - **web** → `.claude/skills/installer-setup-project/SKILL.md`
 - **ios** → `.claude/skills/installer-setup-project/SKILL.md`
-- **flutter** → tell the user Flutter setup is not yet implemented; point to `software-dev-agentic/lib/platforms/flutter-mobile-talenta/README.md`
+- **flutter** → tell the user Flutter setup is not yet implemented; point to `software-dev-agentic/lib/platforms/flutter/`
 
 Follow the skill's Steps exactly.
 

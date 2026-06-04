@@ -16,7 +16,7 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 | Parameter | Description |
 |---|---|
 | `target` | File path(s) of the source artifact(s) to test |
-| `platform` | Platform identifier (e.g. `ios-talenta`, `flutter-mobile-talenta`) |
+| `platform` | Platform identifier (e.g. `ios-swift`, `flutter`, `android-kotlin`, `web-nextjs`) |
 
 ## Scope Boundary
 

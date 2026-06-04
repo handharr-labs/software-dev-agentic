@@ -6,7 +6,7 @@ allowed-tools: AskUserQuestion, Bash, Agent
 
 ## Arguments
 
-`$ARGUMENTS` — optional platform name (e.g. `web`, `ios-talenta`, `flutter-mobile-talenta`).
+`$ARGUMENTS` — optional platform name (e.g. `flutter`, `ios-swift`, `android-kotlin`, `web-nextjs`).
 
 ## Steps
 

@@ -11,14 +11,16 @@ allowed-tools: Bash
    ```bash
    readlink .claude/skills/domain-create-entity 2>/dev/null
    ```
-   - Contains `platforms/ios-talenta` → `ios`
-   - Contains `platforms/web` → `web`
-   - Contains `platforms/flutter-mobile-talenta` → `flutter`
+   - Contains `platforms/ios-swift` → `ios-swift`
+   - Contains `platforms/web-nextjs` → `web-nextjs`
+   - Contains `platforms/flutter` → `flutter`
+   - Contains `platforms/android-kotlin` → `android-kotlin`
 
 2. **If detection fails** (no symlink or unknown path), ask the user which platform:
-   - `web` — Next.js project
-   - `ios` — Swift/UIKit project
+   - `web-nextjs` — Next.js project
+   - `ios-swift` — Swift/UIKit project
    - `flutter` — Dart/BLoC project
+   - `android-kotlin` — Android/Kotlin project
 
 3. **Run sync:**
    ```bash

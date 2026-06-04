@@ -90,9 +90,9 @@ Each project directory requires a `repo.yaml`:
 ```yaml
 name: flutter-mobile-talenta
 platform: flutter
-remote: https://github.com/mekari/flutter-mobile-talenta
-local_path: null        # set to enable codebase scan
+remote: null            # auto-populated from git remote get-url origin on first scan
 last_scanned: null
+last_scanned_local_path: null  # path used by the last engineer who ran the scan
 ```
 
 **What belongs in project docs** — things unique to the project, not covered by the platform standard architecture doc:

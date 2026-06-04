@@ -37,7 +37,7 @@ You are the KMS seed orchestrator. You coordinate the seeding workflow without w
 ```
 Seeded N sources:
   flutter-base-knowledge  → 47 upserted, 3 unchanged
-  ⚠  flutter-mobile-talenta → skipped (path not found)
+  ⚠  flutter-talenta → skipped (path not found)
 
 Total: 47 upserted, 3 unchanged, 1 source unavailable
 ```
