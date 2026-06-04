@@ -1,57 +1,48 @@
 # software-dev-agentic
 
-> Claude Code toolkit for Clean Architecture projects — v9.2.6
+> Claude Code toolkit for Clean Architecture projects — v10.0.0
 
-A multi-platform agentic toolkit — agents, skills, hooks, and architecture reference docs for Clean Architecture projects. Distributed as a **git submodule** or a **Claude Code plugin**.
+A multi-platform agentic toolkit — agents, skills, hooks, and architecture reference docs for Clean Architecture projects. Distributed as a **Claude Code plugin**.
 
-**Platforms:** Web (Next.js 15) · iOS (Swift/UIKit) · Flutter · Android
+**Platforms:** Flutter · iOS (Swift/UIKit) · Android (Kotlin) · Web (Next.js 15)
 
 ---
 
 ## How it works
 
-Agents are organized into **personas** — coherent workflow groups (builder, detective, tracker, auditor, installer). All personas ship to every platform.
+Agents are organized into **personas** — coherent workflow groups (developer, debugger, tracker, auditor, installer, qa). All personas ship to every platform plugin.
 
-Two distribution paths — same source, same behavior:
-
-| | Submodule | Plugin |
-|---|---|---|
-| Setup | `setup-symlinks.sh` | `/plugin install` |
-| Skill entry | `/builder-build-feature` | `/sda-<platform>:builder-build-feature` |
-| Updates | `sync.sh` | auto-update on next session |
-| Overrides | `agents.local/` / `skills.local/` | `.claude/agents/` overrides plugin at higher priority |
+Knowledge is served by the **KMS** (ChromaDB-backed) — agents query `kms_list` → reason → `kms_fetch` at runtime. Project-specific context (feature inventory, deviations, API endpoints) is seeded per project via `/kms-seed`. Platform pattern knowledge (layers, conventions, patterns) ships pre-seeded inside the plugin.
 
 ---
 
-## Setup — Plugin (recommended)
-
-The plugin path requires no submodule, no symlinks, and updates automatically on every release.
+## Setup — Plugin
 
 ### Install
 
-From inside the downstream project directory, run:
+From inside the downstream project directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hndhr/software-dev-agentic/main/scripts/install-plugin.sh | bash -s -- --platform=flutter-mobile-talenta
+curl -fsSL https://raw.githubusercontent.com/hndhr/software-dev-agentic/main/scripts/install-plugin.sh | bash -s -- --platform=flutter
 ```
 
-Replace `flutter-mobile-talenta` with your platform. The script:
-- Installs at **project scope** — plugin is active only in this repo, not globally
-- Patches `.gitignore` with `.claude/agentic-state/`
-- Applies the platform `CLAUDE.md` template
-- Sets `skillListingBudgetFraction: 0.03` in `.claude/settings.json`
+Replace `flutter` with your platform. Available platforms:
 
-Then run `/reload-plugins` in Claude Code to activate.
+| Plugin | Platform |
+|---|---|
+| `sda-flutter` | Flutter / Dart / BLoC |
+| `sda-ios-swift` | iOS / Swift / UIKit |
+| `sda-android-kotlin` | Android / Kotlin |
+| `sda-web-nextjs` | Web / Next.js 15 |
+
+The script installs at **project scope** — active only in this repo. Then run `/reload-plugins` in Claude Code to activate.
 
 ### Auto-install for teammates
 
-Two files to commit — that's the full setup. Teammates clone the repo, trust the folder, and both files are applied automatically.
+Commit two files — teammates get the full setup automatically on first session.
 
 #### Step 1 — `.claude/settings.json`
 
-Declares the marketplace and enables the plugin. Claude Code auto-installs on first session.
-
-**Flutter (mobile-talenta):**
 ```json
 {
   "extraKnownMarketplaces": {
@@ -60,92 +51,82 @@ Declares the marketplace and enables the plugin. Claude Code auto-installs on fi
     }
   },
   "enabledPlugins": {
-    "sda-flutter-mobile-talenta@sda": true
+    "sda-flutter@sda": true
   }
 }
 ```
 
-Replace `enabledPlugins` with the plugin matching your project:
-
-| Plugin | Platform |
-|---|---|
-| `sda-flutter-mobile-talenta` | Flutter / mobile-talenta |
-| `sda-flutter-mobile-jurnal` | Flutter / mobile-jurnal |
-| `sda-flutter-qontak-chat` | Flutter / qontak-chat |
-| `sda-flutter-qontak-crm` | Flutter / qontak-crm |
-| `sda-ios-talenta` | iOS / talenta |
-| `sda-android-talenta` | Android / talenta |
-| `sda-web` | Web / Next.js |
+Replace `sda-flutter` with the plugin matching your platform.
 
 #### Step 2 — `.mcp.json` (KMS)
 
-Wires the KMS MCP server so agents can query the knowledge store. Claude Code does not auto-start local MCP servers from plugin config — this file is required.
+Wires the KMS MCP server so agents can query the knowledge store.
 
-Copy the snippet for your platform into `.mcp.json` at your project root:
-
-**Flutter / mobile-talenta**
+**Flutter:**
 ```json
 {
   "mcpServers": {
     "kms": {
       "command": "bash",
-      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-talenta\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-talenta/$latest/kms/server.sh\""]
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-flutter\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-flutter/$latest/kms/server.sh\""]
     }
   }
 }
 ```
 
-**Flutter / mobile-jurnal**
+**iOS Swift:**
 ```json
 {
   "mcpServers": {
     "kms": {
       "command": "bash",
-      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-jurnal\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-flutter-mobile-jurnal/$latest/kms/server.sh\""]
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-ios-swift\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-ios-swift/$latest/kms/server.sh\""]
     }
   }
 }
 ```
 
-**iOS / talenta**
+**Android Kotlin:**
 ```json
 {
   "mcpServers": {
     "kms": {
       "command": "bash",
-      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-ios-talenta\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-ios-talenta/$latest/kms/server.sh\""]
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-android-kotlin\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-android-kotlin/$latest/kms/server.sh\""]
     }
   }
 }
 ```
 
-**Android / talenta**
+**Web Next.js:**
 ```json
 {
   "mcpServers": {
     "kms": {
       "command": "bash",
-      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-android-talenta\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-android-talenta/$latest/kms/server.sh\""]
+      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-web-nextjs\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-web-nextjs/$latest/kms/server.sh\""]
     }
   }
 }
 ```
 
-The launcher finds the latest installed version at runtime — survives plugin updates without changing this file. Commit it to the repo so teammates get it automatically.
+Commit `.mcp.json` so teammates get the KMS wiring automatically. Verify with `/kms-status` after Claude Code restarts.
 
-Verify with `/kms-status` (or `/sda-<platform>:kms-status`) after Claude Code restarts.
+### Seed project knowledge
 
-### Use trigger skills
+The plugin ships with platform-level patterns pre-seeded. To add your project's specific knowledge (feature inventory, API endpoints, deviations):
 
+```bash
+/kms-seed
 ```
-/sda-flutter-mobile-talenta:builder-build-feature
-/sda-flutter-mobile-talenta:detective-debug
-/sda-flutter-mobile-talenta:auditor-arch-review
+
+Or extract directly from the codebase:
+
+```bash
+/kms-extract-codebase
 ```
 
 ### Updates
-
-Engineers with auto-update enabled receive plugin updates automatically on the next session after a release. Others run:
 
 ```
 /plugin marketplace update sda
@@ -153,96 +134,54 @@ Engineers with auto-update enabled receive plugin updates automatically on the n
 
 ---
 
-## Setup — Submodule
-
-Use this path if your project already uses the submodule approach or needs local file overrides.
-
-### Starting a new project
-
-```bash
-# 1. Create your project (example: Next.js)
-npx create-next-app@latest my-app --typescript --tailwind --eslint --app --src-dir
-cd my-app
-
-# 2. Add the submodule
-git submodule add https://github.com/hndhr/software-dev-agentic software-dev-agentic
-
-# 3. Wire everything — symlinks all agents, skills, hooks, and reference for the platform
-software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-# or
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
-```
-
-```
-your-project/
-  software-dev-agentic/    ← this repo (submodule)
-  .claude/
-    agents/                → symlinks into submodule
-    skills/                → symlinks into submodule
-    agents.local/          ← your project-specific overrides (never touched by sync)
-```
-
-Open Claude Code and use trigger skills (`/builder-build-feature`, `/detective-debug`, etc.) as the entry point.
-
-### Adding to an existing project
-
-```bash
-git submodule add https://github.com/hndhr/software-dev-agentic software-dev-agentic
-software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-```
-
-The script wires symlinks, copies `CLAUDE.md`, and sets up `settings.local.json`. Re-running is safe — existing files and local overrides are never overwritten.
-
-### Keeping up to date
-
-```bash
-software-dev-agentic/scripts/sync.sh --platform=<platform>
-```
-
-Pulls the latest, re-runs symlink setup (idempotent), and reminds you to commit the updated submodule pointer. Local overrides in `agents.local/` and `skills.local/` are never touched.
-
----
-
 ## What's included
 
 ### Agents — by persona
 
-**builder** — feature construction across CLEAN layers
+**developer** — feature construction across CLEAN layers
 
 | Agent | Purpose |
 |---|---|
-| `builder-feature-orchestrator` | Brain of the builder persona — decides which planners to spawn each round, synthesizes plan.md + context.md, instructs entry skill to spawn worker. Never spawns agents or writes source files directly. |
-| `builder-feature-worker` | Execute an approved feature plan layer by layer |
-| `builder-backend-orchestrator` | Build domain + data layers when presentation exists or will be built separately |
-| `builder-groom-orchestrator` | Groom a Jira ticket against the codebase — detects scope from AC, returns which planners to run, synthesizes grooming summary |
-| `builder-domain-planner` | Discover Domain layer — entities, use cases, repository interfaces. Returns findings + impact recommendations. Read-only. |
-| `builder-data-planner` | Discover Data layer — DTOs, mappers, datasources, repository impls. Returns findings + impact recommendations. Read-only. |
-| `builder-pres-planner` | Discover Presentation layer — StateHolders, screens, components. Returns findings + impact recommendations. Read-only. |
-| `builder-app-planner` | Discover App layer — DI, routing, module, analytics, feature flags. Returns findings + impact recommendations. Read-only. |
-| `builder-ui-worker` | Create or update screens and components bound to an existing StateHolder |
-| `builder-test-worker` | Generate tests for any CLEAN layer |
+| `developer-feature-strategist` | Brain of the developer persona — decides which layer planners to spawn, synthesizes plan.md + context.md. Never spawns agents or writes files directly. |
+| `developer-feature-worker` | Execute an approved feature plan layer by layer |
+| `developer-backend-worker` | Build Domain + Data layers directly — entities, use cases, mappers, datasources, repository impls |
+| `developer-ui-worker` | Create or update screens and components bound to an existing StateHolder |
+| `developer-test-worker` | Route test generation to the correct layer procedure |
+| `developer-domain-planner` | Discover Domain layer — entities, use cases, repository interfaces. Read-only. |
+| `developer-data-planner` | Discover Data layer — DTOs, mappers, datasources, repository impls. Read-only. |
+| `developer-pres-planner` | Discover Presentation layer — StateHolders, screens, components. Read-only. |
+| `developer-app-planner` | Discover App layer — DI, routing, module, analytics, feature flags. Read-only. |
+| `developer-groom-strategist` | Groom a Jira ticket against the codebase |
+| `developer-rfc-writer` | Write RFC + breakdown from converged plan |
+| `developer-figma-worker` | Extract Figma design context and write alignment files |
 
-**detective** — debugging and performance analysis
+**debugger** — debugging and root cause analysis
 
 | Agent | Purpose |
 |---|---|
-| `detective-debug-orchestrator` | Investigate a bug through static analysis, form hypotheses, instrument code |
-| `detective-debug-worker` | Trace a runtime error or unexpected behavior to its root cause |
-| `detective-debug-log-worker` | Add or remove debug log statements for a specific investigation |
-| `perf-worker` | Score agentic session performance across D1–D7 dimensions, write report |
+| `debugger-strategist` | Coordinate debug investigation — static analysis then runtime instrumentation |
+| `debugger-worker` | Trace a runtime error through CLEAN layers to its root cause |
+| `debugger-log-worker` | Add or remove debug log statements for a specific investigation |
 
 **tracker** — issue and ticket lifecycle
 
 | Agent | Purpose |
 |---|---|
 | `tracker-issue-worker` | Create or pick up a GitHub issue, open the feature branch, update backlog |
-| `tracker-jira-ticket-worker` | Create Jira tickets under an epic from a platform breakdown list — fetches PRD and optional Figma context, generates requirement-focused descriptions |
+| `tracker-jira-ticket-worker` | Create Jira tickets under an epic from a platform breakdown list |
 
 **auditor** — architecture compliance
 
 | Agent | Purpose |
 |---|---|
-| `auditor-arch-review-worker` | Audit code for CLEAN Architecture violations — layer boundaries, entity purity, DI |
+| `auditor-arch-review-worker` | Audit code for CLEAN Architecture violations — layer boundaries, entity purity, naming conventions |
+
+**qa** — test case and automation generation
+
+| Agent | Purpose |
+|---|---|
+| `qa-testcase-worker` | Generate mobile UI test cases from Jira tickets, PRDs, or Figma designs |
+| `qa-automation-worker` | Translate test case CSVs into Maestro YAML automation scripts |
 
 **installer** — project setup
 
@@ -254,16 +193,23 @@ Pulls the latest, re-runs symlink setup (idempotent), and reminds you to commit 
 
 ### Skills — by persona
 
-**builder**
+**developer**
 
 | Skill | Purpose |
 |---|---|
-| `/builder-build-feature` | Build or update a feature — resumes an existing run or starts a new one (plan-first or build-directly) |
-| `/builder-plan-feature` | Plan then build — runs convergence planning loop (spawning only needed layer planners per round), shows approval prompt, then executes |
-| `/builder-build-from-ticket` | One-shot build from a Jira ticket key or URL — non-interactive, convergence loop runs automatically, designed for CI |
-| `/builder-backend` | Build Domain + Data layers only |
-| `/builder-groom-ticket` | Groom a locally fetched Jira ticket against the codebase |
-| `/builder-clear-runs` | Remove stale orchestrator run state from `.claude/agentic-state/runs/` |
+| `/developer-build-feature` | Build or resume a feature — plan-first or build-directly |
+| `/developer-plan-feature` | Run convergence planning loop, show approval, then execute |
+| `/developer-build-from-ticket` | One-shot build from a Jira ticket — non-interactive, designed for CI |
+| `/developer-backend` | Build Domain + Data layers only |
+| `/developer-rfc` | Write RFC + breakdown from a Jira epic |
+| `/developer-groom-ticket` | Groom a locally fetched Jira ticket against the codebase |
+| `/developer-clear-runs` | Remove stale run state from `.claude/agentic-state/runs/` |
+
+**debugger**
+
+| Skill | Purpose |
+|---|---|
+| `/debugger-debug` | Trigger debug investigation — static analysis then optional instrumentation |
 
 **tracker**
 
@@ -273,31 +219,35 @@ Pulls the latest, re-runs symlink setup (idempotent), and reminds you to commit 
 | `/tracker-issue` | Create or pick up a GitHub issue, create branch, update backlog |
 | `/tracker-adjust-ticket` | Update the Session Adjustment section of a locally fetched ticket |
 
-**detective**
-
-| Skill | Purpose |
-|---|---|
-| `/detective-debug` | Trigger the debug orchestrator — collects bug intake then investigates |
-
 **auditor**
 
 | Skill | Purpose |
 |---|---|
 | `/auditor-arch-review` | Audit code for CLEAN Architecture violations |
 
+**qa**
+
+| Skill | Purpose |
+|---|---|
+| `/qa-generate-testcase` | Generate mobile UI test cases from Jira, Confluence, or Figma |
+| `/qa-generate-automation` | Generate Maestro YAML automation scripts from test case CSVs |
+
 **installer**
 
 | Skill | Purpose |
 |---|---|
 | `/installer-setup` | Set up or reconfigure a project to use this toolkit |
-| `/installer-doctor` | Audit the toolkit setup — submodule, symlinks, CLAUDE.md, settings, gh auth |
-| `/installer-sync` | Pull the latest updates and re-link agents, skills, hooks, and reference docs |
+| `/installer-doctor` | Audit the toolkit setup — plugin, KMS, CLAUDE.md, settings, gh auth |
+| `/installer-sync` | Pull the latest updates and re-link agents and skills |
 | `/installer-update` | Sync to latest then verify the full installation end-to-end |
 
 **utility**
 
 | Skill | Purpose |
 |---|---|
+| `/kms-status` | Check KMS server health, ChromaDB node count, and knowledge coverage |
+| `/kms-seed` | Seed ChromaDB from registered knowledge sources |
+| `/kms-extract-codebase` | Scan a local project repo and extract project-reality docs into KMS |
 | `/agentic-perf-review` | Score a Claude session on D1–D7 dimensions, write a report |
 | `/release` | Cut a new release — bumps VERSION, prepends CHANGELOG, commits, tags |
 
@@ -305,31 +255,11 @@ Pulls the latest, re-runs symlink setup (idempotent), and reminds you to commit 
 
 ## Recommended Workflows
 
-These are the recommended flows to try first. They cover the two most common day-to-day scenarios and give you a clear picture of how the personas work together. Start here before exploring individual agents or skills in depth.
-
----
-
 ### Workflow 1 — Tracker Persona
 
----
+#### 1a — Create Jira Tickets from PRD
 
-#### 1a — Create Jira Tickets from PRD or Confluence Doc
-
-**When to use:** You have a PRD and a per-platform task breakdown and need to turn them into properly described Jira tickets.
-
-**What you need before starting:**
-- Atlassian MCP installed and authenticated
-- Figma MCP (optional — for UI tickets with design specs)
-- A Jira epic key to put the tickets under
-- A breakdown list in this format:
-  ```
-  - [ADR] [UI+API] Show location marker on map: 2 days
-  - [iOS] [UI+API] Show location marker on map: 2 days
-  - [ADR] [UI] Show location accuracy perimeter: 1 day
-  - [iOS] [UI] Show location accuracy perimeter: 1 day
-  ```
-
-Paste everything inline — the worker reads it all from your message:
+**What you need:** Atlassian MCP authenticated · Jira epic key · platform breakdown list
 
 ```
 /tracker-jira-ticket
@@ -346,132 +276,51 @@ breakdown:
 - [iOS] [UI] Show location accuracy perimeter: 1 day
 ```
 
-If the PRD already links to Figma designs, you don't need to add `figma_links` — the worker will use what's in the PRD. Only add `figma_links` explicitly when the designs live in a separate Figma file not referenced in the PRD:
-
-```
-figma_links: https://figma.com/design/abc123/Feature-Screens?node-id=1-2
-```
-
-If any required input is missing, the worker will ask before proceeding.
-
-The worker walks through the full flow automatically:
-
-1. Parses the breakdown into tickets with story points
-2. Fetches the PRD from Confluence (or uses your pasted text)
-3. Fetches Figma design specs for `[UI]` and `[UI+API]` tickets
-4. Generates a structured description per ticket: **Context** · **Scope of Work** · **Design** · **Acceptance Criteria**
-5. Shows a preview table — you confirm before anything is created
-6. Creates all tickets under the epic via Atlassian MCP
-
-After tickets are created, fetch them as local `.md` files using any MCP tool (e.g. Atlassian MCP). This gives Claude a local copy to read and update — the original Jira ticket is never modified directly.
-
----
+The worker parses the breakdown, fetches the PRD, generates structured Jira descriptions, shows a preview table, and creates all tickets under the epic.
 
 #### 1b — Update Ticket Progress
-
-**When to use:** After any work or discussion session — you don't need to have implemented anything. A design discussion, an architectural decision, or a set of resolved open questions is enough reason to run this. Record what was completed, decided, or clarified. Run this as often as needed; it never touches the original ticket description.
-
-> **Note:** The ticket must be fetched locally first (see 1a). `/tracker-adjust-ticket` reads and updates the local `.md` file — it does not pull from Jira directly.
-
-Paste your session notes inline and end with `/tracker-adjust-ticket`. Example:
 
 ```
 Session update:
 
 Work items completed:
-- Verified old cache mechanism in Connection.swift is no longer used — safe to remove
 - Migrated GetLocationListUseCase to new datasource pattern
-- Added force: Bool parameter to UseCaseType — all use cases updated
 
 Decisions:
-- Replaced old caching layer entirely — it was unused and conflicting with OkHttp cache
-- Chose to add force param to UseCaseType protocol rather than a separate ForceCallUseCase wrapper
-
-Open questions resolved:
-- Confirmed with backend: /location/list endpoint supports cache-control headers, no extra param needed
-
-Still open:
-- Need to verify force call behavior on poor network — test on device before closing
+- Replaced old caching layer entirely
 
 /tracker-adjust-ticket path/to/TICKET-123.md
 ```
 
-Claude writes a `## Session Adjustment` section into the local ticket file with work items, decisions, and open questions — nothing else in the file is touched.
-
-When you're ready to start building, move to **Workflow 2**.
-
 ---
 
-### Workflow 2 — Builder Persona: Groom then build from a local ticket
+### Workflow 2 — Developer Persona: Groom then build
 
-**When to use:** You have a Jira ticket and want Claude to understand the codebase context, plan the implementation, and execute it layer by layer.
+**Step 1 — Fetch the ticket locally** via Atlassian MCP.
 
-This is the most common day-to-day flow. Follow the steps in order — each one sets up the next.
-
----
-
-**Step 1 — Fetch the ticket locally**
-
-Use any MCP tool (e.g. Atlassian MCP) to fetch the Jira ticket and save it as a local `.md` file. This is the single source of truth Claude reads throughout the workflow.
-
----
-
-**Step 2 — Groom the ticket against the codebase**
-
-This is where you give Claude the context that isn't in the ticket. Open a new session, paste your notes — open questions, relevant files, constraints, things to investigate — then end the message with `/builder-groom-ticket`. You don't need a separate prompt; everything goes in one message.
-
-Example:
+**Step 2 — Groom the ticket**
 
 ```
 We have some things to address:
 
-1. Cache mechanism
-   - In @Talenta/Utils/Connection.swift and @Talenta/Middleware/Network/Connector.swift
-     there's an old caching layer that hasn't been maintained.
-   - We need to decide: keep it, improve it, or replace it.
+1. Cache mechanism in Connection.swift — keep, improve, or replace?
+2. Some APIs still use the old pattern — need migration
+3. Force call bypassing TTL — pass force: Bool from presentation to data layer
 
-2. Affected APIs — migration needed
-   - Some still use the old @Talenta/Middleware/Network/Interface/ pattern
-   - Target pattern: @Talenta/Module/TalentaDashboard/Data/DataSource/DashboardRemoteDataSource.swift
-
-3. Force call bypassing TTL
-   - Need to pass force: Bool from presentation down to the data layer
-   - Considering adding it to UseCaseType — but that means refactoring all use cases
-
-/builder-groom-ticket path/to/TICKET-123.md
+/developer-groom-ticket path/to/TICKET-123.md
 ```
 
-**Output:** the ticket file gets a `## Session Adjustment` section added — layer mapping, concrete work items, decisions, and open questions. This becomes the input for the next step.
-
----
-
-**Step 3 — Start a fresh session**
-
-Run `/clear` or open a new Claude Code session. Grooming can consume significant context — starting fresh keeps the build session focused and token-efficient.
-
----
+**Step 3 — Start a fresh session** (`/clear` or new Claude Code session).
 
 **Step 4 — Plan and build**
-
-You can be as brief or specific as you like. A minimal prompt:
 
 ```
 Let's work on the work items in this ticket.
 
-/builder-plan-feature path/to/TICKET-123.md
+/developer-plan-feature path/to/TICKET-123.md
 ```
 
-Or be more directive if you want to focus on specific items:
-
-```
-Let's work on the work items in this ticket. Focus on the API migration items first, skip the force call refactor for now.
-
-/builder-plan-feature path/to/TICKET-123.md
-```
-
-Claude reads the groomed ticket (including the Session Adjustment), runs the convergence planning loop — spawning only the layer planners relevant to the work items, expanding scope if planners detect cross-layer impact — and presents a plan for your approval. Once you approve, `builder-feature-worker` executes the implementation layer by layer — Domain → Data → Presentation → UI.
-
----
+Claude reads the groomed ticket, runs the convergence planning loop, presents a plan for approval, then executes layer by layer — Domain → Data → Presentation → UI.
 
 **Step 5 — Update ticket progress**
 
@@ -479,19 +328,11 @@ Claude reads the groomed ticket (including the Session Adjustment), runs the con
 /tracker-adjust-ticket path/to/TICKET-123.md
 ```
 
-After the build, update the ticket with what was completed this session: which work items are done, decisions made, and any remaining open questions. Keeps the ticket as the living record of the feature.
-
----
-
-**Step 6 — Verify and iterate**
-
-Run the app, review the output, and ask Claude to adjust anything. If work items remain from the Session Adjustment, loop back to Step 4 for the next session.
-
 ---
 
 ## Architecture
 
-All agents enforce a three-layer Clean Architecture:
+All agents enforce Clean Architecture:
 
 ```
 Presentation  →  Domain  ←  Data
@@ -501,38 +342,27 @@ Presentation  →  Domain  ←  Data
 - **Data** — implements domain interfaces. Remote/DB data sources, mappers, repository implementations.
 - **Presentation** — StateHolder (ViewModel / BLoC / Presenter), UI screens, navigation. Depends only on domain.
 
-Platform skill implementations handle the language and framework specifics:
+| Platform | Language | State management |
+|---|---|---|
+| Flutter | Dart | BLoC / Cubit |
+| iOS | Swift | ViewModel + Coordinator |
+| Android | Kotlin | Presenter |
+| Web | TypeScript | Custom hooks |
 
-| Platform | Language | UI framework | State management |
-|---|---|---|---|
-| Web | TypeScript | Next.js 15 / React | Custom hooks |
-| iOS | Swift | UIKit | ViewModel + Coordinator |
-| Flutter | Dart | Flutter | BLoC |
-| Android | Kotlin | — | Presenter |
-
-Architecture reference docs live in `lib/core/reference/code-architecture/` (universal) and `lib/platforms/<platform>/reference/` (platform-specific).
+Platform pattern knowledge lives in `lib/core/knowledge/` (fallback) and ChromaDB (primary via KMS MCP).
 
 ---
 
 ## Design docs
 
-Local source of truth (this repo):
-- [`docs/principles/core-design-principles.md`](docs/principles/core-design-principles.md) — all 15 principles, full taxonomy, decision rules
-- [`docs/principles/submodule-repo-structure.md`](docs/principles/submodule-repo-structure.md) — cross-platform submodule architecture
-
-Published view (Confluence):
-- [Agentic Coding Assistant — Core Design Principles](https://jurnal.atlassian.net/wiki/spaces/~611df3da650a26006e44928d/pages/51126370416)
-- [Shared Agentic Submodule Architecture — Cross-Platform Scaling](https://jurnal.atlassian.net/wiki/spaces/~611df3da650a26006e44928d/pages/51129909710)
+- [`docs/principles/core-design-principles.md`](docs/principles/core-design-principles.md) — full architecture, taxonomy, decision rules
+- [`docs/principles/kms-design-principles.md`](docs/principles/kms-design-principles.md) — KMS design, metadata schema, cascade resolution
+- [`docs/principles/submodule-repo-structure.md`](docs/principles/submodule-repo-structure.md) — repo structure and distribution model
 
 ---
 
 ## .gitignore recommendations
 
-Add to your downstream project's `.gitignore`:
-
 ```gitignore
-# Claude Code — agentic state (delegation flags, session state, run artifacts)
 .claude/agentic-state/
 ```
-
-This directory holds delegation flags, session tracking, and per-feature orchestrator run state. It is local state and should not be committed.
