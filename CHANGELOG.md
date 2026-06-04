@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.0.1] — 2026-06-04
+
+### Added
+- **Mekari Pixel Flutter catalog** — moved from `lib/core/reference/design-system/` to `kms/knowledge-sources/design/flutter-mekari-pixel-catalog.md`; seeded into ChromaDB under `discipline=design, platform=flutter`
+- **`developer-feature-worker`** — pre-flight now queries `kms_list(discipline="design")` for component catalog; gracefully skips with a log line when no catalog exists (iOS, Android)
+- **`/kms-status`** — scoped load probe: fires the same `kms_list` calls agents use in pre-flight (engineering + design per platform/project) and reports node counts and topics
+
+### Changed
+- **`/release`** — step 3 now flushes uncommitted working-tree changes into logical chunk commits before touching VERSION/CHANGELOG
+
+---
+
 ## [10.0.0] — 2026-06-04
 
 ### Added
