@@ -7,6 +7,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.1.0] — 2026-06-04
+
+### Added
+- **KMS section-level chunking** — `DirectorySource` now splits every knowledge file by `##` headings before seeding; each section becomes one ChromaDB node instead of one blob per file
+- **`/kms-audit`** — new orchestrator skill + `kms-source-audit-worker` agent; validates all files in `kms/knowledge-sources/` against authoring rules (R1–R7) before seeding; reports errors and warnings
+- **`docs/principles/kms-knowledge-source-rules.md`** — authoring rules for knowledge source files: chunking contract, file naming, section structure (R1–R7), discipline-specific heading templates, project doc rules, `kms_upsert` contract
+
+### Changed
+- **All agents and skills** — replaced `kms_list` + `kms_fetch` with `kms_query` (semantic search); agents no longer require exact `(topic, pattern)` metadata match — one architecture doc per platform is sufficient
+- **`kms-extract-worker`** — all output formats updated to use `##`-per-entity structure (one heading per feature, endpoint group, component, integration); project docs now chunk correctly on seed
+- **`kms-extract-codebase` skill** — added existence check before extraction; prompts user to choose `overwrite-all` / `missing-only` / `select` when docs already exist; supports new project bootstrap (creates `repo.yaml` when project directory doesn't exist yet)
+- **`kms-extract-orchestrator`** — respects `doc_types` filter from skill; validates `##` headings in output files before proceeding to seed
+
+### Removed
+- **Stale v9.3.0 project-specific plugins** — `android-talenta`, `flutter-mobile-talenta`, `flutter-mobile-jurnal`, `flutter-qontak-chat`, `flutter-qontak-crm`, `ios-talenta`, `web` removed from `dist/plugins/` and `marketplace.json`; only generic platform plugins remain (`flutter`, `ios-swift`, `android-kotlin`, `web-nextjs`)
+
+---
+
 ## [10.0.4] — 2026-06-04
 
 ### Fixed
