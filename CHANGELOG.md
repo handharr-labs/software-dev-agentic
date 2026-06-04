@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.3.0] — 2026-06-04
+
+### Fixed
+- **`kms_list(project=...)` returns empty** — `ListKnowledge` now fetches project-tier nodes when only `project` is given; previously required both `platform` and `project`
+- **ios-talenta nodes stored under wrong project name** — `_load_repo_meta` now respects the `name` field in `repo.yaml` before falling back to remote URL derivation; `talenta-ios.git` remote no longer overrides `name: ios-talenta`
+- **`kms_fetch` wrong discipline for project docs** — project knowledge nodes are seeded with `discipline="engineering"`, not `"projects"`
+
+### Changed
+- **`mobile-talenta/repo.yaml`** — added explicit `name: mobile-talenta` field
+- **`kms/knowledge-sources/projects/ios-talenta/`** — deviations headings simplified (stripped verbose `— subtitle` pattern); `Moya/RxSwift` → `Moya RxSwift Integration`
+- **`kms/knowledge-sources/projects/mobile-talenta/`** — `Overview` → `App Structure`; `Time Management (TM)` split into 9 top-level `##` sections; `Inbox / Approvals` split into `Inbox` + `Approval Requests`; `Account / Profile` → `Account Profile`; `Task & Timesheet (TNT)` → `Task Management`; `Presentation Widgets (Shared)` split into 7 `##` sections
+
+---
+
 ## [10.2.0] — 2026-06-04
 
 ### Added
