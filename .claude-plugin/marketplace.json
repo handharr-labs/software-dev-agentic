@@ -11,28 +11,28 @@
       "source": "./dist/plugins/android-kotlin",
       "description": "Builder, detective, tracker, auditor personas for android-kotlin",
       "category": "development-workflows",
-      "version": "10.3.0"
+      "version": "10.4.0"
     },
     {
       "name": "sda-flutter",
       "source": "./dist/plugins/flutter",
       "description": "Builder, detective, tracker, auditor personas for flutter",
       "category": "development-workflows",
-      "version": "10.3.0"
+      "version": "10.4.0"
     },
     {
       "name": "sda-ios-swift",
       "source": "./dist/plugins/ios-swift",
       "description": "Builder, detective, tracker, auditor personas for ios-swift",
       "category": "development-workflows",
-      "version": "10.3.0"
+      "version": "10.4.0"
     },
     {
       "name": "sda-web-nextjs",
       "source": "./dist/plugins/web-nextjs",
       "description": "Builder, detective, tracker, auditor personas for web-nextjs",
       "category": "development-workflows",
-      "version": "10.3.0"
+      "version": "10.4.0"
     }
   ]
 }
