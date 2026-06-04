@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.0.0] — 2026-06-04
+
+### Added
+- **KMS-aware agents** — `developer-backend-worker`, `auditor-arch-review-worker`, `debugger-worker`, `qa-testcase-worker` now load patterns via `kms_list` → reason → `kms_fetch` before executing
+
+### Changed
+- **Platform consolidation** — `lib/platforms/` reduced from 7 project-specific dirs to 4 generic platforms: `flutter`, `ios-swift`, `android-kotlin`, `web-nextjs`
+- **Project derivation** — all KMS-aware agents derive `project` from `basename $(pwd)` instead of reading CLAUDE.md; no downstream CLAUDE.md changes required
+- **`ios-swift` / `web-nextjs`** — agents and skills removed; knowledge now sourced entirely from KMS
+- **Plugin marketplace** — 4 generic plugins (`sda-flutter`, `sda-ios-swift`, `sda-android-kotlin`, `sda-web-nextjs`) replace 7 project-specific ones
+
+### Removed
+- **`lib/platforms/flutter-mobile-talenta`**, **`flutter-qontak-crm`**, **`flutter-mobile-jurnal`**, **`flutter-qontak-chat`** — consolidated into `flutter`
+- **`lib/platforms/ios-talenta`** — renamed to `ios-swift`
+- **`lib/platforms/android-talenta`** — renamed to `android-kotlin`
+- **`lib/platforms/web`** — renamed to `web-nextjs`
+- **`flutter-qontak-crm` legacy skills** — project-specific; belong in downstream `.claude/skills.local/`
+
+---
+
 ## [9.3.0] — 2026-06-04
 
 ### Added
