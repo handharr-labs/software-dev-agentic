@@ -55,7 +55,10 @@ class UpsertKnowledge:
 
         if existing is None or not existing.content:
             owned = {k: v for k, v in _parse_sections(node.content).items() if k in owns}
-            node = dataclasses.replace(node, content=_assemble_sections(owned))
+            assembled = _assemble_sections(owned)
+            # Fall back to full content when no owned sections match (e.g. project docs
+            # with domain-specific headings like ## Features that aren't in the owns list).
+            node = dataclasses.replace(node, content=assembled if assembled else node.content)
         else:
             merged = _parse_sections(existing.content)
             new_sections = _parse_sections(node.content)

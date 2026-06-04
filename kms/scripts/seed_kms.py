@@ -153,11 +153,11 @@ def _register_source(target: str, repo_root: Path) -> dict | None:
 # Core seed logic
 # ---------------------------------------------------------------------------
 
-def _seed_source(adapter: KnowledgeSource, upsert: UpsertKnowledge, repo: ChromaKnowledgeRepository) -> tuple[int, int]:
+def _seed_source(adapter: KnowledgeSource, upsert: UpsertKnowledge, repo: ChromaKnowledgeRepository, force: bool = False) -> tuple[int, int]:
     ok = skipped = 0
     for node in adapter.read():
         existing = repo.fetch_exact(node.platform, node.project, node.discipline, node.topic, node.pattern)
-        if existing and existing.content_hash and existing.content_hash == node.content_hash:
+        if not force and existing and existing.content_hash and existing.content_hash == node.content_hash and existing.content:
             skipped += 1
             continue
         upsert.execute(node, owns=adapter.owns)
@@ -171,6 +171,7 @@ def seed(
     type_filter: str | None = None,
     add_target: str | None = None,
     repo_root: Path | None = None,
+    force: bool = False,
 ) -> None:
     repo_root = repo_root or Path(__file__).resolve().parent.parent.parent
     repo = ChromaKnowledgeRepository(db_path=os.path.abspath(db_path))
@@ -206,7 +207,7 @@ def seed(
             continue
 
         print(f"  Seeding '{adapter.name}' ({adapter.source_type}) …")
-        ok, skipped = _seed_source(adapter, upsert, repo)
+        ok, skipped = _seed_source(adapter, upsert, repo, force=force)
         print(f"    → {ok} upserted, {skipped} unchanged")
         total_ok += ok
         total_skipped += skipped
@@ -234,6 +235,7 @@ if __name__ == "__main__":
     parser.add_argument("--source", help="Seed one registered source by name")
     parser.add_argument("--type", dest="src_type", help="Seed all sources of this type")
     parser.add_argument("--add", dest="add_target", help="Detect, register, and seed a new source")
+    parser.add_argument("--force", action="store_true", help="Re-upsert all nodes even if content_hash matches")
     args = parser.parse_args()
 
     seed(
@@ -241,4 +243,5 @@ if __name__ == "__main__":
         source_filter=args.source,
         type_filter=args.src_type,
         add_target=args.add_target,
+        force=args.force,
     )

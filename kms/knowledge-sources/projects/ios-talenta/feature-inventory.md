@@ -48,3 +48,4 @@ Scanned: 2026-06-04
 | 38 | Notifications (FCM) | `NotificationServiceExtension/`, `NotificationContentExtension/` | Rich push notification display and handling |
 | 39 | Attendance Widget | `Attendance/` (extension target) | iOS home screen widget showing attendance shortcut |
 | 40 | Flutter Module (brick_house) | Embedded via `cocoapods-embed-flutter` | Time Management and other features delegated to Flutter; `TimeManagementManager` / `flutterTmManager` |
+
