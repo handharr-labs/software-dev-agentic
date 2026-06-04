@@ -1,180 +1,298 @@
-# Feature Inventory — flex-mobile (Flutter)
+# Feature Inventory — flex-mobile
 
-Scanned: 2026-06-04
-Source: https://github.com/mekari/flex-mobile
-Local path: /Users/puras.handharmahuamekari.com/Workspace/flex-mobile
-
-## App Overview
-
-flex-mobile is a Flutter fintech app by Mekari for earned-wage access (EWA), PPOB bill payments, savings, and related financial services for employees. Architecture: Clean Architecture + BLoC. Monorepo with three internal packages: `flex_core`, `cashout`, `saving`.
+Platform: Flutter (Melos monorepo)
+Packages: `flex_mobile` (root app), `modules/flex_core`, `modules/saving`, `modules/cashout`
+Last scanned: 2026-06-04
 
 ---
 
-## Features (lib/features/)
+## Authentication
 
-### 1. account
-- Profile/menu screen for the user's account
-- Sub-sections: info menu, benefits, referral, settings, signout dialog, support dialog
-- Presentation-only feature (no data layer in this directory — data lives in flex_core)
-
-### 2. app_settings
-- Fetches mobile app version settings (min/force-update enforcement)
-- BLoC: MobileVersionBloc
-- Use case: GetMobileVersionSettings
-- Endpoint: GET `mobile_versions`
-
-### 3. auto_debit
-- Bank auto-debit linkage feature for automatic salary deduction
-- Screens: landing, activation slider, bank selection, FAQ, linkage, TnC
-- BLoC: AutoDebitBloc
-- Entities: AutoDebitBankInfo, AutoDebitSettings, AutoDebitLinkage
-- Use cases: GetBankInfo, GetAutoDebitSettings, GetAutoDebitLinkage, GetActivationUrl
-- Endpoints: GET `auto_debits/banks`, GET `auto_debits/setting`, GET `auto_debits/linkages/info`, POST `auto_debits/linkages`
-
-### 4. balance (lib/features/balance + flex_core/features/balance)
-- Shows EWA/credit balance detail with recent transaction history
-- Entities: Balance, BalanceDetail, BalanceCategory
-- Endpoint: via flex_core BalanceRemoteSource
-
-### 5. campaigns
-- Displays promotional campaigns on the home screen
-- Screens: CampaignDetailScreen
-- BLoCs: CampaignsBloc, CampaignDetailBloc
-- Entities: Campaign, CampaignDetail
-- Use cases: GetCampaignsUsecase, GetCampaignDetailUsecase
-- Endpoint: GET `mobile/campaigns`, GET `mobile/campaigns/{id}`
-
-### 6. cashout (modules/cashout)
-- Dedicated module for Earned Wage Access cash withdrawal flow
-- Sub-features: fee calculation, payment methods, promo codes, B2C partner payment
-- Screens: payment selection, confirmation, success, partner agreement webview
-- BLoCs: FeeCalculationsBloc, PaymentMethodsBloc, PaymentsBloc, PartnerPaymentBloc
-- Entities: FeeCalculations, FeeSettings, Payment, PaymentData, PaymentMethods, Promo, CreditPartner
-- Use cases: CreatePayment, GetCompanyFeeSettings, GetFeeCalculations, GetPartnerPayment, GetPaymentMethods, GetPromoDetail, GetPromos, RequestPartnerPayment
-- Endpoints: GET `company_fee_settings`, GET `fee_calculations`, GET `payment_methods`, POST `credit/transactions/cashout`, POST `credit/credit_partner_transactions`, GET `credit/credit_partner_transactions/{id}`, GET `promo_codes`, GET `promo_codes/{id}`
-
-### 7. ckyc (Credit KYC)
-- Full KYC/identity verification flow for credit upgrade
-- Steps: NIK validation, KTP photo capture, OCR, liveness check, form submission, payslip upload, emergency contact, spouse data, TnC
-- BLoCs: CkycBloc, CkycMasterDataBloc, CkycProcessBloc, CkycTncBloc, TakeKtpBloc, CkycLivenessBloc, CkycEmergencyBloc, UploadPayslipBloc
-- Entities: CkycMasterData, CkycOcrData, CkycStepDetails
-- Use cases: ValidateNik, GetStepDetails, GetOcrData, GetUploadKTPUrl, UploadKTP, FinishUploadKTP, UploadPayslip, SubmitForm, SubmitEmergencyContact, SubmitSpouseData, CheckLiveness, UpdateLivenessStep, GetTermOfService, InitKyc
-- Endpoints: POST `ckyc/kyc/availability`, GET/POST `ckyc/kyc`, GET `ckyc/ocr`, POST `ckyc/ktps`, PATCH `ckyc/ktps`, POST `ckyc/kyc/upload_payslip`, POST `ckyc/ocr` (form), POST `ckyc/kyc/emergency_contact`, POST `ckyc/kyc/spouse_data`, POST `ckyc/liveness`, PATCH `ckyc/liveness`, POST `ckyc/kyc/init`, GET `ckyc/kyc/terms_of_service`
-
-### 8. electricity (PPOB)
-- Prepaid and postpaid PLN electricity bill payment
-- Screens: ElectricityPrepaidScreen, ElectricityPostpaidScreen, ElectricityBillingScreen
-- BLoC: ElectricityBloc
-- Use cases: GetPrepaidElectricityProducts, InquiryPrepaidElectricity, InquiryPostpaidElectricity
-- Endpoints: POST `credit/transactions/electricity_prepaids/inquire`, POST `credit/transactions/electricity_postpaids/inquire`, GET `sepulsa_product/...`
-
-### 9. fee_calculations
-- Generic fee calculation feature for transactions
-- Endpoint: via shared FeeCalculationsDataSource
-
-### 10. flex_point
-- Flex Points loyalty/reward balance and transaction history
-- Screens: FlexPointScreen, FlexPointHistoryScreen
-- BLoCs: FlexPointBloc, FlexPointBalanceBloc
-- Entities: FlexPointBalance, FlexPointTransaction
-- Use cases: GetFlexPointBalance, GetFlexPointTransaction
-- Endpoints: GET `flex_points/balance`, GET `flex_point_transactions`
-
-### 11. home
-- Main dashboard screen; aggregates balance, campaigns, awareness articles, benefits, PPOB shortcuts, recent transactions, active vouchers
-- Widgets: HomeBalanceSection, HomeCampaignSection, HomeAwarenessSection, HomePpobSection, HomeRecentTransactionSection, HomeActiveVoucherSection, HomeHighlightedProductSection, HomeBenefitsSection, HomeAppBar, HomeTabBar, HomeTabContent
-- NPS subscription via Firebase Realtime DB
-- Coachmark/onboarding overlay
-
-### 12. inbox (local)
-- Local notification inbox backed by Hive (no remote fetch)
-- Used for MoEngage inbox messages
-
-### 13. individual_access
-- Mekari Saving individual access eligibility check and TnC acceptance
-- Screens: IndividualAccessLandingScreen, IndividualAccessScreen
-- BLoC: IndividualAccessBloc
-- Use cases: CheckEligibility, AcceptIndividualAccess
-- Endpoints: GET `mekari_saving/users/access_status`, POST `mekari_saving/users/accept_tnc`
-
-### 14. installment
-- Installment/lending feature (referenced in DI but screens not fully explored)
-
-### 15. mobile (PPOB)
-- Prepaid mobile top-up (pulsa + data plan) and postpaid phone bill payment
-- Screens: MobilePlanScreen, DataPlanScreen, MobilePostpaidScreen, MobilePostpaidBillingScreen
-- BLoCs: PrepaidProductsBloc, PrepaidFilteredProductsBloc, PostpaidProductsBloc, PostpaidInquiryBloc, RecentTransactionBloc
-- Use cases: FindAllPrepaidMobileProduct, FindAllPrepaidDataPlanProduct, FindAllPostpaidMobileProduct, GetPostpaidMobileInquiry, GetRecentMobilePlanTransactions, GetRecentDataPlanTransactions, GetRecentPostpaidMobileTransactions
-- Endpoints: GET `sepulsa_product/mobile_prepaid`, GET `sepulsa_product/mobile_postpaid`, POST `credit/transactions/mobile_postpaids/inquire`
-
-### 16. payment (shared payment flow)
-- Generic PPOB transaction payment submission; handles credit and flex balance paths
-- Covers: mobile prepaid/postpaid, electricity prepaid/postpaid, e-wallets (GoPay, OVO, ShopeePay, DANA), voucher, cashout, PDAM
-- Two data sources: CreditPaymentDataSource (`credit/transactions/*`) and FlexPaymentDataSource (`flex/transactions/*`)
-- BLoCs: PaymentDataBloc, PaymentFeeBloc, PaymentMethodBloc, PaymentVerificationBloc
-- Screens: PaymentConfirmationScreen, PaymentVerificationScreen
-
-### 17. pdam (PPOB)
-- PDAM water utility bill inquiry and payment
-- Screens: PdamInputScreen, PdamBillingScreen
-- BLoCs: PdamOperatorBloc, PdamInquiryBloc, RecentPdamTransactionBloc
-- Use cases: GetPdamOperators, InquirePdam, GetRecentPdamTransactions
-- Endpoints: GET `credit/transactions/pdams/operators`, POST `credit/transactions/pdams/inquire`
-
-### 18. promo
-- Generic promo codes listing (distinct from cashout promos — benefit-level promos)
-- Screens: PromoListScreen, PromoDetailScreen
-- BLoCs: PromoListBloc, PromoDetailBloc
-- Entities: Promo
-- Endpoints: GET `promo_codes`, GET `promo_codes/{id}`
-
-### 19. product (generic PPOB product)
-- Cached product catalog (backed by Hive + remote)
-
-### 20. referral
-- Referral program: share referral code, submit received code, view settings
-- Screens: ReferralScreen, ReferralTncScreen, referral sheets (input, exist, not-eligible)
-- BLoC: ReferralBloc
-- Entities: ReferralGlobalSettings, ReferralUserSettings
-- Use cases: GetReferralGlobalSettings, GetReferralUserSettings, SubmitReferralCode, GetIsFirstTimeReferralAccess, SetFirstTimeReferralAccess
-- Endpoints: GET `referral_settings`, GET `user_referral_settings`, PATCH `user_referral_settings/{code}`
-
-### 21. reimbursement
-- Employee expense reimbursement submission and detail view
-- Screens: ReimbursementRequestScreen, ReimbursementDetailScreen
-- BLoCs: ReimbursementRequestBloc, ReimbursementDetailBloc
-- Entities: Reimbursement
-- Use cases: RequestReimbursement, GetReimbursementDetail, CancelReimbursement
-- Endpoints: POST `reimbursements`, GET `reimbursements/{id}`, DELETE `reimbursements/{id}`
-
-### 22. savings (lib/features/savings — bridge to saving module)
-- Registers user into Mekari Saving service
-- Use case: RegisterUserUsecase
-- Endpoint: POST `mekari_saving/users`
-
-### 23. saving (modules/saving)
-- Full Mekari Savings module (separate Dart package)
-- Sub-features: authentication (linkage to savings account, token management), balance, transactions, settings, KYC
-- Multi-BLoC architecture; uses separate savings API base URL
-
-### 24. voucher
-- User voucher list (active + past) with redeem flow
-- Screens: VoucherScreen
-- BLoC: VoucherBloc
-- Entities: Voucher, VoucherDetail, VoucherRedeem
-- Use cases: GetVoucherList, GetVoucherDetail, RedeemVoucher
-- Endpoints: GET `user_vouchers`, GET `user_vouchers/{id}`, PUT `user_vouchers/{id}/redeem`
-
-### 25. flex_core/auth
-- SSO login/logout, company app info sync
-- Endpoints: POST sync SSO, GET company app info
-
-### 26. flex_core/awareness
-- Awareness articles and product feedback screen
-
-### 27. flex_core/balance
-- Core balance fetch (credit/flex balance)
+- **SSO Login** — Mekari SSO via `auth_module` (git package). Syncs user via `auth/sync_user_via_sso`. Stores auth tokens in `FlutterSecureStorage`.
+- **PIN Management** — Setup, change, forgot, and validation endpoints under `pins/`. PIN is sent as an HTTP header on payment requests.
+- **OTP Verification** — Device verification via `device_verification/send_otp` and `device_verification/validate_otp`. Multi-channel: SMS, WhatsApp, email.
+- **Biometric Auth** — `local_auth` package for fingerprint/face unlock.
 
 ---
 
-## Feature Count: 27 features
+## Session Management
+
+- `SessionBloc` in `lib/shared/presentation/blocs/session/` manages the active user session lifecycle.
+
+---
+
+## Balance
+
+- **Balance Overview** — Fetches credit and flex balances via `user_balance` and `user_balance/details` (flex_core `BalanceRemoteSource`).
+
+---
+
+## Transactions
+
+- **Credit Transactions** — Paginated list and detail via `credit/transactions` (flex_core `CreditTransactionRemoteSource`).
+- **Flex Transactions** — Paginated list and detail via `flex_transactions` (flex_core `FlexTransactionRemoteSource`).
+- **Transaction Approval** — Multi-step approval workflow for company admins. Pending approvals, history, single and bulk approve/reject via `credit/transaction_approvals`.
+- **Recent Transactions** — Locally cached PPOB transaction history via `HiveProductHelper`.
+
+---
+
+## Cashout (Early Salary Withdrawal)
+
+Module: `modules/cashout` (Brick-Way micro-frontend).
+- **Cashout Flow** — Amount input, fee simulation, payment confirmation, PIN authorization. Supports credit and Finfra (B2C partner) cashout paths.
+- **Payment Methods** — `payment_methods?transaction_kind=cashout` shows credit, Flex Points, and cashout limit.
+- **Fee Calculation** — `fee_calculations` and `company_fee_settings` for admin fee and Flex Point deduction preview.
+- **Promo / Discount** — Promo list and detail fetched from a dedicated promo source; applied at cashout confirmation.
+- **Partner Payment (Finfra B2C)** — Creates partner transaction at `credit/credit_partner_transactions`, then executes cashout at `credit/credit_partner_transactions/{id}/cashout`.
+
+---
+
+## Installment (Flex Lending)
+
+Feature: `lib/features/installment/`
+- **Loan Agreement (ToS)** — Fetches term-of-service via `lending/term_of_service`.
+- **Loan Simulation** — `lending/user_loans/simulation_details` returns repayment schedule for requested amount.
+- **Tenure Options** — `lending/user_loans/available_tenure` returns available repayment periods.
+- **Loan Request** — POST `lending/user_loans` to submit a loan application.
+- **OTP Verification** — Verifies and resends loan OTP via `lending/otps/verify` and `lending/otps/resend`.
+- **Loan History** — Paginated history via GET `lending/user_loans`.
+- **Upgrade Facility** — `PATCH /lending/users/update_limit_upgrade_status` to accept/reject a credit limit upgrade offer.
+- **KYC for Lending** — `KycLendingBloc` drives the KYC steps required before loan disbursement.
+
+---
+
+## CKYC (Customer KYC)
+
+Feature: `lib/features/ckyc/`
+- **NIK Validation** — `ckyc/kyc/availability` checks ID card availability.
+- **KYC Init & Steps** — `ckyc/kyc/init` initialises, `ckyc/kyc` fetches current step details.
+- **KTP Upload** — Presigned URL flow: POST `ckyc/ktps` → PUT to presigned URL → PATCH `ckyc/ktps` to finalise.
+- **Payslip Upload** — Multipart POST to `ckyc/kyc/upload_payslip`.
+- **OCR Data** — GET and POST `ckyc/ocr`.
+- **Liveness Check** — POST `ckyc/liveness` returns a liveness URL; PATCH `ckyc/liveness` updates step.
+- **Emergency Contact** — POST `ckyc/kyc/emergency_contact`.
+- **Spouse Data** — POST `ckyc/kyc/spouse_data`.
+- **ToS** — GET `ckyc/kyc/terms_of_service` (cached 5 minutes).
+
+---
+
+## PPOB — Mobile Prepaid
+
+Feature: `lib/features/mobile/`
+- **Products** — GET `sepulsa_product/mobile_prepaid?paket_data=<bool>` for pulsa and data packages.
+- **Payment** — POST `credit/transactions/mobile_prepaids` (via `CreditPaymentDataSource`) or `flex/transactions/mobile_prepaids` (via `FlexPaymentDataSource`).
+
+---
+
+## PPOB — Mobile Postpaid
+
+Feature: `lib/features/mobile/`
+- **Products** — GET `sepulsa_product/mobile_postpaid`.
+- **Inquiry** — POST `credit/transactions/mobile_postpaids/inquire`.
+- **Payment** — POST `credit/transactions/mobile_postpaids` (via `CreditPaymentDataSource`) or `flex/transactions/mobile_postpaids` (via `FlexPaymentDataSource`).
+
+---
+
+## PPOB — Electricity
+
+Feature: `lib/features/electricity/`
+- **Prepaid Products** — GET `sepulsa_product/electricity_prepaid`.
+- **Prepaid Inquiry** — POST `credit/transactions/electricity_prepaids/inquire`.
+- **Postpaid Inquiry** — POST `credit/transactions/electricity_postpaids/inquire`.
+- **Payment** — POST `credit/transactions/electricity_prepaids` or `credit/transactions/electricity_postpaids`.
+
+---
+
+## PPOB — PDAM (Water Utility)
+
+Feature: `lib/features/pdam/`
+- **Operators** — GET `credit/transactions/pdams/operators`.
+- **Inquiry** — POST `credit/transactions/pdams/inquire`.
+- **Payment** — POST `credit/transactions/pdams`.
+- **Recent Transactions** — Hive-cached, surfaced in `RecentPDAMTransactionBloc`.
+
+---
+
+## E-Wallet Top-up
+
+Feature: `lib/features/ewallet/`
+- **GoPay, OVO, ShopeePay, DANA** — Each dispatched via corresponding `CreditPaymentDataSource` paths (e.g. `credit/transactions/gopay`).
+
+---
+
+## Vouchers
+
+Feature: `lib/features/voucher/`
+- **Voucher List** — Paginated GET `user_vouchers` (active and past).
+- **Voucher Detail** — GET `user_vouchers/{id}?for=<balanceSource>`.
+- **Redeem Voucher** — PUT `user_vouchers/{id}/redeem`.
+
+---
+
+## Promo
+
+Feature: `lib/features/promo/`
+- **Promo List** — GET `promo_codes`.
+- **Promo Detail** — GET `promo_codes/{id}`.
+
+---
+
+## Campaigns
+
+Feature: `lib/features/campaigns/`
+- **Campaign List** — GET `mobile/campaigns` with query parameters; response cached via `NetworkCachePolicy`.
+- **Campaign Detail** — GET `mobile/campaigns/{id}`.
+
+---
+
+## Products / Marketplace
+
+Feature: `lib/features/product/`
+- **Product List** — Paginated GET `mobile/products` with optional category filter; result cached in Hive.
+- **Product Detail** — GET `mobile/products/{id}`.
+
+---
+
+## Flex Points
+
+Feature: `lib/features/flex_point/`
+- **Balance** — GET `flex_points/balance`.
+- **Transaction History** — Paginated GET `flex_point_transactions` (year filter supported).
+
+---
+
+## Referral
+
+Feature: `lib/features/referral/`
+- **Global Settings** — GET `referral_settings`.
+- **User Settings** — GET `user_referral_settings`.
+- **Submit Code** — PATCH `user_referral_settings/{code}`.
+
+---
+
+## Reimbursement
+
+Feature: `lib/features/reimbursement/`
+- **Detail** — GET `reimbursements/{id}`.
+- **Create** — POST `reimbursements`.
+- **Cancel** — DELETE `reimbursements/{id}`.
+
+---
+
+## Individual Access (B2C / Mekari Saving Registration)
+
+Feature: `lib/features/individual_access/`
+- **Eligibility Check** — GET `mekari_saving/users/access_status`.
+- **Accept TnC** — POST `mekari_saving/users/accept_tnc`.
+
+---
+
+## Savings (Mekari Saving Module)
+
+Module: `modules/saving/`
+- **User Registration** — POST `mekari_saving/users` (root app `SavingsRemoteSource`).
+- **Auth / Token** — POST `auth/access-token`, POST `auth/refresh-token`, GET `auth/check-linkage-status` (SavingsNetworkClient to separate `SAVING_URL`).
+- **Onboarding TnC** — GET `onboarding/tnc`, POST `onboarding/tnc/agree`, GET `onboarding/status`.
+- **Balance Inquiry** — POST `transactions/balance-inquiry`.
+- **Transaction List** — GET `transactions` with filters.
+- **Transaction Detail** — GET `transactions/{id}/detail`.
+- **Transfer Intrabank** — Inquiry, confirmation, and execution via dedicated paths under `transactions/`.
+- **Transfer Interbank** — Same pattern as intrabank.
+- **Bank List** — GET `transactions/bank-list`.
+- **Profile Management** — GET/update profile, two-factor management (feature-flagged).
+
+---
+
+## App Settings
+
+Feature: `lib/features/app_settings/`
+- **Mobile Version Control** — GET `mobile_versions` returns min/force-update version per platform.
+
+---
+
+## Auto-Debit
+
+Feature: `lib/features/auto_debit/`
+- **Bank Info** — GET `auto_debits/banks`.
+- **Settings** — GET `auto_debits/setting`.
+- **Linkage Info** — GET `auto_debits/linkages/info`.
+- **Activate Linkage** — POST `auto_debits/linkages`.
+
+---
+
+## Fee Calculations
+
+Feature: `lib/features/fee_calculations/`
+- **Company Fee Settings** — GET `company_fee_settings?transaction_kind=<kind>`.
+- **Fee Calculation** — GET `fee_calculations` (also used in cashout module).
+
+---
+
+## Payment Methods
+
+Feature: `lib/features/payment/`
+- **Payment Methods** — GET `payment_methods?transaction_kind=<kind>` returns available payment sources (credit, flex points, cashout limit).
+- **Payment Fee** — GET `fee_calculations` (via `PaymentFeeRemoteDataSource`).
+
+---
+
+## Home
+
+Feature: `lib/features/home/`
+- Presentation-only feature; aggregates balance, campaigns, and promo data from other features.
+
+---
+
+## Account
+
+Feature: `lib/features/account/`
+- Presentation-only; shows user profile info sourced from flex_core `UserRemoteDataSource`.
+
+---
+
+## Inbox (MoEngage)
+
+Feature: `lib/features/inbox/`
+- In-app inbox powered by `moengage_inbox`. Messages are fetched locally from MoEngage SDK; no custom REST endpoint.
+
+---
+
+## Balance (Presentation)
+
+Feature: `lib/features/balance/`
+- Presentation layer only; wraps balance data from flex_core.
+
+---
+
+## Walkthrough
+
+`lib/shared/presentation/screens/walkthrough/`
+- First-run onboarding flow with illustration screens.
+
+---
+
+## B2C (Business-to-Consumer)
+
+Feature: `lib/features/b2c/`
+- Presentation layer for B2C user experience; credit partner transaction flow.
+
+---
+
+## Insurance (Presentation Shell)
+
+Feature: `lib/features/insurance/`
+- Presentation-only shell; content delivered via WebView.
+
+---
+
+## Feedback (NPS / CSAT)
+
+flex_core `FeedbackRemoteSource`
+- Submits NPS and CSAT responses to Firebase Realtime Database at `user_feedback/nps/{companyId}/{userId}` and `user_feedback/csat/{companyId}/{userId}`.
+
+---
+
+## Feature Flags
+
+Managed via `mekari_flag` (Firebase Remote Config wrapper).
+Flags: `flag_mekari_network`, `flag_mekari_log`, `flag_mekari_savings`, `flag_savings_render_webview`, `flag_savings_cashin_cashout`, `flag_savings_profile_management`, `flag_savings_linkage_phone_prefilled`, `flag_savings_title_migration`, `flag_finfra_installment`, `flag_sso_phone_verification`, `flag_ewallet_dana`, `flag_pdam_feature`, `flag_use_objectbox`.

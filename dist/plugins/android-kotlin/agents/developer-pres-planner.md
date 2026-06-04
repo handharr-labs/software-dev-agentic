@@ -35,9 +35,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
-`kms_query(text="presentation layer bloc cubit state management screen structure navigation router coordinator component widget", platform="{platform}", discipline="engineering", n_results=5)`
+1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
+2. `kms_query(text="presentation layer bloc cubit state management screen structure navigation router coordinator component widget", platform="{platform}", discipline="engineering", n_results=5)` — theory, definitions, documented patterns
+3. Codebase explore — `Grep` for `extends Bloc\|extends Cubit\|extends ChangeNotifier\|class.*ViewModel\|class.*StateHolder` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, non-trivial state handling) as live code reference
 
-Use returned content as reference for naming conventions, state patterns, and navigation patterns. If no results or tool unavailable: skip pattern reference and note it in findings — infer naming conventions from found files in Steps 2–3 instead.
+Combine KMS knowledge (theory + definitions) with codebase evidence (live pattern) before proceeding.
 
 **Step 0a — Consume Figma groups (skip if `figma_groups` not provided)**
 

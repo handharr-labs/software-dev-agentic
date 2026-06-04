@@ -48,9 +48,11 @@ Skip all other steps entirely. Always run Step 1 (platform reference) regardless
 
 **Step 1 — Load reference (always — run before any codebase search, regardless of scope or mode)**
 
-`kms_query(text="dependency injection DI container registration route navigation module registration analytics constants feature flag", platform="{platform}", discipline="engineering", n_results=5)`
+1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
+2. `kms_query(text="dependency injection DI container registration route navigation module registration analytics constants feature flag", platform="{platform}", discipline="engineering", n_results=5)` — theory, definitions, documented wiring patterns
+3. Codebase explore — `Grep` for existing DI registration files (`*module*`, `*di*`, `*injection*`, `*locator*`) excluding `test/` paths → read the most complete match as live wiring reference
 
-Use returned content as reference for wiring patterns, including `## Planner Search Patterns` if present — Steps 2–6 depend on it. Sections marked with a stub (`> No convention established yet`) have no wiring pattern to enforce — skip codebase discovery for those sections. If no results or tool unavailable: skip pattern reference and note it in findings — infer patterns from found files in Steps 2–6 instead.
+Use combined result as reference for wiring patterns, including `## Planner Search Patterns` if present — Steps 2–6 depend on it. Sections marked with a stub (`> No convention established yet`) have no wiring pattern to enforce — skip codebase discovery for those sections.
 
 **Step 2 — Locate DI registration files**
 

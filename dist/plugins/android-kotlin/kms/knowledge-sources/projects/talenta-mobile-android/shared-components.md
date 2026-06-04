@@ -1,97 +1,221 @@
 # Shared Components — talenta-mobile-android
 
-## MVP Base Classes (`base/` module)
+## BaseVbActivity
 
-| Class | Package | Description |
-|---|---|---|
-| `BasePresenter<View : MvpView>` | `co.talenta.base.presenter` | Abstract presenter; manages CompositeDisposable, WeakReference view, ErrorHandler injection; provides `.withState()` RxJava operators for loading state |
-| `MvpPresenter<View>` | `co.talenta.base.presenter` | Interface defining `attach`, `detach`, `view` |
-| `MvpView` | `co.talenta.base.view` | Interface defining `showLoading()`, `hideLoading()` |
-| `BaseLegacyPresenter` | `co.talenta.base` | Legacy presenter base (pre-RxJava 3 migration) |
-| `IBasePresenter` | `co.talenta.base` | Legacy presenter interface |
-| `IBaseView` | `co.talenta.base` | Legacy view interface |
-| `BaseListAdapter` | `co.talenta.base.adapter` | RecyclerView adapter base |
-| `BaseViewHolder` | `co.talenta.base.adapter` | ViewHolder base |
-| `FragmentViewModel` | `co.talenta.base.view.viewpager` | ViewModel for ViewPager tab fragment management |
+- path: base/src/main/java/co/talenta/base/view/BaseVbActivity.kt
+- params: VB : ViewBinding
 
-## Domain Use Case Base Classes (`domain/` module)
+## BaseVbFragment
 
-| Class | Description |
-|---|---|
-| `SingleUseCase<Response, Params>` | Abstract base for Single-returning use cases; applies `SingleTransformer` scheduler, logs success/error |
-| `CompletableUseCase<Params>` | Base for fire-and-forget operations |
-| `FlowableUseCase<Response, Params>` | Base for stream use cases |
-| `MaybeUseCase<Response, Params>` | Base for optional-result use cases |
-| `UseCase<T, Params>` | Root base class holding `build()` and `execute()` |
+- path: base/src/main/java/co/talenta/base/view/BaseVbFragment.kt
+- params: VB : ViewBinding
 
-## Error Handling (`base/error/`)
+## BaseInjectionVbActivity
 
-| Class | Description |
-|---|---|
-| `ErrorHandler` | Interface for view-bound error handling |
-| `DefaultErrorHandler` | Default implementation routing errors to view |
-| `TalentaErrorHandler` | Talenta-specific error handler with network/auth error routing |
-| `WebViewException` / `WebViewHttpException` | Custom exceptions for WebView error surfaces |
-| `RapidMethodException` | Prevents double-tap submission |
+- path: base/src/main/java/co/talenta/base/view/BaseInjectionVbActivity.kt
+- params: VB : ViewBinding
 
-## Helpers (`base/helper/`)
+## BaseMvpVbActivity
 
-| Helper | Description |
-|---|---|
-| `BaseDateHelper` | Date formatting/parsing (JodaTime-based) |
-| `PermissionHelper` | Runtime permission request abstraction |
-| `NetworkHelper` | Network connectivity check |
-| `NotificationHelper` | Local notification creation |
-| `TSnackbarHelper` | Top Snackbar display helper |
-| `FilterHelper` | Common list filter utilities |
-| `ToggleHelper` | Feature toggle evaluation |
-| `TimezoneHelper` | Timezone conversion |
-| `ImageViewHelper` | Glide image loading wrapper |
-| `OfflineCICOHelper` | Offline check-in/check-out storage |
-| `MoEngageTrackerHelper` | MoEngage event tracking wrapper |
-| `RedirectAppHelper` | Cross-app deep-link helper |
-| `RapidCallViewDetector` | Detects rapid repeated UI taps |
-| `FeatureTourHelper` | Feature onboarding tooltip management |
+- path: base/src/main/java/co/talenta/base/view/BaseMvpVbActivity.kt
+- params: P : MvpPresenter<V>, V : MvpView, VB : ViewBinding
 
-## Extensions (`base/extension/`)
+## BaseMvpVbFragment
 
-| File | Description |
-|---|---|
-| `ActivityExtension.kt` | Activity-scoped extension functions |
-| `FragmentExtension.kt` | Fragment-scoped extension functions |
-| `ViewExtension.kt` | View visibility, animations |
-| `ContextExtension.kt` | Context-scoped helpers |
-| `PagingViewExtension.kt` | Paging3 list state UI helpers |
-| `DrawableExtension.kt` | Tinting/drawable utilities |
-| `IntExtension.kt` | Int conversion helpers |
+- path: base/src/main/java/co/talenta/base/view/BaseMvpVbFragment.kt
+- params: P : MvpPresenter<V>, V : MvpView, VB : ViewBinding
 
-## Navigation Abstractions (`base/navigation/`)
+## BaseVbDialog
 
-Each feature exposes a navigation interface registered via `base/navigation/`:
+- path: base/src/main/java/co/talenta/base/view/BaseVbDialog.kt
+- params: VB : ViewBinding
 
-`AuthNavigation`, `EmployeeNavigation`, `FormNavigation`, `FrontdeskNavigation`, `IntegrationNavigation`, `MekariExpenseNavigation`, `MekariInsightNavigation`, `OvertimeNavigation`, `PayslipNavigation`, `PersonalInfoNavigation`, `PortalNavigation`, `ReprimandNavigation`, `ReviewsNavigation`, `TaskNavigation`, `TimeOffNavigation`, `CalendarNavigation`, `RequestChangeDataNavigation`
+## BaseMvpVbDialog
 
-## Core Library Shared Utilities
+- path: base/src/main/java/co/talenta/base/view/BaseMvpVbDialog.kt
+- params: P : MvpPresenter<V>, V : MvpView, VB : ViewBinding
 
-| Component | Module | Description |
-|---|---|---|
-| `orEmpty()`, `orZero()`, `orFalse()`, `orTrue()` | `lib_core_helper` (`com.mekari.commons.extension`) | Null-safe mapper extensions |
-| `NetworkManager` | `lib_core_network` | OkHttp client management, base URL switching |
-| `UrlHelper` | `lib_core_network` | URL construction for dev/prod/kong |
-| `TalentaGlideModule` | `base/library/glide` | Glide + OkHttp3 integration config |
-| `KongToggleManager` | `base/manager/kongtoggle` | Kong feature toggle cache manager |
-| `OfflineCICOManager` | `base/manager/offlinecico` | Offline CICO queue management |
-| `IntegrityManager` | `base/manager` | Google Play Integrity API wrapper |
-| `TalentaNotificationManager` / `TalentaNotificationBuilder` | `base/manager/fcm` | FCM notification construction |
-| Mekari Pixel components | `lib_core_mekari_pixel` | Design system components — tabs, app bar, bottom navigation, buttons, dialogs, toasts |
-| `ShimmerLoadingConfig` | `base/helper` | Facebook Shimmer config helper |
+## WebViewActivity
 
-## Shared Feature Widgets (`feature_shared_live_attendance/`)
+- path: base/src/main/java/co/talenta/base/view/WebViewActivity.kt
+- params: none (configured via intent extras)
 
-| Widget | Description |
-|---|---|
-| `FetchLocationBottomSheet` | GPS fetch UI (legacy) |
-| `MpFetchLocationBottomSheet` | GPS fetch UI (Mekari Pixel) |
-| `OutOfRadiusInformationBottomSheet` | Out-of-radius user info |
-| `SuggestionBottomSheet` / `MpSuggestionBottomSheet` | Location suggestion selection |
-| `LocationConfigManager` | Location accuracy/permission manager for attendance |
+## EmptyStateView
+
+- path: base/src/main/java/co/talenta/base/widget/EmptyStateView.kt
+- params: context, attrs (View subclass)
+
+## InfoView
+
+- path: base/src/main/java/co/talenta/base/widget/InfoView.kt
+- params: context, attrs (View subclass)
+
+## TimezoneTextView
+
+- path: base/src/main/java/co/talenta/base/widget/TimezoneTextView.kt
+- params: context, attrs (TextView subclass)
+
+## ExpandableTextView
+
+- path: base/src/main/java/co/talenta/base/widget/ExpandableTextView.kt
+- params: context, attrs (TextView subclass)
+
+## MonthYearPickerView
+
+- path: base/src/main/java/co/talenta/base/widget/MonthYearPickerView.kt
+- params: context, attrs (View subclass)
+
+## NonInterceptingRecyclerView
+
+- path: base/src/main/java/co/talenta/base/widget/NonInterceptingRecyclerView.kt
+- params: context, attrs (RecyclerView subclass)
+
+## EmojiExcludeEditText
+
+- path: base/src/main/java/co/talenta/base/widget/EmojiExcludeEditText.kt
+- params: context, attrs (EditText subclass)
+
+## MagnifyingPageIndicator
+
+- path: base/src/main/java/co/talenta/base/widget/MagnifyingPageIndicator.kt
+- params: context, attrs (View subclass)
+
+## SingleClickListener
+
+- path: base/src/main/java/co/talenta/base/widget/SingleClickListener.kt
+- params: none (abstract View.OnClickListener)
+
+## TalentaWebView
+
+- path: base/src/main/java/co/talenta/base/widget/webview/TalentaWebView.kt
+- params: context, attrs (WebView subclass)
+
+## CustomWebView
+
+- path: base/src/main/java/co/talenta/base/widget/webview/CustomWebView.kt
+- params: context, attrs (WebView subclass)
+
+## ErrorPageView
+
+- path: base/src/main/java/co/talenta/base/widget/webview/ErrorPageView.kt
+- params: context, attrs (View subclass)
+
+## SuccessSnackBarView
+
+- path: base/src/main/java/co/talenta/base/widget/snackbar/SuccessSnackBarView.kt
+- params: context, attrs (View subclass)
+
+## DateTimePickerDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/DateTimePickerDialog.kt
+- params: none (injected via Dagger)
+
+## FilterDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/FilterDialog.kt
+- params: none
+
+## FeatureIntroductionDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/FeatureIntroductionDialog.kt
+- params: DialogIntroStyle (data class)
+
+## PreviewImageDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/previewimage/PreviewImageDialog.kt
+- params: none (injected via Dagger)
+
+## YearPickerDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/yearpickerdialog/YearPickerDialog.kt
+- params: none
+
+## SelectOptionBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/select_option/SelectOptionBottomSheet.kt
+- params: none
+
+## SelectShiftDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/select_shift/SelectShiftDialog.kt
+- params: none
+
+## MpBaseBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/MpBaseBottomSheet.kt
+- params: ContentVB : ViewBinding (abstract)
+
+## MpBaseInjectionBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/MpBaseInjectionBottomSheet.kt
+- params: ContentVB : ViewBinding (abstract)
+
+## MpBaseMvpBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/MpBaseMvpBottomSheet.kt
+- params: P : MvpPresenter<V>, V : MvpView, ContentVB : ViewBinding (abstract)
+
+## InfoBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/InfoBottomSheet.kt
+- params: MpInfoBottomSheetConfig
+
+## MpInfoBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/MpInfoBottomSheet.kt
+- params: none
+
+## MpApprovalListBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/MpApprovalListBottomSheet.kt
+- params: none (private constructor, use factory)
+
+## MpTimePickerBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/MpTimePickerBottomSheet.kt
+- params: mpTimePickerListener: MpTimePickerListener?
+
+## MpOptionBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/option/MpOptionBottomSheet.kt
+- params: none
+
+## MpDatePickerBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/datepicker/MpDatePickerBottomSheet.kt
+- params: none (private constructor, use factory)
+
+## MpNumberPickerView
+
+- path: base/src/main/java/co/talenta/base/widget/bottomsheet/datepicker/MpNumberPickerView.kt
+- params: context, attrs (View subclass)
+
+## RangeMonthYearPicker
+
+- path: base/src/main/java/co/talenta/base/widget/rangemonthyearpicker/RangeMonthYearPicker.kt
+- params: context, attrs (View subclass)
+
+## KeyAwareEditText
+
+- path: base/src/main/java/co/talenta/base/widget/edittext/KeyAwareEditText.kt
+- params: context, attrs (EditText subclass)
+
+## PermissionRationaleDialogBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/PermissionRationaleDialogBottomSheet.kt
+- params: none
+
+## MpBaseDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/mpdialog/MpBaseDialog.kt
+- params: ContentVB : ViewBinding (abstract)
+
+## SettingBottomSheet
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/settingbottomsheet/SettingBottomSheet.kt
+- params: none
+
+## TimeDurationPickerDialog
+
+- path: base/src/main/java/co/talenta/base/widget/dialog/TimeDurationPickerDialog.kt
+- params: none (injected via Dagger)

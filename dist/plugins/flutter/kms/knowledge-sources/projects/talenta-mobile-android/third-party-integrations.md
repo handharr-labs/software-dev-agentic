@@ -1,119 +1,295 @@
 # Third-Party Integrations — talenta-mobile-android
 
-Source: `dependencies.gradle`, `app/build.gradle`, feature module `build.gradle` files.
+## Firebase Authentication
 
-## Analytics & Crash Reporting
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Firebase Analytics | `com.google.firebase:firebase-analytics` | BoM 33.7.0 | Event tracking |
-| Firebase Crashlytics | `com.google.firebase:firebase-crashlytics-ktx` | BoM 33.7.0 | Crash reporting |
-| Firebase Performance | `com.google.firebase:firebase-perf-ktx` | BoM 33.7.0 | App performance monitoring |
-| MoEngage SDK | `com.moengage:moe-android-sdk` | 13.06.00 | User engagement, push, in-app |
-| MoEngage InApp | `com.moengage:inapp` | 8.8.1 | In-app messaging |
-| MoEngage GeoFence | `com.moengage:geofence` | 4.3.0 | Geo-fencing triggers |
-| MoEngage HMS PushKit | `com.moengage:hms-pushkit` | 5.2.0 | Huawei push support |
-| Mixpanel | `com.mixpanel.android:mixpanel-android` | 7.5.2 | Product analytics |
-| Microsoft Clarity | `com.microsoft.clarity:clarity` | 3.5.1 | Session replay / heatmaps |
+- package: com.google.firebase:firebase-auth
+- purpose: User authentication via Firebase
+- layer: Data
 
-## Messaging & Push
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Firebase Cloud Messaging | `com.google.firebase:firebase-messaging-ktx` | BoM 33.7.0 | Push notifications |
-| Eclipse Paho MQTT | `org.eclipse.paho:org.eclipse.paho.client.mqttv3` | 1.2.5 | Real-time live tracking pub/sub via VerneMQ |
+## Firebase Crashlytics
 
-## Authentication & Security
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Firebase Auth | `com.google.firebase:firebase-auth` | BoM 33.7.0 | Firebase token auth |
-| Firebase App Check | `com.google.firebase:firebase-appcheck-ktx` | BoM 33.7.0 | App attestation |
-| Google Play Integrity | `com.google.android.play:integrity` | 1.5.0 | Device integrity verification |
-| SQLCipher | `net.zetetic:sqlcipher-android` | 4.7.2 | Encrypted local database |
-| RootBeer | `com.scottyab:rootbeer-lib` | 0.1.1 | Root detection |
-| FingerprintJS | `com.github.fingerprintjs:fingerprint-android` | 2.2.0 | Device fingerprinting for CICO |
-| AndroidX Biometric | `androidx.biometric:biometric` | 1.1.0 | Fingerprint/face biometric auth |
-| Mekari Security libs | Internal (`lib_core_mekari_pixel`, `lib_core_network`) | — | Certificate pinning, secure prefs |
+- package: com.google.firebase:firebase-crashlytics
+- purpose: Crash reporting and error tracking
+- layer: Data / Base (via TalentaErrorHandler)
 
-## Networking
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Retrofit 2 | `com.squareup.retrofit2:retrofit` | 2.9.0 | REST API client |
-| OkHttp 3 | `com.squareup.okhttp3:okhttp` | BoM 4.9.3 | HTTP transport layer |
-| Gson | `com.google.code.gson:gson` | 2.8.6 | JSON serialization/deserialization |
-| Chucker | `com.github.chuckerteam.chucker:library` | 3.5.2 | Debug HTTP inspector (debug only) |
+## Firebase Analytics
 
-## Location & Maps
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Google Play Services Maps | `com.google.android.gms:play-services-maps` | 18.1.0 | Map display |
-| Google Play Services Location | `com.google.android.gms:play-services-location` | 20.0.0 (pinned) | GPS, geofencing, location updates |
-| Google Places | `com.google.android.libraries.places:places` | 2.7.0 | Place autocomplete |
-| Mekari Location | `com.mekari.mobile:location` | 1.0.5 | Internal location utilities |
-| TSLocationManager (flutter_background_geolocation) | `com.transistorsoft:tslocationmanager` | 3.7.0 | Background geolocation for live tracking |
+- package: com.google.firebase:firebase-analytics
+- purpose: Event and user behaviour analytics
+- layer: Data
 
-## Customer Support
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Intercom | `io.intercom.android:intercom-sdk` | 15.4.0 | In-app support chat |
+## Firebase Cloud Messaging
 
-## UI Components
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Glide | `com.github.bumptech.glide:glide` | 4.16.0 | Image loading with OkHttp3 integration |
-| Facebook Shimmer | `com.facebook.shimmer:shimmer` | 0.5.0 | Loading skeleton animation |
-| Material Calendar View | `com.github.prolificinteractive:material-calendarview` | 2.0.1 | Calendar date picker |
-| Balloon | `com.github.skydoves:balloon` | 1.5.4 | Tooltip popups |
-| Progress Button | `com.github.razir.progressbutton:progressbutton` | 2.1.0 | Buttons with loading state |
-| TSnackBar | `com.github.Redman1037:TSnackBar` | V2.0.0 | Top-positioned Snackbar |
-| Simple Stack | `com.github.Zhuinden:simple-stack` | 2.3.2 | Back-stack management |
-| SDP/SSP | `com.intuit.sdp/ssp-android` | 1.0.6 | Size/dimension resource scaling |
-| Scrolling Page Indicator | `ru.tinkoff.scrollingpagerindicator` | 1.0.6 | ViewPager dot indicator |
-| Circle Indicator | `me.relex:circleindicator` | 2.1.6 | ViewPager circle indicator |
-| World Country Data | `com.github.blongho:worldCountryData` | v1.5 | Country/dial-code data |
-| Mekari Pixel | `lib_core_mekari_pixel` (internal module) | — | Mekari design system (buttons, tabs, dialogs, app bar) |
+- package: com.google.firebase:firebase-messaging
+- purpose: Push notifications
+- layer: App
 
-## Reactive Programming
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| RxJava 3 | `io.reactivex.rxjava3:rxjava` | 3.0.6 | Async stream processing |
-| RxAndroid 3 | `io.reactivex.rxjava3:rxandroid` | 3.0.0 | Android main thread scheduler |
-| RxKotlin 3 | `io.reactivex.rxjava3:rxkotlin` | 3.0.1 | Kotlin extensions for RxJava |
-| RxBinding 4 | `com.jakewharton.rxbinding4:rxbinding` | 4.0.0 | View event streams |
+## Firebase Remote Config
 
-## Dependency Injection
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Dagger 2 | `com.google.dagger:dagger` | 2.50 | Compile-time DI |
-| Dagger Android | `com.google.dagger:dagger-android` | 2.50 | Activity/Fragment injection support |
+- package: com.google.firebase:firebase-config
+- purpose: Remote feature flag configuration
+- layer: Data
 
-## Persistence
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Room | `androidx.room:room-runtime` | 2.6.1 | SQLite ORM |
-| DataStore | AndroidX (via gradle) | — | Key-value storage |
+## Firebase Performance Monitoring
 
-## Firebase
-| SDK | Artifact | Usage |
-|---|---|---|
-| Firebase Remote Config | `com.google.firebase:firebase-config-ktx` | Feature flag management |
-| Firebase Realtime Database | `com.google.firebase:firebase-database-ktx` | Realtime data (feedback) |
+- package: com.google.firebase:firebase-perf
+- purpose: App performance monitoring
+- layer: App
 
-## Mekari Internal SDKs
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| Mekari Commons | `com.mekari.mobile:commons` | 0.0.5 | Shared extension functions (`orEmpty`, `orZero`, etc.) |
-| Mekari Flag | `com.mekari.mobile:flag` | 0.6.1 | Feature flag client |
+## Firebase Realtime Database
 
-## Background Work
-| SDK | Artifact | Version | Usage |
-|---|---|---|---|
-| WorkManager | `androidx.work:work-runtime-ktx` | 2.9.1 | Deferrable background tasks |
-| WorkManager RxJava3 | `androidx.work:work-rxjava3` | 2.9.1 | RxJava3 integration for workers |
+- package: com.google.firebase:firebase-database
+- purpose: Real-time data sync
+- layer: Data
 
-## Developer Tools (debug/test)
-| SDK | Usage |
-|---|---|
-| LeakCanary 2.14 | Memory leak detection (debug build only) |
-| Chucker 3.5.2 | HTTP traffic inspector (debug build only) |
-| Timber 5.0.1 | Structured logging |
-| Jsoup 1.18.3 | HTML parsing |
-| JodaTime 2.10.6 | Date/time manipulation |
+## Firebase App Check
+
+- package: com.google.firebase:firebase-appcheck, firebase-appcheck-playintegrity
+- purpose: Backend protection against fraudulent traffic
+- layer: App
+
+## MoEngage SDK
+
+- package: com.moengage:moe-android-sdk
+- purpose: Customer engagement, push notifications, in-app messaging
+- layer: App (InAppCallback, ApplicationBackgroundListener, GeoFenceHitListener)
+
+## MoEngage GeoFence
+
+- package: com.moengage:moe-android-geofence
+- purpose: Location-based engagement triggers
+- layer: App
+
+## MoEngage HMS Push Kit
+
+- package: com.moengage:moe-android-hms
+- purpose: Huawei push notification support via MoEngage
+- layer: App
+
+## MoEngage In-App
+
+- package: com.moengage:in-app-nativ
+- purpose: In-app message display
+- layer: App
+
+## Retrofit 2
+
+- package: com.squareup.retrofit2:retrofit
+- purpose: HTTP client for REST API calls
+- layer: Data
+
+## OkHttp 3
+
+- package: com.squareup.okhttp3:okhttp, okhttp-logging-interceptor
+- purpose: HTTP network layer with logging
+- layer: Data
+
+## Gson
+
+- package: com.google.code.gson:gson
+- purpose: JSON serialisation/deserialisation
+- layer: Data
+
+## RxJava 3
+
+- package: io.reactivex.rxjava3:rxjava, rxandroid, rxkotlin
+- purpose: Reactive programming for async data streams
+- layer: Data / Domain / Presentation
+
+## RxBinding 4
+
+- package: com.jakewharton.rxbinding4:rxbinding
+- purpose: Reactive bindings for Android UI events
+- layer: Presentation
+
+## Dagger 2
+
+- package: com.google.dagger:dagger, dagger-android, dagger-android-support
+- purpose: Dependency injection
+- layer: All
+
+## Room
+
+- package: androidx.room:room-runtime, room-rxjava3
+- purpose: Local database ORM
+- layer: Data
+
+## SQLCipher
+
+- package: net.zetetic:android-database-sqlcipher
+- purpose: Encrypted SQLite database
+- layer: Data
+
+## Glide
+
+- package: com.github.bumptech.glide:glide
+- purpose: Image loading and caching
+- layer: Presentation
+
+## Google Play Services Maps
+
+- package: com.google.android.gms:play-services-maps
+- purpose: Google Maps display for live attendance and live tracking
+- layer: Presentation
+
+## Google Play Services Location
+
+- package: com.google.android.gms:play-services-location
+- purpose: Fused location provider for attendance and tracking
+- layer: Data / Feature
+
+## Google Places
+
+- package: com.google.android.libraries.places:places
+- purpose: Location search/autocomplete
+- layer: Presentation
+
+## Google Play Integrity
+
+- package: com.google.android.play:integrity
+- purpose: Device integrity verification (anti-tampering)
+- layer: Data (IntegrityApi.kt)
+
+## Transistorsoft Background Geolocation
+
+- package: com.transistorsoft:tslocationmanager
+- purpose: Background location tracking for Live Tracking feature
+- layer: feature_live_tracking (BackgroundGeoSource.kt)
+
+## Intercom
+
+- package: io.intercom.android:intercom-sdk
+- purpose: In-app customer support messaging
+- layer: lib_core_message (IntercomMessageProvider.kt)
+
+## Mixpanel
+
+- package: com.mixpanel.android:mixpanel-android
+- purpose: Product analytics and event tracking
+- layer: Data (CompanyApi.kt Mixpanel URL)
+
+## WorkManager
+
+- package: androidx.work:work-runtime, work-rxjava3
+- purpose: Background task scheduling for offline sync (SyncOfflineLogWorker, SyncEmployeeWorker)
+- layer: feature_portal
+
+## Paging 3
+
+- package: androidx.paging:paging-runtime, paging-rxjava3
+- purpose: Paginated list loading
+- layer: Presentation
+
+## Timber
+
+- package: com.jakewharton.timber:timber
+- purpose: Logging utility
+- layer: All
+
+## JodaTime
+
+- package: net.danlew:android.joda
+- purpose: Date and time manipulation
+- layer: Domain / Data
+
+## Jetpack Navigation
+
+- package: androidx.navigation:navigation-fragment-ktx, navigation-ui-ktx
+- purpose: Fragment navigation graph
+- layer: Presentation
+
+## Jetpack Biometric
+
+- package: androidx.biometric:biometric
+- purpose: Fingerprint / biometric authentication
+- layer: lib_core_biometric
+
+## Mekari Commons
+
+- package: co.mekari:mekari-commons (internal)
+- purpose: Shared Mekari platform utilities
+- layer: Data / App
+
+## Mekari Flag
+
+- package: co.mekari:mekari-flag (internal)
+- purpose: Feature flag client for Mekari platform
+- layer: Data
+
+## Mekari Location
+
+- package: co.mekari:mekari-location (internal)
+- purpose: Mekari-platform location utilities
+- layer: App
+
+## Mekari Pixel (lib_core_mekari_pixel)
+
+- package: internal module lib_core_mekari_pixel
+- purpose: Design system / UI component library (Mekari Pixel design system)
+- layer: Presentation
+
+## RootBeer
+
+- package: com.scottyab:rootbeer-lib
+- purpose: Root detection for security checks
+- layer: App (RootDetectionManagerImpl.kt)
+
+## Jsoup
+
+- package: org.jsoup:jsoup
+- purpose: HTML parsing (announcement web content)
+- layer: Presentation (AnnouncementWebView.kt)
+
+## SDP / SSP
+
+- package: com.intuit.sdp:sdp-android, com.intuit.ssp:ssp-android
+- purpose: Scalable size units for responsive UI
+- layer: Presentation (res)
+
+## Balloon
+
+- package: com.skydoves:balloon
+- purpose: Tooltip/popover UI components
+- layer: Presentation
+
+## SimpleStack
+
+- package: com.github.Zhuinden:simple-stack
+- purpose: Navigation back-stack management
+- layer: Presentation
+
+## CircleIndicator
+
+- package: me.relex:circleindicator
+- purpose: ViewPager indicator dots
+- layer: Presentation
+
+## TopSnackbar
+
+- package: com.github.tlaabs:TimetableView (or custom top snackbar lib)
+- purpose: Top-positioned snackbar notifications
+- layer: Presentation
+
+## Google Play In-App Update
+
+- package: com.google.android.play:app-update
+- purpose: In-app update flow (flexible/immediate)
+- layer: lib_core_version_update
+
+## Google Play Feature Delivery
+
+- package: com.google.android.play:feature-delivery
+- purpose: Dynamic feature module delivery
+- layer: Data / App
+
+## CameraX
+
+- package: androidx.camera:camera-*
+- purpose: Camera capture for selfie attendance
+- layer: lib_core_camera
+
+## Apache Commons Lang 3
+
+- package: org.apache.commons:commons-lang3
+- purpose: General string/object utility functions
+- layer: App

@@ -39,9 +39,11 @@ Every test case must map to mobile UI actions: tap, swipe, scroll, type, long-pr
 
 Derive: `project` = `basename $(pwd)`.
 
-`kms_query(text="feature acceptance criteria flows product requirements", discipline="product", n_results=5)` — use returned content for context on acceptance criteria and known flows.
+1. `kms_list(discipline="product")` — scan available product knowledge topics
+2. `kms_query(text="feature acceptance criteria flows product requirements", discipline="product", n_results=5)` — documented acceptance criteria and flows
+3. Codebase explore — `Glob` for existing test files (`**/*_test*`, `**/*Test*`, `**/*.spec.*`) → read the most complete test file as live structural reference for test case format
 
-Fallback — if no results or tool unavailable: skip KMS and rely solely on the Jira/Confluence/Figma input.
+Combine KMS knowledge (acceptance criteria context) with codebase evidence (test structure and naming conventions) before generating test cases.
 
 ## Preconditions
 

@@ -1,4 +1,4 @@
-Consolidated Flutter Clean Architecture reference — covers all engineering layers, patterns, and cross-cutting concerns used across Flutter projects. Source: lib/core/knowledge/flutter/engineering/.
+Consolidated Flutter Clean Architecture reference — covers all engineering layers, patterns, and cross-cutting concerns used across Flutter projects.
 
 # Domain
 

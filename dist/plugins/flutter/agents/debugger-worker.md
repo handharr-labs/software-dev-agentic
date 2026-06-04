@@ -40,9 +40,11 @@ Never use `find`/`ls` to navigate a vendor directory speculatively. If the patte
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths in the error/stack trace.
 
-`kms_query(text="error handling architecture layer patterns expected behaviour", platform="{platform}", discipline="engineering", n_results=5)` — use returned content to confirm expected vs actual behaviour.
+1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
+2. `kms_query(text="error handling architecture layer patterns expected behaviour", platform="{platform}", discipline="engineering", n_results=5)` — documented error handling patterns
+3. Codebase explore — `Grep` for `catch\|Result\|Either\|onError` in the affected layer excluding `test/` paths → use the most representative file to understand the live expected error flow
 
-Fallback — if no results or tool unavailable: skip KMS and rely on source code reads only.
+Combine KMS knowledge with codebase evidence to confirm expected vs actual behaviour.
 
 ## Step 1 — Understand the Symptom
 

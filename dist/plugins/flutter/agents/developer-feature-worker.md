@@ -56,12 +56,12 @@ Load cross-cutting convention references before writing any code — knowledge f
 
 Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 
-`kms_query(text="syntax conventions utilities error handling code patterns", platform="{platform}", discipline="engineering", n_results=5)`
+1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
+2. `kms_query(text="syntax conventions utilities error handling code patterns", platform="{platform}", discipline="engineering", n_results=5)` — cross-cutting conventions
+3. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
 
 **Design system — optional, non-blocking:**
 `kms_query(text="design system component catalog", platform="{platform}", discipline="design", n_results=3)` — if results found, keep available for StateHolder and App layer artifact steps. If no results: log `[design system] no catalog for {platform} — skipping` and continue.
-
-Fallback — if no results or tool unavailable: skip and continue without convention reference.
 
 Apply every loaded convention throughout all artifacts — this is not optional.
 
@@ -109,7 +109,9 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific knowledge reference for this artifact type — `kms_query(text="{artifact_type} naming convention code pattern", platform="{platform}", discipline="engineering", n_results=3)`; fallback if no results: proceed without pattern reference
+2. Load the layer-specific reference for this artifact type:
+   - `kms_query(text="{artifact_type} naming convention code pattern", platform="{platform}", discipline="engineering", n_results=3)` — documented pattern
+   - Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):
    - Look up this artifact's name in the `Figma Alignment` table — read the `Figma Files` column directly to get the list of `.md` file paths. No Glob needed.
    - `Read` each listed `.md` file body only — extract `State` and `Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
@@ -149,7 +151,9 @@ The path is recorded in `state.json` under `stateholder_contract`. The calling s
 App layer wiring is always direct `Read` + `Edit` — no skill is needed. For each row in the `## App Layer` section of `plan.md`:
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
-2. Load the platform app-layer knowledge reference to confirm the exact pattern — `kms_query(text="app layer wiring {pattern} registration pattern", platform="{platform}", discipline="engineering", n_results=3)`; fallback if no results: proceed without pattern reference.
+2. Load the app-layer reference:
+   - `kms_query(text="app layer wiring {pattern} registration pattern", platform="{platform}", discipline="engineering", n_results=3)` — documented wiring pattern
+   - Codebase explore — `Grep` for existing DI/route registration calls in the target file → use as live wiring reference
 3. `Read` the target file using `offset` + `limit` around the insertion point (Grep for a known symbol or section marker first).
 4. Apply the targeted edit — add only what the plan specifies.
 5. Validate: `Grep` for the newly added symbol or registration call in the modified file.

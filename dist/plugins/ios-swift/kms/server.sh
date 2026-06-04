@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 export KMS_DB_PATH="$PLUGIN_ROOT/chroma"
-export KMS_KNOWLEDGE_DIR="$PLUGIN_ROOT/knowledge"
 export PYTHONPATH="$PLUGIN_ROOT"
 
 # Auto-install deps on first run — no-op if already satisfied.

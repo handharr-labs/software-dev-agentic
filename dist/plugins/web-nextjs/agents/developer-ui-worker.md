@@ -103,7 +103,9 @@ If no catalog: skip to Level 2.
 **Level 2 — Project shared components**
 
 For each element in `## Custom Widgets` (or all elements if no catalog):
-- Primary: `kms_fetch(platform, project, discipline="engineering", topic="presentation", pattern="screen_structure")` and check `Shared Component Paths`; fallback: Grep `software-dev-agentic/lib/core/knowledge/{platform}/engineering/presentation/index.md` for the `Shared Component Paths` entry → read the referenced pattern file
+- `kms_query(text="shared component paths presentation screen structure", platform="{platform}", discipline="engineering", n_results=3)` — check results for `Shared Component Paths`
+- Codebase explore — `Glob` for shared component directories (`**/shared/**`, `**/components/**`, `**/widgets/**`) → use found paths as live reference
+- Combine both: KMS paths are the documented catalog, Glob paths are the ground truth
 - For each path: Grep for keywords matching the element (e.g. "card", "list", "avatar")
 - ≥80% behavior match → **reuse**, remove from Custom Widgets
 - Partial match → **extend** via `Read` + `Edit`, remove from Custom Widgets

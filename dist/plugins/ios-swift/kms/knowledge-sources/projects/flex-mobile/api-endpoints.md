@@ -1,200 +1,353 @@
-# API Endpoints — flex-mobile (Flutter)
+# API Endpoints — flex-mobile
 
-Scanned: 2026-06-04
+Platform: Flutter (Melos monorepo)
+Last scanned: 2026-06-04
 
-All paths are relative to the base URL configured per environment via envied (`BASE_URL`, `BENEFIT_CMS_URL`, `LENDING_URL`, `SAVING_URL`). Most endpoints use `FlexNetworkClient` (credit/benefit network). Pin-protected endpoints send PIN in request header `pin: <value>`. JSONAPI responses use `japx` for decoding.
+The app uses four distinct base URL environments, all configured via `envied`-obfuscated `.env.*` files:
 
----
+| Client | Env Var | Used By |
+|---|---|---|
+| `FlexNetworkClient` (credit) | `BASE_URL` | Most features |
+| `BenefitNetworkClient` | `BENEFIT_CMS_URL` | Campaigns, products, benefit CMS |
+| `LendingNetworkClient` | `LENDING_URL` | Installment / lending |
+| `SavingsNetworkClient` | `SAVING_URL` | Mekari Saving module |
 
-## Environments
-
-| Name       | Env file           |
-|------------|--------------------|
-| production | `.env.production`  |
-| staging    | `.env.staging`     |
-| sandbox    | `.env.sandbox`     |
-
-Base URL keys: `BASE_URL` (credit), `BENEFIT_CMS_URL` (benefit/lending CMS), `LENDING_URL`, `SAVING_URL`
+All clients use `mekari_network` (`MKRNetwork`) under the hood with `FlexNetworkAuthInterceptor` injecting Bearer tokens.
 
 ---
 
-## App Settings
+## Authentication (flex_core — credit base URL)
 
-| Method | Path              | Feature       | Notes              |
-|--------|-------------------|---------------|--------------------|
-| GET    | `mobile_versions` | app_settings  | Force-update check |
-
----
-
-## Auto Debit
-
-| Method | Path                       | Feature    | Notes                    |
-|--------|----------------------------|------------|--------------------------|
-| GET    | `auto_debits/banks`        | auto_debit | List supported banks     |
-| GET    | `auto_debits/setting`      | auto_debit | Auto-debit settings      |
-| GET    | `auto_debits/linkages/info`| auto_debit | Current linkage status   |
-| POST   | `auto_debits/linkages`     | auto_debit | Request activation URL   |
+| Method | Path | Description |
+|---|---|---|
+| DELETE | `auth/logout` | Log out current session |
+| POST | `auth/sync_user_via_sso` | Sync user after SSO login |
 
 ---
 
-## Cashout (EWA withdrawal — modules/cashout)
+## Users (flex_core — credit base URL)
 
-| Method | Path                                              | Feature | Notes                                 |
-|--------|---------------------------------------------------|---------|---------------------------------------|
-| GET    | `company_fee_settings`                            | cashout | Company cashout fee config            |
-| GET    | `fee_calculations`                                | cashout | Calculate transaction fee             |
-| GET    | `payment_methods`                                 | cashout | Available payment methods             |
-| POST   | `credit/transactions/cashout`                     | cashout | Create cashout transaction (PIN req)  |
-| POST   | `credit/credit_partner_transactions`              | cashout | Request B2C partner payment           |
-| POST   | `credit/credit_partner_transactions/{id}/cashout` | cashout | Complete partner cashout              |
-| GET    | `credit/credit_partner_transactions/{id}`         | cashout | Get partner payment status            |
-| GET    | `promo_codes`                                     | cashout | List available promos                 |
-| GET    | `promo_codes/{id}`                                | cashout | Promo detail                          |
+| Method | Path | Description |
+|---|---|---|
+| GET | `users/profile` | Fetch current user profile |
+| GET | `users/employment_information` | Fetch employment info |
+| POST | `users/change_settings` | Update user settings (language, etc.) |
+| GET | `users/change_password` | Get change-password redirect URL |
+| POST | `users/resend_agreement` | Resend sign agreement email |
 
 ---
 
-## CKYC (Credit KYC)
+## Balance (flex_core — credit base URL)
 
-| Method | Path                             | Feature | Notes                            |
-|--------|----------------------------------|---------|----------------------------------|
-| POST   | `ckyc/kyc/availability`          | ckyc    | Validate NIK                     |
-| POST   | `ckyc/kyc/init`                  | ckyc    | Init KYC process                 |
-| GET    | `ckyc/kyc`                       | ckyc    | Get KYC step details             |
-| GET    | `ckyc/ocr`                       | ckyc    | Get OCR data from KTP            |
-| POST   | `ckyc/ktps`                      | ckyc    | Get presigned S3 URL for KTP     |
-| PATCH  | `ckyc/ktps`                      | ckyc    | Finish KTP upload                |
-| POST   | `ckyc/kyc/upload_payslip`        | ckyc    | Upload payslip (multipart)       |
-| POST   | `ckyc/ocr`                       | ckyc    | Submit OCR form data             |
-| POST   | `ckyc/kyc/emergency_contact`     | ckyc    | Submit emergency contact         |
-| POST   | `ckyc/kyc/spouse_data`           | ckyc    | Submit spouse data               |
-| POST   | `ckyc/liveness`                  | ckyc    | Start liveness check             |
-| PATCH  | `ckyc/liveness`                  | ckyc    | Update liveness step             |
-| GET    | `ckyc/kyc/terms_of_service`      | ckyc    | Fetch TnC URL (cached 5 min)     |
+| Method | Path | Description |
+|---|---|---|
+| GET | `user_balance` | Fetch credit + flex balance |
+| GET | `user_balance/details` | Fetch balance breakdown details |
 
 ---
 
-## Electricity (PPOB)
+## PIN (flex_core — credit base URL)
 
-| Method | Path                                               | Feature     | Notes                    |
-|--------|----------------------------------------------------|-------------|--------------------------|
-| POST   | `credit/transactions/electricity_prepaids/inquire` | electricity | PLN prepaid inquiry      |
-| POST   | `credit/transactions/electricity_postpaids/inquire`| electricity | PLN postpaid inquiry     |
-| GET    | `sepulsa_product/electricity_prepaid` (inferred)   | electricity | Prepaid token products   |
-
----
-
-## Flex Points
-
-| Method | Path                      | Feature    | Notes                         |
-|--------|---------------------------|------------|-------------------------------|
-| GET    | `flex_points/balance`     | flex_point | Flex Points balance           |
-| GET    | `flex_point_transactions` | flex_point | Paginated transaction history |
+| Method | Path | Description |
+|---|---|---|
+| POST | `pins/pin_setup` | Set up new PIN |
+| PUT | `pins/update_pin` | Change existing PIN |
+| POST | `forgot_pin` | Initiate forgot-PIN flow |
+| POST | `pins/pin_validation` | Validate PIN (pin passed as header) |
 
 ---
 
-## Individual Access (Mekari Saving)
+## Device Verification (flex_core — credit base URL)
 
-| Method | Path                               | Feature           | Notes                        |
-|--------|------------------------------------|-------------------|------------------------------|
-| GET    | `mekari_saving/users/access_status`| individual_access | Eligibility check            |
-| POST   | `mekari_saving/users/accept_tnc`   | individual_access | Accept individual access TnC |
-
----
-
-## Mobile PPOB
-
-| Method | Path                                          | Feature | Notes                      |
-|--------|-----------------------------------------------|---------|----------------------------|
-| GET    | `sepulsa_product/mobile_prepaid`              | mobile  | Prepaid/data plan products |
-| GET    | `sepulsa_product/mobile_postpaid`             | mobile  | Postpaid mobile products   |
-| POST   | `credit/transactions/mobile_postpaids/inquire`| mobile  | Postpaid bill inquiry      |
+| Method | Path | Description |
+|---|---|---|
+| POST | `device_verification/send_otp` | Send OTP via SMS/WhatsApp/email |
+| POST | `device_verification/validate_otp` | Validate submitted OTP |
 
 ---
 
-## Payment (PPOB Transactions)
+## Transactions (flex_core — credit base URL)
 
-Two parallel sets: `CreditPaymentDataSource` (credit balance) and `FlexPaymentDataSource` (flex balance).
-
-| Method | Path (credit)                                     | Path (flex)                        | Notes      |
-|--------|---------------------------------------------------|------------------------------------|------------|
-| POST   | `credit/transactions/mobile_prepaids`             | `flex/transactions/mobile_prepaids`| PIN header |
-| POST   | `credit/transactions/mobile_postpaids`            | `flex/transactions/mobile_postpaids`| PIN header |
-| POST   | `credit/transactions/electricity_prepaids`        | `flex/transactions/electricity_prepaids`| PIN header |
-| POST   | `credit/transactions/electricity_postpaids`       | `flex/transactions/electricity_postpaids`| PIN header |
-| POST   | `credit/transactions/gopay`                       | `flex/transactions/gopay`          | PIN header |
-| POST   | `credit/transactions/ovo`                         | `flex/transactions/ovo`            | PIN header |
-| POST   | `credit/transactions/shopee_pay`                  | `flex/transactions/shopee_pay`     | PIN header |
-| POST   | `credit/transactions/dana`                        | `flex/transactions/dana`           | PIN header |
-| POST   | `credit/transactions/voucher`                     | flex voucher path                  | PIN header |
-| POST   | `credit/transactions/cashout`                     | —                                  | PIN header |
-| POST   | `credit/transactions/pdams`                       | `flex/transactions/pdams`          | PIN header |
-| POST   | `credit/credit_partner_transactions/{id}/cashout` | —                                  | Finfra path|
+| Method | Path | Description |
+|---|---|---|
+| GET | `credit/transactions` | Paginated credit transaction list |
+| GET | `credit/transactions/{id}` | Credit transaction detail |
+| GET | `flex_transactions` | Paginated flex transaction list |
+| GET | `flex_transactions/{id}` | Flex transaction detail |
 
 ---
 
-## PDAM (PPOB)
+## Transaction Approval (flex_core — credit base URL)
 
-| Method | Path                                  | Feature | Notes                   |
-|--------|---------------------------------------|---------|-------------------------|
-| GET    | `credit/transactions/pdams/operators` | pdam    | List PDAM operators     |
-| POST   | `credit/transactions/pdams/inquire`   | pdam    | PDAM bill inquiry       |
-
----
-
-## Promo Codes (benefit-level)
-
-| Method | Path               | Feature | Notes         |
-|--------|--------------------|---------|---------------|
-| GET    | `promo_codes`      | promo   | List promos   |
-| GET    | `promo_codes/{id}` | promo   | Promo detail  |
+| Method | Path | Description |
+|---|---|---|
+| GET | `credit/transaction_approvals/{id}` | Approval detail |
+| GET | `credit/transactions/{id}/approval_history` | Approval history for a transaction |
+| PATCH | `credit/transaction_approvals/{id}` | Update approval status |
+| POST | `credit/transaction_approvals/process_bulk` | Bulk approve/reject |
+| GET | `credit/transaction_approvals/check_pending_approvals` | Check if pending approvals exist |
+| GET | `credit/transaction_approvals/pending_approvals` | Paginated pending approvals |
+| GET | `credit/transaction_approvals/my_approvals` | Paginated approval history |
 
 ---
 
-## Referral
+## Payment Methods (credit base URL)
 
-| Method | Path                            | Feature  | Notes                      |
-|--------|---------------------------------|----------|----------------------------|
-| GET    | `referral_settings`             | referral | Global referral config     |
-| GET    | `user_referral_settings`        | referral | User's referral settings   |
-| PATCH  | `user_referral_settings/{code}` | referral | Submit received code       |
+| Method | Path | Description |
+|---|---|---|
+| GET | `payment_methods` | Available payment sources; requires `transaction_kind` query param |
 
 ---
 
-## Reimbursement
+## Fee Calculations (credit base URL)
 
-| Method | Path                  | Feature       | Notes                     |
-|--------|-----------------------|---------------|---------------------------|
-| POST   | `reimbursements`      | reimbursement | Create reimbursement      |
-| GET    | `reimbursements/{id}` | reimbursement | Detail                    |
-| DELETE | `reimbursements/{id}` | reimbursement | Cancel                    |
-
----
-
-## Savings (Mekari Saving user registration)
-
-| Method | Path                  | Feature | Notes          |
-|--------|-----------------------|---------|----------------|
-| POST   | `mekari_saving/users` | savings | Register user  |
+| Method | Path | Description |
+|---|---|---|
+| GET | `fee_calculations` | Calculate transaction fee |
+| GET | `company_fee_settings` | Fetch company-level fee settings; requires `transaction_kind` |
 
 ---
 
-## Vouchers
+## Cashout (credit base URL)
 
-| Method | Path                        | Feature | Notes                         |
-|--------|-----------------------------|---------|-------------------------------|
-| GET    | `user_vouchers`             | voucher | Paginated list (active/past)  |
-| GET    | `user_vouchers/{id}`        | voucher | Voucher detail                |
-| PUT    | `user_vouchers/{id}/redeem` | voucher | Redeem voucher                |
-
----
-
-## Campaigns
-
-| Method | Path                    | Feature   | Notes                    |
-|--------|-------------------------|-----------|--------------------------|
-| GET    | `mobile/campaigns`      | campaigns | List campaigns (cached)  |
-| GET    | `mobile/campaigns/{id}` | campaigns | Campaign detail          |
+| Method | Path | Description |
+|---|---|---|
+| POST | `credit/transactions/cashout` | Execute standard cashout |
+| POST | `credit/credit_partner_transactions` | Create Finfra B2C partner transaction |
+| GET | `credit/credit_partner_transactions/{id}` | Get partner transaction status |
+| POST | `credit/credit_partner_transactions/{id}/cashout` | Execute cashout on partner transaction |
 
 ---
 
-## Total endpoints: ~60
+## Lending (LendingNetworkClient — LENDING_URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `lending/term_of_service` | Fetch loan agreement ToS |
+| GET | `lending/user_loans/simulation_details` | Loan repayment simulation |
+| GET | `lending/user_loans/available_tenure` | Available repayment tenure options |
+| POST | `lending/user_loans` | Submit loan request |
+| GET | `lending/user_loans/{id}` | Fetch loan detail |
+| GET | `lending/user_loans` | Paginated loan history |
+| POST | `lending/otps/verify` | Verify loan OTP |
+| POST | `lending/otps/resend` | Resend loan OTP |
+| PATCH | `/lending/users/update_limit_upgrade_status` | Accept/reject credit limit upgrade |
+
+---
+
+## CKYC (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `ckyc/kyc/availability` | Validate NIK |
+| GET | `ckyc/kyc` | Get KYC step details |
+| POST | `ckyc/kyc/init` | Initialise KYC process |
+| GET | `ckyc/ocr` | Get OCR data |
+| POST | `ckyc/ocr` | Submit OCR form data |
+| POST | `ckyc/ktps` | Get presigned URL for KTP upload |
+| PUT | `<presigned_url>` | Upload KTP file directly to S3 |
+| PATCH | `ckyc/ktps` | Finalise KTP upload |
+| POST | `ckyc/kyc/upload_payslip` | Upload payslip (multipart) |
+| POST | `ckyc/kyc/emergency_contact` | Submit emergency contact |
+| POST | `ckyc/kyc/spouse_data` | Submit spouse data |
+| POST | `ckyc/liveness` | Initiate liveness check, returns URL |
+| PATCH | `ckyc/liveness` | Update liveness step status |
+| GET | `ckyc/kyc/terms_of_service` | Get KYC ToS URL (5-minute cache) |
+
+---
+
+## Mobile PPOB (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `sepulsa_product/mobile_prepaid` | Prepaid mobile products |
+| GET | `sepulsa_product/mobile_postpaid` | Postpaid mobile products |
+| POST | `credit/transactions/mobile_postpaids/inquire` | Postpaid bill inquiry |
+| POST | `credit/transactions/mobile_prepaids` | Pay prepaid mobile (credit) |
+| POST | `credit/transactions/mobile_postpaids` | Pay postpaid mobile (credit) |
+| POST | `flex/transactions/mobile_prepaids` | Pay prepaid mobile (flex) |
+| POST | `flex/transactions/mobile_postpaids` | Pay postpaid mobile (flex) |
+
+---
+
+## Electricity PPOB (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `sepulsa_product/electricity_prepaid` | Prepaid electricity token products |
+| POST | `credit/transactions/electricity_prepaids/inquire` | Prepaid meter inquiry |
+| POST | `credit/transactions/electricity_postpaids/inquire` | Postpaid bill inquiry |
+| POST | `credit/transactions/electricity_prepaids` | Pay prepaid electricity (credit) |
+| POST | `credit/transactions/electricity_postpaids` | Pay postpaid electricity (credit) |
+| POST | `flex/transactions/electricity_prepaids` | Pay prepaid electricity (flex) |
+| POST | `flex/transactions/electricity_postpaids` | Pay postpaid electricity (flex) |
+
+---
+
+## PDAM (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `credit/transactions/pdams/operators` | List PDAM water operators |
+| POST | `credit/transactions/pdams/inquire` | PDAM bill inquiry |
+| POST | `credit/transactions/pdams` | Pay PDAM bill (credit) |
+| POST | `flex/transactions/pdams` | Pay PDAM bill (flex) |
+
+---
+
+## E-Wallet (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `credit/transactions/gopay` | Top up GoPay |
+| POST | `credit/transactions/ovo` | Top up OVO |
+| POST | `credit/transactions/shopee_pay` | Top up ShopeePay |
+| POST | `credit/transactions/dana` | Top up DANA |
+| POST | `flex/transactions/gopay` | Top up GoPay (flex balance) |
+| POST | `flex/transactions/ovo` | Top up OVO (flex balance) |
+| POST | `flex/transactions/shopee_pay` | Top up ShopeePay (flex balance) |
+| POST | `flex/transactions/dana` | Top up DANA (flex balance) |
+
+---
+
+## Vouchers (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `user_vouchers` | Paginated voucher list (`past` param) |
+| GET | `user_vouchers/{id}` | Voucher detail |
+| PUT | `user_vouchers/{id}/redeem` | Redeem voucher |
+| POST | `flex_transactions` | Pay with voucher (flex) |
+| POST | `credit/transactions/voucher` | Pay with voucher (credit) |
+
+---
+
+## Promo Codes (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `promo_codes` | List promos |
+| GET | `promo_codes/{id}` | Promo detail |
+
+---
+
+## Campaigns (BenefitNetworkClient — BENEFIT_CMS_URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `mobile/campaigns` | Campaign list (cacheable) |
+| GET | `mobile/campaigns/{id}` | Campaign detail |
+
+---
+
+## Products (BenefitNetworkClient — BENEFIT_CMS_URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `mobile/products` | Paginated product list |
+| GET | `mobile/products/{id}` | Product detail |
+
+---
+
+## Flex Points (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `flex_points/balance` | Flex Point balance |
+| GET | `flex_point_transactions` | Paginated Flex Point transaction history |
+
+---
+
+## Referral (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `referral_settings` | Global referral settings |
+| GET | `user_referral_settings` | User referral settings |
+| PATCH | `user_referral_settings/{code}` | Submit referral code |
+
+---
+
+## Reimbursement (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `reimbursements/{id}` | Reimbursement detail |
+| POST | `reimbursements` | Create reimbursement |
+| DELETE | `reimbursements/{id}` | Cancel reimbursement |
+
+---
+
+## Auto-Debit (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `auto_debits/banks` | Supported banks for auto-debit |
+| GET | `auto_debits/setting` | Auto-debit settings |
+| GET | `auto_debits/linkages/info` | Current linkage info |
+| POST | `auto_debits/linkages` | Create linkage (returns activation URL) |
+
+---
+
+## App Settings (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `mobile_versions` | Min/force-update version per platform |
+
+---
+
+## Individual Access (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `mekari_saving/users/access_status` | Check B2C eligibility |
+| POST | `mekari_saving/users/accept_tnc` | Accept individual access TnC |
+
+---
+
+## Mekari Saving Registration (credit base URL)
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `mekari_saving/users` | Register user for Mekari Saving |
+
+---
+
+## Mekari Saving (SavingsNetworkClient — SAVING_URL)
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `auth/access-token` | Obtain savings auth token |
+| POST | `auth/refresh-token` | Refresh savings auth token |
+| GET | `auth/check-linkage-status` | Check savings account linkage |
+| GET | `onboarding/tnc` | Savings onboarding TnC |
+| POST | `onboarding/tnc/agree` | Agree to savings TnC |
+| GET | `onboarding/status` | Savings onboarding status |
+| POST | `transactions/balance-inquiry` | Savings account balance |
+| GET | `transactions` | Savings transaction list |
+| GET | `transactions/{id}/detail` | Savings transaction detail |
+| GET | `transactions/bank-list` | Bank list for transfers |
+| POST | `transactions/internal-account-inquiry` | Intrabank transfer inquiry |
+| POST | `transactions/external-account-inquiry` | Interbank transfer inquiry |
+| POST | `transactions/transfer-intrabank` | Execute intrabank transfer |
+| POST | `transactions/transfer-interbank` | Execute interbank transfer |
+| POST | `transactions/transfer-intrabank-confirmation` | Intrabank transfer confirmation |
+| POST | `transactions/transfer-interbank-confirmation` | Interbank transfer confirmation |
+
+---
+
+## Feedback (Firebase Realtime Database)
+
+| Operation | Path | Description |
+|---|---|---|
+| SET | `user_feedback/csat/{companyId}/{userId}` | Submit CSAT rating |
+| SET | `user_feedback/nps/{companyId}/{userId}` | Submit NPS rating |
+
+---
+
+## QA / Dev Tools (ENABLE_DEV_TOOLS only)
+
+| Method | Path | Base |
+|---|---|---|
+| POST | `/v2/transaction/sendpush` | `https://api-01.moengage.com` — push notification trigger |

@@ -1,4 +1,4 @@
-Consolidated Android Clean Architecture reference — covers all engineering layers, patterns, and cross-cutting concerns used across Android projects. Source: lib/core/knowledge/android-talenta/engineering/.
+Consolidated Android Clean Architecture reference — covers all engineering layers, patterns, and cross-cutting concerns used across Android projects.
 
 # Domain
 

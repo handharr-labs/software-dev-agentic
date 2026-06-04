@@ -1,87 +1,152 @@
-# Architecture Deviations — flex-mobile (Flutter)
+# Deviations — flex-mobile
 
-Scanned: 2026-06-04
+Platform: Flutter (Melos monorepo)
+Last scanned: 2026-06-04
 
-## Summary
-
-flex-mobile largely follows Clean Architecture + BLoC consistently. The deviations below are real observations from the codebase scan.
-
----
-
-## DEV-001: Inconsistent use_cases directory naming
-
-**Location:** Various features  
-**Expected:** Uniform `use_cases/` directory name  
-**Actual:** Some features use `use_cases/` (app_settings, auto_debit, voucher, promo), others use `usecases/` without underscore (ckyc, auto_debit domain, mobile, pdam, campaigns)  
-**Impact:** Low — naming only, no functional consequence
+This document records architectural patterns, deliberate choices, and structural quirks that differ from the canonical Clean Architecture + BLoC + get_it/injectable baseline described in `CLAUDE.md`.
 
 ---
 
-## DEV-002: Domain entities with `.g.dart` files (json_serializable on domain layer)
+## Manual get_it DI (no injectable)
 
-**Location:** `lib/features/referral/domain/entities/referral_global_settings.g.dart`, `lib/features/referral/domain/entities/referral_user_settings.g.dart`, `saving` module entities  
-**Expected:** Domain entities are pure Dart; serialization belongs in data layer  
-**Actual:** Some domain entities generate `fromJson`/`toJson` directly via `json_annotation`  
-**Impact:** Medium — couples domain to JSON serialization concern, violates layer purity
+**Expected:** `injectable` + `@injectable`/`@lazySingleton` annotations and generated `configureDependencies()`.
 
----
+**Actual:** All registrations are hand-written across `service_locator.dart`, `data_locator.dart`, `domain_locator.dart`, `database_locator.dart`, and `bloc_factory.dart`. No code generation for DI.
 
-## DEV-003: Dual payment data source classes in a single file
-
-**Location:** `lib/features/payment/data/data_sources/payment_remote_data_source.dart`  
-**Actual:** Two concrete classes (`CreditPaymentDataSource`, `FlexPaymentDataSource`) in one file, both extending abstract `PaymentDataSource`. The abstract class holds the `FlexNetworkClient` reference — making it concrete, not abstract.  
-**Impact:** Low-medium — harder to extend independently, but functional
+**Impact:** Adding a new repository or use case requires manually editing 2–3 locator files. Forgotten registrations cause runtime `StateError` (not compile-time errors).
 
 ---
 
-## DEV-004: Account feature has no data/domain layers
+## Four Separate Network Clients (Multi-Base-URL)
 
-**Location:** `lib/features/account/`  
-**Expected:** Full Clean Architecture stack  
-**Actual:** Only presentation layer exists. All account-related data is pulled from other features (auth from flex_core, balance, etc.)  
-**Impact:** Low — intentional composition, but inconsistent with other feature structures
+**Expected:** A single `FlexNetworkClient` with a configurable base URL.
 
----
+**Actual:** Four distinct client classes, each hardwired to a different base URL:
+1. `FlexNetworkClient` → `BASE_URL` (credit API)
+2. `BenefitNetworkClient` → `BENEFIT_CMS_URL` (CMS / campaigns)
+3. `LendingNetworkClient` → `LENDING_URL` (installment/lending)
+4. `SavingsNetworkClient` → `SAVING_URL` (Mekari Saving)
 
-## DEV-005: Two separate `promo` feature implementations
-
-**Location:** `lib/features/promo/` (benefit-level promos) and `modules/cashout/lib/src/data/sources/promo_remote_source.dart` (cashout promos)  
-**Actual:** Both hit the same `promo_codes` API path but are completely separate feature implementations with no shared code  
-**Impact:** Medium — duplication; risk of behavior divergence
+**Impact:** Data sources must declare dependency on the right client type. Passing the wrong client silently routes to the wrong base URL.
 
 ---
 
-## DEV-006: Network client as constructor parameter in abstract class
+## Cashout Module Uses Brick-Way (Micro-Frontend)
 
-**Location:** `lib/features/payment/data/data_sources/payment_remote_data_source.dart`  
-**Actual:** `PaymentDataSource` is declared abstract but takes `FlexNetworkClient` in its constructor, making it effectively a concrete base class  
-**Impact:** Low — design smell, but works
+**Expected:** Feature module follows the same `lib/features/<name>/data|domain|presentation` structure as all other features.
 
----
+**Actual:** `modules/cashout` is a Brick-Way (`brick_way` git package) micro-frontend. It registers itself via `BrickModule`, `BrickRouter`, and `BrickApp`. Has its own DI locator, its own environment, its own localisation files.
 
-## DEV-007: `flex_core` module contains presentation layer features
-
-**Location:** `modules/flex_core/lib/features/auth/presentation/`, `modules/flex_core/lib/features/awareness/presentation/`, etc.  
-**Expected:** Shared modules typically contain domain/data only  
-**Actual:** flex_core ships complete feature stacks including screens and BLoCs, which the host app directly uses  
-**Impact:** Low — intentional design for cross-product sharing, but couples UI to the core module
+**Impact:** Cashout routing and DI bootstrap differ from all other features. Cashout cannot be accessed directly via the standard router; it must be launched via `BrickApp`.
 
 ---
 
-## DEV-008: `device_preview` and `mekari_qa_tools` in production dependencies
+## Dual Payment Path (Credit vs Flex Balance)
 
-**Location:** `pubspec.yaml` dependencies block (not dev_dependencies)  
-**Actual:** `device_preview: 1.2.0` and `mekari_qa_tools` are listed under `dependencies`, not `dev_dependencies`. Tree-shaken only if ENABLE_DEV_TOOLS flag is false.  
-**Impact:** Medium — increases app binary size; should be under dev_dependencies or conditionally excluded
+**Expected:** A single payment data source with a balance-source parameter.
 
----
+**Actual:** Two separate `PaymentDataSource` subclasses exist side by side:
+- `CreditPaymentDataSource` — all paths prefixed `credit/transactions/`
+- `FlexPaymentDataSource` — all paths prefixed `flex/transactions/`
 
-## DEV-009: Hardcoded `MOENGAGE_APP_ID` constant reference in service locator
+Both implement the same `PaymentRemoteDataSource` interface. The correct one is chosen at the use-case/repository level based on the user's selected payment method.
 
-**Location:** `lib/configs/di/service_locator.dart`  
-**Actual:** App ID constant is directly referenced without env abstraction  
-**Impact:** Low — common pattern for MoEngage integration
+**Impact:** Any new PPOB payment type must be added to both classes. Path constants are duplicated.
 
 ---
 
-## Deviation Count: 9
+## Installment Paths Have Leading Slash
+
+**Expected:** Path strings relative to base URL, no leading slash (consistent with every other data source).
+
+**Actual:** `UpgradeFacilityRemoteDataSourceImpl` uses `static const upgradeLimitPath = '/lending/users/update_limit_upgrade_status'` with a leading `/`. All other data sources omit the leading slash.
+
+**Impact:** Depending on Dio configuration, the leading slash may or may not strip the base URL path. This is an inconsistency that could cause routing issues if the base URL has a path component.
+
+---
+
+## Inbox Uses MoEngage SDK (No REST Endpoint)
+
+**Expected:** In-app inbox backed by a REST API like other features.
+
+**Actual:** `InboxRepositoryImpl` depends solely on `InboxLocalDataSource` (a wrapper around `MoEngageInbox`). No remote data source. Messages are delivered and stored by the MoEngage SDK.
+
+**Impact:** Inbox data is not accessible without an active MoEngage session. No offline-first strategy.
+
+---
+
+## Feedback Written Directly to Firebase Realtime Database
+
+**Expected:** Feedback posted to the app's REST API.
+
+**Actual:** `FeedbackRemoteSourceImpl` takes `FirebaseDatabase` directly and writes to `user_feedback/csat|nps/{companyId}/{userId}` nodes. No REST intermediary.
+
+**Impact:** Feedback data lives in Firebase RTDB, not the main application database. Requires Firebase RTDB rules to be permissive for authenticated writes.
+
+---
+
+## KTP Upload via Presigned S3 URL (Three-Step Flow)
+
+**Expected:** Direct multipart POST to app API.
+
+**Actual:** Three-step process:
+1. POST `ckyc/ktps` → receive `presigned_url`
+2. PUT file directly to presigned URL (fresh `FlexNetworkClient` instance with `baseUrl: ''`)
+3. PATCH `ckyc/ktps` → finalise
+
+For payslips, a single multipart POST to `ckyc/kyc/upload_payslip` is used instead.
+
+**Impact:** KTP and payslip upload paths are inconsistent. The presigned-URL client bypasses all auth interceptors.
+
+---
+
+## ObjectBox as Optional Hive Replacement (Feature-Flagged)
+
+**Expected:** A single local database strategy.
+
+**Actual:** Both `hive` and `objectbox` are bundled in the app. ObjectBox is activated at runtime via `flag_use_objectbox` Firebase Remote Config flag. When disabled, Hive is used. ObjectBox store is lazy-initialised via `ObjectBoxDatabaseProvider`.
+
+**Impact:** Two parallel local storage paths exist. New entities must be registered in both systems or rely on the flag for routing.
+
+---
+
+## Saving Module Has Its Own Auth Token Lifecycle
+
+**Expected:** A single SSO-derived auth token shared across all features.
+
+**Actual:** The `saving` module maintains a separate `SavingsTokenResponse` lifecycle. It calls `auth/access-token` on the Savings API, stores its own token, and refreshes it independently via `auth/refresh-token`. Linkage between Mekari Flex and Mekari Saving is established via `auth/check-linkage-status`.
+
+**Impact:** Savings authentication is entirely decoupled. Session expiry in the savings module does not correlate with the main app session.
+
+---
+
+## Presentation-Only Features Without Data/Domain Layers
+
+Several features have only a `presentation/` directory with no `data/` or `domain/` sublayers:
+- `lib/features/account/` — presentation only
+- `lib/features/balance/` — presentation only  
+- `lib/features/home/` — presentation only
+- `lib/features/b2c/` — presentation only
+- `lib/features/insurance/` — presentation only (WebView shell)
+
+**Impact:** These features borrow data from other features' blocs/repositories directly rather than owning their own domain layer. This creates implicit coupling.
+
+---
+
+## QA / Dev Tools in Production Bundle
+
+**Expected:** Dev tooling excluded from production builds via build flavors or tree-shaking.
+
+**Actual:** `MoengageApi`, `AccountCredentialsHelper`, `QATestingTools`, `QANotificationBloc`, and `QACredentialsBloc` are conditionally registered/shown based on `ENABLE_DEV_TOOLS` (an `envied`-sourced constant). The code is compiled into the production binary but guarded at runtime.
+
+**Impact:** Dev tool code and the MoEngage API client (including campaign trigger capability) are present in production builds.
+
+---
+
+## PPOB Recent Transactions Cached Locally (No API)
+
+**Expected:** Recent transaction history fetched from API.
+
+**Actual:** `RecentTransactionRepository` and `RecentPDAMTransactionRepository` are backed exclusively by `HiveProductHelper` — no remote data source. Recent transactions are written to Hive after a successful payment and read back on the next visit.
+
+**Impact:** History is device-local and lost on reinstall or app clear.

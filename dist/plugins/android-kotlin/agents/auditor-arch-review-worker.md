@@ -54,9 +54,11 @@ Defer to the platform skill for the full naming table. Flag deviations as Warnin
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths (step 2 below).
 
-`kms_query(text="naming conventions architecture dependency rules layer invariants deviation patterns", platform="{platform}", discipline="engineering", n_results=5)` — use as authoritative reference for U5 and project-specific rules.
+1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics to understand what conventions are documented
+2. `kms_query(text="naming conventions architecture dependency rules layer invariants deviation patterns", platform="{platform}", discipline="engineering", n_results=5)` — documented conventions for U5 and project-specific rules
+3. Codebase explore — `Grep` for the most representative well-structured file per layer under review (e.g., a complete UseCase, a complete RepositoryImpl) excluding `test/` paths → extract live naming conventions and dependency patterns
 
-Fallback — if no results or tool unavailable: skip KMS, infer naming conventions from existing source files directly.
+Combine KMS documented rules with codebase evidence as authoritative reference for the review.
 
 ## Review Process
 

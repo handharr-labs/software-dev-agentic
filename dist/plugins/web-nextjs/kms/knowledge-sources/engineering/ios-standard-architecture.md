@@ -1,4 +1,4 @@
-Consolidated iOS Clean Architecture reference — covers all engineering layers, patterns, and cross-cutting concerns used across iOS projects. Source: lib/core/knowledge/ios-talenta/engineering/.
+Consolidated iOS Clean Architecture reference — covers all engineering layers, patterns, and cross-cutting concerns used across iOS projects.
 
 # Domain
 

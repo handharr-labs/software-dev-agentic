@@ -34,9 +34,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
-`kms_query(text="domain layer entity use case repository interface domain service dependency rule creation order", platform="{platform}", discipline="engineering", n_results=5)`
+1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
+2. `kms_query(text="domain layer entity use case repository interface domain service dependency rule creation order", platform="{platform}", discipline="engineering", n_results=5)` — theory, definitions, documented patterns
+3. Codebase explore — `Grep` for `class.*UseCase\|implements.*UseCase\|abstract.*UseCase` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, no TODO stubs) as live code reference
 
-Use returned content as reference for naming conventions, code patterns, and dependency rules. If no results or tool unavailable: skip pattern reference and note it in findings — infer naming conventions from found files in Steps 2–3 instead.
+Combine KMS knowledge (theory + definitions) with codebase evidence (live pattern) before proceeding.
 
 **Step 1 — Locate and classify artifacts**
 
