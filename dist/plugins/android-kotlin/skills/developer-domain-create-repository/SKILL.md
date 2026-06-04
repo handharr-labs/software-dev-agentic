@@ -9,7 +9,7 @@ Create a Repository interface following the {platform} standard architecture in 
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="domain", pattern="repository_interface", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
+1. **Fetch pattern** — `kms_query(text="domain repository interface naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
 2. **Identify** the data operations the feature needs
 3. **Locate** path per the impl doc's repository interface convention
 4. **Create** the interface file following the impl doc pattern

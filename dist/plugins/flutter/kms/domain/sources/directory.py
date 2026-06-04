@@ -81,6 +81,42 @@ def _parse_filename(stem: str) -> tuple[str | None, str, str]:
     return None, snake, snake
 
 
+def _heading_to_slug(heading: str) -> str:
+    """Convert a markdown heading to a snake_case slug for use as topic/pattern."""
+    slug = re.sub(r"[^\w\s]", "", heading.lower())
+    return re.sub(r"\s+", "_", slug.strip())
+
+
+def _chunk_by_sections(content: str) -> list[tuple[str, str]]:
+    """Split content by ## headings. Returns [(heading, section_content), ...].
+
+    Only chunks when at least one ## heading is present. Returns the whole
+    content as a single unnamed chunk when no ## headings exist.
+    """
+    lines = content.splitlines()
+    sections: list[tuple[str, str]] = []
+    current_heading: str | None = None
+    current_lines: list[str] = []
+
+    for line in lines:
+        if line.startswith("## "):
+            if current_heading is not None or current_lines:
+                sections.append((current_heading or "", "\n".join(current_lines).strip()))
+            current_heading = line[3:].strip()
+            current_lines = [line]
+        else:
+            current_lines.append(line)
+
+    if current_heading is not None or current_lines:
+        sections.append((current_heading or "", "\n".join(current_lines).strip()))
+
+    has_headings = any(h for h, _ in sections)
+    if not has_headings:
+        return []  # caller yields as single node
+
+    return [(h, c) for h, c in sections if c.strip()]
+
+
 def _derive_scope(platform: str | None, project: str | None) -> str:
     if project:
         return "project"
@@ -157,22 +193,41 @@ class DirectorySource(KnowledgeSource):
                     print(f"  skip (excluded): {path.name}")
                     continue
 
-                platform, topic, pattern = _parse_filename(path.stem)
+                platform, file_topic, file_pattern = _parse_filename(path.stem)
                 content = path.read_text(encoding="utf-8").strip()
+                scope = _derive_scope(platform, None)
+                chunks = _chunk_by_sections(content)
 
-                yield KnowledgeNode(
-                    scope=_derive_scope(platform, None),
-                    platform=platform,
-                    project=None,
-                    discipline=discipline,
-                    topic=topic,
-                    pattern=pattern,
-                    summary=_extract_summary(content),
-                    source_file=str(path),
-                    updated_at=date.today().isoformat(),
-                    content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                    content=content,
-                )
+                if chunks:
+                    for heading, section_content in chunks:
+                        section_slug = _heading_to_slug(heading) if heading else file_topic
+                        yield KnowledgeNode(
+                            scope=scope,
+                            platform=platform,
+                            project=None,
+                            discipline=discipline,
+                            topic=section_slug,
+                            pattern=section_slug,
+                            summary=_extract_summary(section_content),
+                            source_file=str(path),
+                            updated_at=date.today().isoformat(),
+                            content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                            content=section_content,
+                        )
+                else:
+                    yield KnowledgeNode(
+                        scope=scope,
+                        platform=platform,
+                        project=None,
+                        discipline=discipline,
+                        topic=file_topic,
+                        pattern=file_pattern,
+                        summary=_extract_summary(content),
+                        source_file=str(path),
+                        updated_at=date.today().isoformat(),
+                        content_hash=hashlib.sha256(content.encode()).hexdigest(),
+                        content=content,
+                    )
 
     # ------------------------------------------------------------------
     # Project-specific docs: {root}/projects/{project}/{file}.md
@@ -202,17 +257,35 @@ class DirectorySource(KnowledgeSource):
 
                 stem = path.stem.replace("-", "_")
                 content = path.read_text(encoding="utf-8").strip()
+                chunks = _chunk_by_sections(content)
 
-                yield KnowledgeNode(
-                    scope="project",
-                    platform=repo.platform,
-                    project=repo.name,
-                    discipline="engineering",
-                    topic=stem,
-                    pattern=stem,
-                    summary=_extract_summary(content),
-                    source_file=str(path),
-                    updated_at=date.today().isoformat(),
-                    content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                    content=content,
-                )
+                if chunks:
+                    for heading, section_content in chunks:
+                        section_slug = _heading_to_slug(heading) if heading else stem
+                        yield KnowledgeNode(
+                            scope="project",
+                            platform=repo.platform,
+                            project=repo.name,
+                            discipline="engineering",
+                            topic=section_slug,
+                            pattern=section_slug,
+                            summary=_extract_summary(section_content),
+                            source_file=str(path),
+                            updated_at=date.today().isoformat(),
+                            content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                            content=section_content,
+                        )
+                else:
+                    yield KnowledgeNode(
+                        scope="project",
+                        platform=repo.platform,
+                        project=repo.name,
+                        discipline="engineering",
+                        topic=stem,
+                        pattern=stem,
+                        summary=_extract_summary(content),
+                        source_file=str(path),
+                        updated_at=date.today().isoformat(),
+                        content_hash=hashlib.sha256(content.encode()).hexdigest(),
+                        content=content,
+                    )

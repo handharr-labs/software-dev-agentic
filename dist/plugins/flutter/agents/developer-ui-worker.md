@@ -2,7 +2,7 @@
 name: developer-ui-worker
 description: Execute the UI layer of an approved feature plan — Screen, Component, and Navigator artifacts only. Spawned by /developer-plan-feature after developer-feature-worker emits Layers Complete. Starts with a clean context: loads plan.md, context.md, stateholder-contract, and Figma references fresh.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_query
 related_skills:
   - developer-pres-create-screen
   - developer-pres-create-component
@@ -50,24 +50,9 @@ Read the stateholder contract from disk using the `Read` tool on the path from `
 
 Load the UI-relevant presentation knowledge reference before writing any code.
 
-Primary — KMS MCP:
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` = `basename $(pwd)`, `{platform}` from plan.md frontmatter
-2. From the TOC, identify nodes with `topic: presentation` or `topic: navigation`
-3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="{topic}", pattern="{pattern}")` for each pattern in scope — do not load domain, data, or app patterns
+`kms_query(text="presentation layer screen structure navigation router component widget state management", platform="{platform}", discipline="engineering", n_results=5)`
 
-Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
-```
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/presentation/index.md
-```
-Then read specific pattern files by scope:
-
-| Scope | Pattern files |
-|---|---|
-| Screen | `presentation/screen_structure.md`, `presentation/bloc_listener.md` |
-| Component | `presentation/component.md` |
-| Navigator | `navigation/go_router.md` (flutter), `navigation/coordinator.md` (ios), `navigation/routes.md` (web) — pick by platform |
-
-Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/presentation/{pattern}.md` overrides platform-base when it exists. `{project}` = `basename $(pwd)`.
+Fallback — if no results or tool unavailable: proceed without pattern reference.
 
 Check state.json to resume from a previous run:
 ```bash

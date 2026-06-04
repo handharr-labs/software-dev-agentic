@@ -10,7 +10,7 @@ Remove all debug instrumentation logs using the platform's log prefix from `kms/
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="presentation", pattern="logging", platform={platform}, project={project})` for the platform's debug log prefix (e.g. `[DebugTest]`). **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
+1. **Fetch pattern** — `kms_query(text="debug logging format prefix naming convention", platform={platform}, discipline="engineering", n_results=3)` for the platform's debug log prefix (e.g. `[DebugTest]`). **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
 2. `Grep` the codebase for the debug prefix to find all instrumented files
 3. For each file: `Read` the file, then `Edit` to remove every debug log line
 4. Confirm no debug logs remain

@@ -2,7 +2,7 @@
 name: developer-feature-worker
 description: Execute an approved feature plan for Domain, Data, Presentation (StateHolder), and App layers — reads plan.md, calls skills in layer order, validates each artifact inline. UI layer (Screen/Component/Navigator) is handled by developer-ui-worker after this worker completes. Invoked by /developer-plan-feature or /developer-build-feature skills after plan approval.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_query
 related_skills:
   - developer-domain-create-entity
   - developer-domain-create-repository
@@ -56,23 +56,12 @@ Load cross-cutting convention references before writing any code — knowledge f
 
 Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 
-Primary — KMS MCP:
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — scoped TOC
-2. From the TOC, select patterns under `topic: syntax_conventions`, `utilities`, and `error_handling`
-3. `kms_fetch(platform, project, discipline="engineering", topic="{topic}", pattern="{pattern}")` for each selected pattern
+`kms_query(text="syntax conventions utilities error handling code patterns", platform="{platform}", discipline="engineering", n_results=5)`
 
 **Design system — optional, non-blocking:**
-4. `kms_list(platform="{platform}", discipline="design")` — check if a component catalog exists for this platform
-5. If results found: `kms_fetch(platform="{platform}", discipline="design", topic="design-system", pattern="component-catalog")` and keep it available for StateHolder and App layer artifact steps
-6. If no results (iOS, Android, or any platform not yet catalogued): log `[design system] no catalog for {platform} — skipping` and continue. Do not block or error.
+`kms_query(text="design system component catalog", platform="{platform}", discipline="design", n_results=3)` — if results found, keep available for StateHolder and App layer artifact steps. If no results: log `[design system] no catalog for {platform} — skipping` and continue.
 
-Fallback — if `kms_list` tool unavailable (NEVER read from `.claude/reference/code-architecture/` — those files are deleted):
-```
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/syntax_conventions/conventions.md
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/utilities/index.md
-software-dev-agentic/lib/core/knowledge/{platform}/engineering/error_handling/failure_types.md
-```
-For utilities, read specific files from the index. Cascade: `software-dev-agentic/lib/core/knowledge/{project}/engineering/{topic}/{pattern}.md` overrides platform-base when it exists.
+Fallback — if no results or tool unavailable: skip and continue without convention reference.
 
 Apply every loaded convention throughout all artifacts — this is not optional.
 
@@ -120,7 +109,7 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific knowledge reference for this artifact type — primary: `kms_fetch(platform, project, discipline="engineering", topic="{topic}", pattern="{pattern}")` for the relevant pattern(s); fallback if KMS unavailable: read `software-dev-agentic/lib/core/knowledge/{platform}/engineering/{topic}/index.md` then the specific pattern file(s)
+2. Load the layer-specific knowledge reference for this artifact type — `kms_query(text="{artifact_type} naming convention code pattern", platform="{platform}", discipline="engineering", n_results=3)`; fallback if no results: proceed without pattern reference
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):
    - Look up this artifact's name in the `Figma Alignment` table — read the `Figma Files` column directly to get the list of `.md` file paths. No Glob needed.
    - `Read` each listed `.md` file body only — extract `State` and `Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
@@ -160,7 +149,7 @@ The path is recorded in `state.json` under `stateholder_contract`. The calling s
 App layer wiring is always direct `Read` + `Edit` — no skill is needed. For each row in the `## App Layer` section of `plan.md`:
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
-2. Load the platform app-layer knowledge reference to confirm the exact pattern — primary: `kms_fetch(platform, project, discipline="engineering", topic="app", pattern="{pattern}")` for the relevant wiring pattern; fallback if KMS unavailable: read `software-dev-agentic/lib/core/knowledge/{platform}/engineering/app/index.md` then specific pattern files.
+2. Load the platform app-layer knowledge reference to confirm the exact pattern — `kms_query(text="app layer wiring {pattern} registration pattern", platform="{platform}", discipline="engineering", n_results=3)`; fallback if no results: proceed without pattern reference.
 3. `Read` the target file using `offset` + `limit` around the insertion point (Grep for a known symbol or section marker first).
 4. Apply the targeted edit — add only what the plan specifies.
 5. Validate: `Grep` for the newly added symbol or registration call in the modified file.

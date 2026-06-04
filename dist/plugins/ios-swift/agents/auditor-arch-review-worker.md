@@ -2,7 +2,7 @@
 name: auditor-arch-review-worker
 description: Review code for Clean Architecture violations — layer boundary breaches, entity immutability, service purity, mapper patterns, and naming conventions. Designed to be invoked only by the `/auditor-arch-review` skill — not directly.
 model: sonnet
-tools: Read, Glob, Grep, mcp__kms__kms_list, mcp__kms__kms_fetch
+tools: Read, Glob, Grep, mcp__kms__kms_query
 permissionMode: plan
 related_skills:
   - auditor-arch-check
@@ -54,11 +54,9 @@ Defer to the platform skill for the full naming table. Flag deviations as Warnin
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths (step 2 below).
 
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — scoped TOC
-2. Select naming convention and architecture deviation patterns
-3. `kms_fetch(...)` for each selected pattern — use as the authoritative reference for U5 and project-specific rules
+`kms_query(text="naming conventions architecture dependency rules layer invariants deviation patterns", platform="{platform}", discipline="engineering", n_results=5)` — use as authoritative reference for U5 and project-specific rules.
 
-Fallback — if `kms_list` unavailable: skip KMS, infer naming conventions from existing source files directly.
+Fallback — if no results or tool unavailable: skip KMS, infer naming conventions from existing source files directly.
 
 ## Review Process
 

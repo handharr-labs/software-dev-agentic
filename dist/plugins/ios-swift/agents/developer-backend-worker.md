@@ -2,7 +2,7 @@
 name: developer-backend-worker
 description: Build the Domain and Data layers for a feature — entities, repository interfaces, use cases, mappers, datasources, and repository implementations. Calls skills directly in layer order. No sub-agents.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_list, mcp__kms__kms_fetch
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_query
 related_skills:
   - developer-domain-create-entity
   - developer-domain-create-repository
@@ -30,11 +30,9 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 
 Derive: `project` = `basename $(pwd)`, `platform` from spawn prompt.
 
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — scoped TOC
-2. Reason over TOC — select `domain` and `data` patterns relevant to the feature
-3. `kms_fetch(platform, project, discipline="engineering", topic="{topic}", pattern="{pattern}")` for each selected pattern
+`kms_query(text="domain data layer entity use case repository interface dto mapper data source implementation", platform="{platform}", discipline="engineering", n_results=5)`
 
-Fallback — if `kms_list` unavailable: read `software-dev-agentic/lib/core/knowledge/{platform}/engineering/domain/index.md` and `data/index.md`, then fetch specific pattern files.
+Fallback — if no results or tool unavailable: proceed without pattern reference.
 
 ## Search Protocol — Never Violate
 

@@ -9,7 +9,7 @@ Create a Repository Implementation following the {platform} standard architectur
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="data", pattern="repository_impl", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
+1. **Fetch pattern** — `kms_query(text="data repository implementation naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
 2. **Confirm** the domain repository interface, data source, and mapper all exist
 3. **Locate** path per the impl doc's repository impl directory convention
 4. **Create** the repository implementation file following the impl doc pattern
