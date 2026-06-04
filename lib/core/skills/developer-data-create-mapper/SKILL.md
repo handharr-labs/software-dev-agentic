@@ -5,11 +5,11 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a Mapper following `lib/core/knowledge/{platform}/engineering/data/mapper.md`.
+Create a Mapper following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="data", pattern="mapper", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/data/mapper.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/data/mapper.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="data", pattern="mapper", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. **Confirm** both the DTO and domain entity exist before creating the mapper
 3. **Locate** path per the impl doc's mapper directory convention
 4. **Create** the mapper file following the impl doc pattern

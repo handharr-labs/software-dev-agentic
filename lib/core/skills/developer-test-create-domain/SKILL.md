@@ -5,11 +5,11 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create domain tests following `lib/core/knowledge/{platform}/engineering/testing/use_case_test.md`.
+Create domain tests following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="testing", pattern="use_case_test", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/testing/use_case_test.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/testing/use_case_test.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="testing", pattern="use_case_test", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. **Read** the use case / service implementation completely
 3. **Identify** all code paths and edge cases to cover
 4. **Locate** path per the impl doc's test directory convention

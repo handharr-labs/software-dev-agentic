@@ -14,15 +14,18 @@ _NULL = "null"  # ChromaDB metadata can't store None; sentinel string used inste
 
 def _to_meta(node: KnowledgeNode) -> dict:
     return {
-        "platform":    node.platform or _NULL,
-        "project":     node.project or _NULL,
-        "discipline":  node.discipline,
-        "topic":       node.topic,
-        "pattern":     node.pattern,
-        "summary":     node.summary,
-        "tags":        json.dumps(node.tags),
-        "source_file": node.source_file or "",
-        "updated_at":  node.updated_at or "",
+        "scope":         node.scope,
+        "platform":      node.platform or _NULL,
+        "project":       node.project or _NULL,
+        "discipline":    node.discipline,
+        "topic":         node.topic,
+        "pattern":       node.pattern,
+        "summary":       node.summary,
+        "tags":          json.dumps(node.tags),
+        "source_file":   node.source_file or "",
+        "updated_at":    node.updated_at or "",
+        "content_hash":  node.content_hash or "",
+        "schema_version": "1",
     }
 
 
@@ -36,6 +39,7 @@ def _build_where(filters: dict) -> Optional[dict]:
 
 def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
     return KnowledgeNode(
+        scope=meta.get("scope", "universal"),
         platform=None if meta["platform"] == _NULL else meta["platform"],
         project=None if meta["project"] == _NULL else meta["project"],
         discipline=meta["discipline"],
@@ -45,6 +49,7 @@ def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
         tags=json.loads(meta.get("tags", "[]")),
         source_file=meta.get("source_file") or None,
         updated_at=meta.get("updated_at") or None,
+        content_hash=meta.get("content_hash") or None,
         content=content,
     )
 

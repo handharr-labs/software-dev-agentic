@@ -70,20 +70,17 @@ done
 ### 5 — Check KMS seed freshness
 
 ```bash
-current_hash=$(git rev-parse HEAD:lib/core/knowledge 2>/dev/null || echo "unknown")
 stored=$(cat dist/.kms_seeds/.version 2>/dev/null || echo "")
-echo "current: $current_hash"
-echo "stored:  $stored"
+echo "stored: $stored"
 ```
 
-Evaluate:
-- `stored == "git:$current_hash"` → fresh. Continue to Step 6.
-- `stored` starts with `dashboard:` → fresh (dashboard updated ChromaDB directly). Continue to Step 6.
-- Otherwise → stale. Report: "KMS seed is stale — knowledge changed since last seed."
+Check `kms/sources.yaml` — compare `last_seeded` dates against file modification times in `kms/knowledge-sources/`.
+
+If any source has files newer than `last_seeded`: report "KMS seed may be stale — knowledge-sources updated since last seed."
 
   Ask: "Seed now? (yes / skip)"
-  - `yes` → run `bash scripts/seed-kms.sh` before continuing
-  - `skip` → continue; `build-plugin.sh` will re-seed inline (slower build)
+  - `yes` → invoke `/kms-seed` before continuing
+  - `skip` → continue
 
 ### 6 — Rebuild and commit all plugins
 

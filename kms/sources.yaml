@@ -1,0 +1,10 @@
+sources:
+- last_seeded: '2026-06-04'
+  name: knowledge-sources
+  owns:
+  - theory
+  - definition
+  - code_pattern
+  - rationale
+  path: kms/knowledge-sources
+  type: directory

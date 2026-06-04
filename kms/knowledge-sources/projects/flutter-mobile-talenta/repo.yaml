@@ -1,0 +1,4 @@
+platform: flutter
+remote: https://github.com/mekari/flutter-mobile-talenta   # project name derived from this
+local_path: null        # set to absolute local clone path to enable codebase scan
+last_scanned: null

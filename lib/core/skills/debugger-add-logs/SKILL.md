@@ -6,13 +6,13 @@ allowed-tools: Read, Edit, Glob, Grep
 knowledge_scope: engineering
 ---
 
-Add debug instrumentation logs following `lib/core/knowledge/{platform}/engineering/presentation/logging.md` for format and prefix rules.
+Add debug instrumentation logs following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` for format and prefix rules.
 
 ## Steps
 
 Follow the `INSTRUMENTATION_BRIEF` provided by the caller:
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="presentation", pattern="logging", platform={platform}, project={project})` for the platform's log format and prefix. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/presentation/logging.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/presentation/logging.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="presentation", pattern="logging", platform={platform}, project={project})` for the platform's log format and prefix. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. `Grep` each target method name to locate the exact line
 3. `Read` only the method body — not the full file
 4. Insert logs at entry, exit, branch points, and error handlers as specified in the brief

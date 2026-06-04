@@ -59,27 +59,11 @@ Run:
 bash software-dev-agentic/scripts/update-ref-counts.sh lib/platforms/<platform>/reference/
 ```
 
-#### 3c — KMS Pattern Scan (optional)
+#### 3c — KMS Codebase Extraction (optional)
 
-Ask the user: "Do you want to refresh `## Code Pattern` sections in `lib/core/knowledge/` from this repo? (yes / no)"
+Ask the user: "Do you want to extract project-reality knowledge from this repo into KMS? (yes / no)"
 
-If yes:
-
-**Read** `.claude/agents/agent-kms-scan-worker.md` to load the worker's full instructions.
-
-Spawn a `general-purpose` agent using those instructions as the prompt body, appended with:
-
-```
-## Inputs
-
-repo_path: <repo_path>
-platform: <platform>
-working_directory: <absolute path of current working directory>
-```
-
-Wait for completion. Validate that the response contains an `## Output` section.
-
-Store the output for Step 5 summary.
+If yes: invoke `/kms-extract-codebase --project <platform>` and wait for completion.
 
 ### 4 — Check Skill Contracts (All Platforms)
 

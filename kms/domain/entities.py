@@ -5,16 +5,18 @@ from typing import Optional
 
 @dataclass
 class KnowledgeNode:
-    platform: Optional[str]    # flutter | web | ios | android | None (universal)
-    project: Optional[str]     # talenta | jurnal | None (platform-base)
-    discipline: str            # engineering | design | qa | devops | security | ...
+    scope: str                 # universal | platform | project — see schema.SCOPE_VALUES
+    discipline: str            # see schema.DISCIPLINE_VALUES
     topic: str
     pattern: str
-    summary: str = ""          # first sentence of ## Theory, populated at seed time
+    platform: Optional[str] = None   # flutter | web | ios | android — required if scope != universal
+    project: Optional[str] = None    # talenta | jurnal | ... — required if scope == project
+    summary: str = ""                # first sentence of ## Theory, populated at seed time
     tags: list[str] = field(default_factory=list)
     source_file: Optional[str] = None
     updated_at: Optional[str] = None
-    content: Optional[str] = None  # None in list results, populated in fetch/query results
+    content_hash: Optional[str] = None  # SHA256 of content body — used for incremental seed detection
+    content: Optional[str] = None       # None in list results, populated in fetch/query results
 
     @property
     def id(self) -> str:
