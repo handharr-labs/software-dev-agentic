@@ -187,8 +187,9 @@ build_kms() {
 MANIFEST
   echo "  manifest     sda-kms@${VERSION}"
 
-  # KMS Python package + launcher
+  # KMS Python package + launcher (exclude runtime db — chroma lives at $PLUGIN_ROOT/chroma)
   cp -r "$SUBMODULE/kms" "$out/kms"
+  rm -rf "$out/kms/db"
   cat > "$out/kms/server.sh" <<'LAUNCHER'
 #!/usr/bin/env bash
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
