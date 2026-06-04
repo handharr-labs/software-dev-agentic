@@ -5,11 +5,11 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create mocks following `lib/core/knowledge/{platform}/engineering/testing/mock_generation.md`.
+Create mocks following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="testing", pattern="mock_generation", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/testing/mock_generation.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/testing/mock_generation.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="testing", pattern="mock_generation", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. **Identify** the interfaces that need mocking (repository, use case, service)
 3. **Locate** path per the impl doc's mock directory convention
 4. **Create** or generate the mock file(s) following the impl doc pattern

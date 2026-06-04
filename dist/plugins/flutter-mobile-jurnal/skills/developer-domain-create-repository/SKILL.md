@@ -5,11 +5,11 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a Repository interface following `lib/core/knowledge/{platform}/engineering/domain/repository_interface.md`.
+Create a Repository interface following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="domain", pattern="repository_interface", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/domain/repository_interface.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/domain/repository_interface.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="domain", pattern="repository_interface", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. **Identify** the data operations the feature needs
 3. **Locate** path per the impl doc's repository interface convention
 4. **Create** the interface file following the impl doc pattern

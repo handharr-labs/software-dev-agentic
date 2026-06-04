@@ -5,11 +5,11 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a domain Entity following `lib/core/knowledge/{platform}/engineering/domain/entity.md`.
+Create a domain Entity following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="domain", pattern="entity", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/domain/entity.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/domain/entity.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="domain", pattern="entity", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. **Identify** the business concept the entity represents
 3. **Locate** path per the impl doc's entity directory convention
 4. **Create** the entity file following the impl doc pattern

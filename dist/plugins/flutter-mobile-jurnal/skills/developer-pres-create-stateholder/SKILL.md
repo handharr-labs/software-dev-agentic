@@ -5,11 +5,11 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create the StateHolder following `lib/core/knowledge/{platform}/engineering/state_management/bloc.md`.
+Create the StateHolder following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="state_management", pattern="bloc", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/state_management/bloc.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/state_management/bloc.md` (platform-base).
+1. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="state_management", pattern="bloc", platform={platform}, project={project})` for the canonical pattern and path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 2. **Confirm** use cases exist in domain layer before proceeding
 3. **Locate** path per `### Creation Order` in the impl doc
 4. **Create** the StateHolder file(s) following the implementation pattern

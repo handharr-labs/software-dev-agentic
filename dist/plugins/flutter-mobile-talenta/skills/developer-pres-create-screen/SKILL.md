@@ -5,12 +5,12 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a Screen following `lib/core/knowledge/{platform}/engineering/presentation/screen_structure.md`.
+Create a Screen following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
 
 ## Steps
 
 1. **Read** `.claude/runs/<feature>/stateholder-contract.md` completely — must match state fields and events exactly
-2. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="presentation", pattern="screen_structure", platform={platform}, project={project})` for the canonical pattern and file path convention. **Fallback** if KMS unavailable: `Read lib/core/knowledge/{project}/engineering/presentation/screen_structure.md` (project override) → `Read lib/core/knowledge/{platform}/engineering/presentation/screen_structure.md` (platform-base).
+2. **Fetch pattern** — `kms_fetch(discipline="engineering", topic="presentation", pattern="screen_structure", platform={platform}, project={project})` for the canonical pattern and file path convention. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and locate the relevant section).
 3. **Locate** path per the impl doc's screen directory convention
 4. **Create** the screen file following the impl doc pattern
 5. **Register** route/navigation entry if required by the platform (see impl doc)
