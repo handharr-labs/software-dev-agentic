@@ -132,25 +132,23 @@ MANIFEST
 
   echo "  → test: claude --plugin-dir $out"
 
-  # ── KMS — copy package, seed ChromaDB, wire MCP ──────────────────────────────
+  # ── KMS — copy package, copy pre-seeded chroma, wire MCP ────────────────────
+  # Seeding is done separately via scripts/seed-kms.sh — build just packages the result.
   local knowledge_dir="$SUBMODULE/lib/core/knowledge"
+  local shared_chroma="$SUBMODULE/dist/.kms_seeds/.shared/chroma"
+
   if [ -d "$knowledge_dir" ]; then
-    if ! command -v python3 &>/dev/null; then
-      echo "  kms          SKIP (python3 not found — install Python 3 to enable KMS)"
-    else
-      # Copy kms/ Python package into plugin.
-      cp -r "$SUBMODULE/kms" "$out/kms"
+    # Copy kms/ Python package into plugin.
+    cp -r "$SUBMODULE/kms" "$out/kms"
 
-      # Copy knowledge markdown files as fallback — agents read these when KMS MCP
-      # is offline, and kms-status reports their presence to confirm the build shipped them.
-      cp -r "$knowledge_dir" "$out/knowledge"
-      local knowledge_count
-      knowledge_count=$(find "$out/knowledge" -name "*.md" ! -name "index.md" | wc -l | tr -d ' ')
-      echo "  knowledge    $knowledge_count pattern files → knowledge/"
+    # Copy knowledge markdown files as fallback for agents when KMS MCP is offline.
+    cp -r "$knowledge_dir" "$out/knowledge"
+    local knowledge_count
+    knowledge_count=$(find "$out/knowledge" -name "*.md" ! -name "index.md" | wc -l | tr -d ' ')
+    echo "  knowledge    $knowledge_count pattern files → knowledge/"
 
-      # Launcher — uses ${CLAUDE_PLUGIN_ROOT} injected by Claude Code at runtime.
-      # Falls back to dirname-based resolution for local --plugin-dir testing.
-      cat > "$out/kms/server.sh" <<'LAUNCHER'
+    # Launcher — uses ${CLAUDE_PLUGIN_ROOT} injected by Claude Code at runtime.
+    cat > "$out/kms/server.sh" <<'LAUNCHER'
 #!/usr/bin/env bash
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 export KMS_DB_PATH="$PLUGIN_ROOT/chroma"
@@ -166,38 +164,18 @@ fi
 
 exec python3 -m kms.application.mcp_server
 LAUNCHER
-      chmod +x "$out/kms/server.sh"
+    chmod +x "$out/kms/server.sh"
 
-      # Seed ChromaDB — skip if lib/core/knowledge tree hash unchanged.
-      # Cache dir ($cache_dir) survives rm -rf $out so successive builds don't re-seed.
-      local cache_dir="$SUBMODULE/dist/.kms_seeds/$platform"
-      local marker="$cache_dir/.tree"
-      local tree_hash stored_hash=""
-      tree_hash="$(git -C "$SUBMODULE" rev-parse HEAD:lib/core/knowledge 2>/dev/null || echo "unknown")"
-      [ -f "$marker" ] && stored_hash="$(cat "$marker")"
+    # Copy pre-seeded ChromaDB — run scripts/seed-kms.sh first if missing.
+    if [ -d "$shared_chroma" ]; then
+      cp -r "$shared_chroma" "$out/chroma"
+      echo "  kms          chroma bundled from dist/.kms_seeds/.shared/"
+    else
+      echo "  kms          ⚠ no chroma found — run: bash scripts/seed-kms.sh"
+    fi
 
-      if [ "$tree_hash" = "$stored_hash" ] && [ -d "$cache_dir/chroma" ]; then
-        cp -r "$cache_dir/chroma" "$out/chroma"
-        echo "  kms          seed skipped (lib/core/knowledge unchanged) — restored from cache"
-      elif python3 -c "import chromadb" 2>/dev/null; then
-        echo "  kms          seeding ChromaDB from lib/core/knowledge/ ..."
-        PYTHONPATH="$SUBMODULE" python3 -m kms.scripts.seed_kms \
-          --knowledge-dir "$knowledge_dir" \
-          --db-path "$out/chroma" 2>&1 | sed 's/^/               /'
-        mkdir -p "$cache_dir"
-        rm -rf "$cache_dir/chroma"
-        cp -r "$out/chroma" "$cache_dir/chroma"
-        echo "$tree_hash" > "$marker"
-        # Keep global .version in sync so release skill sees a fresh seed.
-        echo "git:$tree_hash" > "$SUBMODULE/dist/.kms_seeds/.version"
-        echo "  kms          seeded → chroma/ (cache updated)"
-      else
-        echo "  kms          SKIP seed (chromadb not installed — run: pip install chromadb PyYAML)"
-      fi
-
-      # Project setup template — copy this to the downstream project root as .mcp.json
-      # Uses $HOME so it's portable across machines.
-      cat > "$out/kms/project-mcp-template.json" <<MCP_TEMPLATE
+    # Project setup template — copy to downstream project root as .mcp.json
+    cat > "$out/kms/project-mcp-template.json" <<MCP_TEMPLATE
 {
   "mcpServers": {
     "kms": {
@@ -210,8 +188,7 @@ LAUNCHER
   }
 }
 MCP_TEMPLATE
-      echo "  kms          .mcp.json + kms/project-mcp-template.json (copy to project root)"
-    fi
+    echo "  kms          project-mcp-template.json written"
   else
     echo "  kms          SKIP (lib/core/knowledge/ not found)"
   fi
