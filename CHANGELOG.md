@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.5.2] — 2026-06-04
+
+### Fixed
+- **`.gitignore` over-broad `chroma/` pattern** — changed to `/chroma/` and `/kms/db/` (root-anchored); previously matched `dist/plugins/kms/chroma/` and silently excluded all HNSW vector files from git, causing `sda-kms` to ship an empty vector index
+
+---
+
 ## [10.5.1] — 2026-06-04
 
 ### Fixed
