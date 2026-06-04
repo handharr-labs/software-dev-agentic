@@ -49,7 +49,7 @@ def _load_repo_meta(project_dir: Path) -> _RepoMeta:
     with repo_file.open() as f:
         data = yaml.safe_load(f) or {}
     remote = data.get("remote") or None
-    name = _repo_name_from_remote(remote) if remote else project_dir.name
+    name = data.get("name") or (_repo_name_from_remote(remote) if remote else project_dir.name)
     return _RepoMeta(
         name=name,
         platform=data.get("platform") or None,

@@ -38,8 +38,9 @@ class ListKnowledge:
             # Platform-base (project=None → stored as "null").
             tiers.append(self._repo.list(platform=platform, project=NULL_SENTINEL, discipline=discipline, topic=topic))
 
-        if platform and project:
-            # Project-specific overrides.
+        if project:
+            # Project-specific overrides — platform already stored in the node from repo.yaml.
+            # Pass platform if known for a stricter match; None means no platform filter.
             tiers.append(self._repo.list(platform=platform, project=project, discipline=discipline, topic=topic))
 
         # Merge: later tiers (more specific) win on (discipline, topic, pattern) key.
