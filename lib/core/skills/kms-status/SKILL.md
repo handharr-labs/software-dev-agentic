@@ -13,8 +13,8 @@ Confirm the KMS MCP server is reachable and show what knowledge is available in 
 1. Call `kms_info()` — get DB path, knowledge dir path, and node count.
 2. If the call fails or the tool is unavailable: output the OFFLINE block below and stop.
 3. Call `kms_list()` with no filters — fetch the full TOC.
-4. Group results by `platform` → `project` → `discipline` → count of nodes.
-5. For each platform+project pair, list distinct topics covered.
+4. Group results by `platform` → `project` → collapse all disciplines into one row per platform+project pair — sum node counts across disciplines.
+5. For each platform+project row, list distinct topics covered across all disciplines. If a node's discipline is not `engineering`, append `[{discipline}]` after its topic so the origin is visible.
 6. Output the ONLINE block below. Do not add any text, suggestions, or next steps beyond the block.
 
 ## Step 6 — Scoped load probe
@@ -88,9 +88,9 @@ Knowledge dir:  {knowledge_dir}  ✓ {knowledge_files} pattern files
 
 platform       project                  nodes  topics
 ──────────────────────────────────────────────────────────
-flutter        (base)                   {N}    domain, data, presentation, state_management, ...
-flutter        talenta                  {N}    app, project_structure, testing, ...
-ios            talenta                  {N}    domain, data, presentation, navigation, ...
+flutter        (base)                   {N}    standard_architecture, mekari_pixel_catalog [design], ...
+flutter        talenta                  {N}    api_endpoints, feature_inventory, ...
+ios            talenta                  {N}    standard_architecture, api_endpoints, ...
 ...
 ```
 
