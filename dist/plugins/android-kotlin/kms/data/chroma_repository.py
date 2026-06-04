@@ -25,6 +25,7 @@ def _to_meta(node: KnowledgeNode) -> dict:
         "source_file":   node.source_file or "",
         "updated_at":    node.updated_at or "",
         "content_hash":  node.content_hash or "",
+        "content_type":  node.content_type,
         "schema_version": "1",
     }
 
@@ -51,6 +52,7 @@ def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
         updated_at=meta.get("updated_at") or None,
         content_hash=meta.get("content_hash") or None,
         content=content,
+        content_type=meta.get("content_type", "real"),
     )
 
 

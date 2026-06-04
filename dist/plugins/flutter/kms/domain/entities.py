@@ -17,6 +17,7 @@ class KnowledgeNode:
     updated_at: Optional[str] = None
     content_hash: Optional[str] = None  # SHA256 of content body — used for incremental seed detection
     content: Optional[str] = None       # None in list results, populated in fetch/query results
+    content_type: str = "real"          # "real" | "stub" — stubs seed schema; never overwrite real
 
     @property
     def id(self) -> str:

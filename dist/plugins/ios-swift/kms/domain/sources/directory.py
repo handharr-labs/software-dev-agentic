@@ -117,6 +117,11 @@ def _chunk_by_sections(content: str) -> list[tuple[str, str]]:
     return [(h, c) for h, c in sections if c.strip()]
 
 
+def _is_template_file(path: Path) -> bool:
+    """True for _template.md and {platform}-_template.md files."""
+    return path.name == "_template.md" or path.stem.endswith("-_template")
+
+
 def _derive_scope(platform: str | None, project: str | None) -> str:
     if project:
         return "project"
@@ -197,6 +202,7 @@ class DirectorySource(KnowledgeSource):
                 content = path.read_text(encoding="utf-8").strip()
                 scope = _derive_scope(platform, None)
                 chunks = _chunk_by_sections(content)
+                node_content_type = "stub" if _is_template_file(path) else "real"
 
                 if chunks:
                     for heading, section_content in chunks:
@@ -213,6 +219,7 @@ class DirectorySource(KnowledgeSource):
                             updated_at=date.today().isoformat(),
                             content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
                             content=section_content,
+                            content_type=node_content_type,
                         )
                 else:
                     yield KnowledgeNode(
@@ -227,6 +234,7 @@ class DirectorySource(KnowledgeSource):
                         updated_at=date.today().isoformat(),
                         content_hash=hashlib.sha256(content.encode()).hexdigest(),
                         content=content,
+                        content_type=node_content_type,
                     )
 
     # ------------------------------------------------------------------

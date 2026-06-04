@@ -45,13 +45,16 @@ class UpsertKnowledge:
         if not node.content:
             raise ValueError(f"node.content is required for upsert: {node.id}")
 
-        if owns is None:
-            self._repo.upsert(node)
-            return
-
         existing = self._repo.fetch_exact(
             node.platform, node.project, node.discipline, node.topic, node.pattern
         )
+
+        if node.content_type == "stub" and existing is not None and existing.content_type == "real":
+            return  # stubs never overwrite real content
+
+        if owns is None:
+            self._repo.upsert(node)
+            return
 
         if existing is None or not existing.content:
             owned = {k: v for k, v in _parse_sections(node.content).items() if k in owns}
