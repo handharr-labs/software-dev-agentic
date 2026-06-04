@@ -1,60 +1,11 @@
 {
   "name": "sda",
-  "description": "software-dev-agentic \u2014 multi-platform agentic toolkit for Clean Architecture projects",
+  "description": "software-dev-agentic — multi-platform agentic toolkit for Clean Architecture projects",
   "owner": {
     "name": "Jurnal Engineering",
     "email": "engineering@jurnal.id"
   },
   "plugins": [
-    {
-      "name": "sda-flutter-mobile-talenta",
-      "source": "./dist/plugins/flutter-mobile-talenta",
-      "description": "Builder, detective, tracker, auditor personas for flutter-mobile-talenta",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
-    {
-      "name": "sda-flutter-mobile-jurnal",
-      "source": "./dist/plugins/flutter-mobile-jurnal",
-      "description": "Builder, detective, tracker, auditor personas for flutter-mobile-jurnal",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
-    {
-      "name": "sda-flutter-qontak-chat",
-      "source": "./dist/plugins/flutter-qontak-chat",
-      "description": "Builder, detective, tracker, auditor personas for flutter-qontak-chat",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
-    {
-      "name": "sda-flutter-qontak-crm",
-      "source": "./dist/plugins/flutter-qontak-crm",
-      "description": "Builder, detective, tracker, auditor personas for flutter-qontak-crm",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
-    {
-      "name": "sda-ios-talenta",
-      "source": "./dist/plugins/ios-talenta",
-      "description": "Builder, detective, tracker, auditor personas for ios-talenta",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
-    {
-      "name": "sda-android-talenta",
-      "source": "./dist/plugins/android-talenta",
-      "description": "Builder, detective, tracker, auditor personas for android-talenta",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
-    {
-      "name": "sda-web",
-      "source": "./dist/plugins/web",
-      "description": "Builder, detective, tracker, auditor personas for web",
-      "category": "development-workflows",
-      "version": "9.3.0"
-    },
     {
       "name": "sda-android-kotlin",
       "source": "./dist/plugins/android-kotlin",
