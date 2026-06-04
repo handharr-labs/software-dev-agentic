@@ -10,7 +10,7 @@ Audit the specified feature against `kms/knowledge-sources/engineering/{platform
 
 ## Steps
 
-1. **List patterns** — `kms_list(platform={platform}, project={project}, discipline="engineering")` to get all available topics and their patterns. **Fallback** if KMS unavailable: `Read kms/knowledge-sources/engineering/{platform}-standard-architecture.md and find the relevant topic sections. Collect `## Dependency Rule` and `### Layer Invariants` (or `## Layer Invariants`) sections for each layer
+1. **List patterns** — `kms_query(text="architecture naming conventions dependency rules layer invariants", platform={platform}, discipline="engineering", n_results=5)` to get architecture patterns and rules. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and collect `## Dependency Rule` and `### Layer Invariants` (or `## Layer Invariants`) sections for each layer
 2. **Grep** the feature's files for forbidden imports per each layer's dependency rule
 3. **Check** each layer's invariants against the actual code
 4. Report violations grouped by layer and file

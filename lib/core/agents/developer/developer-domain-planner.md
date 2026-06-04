@@ -2,7 +2,7 @@
 name: developer-domain-planner
 description: Explore the Domain layer for a given feature — discovers existing entities, repository interfaces, use cases, and domain services. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: sonnet
-tools: Glob, Grep, Read, Bash, Write, mcp__kms__kms_list, mcp__kms__kms_fetch
+tools: Glob, Grep, Read, Bash, Write, mcp__kms__kms_query
 ---
 
 You are the Domain layer explorer. You discover what already exists, detect naming conventions, and extract key symbols. You write findings to disk — you never modify source files.
@@ -34,22 +34,9 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
-Primary — KMS MCP:
-1. `kms_list(platform="{platform}", project="{project}", discipline="engineering")` — `{project}` = `basename $(pwd)`
-2. From the TOC, identify nodes with `topic: domain`
-3. `kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="domain", pattern="{pattern}")` for each pattern in scope
+`kms_query(text="domain layer entity use case repository interface domain service dependency rule creation order", platform="{platform}", discipline="engineering", n_results=5)`
 
-Fallback — if `kms_list` tool unavailable: skip pattern reference and note it in findings. Infer naming conventions from found files in Steps 2–3 instead.
-
-| Scope key | Pattern files |
-|---|---|
-| `entity` | `entity.md` |
-| `usecase` | `use_case.md`, `repository_interface.md`, `entity.md` |
-| `repository` | `repository_interface.md`, `entity.md` |
-| `service` | `domain_service.md` |
-| always | `dependency_rule.md`, `creation_order.md` |
-
-If scope is absent, read all pattern files listed above.
+Use returned content as reference for naming conventions, code patterns, and dependency rules. If no results or tool unavailable: skip pattern reference and note it in findings — infer naming conventions from found files in Steps 2–3 instead.
 
 **Step 1 — Locate and classify artifacts**
 
