@@ -44,6 +44,30 @@ design       [platform={platform}]                      {N nodes | ⚠ no catalo
 `⚠ no catalog` on design is not an error — it means iOS/Android/web hasn't been catalogued yet and agents will skip gracefully.
 `⚠ 0 nodes` on engineering IS a problem — agents would load nothing.
 
+## Step 7 — Project knowledge summary
+
+After the load probe, fetch a brief snapshot of what the current project actually knows.
+
+Using the same `project` and `platform` derived in Step 6, call:
+
+```
+kms_fetch(platform="{platform}", project="{project}", discipline="engineering", topic="project_structure")
+kms_fetch(platform="{platform}", project="{project}", discipline="product",     topic="feature_inventory")
+```
+
+For each call: if a node is returned, extract and display a 2–3 line excerpt (first meaningful sentences or bullet points). If no node is returned, show `—`.
+
+Output inline after the load probe:
+
+```
+Project summary — {project}
+────────────────────────────────────────────────────
+project_structure   {2–3 line excerpt | —}
+feature_inventory   {2–3 line excerpt | —}
+```
+
+This confirms real content is retrievable for this project, not just that the node count is non-zero.
+
 ## Output — OFFLINE
 
 ```
