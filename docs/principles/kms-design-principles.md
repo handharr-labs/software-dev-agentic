@@ -25,6 +25,8 @@ A ChromaDB-backed knowledge store shipped inside the Claude Code plugin. Agents 
 
 One ChromaDB collection for all knowledge. Scope is enforced by `scope + platform + project` metadata fields, not by collection separation. Splitting by platform would break cascade fallthrough which requires all tiers queryable in a single call.
 
+Nodes from multiple platforms and projects naturally accumulate in a single ChromaDB instance — this is expected. Agents always query with explicit `platform` and `project` filters, so cross-platform nodes are never surfaced to an agent working in a different context. The presence of flutter or android nodes in an iOS plugin's ChromaDB is not an error.
+
 ### 2. Cascade resolution — specific overrides general
 
 Three tiers, resolved in order:
