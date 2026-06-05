@@ -38,7 +38,42 @@ Replace `flutter` with your platform. Available platforms:
 
 > Install both a platform plugin and `sda-kms`. The platform plugin provides agents and skills; `sda-kms` serves the knowledge queries those agents rely on.
 
-The script installs at **project scope** — active only in this repo. Then run `/reload-plugins` in Claude Code to activate.
+### Personal setup (no commits required)
+
+The recommended approach — everything lives in gitignored or user-level files.
+
+#### Step 1 — Platform plugin in `.claude/settings.local.json`
+
+`.claude/settings.local.json` is gitignored by convention — add `enabledPlugins` here so the platform plugin activates only in this project without touching any committed file.
+
+```json
+{
+  "enabledPlugins": {
+    "sda-flutter@sda": true
+  }
+}
+```
+
+Replace `sda-flutter` with the plugin matching your platform.
+
+#### Step 2 — `sda-kms` at user scope (once, machine-wide)
+
+`sda-kms` is shared across all platforms — install it once at user scope and it's available in every project:
+
+```bash
+claude plugin enable sda-kms@sda --scope user
+```
+
+#### Step 3 — KMS MCP at user scope (once, machine-wide)
+
+Register the KMS MCP server once and it applies globally:
+
+```bash
+claude mcp add kms --scope user bash -- -c \
+  'latest=$(ls -v "$HOME/.claude/plugins/cache/sda/sda-kms" 2>/dev/null | tail -1) && exec bash "$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh"'
+```
+
+Restart Claude Code to activate. Verify with `/kms-status`.
 
 ### Auto-install for teammates
 
