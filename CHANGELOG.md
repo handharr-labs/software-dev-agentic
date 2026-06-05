@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.7.0] — 2026-06-05
+
+### Added
+- **Personal setup path in README** — documents no-commit setup: platform plugin in `.claude/settings.local.json` (gitignored), `sda-kms` enabled via `claude plugin enable --scope user`, KMS MCP registered via `claude mcp add --scope user`
+
+### Fixed
+- **`ios-talenta` → `talenta-ios`** — renamed KMS project directory and `repo.yaml` name to match actual repo name; old nodes cleared via DB reset
+
+---
+
 ## [10.6.0] — 2026-06-05
 
 ### Added
