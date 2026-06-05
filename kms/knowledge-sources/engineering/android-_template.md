@@ -411,6 +411,14 @@ _Stub — search pattern examples._
 
 # Cross-Cutting
 
+## Naming Convention
+### Theory
+_Stub — identifier casing rules: PascalCase for classes, camelCase for methods/vars, UPPER_SNAKE_CASE for constants, snake_case for resources and analytics values._
+### Definition
+_Stub — file-level naming patterns per artifact type (Entity, DTO, Mapper, UseCase, Presenter, Contract, Activity)._
+### Code Pattern
+_Stub — canonical naming examples per artifact._
+
 ## Date Service
 ### Theory
 _Stub — abstracted date/time access; never call System.currentTimeMillis() in domain._

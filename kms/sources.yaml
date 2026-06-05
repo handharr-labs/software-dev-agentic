@@ -1,5 +1,5 @@
 sources:
-- last_seeded: '2026-06-04'
+- last_seeded: '2026-06-05'
   name: knowledge-sources
   owns:
   - theory

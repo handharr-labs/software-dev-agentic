@@ -154,6 +154,22 @@ Additional sources (codebase scans, Confluence) are registered as separate entri
 | URL matching `confluence.` | `confluence` |
 | GitHub URL | `codebase` (remote) |
 
+### 10. Chunk strategy — one `##` heading, one node
+
+`DirectorySource` splits every document at `##` heading boundaries before seeding. Each section becomes its own `KnowledgeNode`; `topic` and `pattern` are derived from the heading slug. A file with no `##` headings seeds as a single node using the filename as `topic`/`pattern`.
+
+```
+## Naming Convention          → topic=naming_convention, pattern=naming_convention
+## Repository Implementation  → topic=repository_implementation, pattern=repository_implementation
+(no headings)                 → topic=<filename-stem>, pattern=<filename-stem>
+```
+
+**Consequence for authoring:** any knowledge that must be retrievable by topic via `kms_fetch` must live under its own `##` heading. Content embedded inline within a broader section is indexed but only reachable via vector search — it cannot be fetched by exact metadata match.
+
+**Rule:** when adding a new topic to an existing platform doc (e.g. naming conventions, error handling rules), give it a dedicated `##` heading. Never bury distinct topics as prose under an unrelated section.
+
+**Content hash** is computed per-section after chunking, not per-file. Only sections that changed are re-upserted on the next seed run.
+
 ---
 
 ## Metadata Schema

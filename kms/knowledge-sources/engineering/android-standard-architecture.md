@@ -2986,17 +2986,7 @@ Base classes: `base/` module — `BaseMvpVbActivity`, `BaseMvpVbFragment`, `Base
 
 ### Conventions and Naming
 
-- Classes/interfaces/enums — PascalCase (`AttendancePresenter`)
-- Methods/properties/variables — camelCase (`onCheckInClicked`)
-- Constants — UPPER_SNAKE_CASE
-- Resources — snake_case with component prefixes
-- Test files — `*Test.kt`, placed in `src/test/` mirroring main source structure
-- Test method naming — `test_given[Condition]_when[Action]_then[ExpectedResult]`
-- Base classes: `BasePresenter`, `BaseMvpVbActivity<Binding, Presenter>`, `BaseMvpVbFragment`
-- Contract base types: `BaseMvpView`, `BaseMvpPresenter<View>`
-- Null-safety extensions: `.orEmpty()`, `.orZero()`, `.orFalse()`, `.orTrue()`
-- Disposable cleanup — `addToDisposables()` (never `addToDisposeBag()`)
-- Loading pattern — `doOnSubscribe { showLoading() }.doFinally { hideLoading() }`
+See `## Naming Convention` for the full naming rules.
 
 ### Build Commands
 
@@ -3020,6 +3010,59 @@ Base classes: `base/` module — `BaseMvpVbActivity`, `BaseMvpVbFragment`, `Base
 - Network: Retrofit 2, OkHttp, Gson, `RxJava3CallAdapterFactory`
 - UI: ViewBinding (no `findViewById`)
 - Testing: JUnit4, Mockito + mockito-kotlin, JUnitForger (Elmyr), BDDMockito
+
+## Naming Convention
+
+### Theory
+
+All identifiers follow Kotlin/Android conventions. Consistency matters most at module, file, and test method boundaries.
+
+- Classes/interfaces/enums — PascalCase (`AttendancePresenter`, `EmployeeRepository`)
+- Methods/properties/variables — camelCase (`onCheckInClicked`, `employeeList`)
+- Constants — `UPPER_SNAKE_CASE`
+- Resources — `snake_case` with component prefix (e.g. `ic_`, `bg_`, `layout_`, `item_`)
+- Feature module directories — `snake_case` (e.g. `feature_attendance`)
+- `{Feature}` placeholder in file names = PascalCase; `{feature}` placeholder = snake_case
+- Analytics event and property string values — `snake_case` matching the analytics platform convention
+
+### Definition
+
+File-level naming patterns:
+
+| Artifact | Pattern | Example |
+|---|---|---|
+| Entity | `[Entity].kt` | `Employee.kt` |
+| DTO | `[Entity]Response.kt` | `EmployeeResponse.kt` |
+| Mapper | `[Entity]Mapper.kt` | `EmployeeMapper.kt` |
+| Repository interface | `[Module]Repository.kt` | `AttendanceRepository.kt` |
+| Repository impl | `[Module]RepositoryImpl.kt` | `AttendanceRepositoryImpl.kt` |
+| Use case | `[Action][Entity]UseCase.kt` | `GetTimeOffRequestsUseCase.kt` |
+| MVP contract | `[Feature]Contract.kt` | `AttendanceContract.kt` |
+| Presenter | `[Feature]Presenter.kt` | `AttendancePresenter.kt` |
+| Activity/Fragment | `[Feature]Activity.kt` | `AttendanceActivity.kt` |
+| Test file | `[Subject]Test.kt` | `AttendancePresenterTest.kt` |
+| Test method | `test_given[Condition]_when[Action]_then[ExpectedResult]` | See `## Test Naming Convention` |
+
+### Code Pattern
+
+```kotlin
+// Classes — PascalCase
+class AttendancePresenter : BasePresenter<AttendanceContract.View>()
+
+// Constants — UPPER_SNAKE_CASE
+companion object {
+    const val MAX_RETRY_COUNT = 3
+}
+
+// Resources — snake_case with prefix
+R.layout.fragment_attendance
+R.drawable.ic_check_in
+R.id.tv_employee_name
+
+// Analytics values — snake_case
+const val EVENT_CHECK_IN_SUCCESS = "check_in_success"
+const val PARAM_EMPLOYEE_ID = "employee_id"
+```
 
 # Syntax Conventions
 
