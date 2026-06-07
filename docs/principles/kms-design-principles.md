@@ -238,6 +238,25 @@ KnowledgeSource (abstract interface)
 
 ---
 
+## Retrieval Protocol — `kms_list`, `kms_fetch`, `kms_query`
+
+Three MCP tools serve different retrieval needs. Agents should combine them, not pick just one:
+
+| Tool | Returns | When to use |
+|---|---|---|
+| `kms_list` | Metadata only (TOC) — no content | Step 0: scan what topics exist before deciding what to fetch |
+| `kms_fetch` | Full content of one exact node, cascade-resolved (`project → platform → universal`) | The agent already knows the exact `topic`/`pattern` — deterministic retrieval |
+| `kms_query` | Full content of top-k nodes, ranked by similarity | The agent doesn't know the exact topic — semantic / intent-based discovery |
+
+**Combination pattern:**
+1. `kms_list(discipline, platform)` — scan the TOC, reason over which topics exist
+2. For known, uniform topics — same heading seeded across every platform doc (e.g. `Null Safety Extensions` → `topic=null_safety_extensions`): `kms_fetch(topic, pattern, discipline, platform)` — guaranteed, cascade-resolved retrieval
+3. For exploratory or intent-based needs (e.g. "what conventions apply when writing this artifact type"): `kms_query(text, discipline, platform, n_results)` — semantic ranking
+
+**Why this matters:** `kms_query` ranks top-k across *all* matching nodes — a cross-cutting convention that applies to nearly every artifact (e.g. null-safety unwrapping) can be crowded out of the top-k by more numerous architecture-pattern nodes. When a topic's heading is uniform across platforms, prefer `kms_fetch` for guaranteed retrieval over hoping `kms_query` surfaces it.
+
+---
+
 ## Agentic Seeding Workflow
 
 | Component | Type | Responsibility |
