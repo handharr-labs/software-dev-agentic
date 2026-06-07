@@ -106,3 +106,54 @@ Extension files live in `Shared/Extension/`.
 | `UIViewController` | `UIViewController+Extensions.swift` | `.showAlert(...)`, `.showErrorAlert(message:)`, `.showConfirmation(...)`, `.hideKeyboardWhenTappedAround()` |
 | `BaseErrorModel` | `BaseErrorModel+Extensions.swift` | `.createEmptyDataError()`, `.createNetworkError()`, `.from(error:)` |
 | `Observable` | `Observable+Extensions.swift` | `.unwrap()`, `.mapToVoid()`, `.retryWithDelay(...)` |
+
+---
+
+## Magic Constants
+
+### Theory
+
+**Rule:** Never hard-code a domain-meaningful string or number inline. Promote it to a named constant — scoped to `Shared/Constants/` if reused across features, or declared `private static let` on the type itself if it's local to one.
+
+**Why:** A bare `30`, `"en_US"`, or `"v1/employees"` carries no intent at the call site and forces every reader to trace it back to its meaning. Naming it once makes the value searchable, makes its purpose explicit, and gives a single point of change.
+
+**Invariant:**
+- Shared, cross-feature constants live in `Shared/Constants/` grouped by domain (`NetworkConstants`, `FormatConstants`, ...)
+- Constants used by a single type are declared `private static let` (or `fileprivate`) on that type — never duplicated as inline literals elsewhere in the same file
+- Trivial sentinel values (`0`/`1`/`-1` for indices and comparisons, `true`/`false`, empty-string checks in guards) are exempt — naming these adds noise, not clarity
+- Feature-scoped Analytics Constants follow their own dedicated convention (see standard architecture) — this rule covers everything else
+
+| Scope | Where it lives | Example |
+|---|---|---|
+| Shared across features | `Shared/Constants/{Domain}Constants.swift` | API paths, timeouts, regex patterns, format strings |
+| Local to one type | `private static let` on the type itself | Corner radius, animation duration, debounce thresholds specific to that view |
+
+---
+
+### Code Pattern
+
+```swift
+// Shared/Constants/NetworkConstants.swift
+enum NetworkConstants {
+    static let defaultTimeoutSeconds: TimeInterval = 30
+    static let defaultLocale = "en_US"
+    static let employeesEndpoint = "v1/employees"
+}
+
+// Usage — domain/data/presentation
+var request = URLRequest(url: baseURL.appendingPathComponent(NetworkConstants.employeesEndpoint))
+request.timeoutInterval = NetworkConstants.defaultTimeoutSeconds
+```
+
+**Local to a type:**
+
+```swift
+final class AttendanceCardView: UIView {
+    private static let cardRadius: CGFloat = 12
+    private static let expandAnimationDuration: TimeInterval = 0.25
+
+    // ...uses Self.cardRadius and Self.expandAnimationDuration — never inline 12 or 0.25
+}
+```
+
+**Critical:** if the same literal appears in two or more files, it has already outgrown "local" — promote it to `Shared/Constants/` instead of copying it.

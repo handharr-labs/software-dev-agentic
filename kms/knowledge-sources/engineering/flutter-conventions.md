@@ -106,3 +106,56 @@ Extension files live in `talenta/lib/src/shared/core/extensions/`.
 | `double` | `double_extensions.dart` | `.toCleanString({fractionDigits})` |
 | `bool?` | `bool_extensions.dart` | `.orFalse()`, `.orTrue()`, `.toInt()` |
 | `List<T>?` | `collection_extensions.dart` | `.orEmpty()` |
+
+---
+
+## Magic Constants
+
+### Theory
+
+**Rule:** Never hard-code a domain-meaningful string or number inline. Promote it to a named constant — scoped to the shared `Constants` directory if reused across features, or declared as a `static const` member on the class itself if it's local to one.
+
+**Why:** A bare `30`, `'en_US'`, or `'v1/employees'` carries no intent at the call site and forces every reader to trace it back to its meaning. Naming it once makes the value searchable, makes its purpose explicit, and gives a single point of change.
+
+**Invariant:**
+- Shared, cross-feature constants live in `talenta/lib/src/shared/core/constants/` and are exported via a barrel
+- Constants used by a single class/widget are declared `static const` on that class — never duplicated as inline literals elsewhere in the same file
+- Trivial sentinel values (`0`/`1`/`-1` for indices and comparisons, `true`/`false`, empty-string checks in guards) are exempt — naming these adds noise, not clarity
+
+| Scope | Where it lives | Example |
+|---|---|---|
+| Shared across features | `shared/core/constants/{domain}_constants.dart` | API paths, timeouts, regex patterns, format strings |
+| Local to one class/widget | `static const` on the class itself | Corner radius, animation duration, debounce thresholds specific to that widget |
+
+---
+
+### Code Pattern
+
+```dart
+// talenta/lib/src/shared/core/constants/network_constants.dart
+class NetworkConstants {
+  const NetworkConstants._();
+
+  static const int defaultTimeoutSeconds = 30;
+  static const String defaultLocale = 'en_US';
+  static const String employeesEndpoint = 'v1/employees';
+}
+
+// Usage — domain/data/presentation
+final response = await _client
+    .get(NetworkConstants.employeesEndpoint)
+    .timeout(const Duration(seconds: NetworkConstants.defaultTimeoutSeconds));
+```
+
+**Local to a class:**
+
+```dart
+class AttendanceCard extends StatelessWidget {
+  static const double _cardRadius = 12;
+  static const Duration _expandAnimationDuration = Duration(milliseconds: 250);
+
+  // ...uses _cardRadius and _expandAnimationDuration — never inline 12 or Duration(milliseconds: 250)
+}
+```
+
+**Critical:** if the same literal appears in two or more files, it has already outgrown "local" — promote it to the shared `Constants` directory instead of copying it.
