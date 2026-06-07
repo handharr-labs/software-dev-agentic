@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.8.1] — 2026-06-08
+
+### Fixed
+- **`kms_query` crash on combined `platform` + `discipline` filters** — `ChromaKnowledgeRepository.query()` passed multi-key `where` dicts straight to ChromaDB, which requires a single `{field: {"$eq": v}}` clause or a composite `$and`/`$or`. Any query combining both filters (e.g. `developer-feature-worker`'s pre-flight cross-cutting conventions load) crashed with `Expected where to have exactly one operator`. Now reuses `_build_where`, the same wrapper already used by `list()` and `fetch_exact()`
+
+---
+
 ## [10.8.0] — 2026-06-08
 
 ### Added
