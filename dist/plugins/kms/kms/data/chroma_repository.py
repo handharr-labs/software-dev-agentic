@@ -131,8 +131,9 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             "n_results": min(n_results, self._col.count() or 1),
             "include": ["metadatas", "documents", "distances"],
         }
-        if where:
-            kwargs["where"] = where
+        built_where = _build_where(where) if where else None
+        if built_where:
+            kwargs["where"] = built_where
 
         result = self._col.query(**kwargs)
         nodes = []
