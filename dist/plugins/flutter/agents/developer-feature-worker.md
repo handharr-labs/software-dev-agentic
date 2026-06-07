@@ -2,7 +2,7 @@
 name: developer-feature-worker
 description: Execute an approved feature plan for Domain, Data, Presentation (StateHolder), and App layers — reads plan.md, calls skills in layer order, validates each artifact inline. UI layer (Screen/Component/Navigator) is handled by developer-ui-worker after this worker completes. Invoked by /developer-plan-feature or /developer-build-feature skills after plan approval.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_query
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_list, mcp__kms__kms_fetch, mcp__kms__kms_query
 related_skills:
   - developer-domain-create-entity
   - developer-domain-create-repository
@@ -57,7 +57,8 @@ Load cross-cutting convention references before writing any code — knowledge f
 Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 
 1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
-2. `kms_query(text="syntax conventions utilities error handling code patterns", platform="{platform}", discipline="engineering", n_results=5)` — cross-cutting conventions
+2. `kms_fetch(topic="null_safety_extensions", pattern="null_safety_extensions", discipline="engineering", platform="{platform}")` — deterministic load of the optional-handling convention (`.orEmpty()`, `.orZero()`, `.orFalse()`, etc.). This is uniform across every platform's `{platform}-conventions.md` — fetch by exact topic rather than relying on `kms_query` ranking. Apply throughout every artifact that unwraps a nullable value.
+3. `kms_query(text="syntax conventions utilities error handling code patterns", platform="{platform}", discipline="engineering", n_results=5)` — additional cross-cutting conventions via semantic search
 3. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
 
 **Design system — optional, non-blocking:**
