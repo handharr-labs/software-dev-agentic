@@ -70,7 +70,7 @@ Register the KMS MCP server once and it applies globally:
 
 ```bash
 claude mcp add kms --scope user bash -- -c \
-  'latest=$(ls -v "$HOME/.claude/plugins/cache/sda/sda-kms" 2>/dev/null | tail -1) && exec bash "$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh"'
+  'latest=$(ls "$HOME/.claude/plugins/cache/sda/sda-kms" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash "$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh"'
 ```
 
 Restart Claude Code to activate. Verify with `/kms-status`.
@@ -89,13 +89,12 @@ Commit two files — teammates get the full setup automatically on first session
     }
   },
   "enabledPlugins": {
-    "sda-flutter@sda": true,
-    "sda-kms@sda": true
+    "sda-flutter@sda": true
   }
 }
 ```
 
-Replace `sda-flutter` with the plugin matching your platform. `sda-kms` is the same for all platforms.
+Replace `sda-flutter` with the plugin matching your platform. `sda-kms` is installed at user scope (not per-project) — see the Personal setup section above.
 
 #### Step 2 — `.mcp.json` (KMS)
 
@@ -106,7 +105,7 @@ Wires the KMS MCP server. The same config works for all platforms — it always 
   "mcpServers": {
     "kms": {
       "command": "bash",
-      "args": ["-c", "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-kms\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh\""]
+      "args": ["-c", "latest=$(ls \"$HOME/.claude/plugins/cache/sda/sda-kms\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh\""]
     }
   }
 }

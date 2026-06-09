@@ -104,12 +104,12 @@ fi
 
 echo ""
 PLUGIN_CACHE="$HOME/.claude/plugins/cache/$MARKETPLACE/$PLUGIN_NAME"
-LATEST_VERSION="$(ls -v "$PLUGIN_CACHE" 2>/dev/null | tail -1)"
+LATEST_VERSION="$(ls "$PLUGIN_CACHE" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)"
 
 if [ -n "$LATEST_VERSION" ] && [ -f "$PLUGIN_CACHE/$LATEST_VERSION/kms/server.sh" ]; then
   PROJECT_MCP="$PROJECT_ROOT/.mcp.json"
   # The command finds the latest installed version at launch time — survives updates.
-  KMS_CMD="latest=\$(ls -v \"$PLUGIN_CACHE\" 2>/dev/null | tail -1) && exec bash \"$PLUGIN_CACHE/\$latest/kms/server.sh\""
+  KMS_CMD="latest=\$(ls \"$PLUGIN_CACHE\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$PLUGIN_CACHE/\$latest/kms/server.sh\""
   python3 - "$PROJECT_MCP" "$KMS_CMD" <<'PYEOF'
 import json, sys, os
 mcp_path, kms_cmd = sys.argv[1], sys.argv[2]
