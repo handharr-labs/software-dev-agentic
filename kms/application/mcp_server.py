@@ -5,12 +5,11 @@ Run:
   KMS_DB_PATH=/path/to/chroma python -m kms.application.mcp_server
 
 Logging (opt-in):
-  KMS_ENABLE_LOGGING=true   enable JSONL usage log
-  KMS_LOG_PATH=<path>       log file path (default: <db_parent>/logs/kms-usage.jsonl)
+  KMS_ENABLE_LOGGING=true   enable usage log
+  KMS_LOG_PATH=<path>       log file path (default: <db_parent>/logs/kms-usage.log)
   KMS_LOG_MAX_MB=<n>        rotate when log exceeds this size in MB (default: 10)
 """
 from __future__ import annotations
-import json
 import os
 import sys
 import time
@@ -39,9 +38,28 @@ _log_max_bytes = float(os.environ.get("KMS_LOG_MAX_MB", "10")) * 1024 * 1024
 _log_path = os.path.abspath(
     os.environ.get(
         "KMS_LOG_PATH",
-        os.path.join(os.path.dirname(_db_path_abs), "logs", "kms-usage.jsonl"),
+        os.path.join(os.path.dirname(_db_path_abs), "logs", "kms-usage.log"),
     )
 )
+
+
+def _summarize_result(tool: str, result) -> str:
+    if tool == "kms_list":
+        if not result:
+            return "count=0"
+        ids = [r.get("id", "") for r in result[:5]]
+        return f"count={len(result)}  top_ids=[{', '.join(ids)}]"
+    if tool == "kms_fetch":
+        if not result:
+            return "found=false"
+        content_chars = len(result.get("content") or "")
+        return f"id={result.get('id')}  content_chars={content_chars}"
+    if tool == "kms_query":
+        if not result:
+            return "count=0"
+        ids = [r.get("id", "") for r in result[:5]]
+        return f"count={len(result)}  hits=[{', '.join(ids)}]"
+    return ""
 
 
 def _log(tool: str, inputs: dict, result_count: int, latency_ms: float, result=None) -> None:
@@ -51,16 +69,19 @@ def _log(tool: str, inputs: dict, result_count: int, latency_ms: float, result=N
         os.makedirs(os.path.dirname(_log_path), exist_ok=True)
         if os.path.isfile(_log_path) and os.path.getsize(_log_path) > _log_max_bytes:
             os.replace(_log_path, _log_path + ".old")
-        entry = {
-            "ts": datetime.now(timezone.utc).isoformat(),
-            "tool": tool,
-            "inputs": inputs,
-            "result_count": result_count,
-            "latency_ms": round(latency_ms, 2),
-            "result": result,
-        }
+        ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        inputs_str = "  ".join(f"{k}={v}" for k, v in inputs.items() if v is not None)
+        result_str = _summarize_result(tool, result)
+        lines = [
+            f"{'─' * 60}",
+            f"{ts}  {tool}  {round(latency_ms, 1)}ms",
+            f"inputs:  {inputs_str or '-'}",
+        ]
+        if result_str:
+            lines.append(f"result:  {result_str}")
+        lines.append("")
         with open(_log_path, "a") as f:
-            f.write(json.dumps(entry) + "\n")
+            f.write("\n".join(lines) + "\n")
     except Exception:
         pass
 
