@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.11.4] — 2026-06-10
+
+### Added
+- **KMS result logging** — `kms_list`, `kms_fetch`, and `kms_query` now write the full result payload into `kms-usage.jsonl` when `KMS_ENABLE_LOGGING=true`. Enables post-session inspection of exactly what the agent read from the knowledge store.
+
+---
+
 ## [10.11.3] — 2026-06-10
 
 ### Fixed
