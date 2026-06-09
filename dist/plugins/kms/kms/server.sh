@@ -5,6 +5,11 @@ export PYTHONPATH="$PLUGIN_ROOT"
 export KMS_ENABLE_LOGGING="${KMS_ENABLE_LOGGING:-false}"
 export KMS_LOG_MAX_MB="${KMS_LOG_MAX_MB:-10}"
 
+# Kill stale KMS server processes from older plugin versions.
+for _pid in $(pgrep -f "kms.application.mcp_server" 2>/dev/null); do
+  lsof -p "$_pid" 2>/dev/null | grep -q "$PLUGIN_ROOT" || kill "$_pid" 2>/dev/null
+done
+
 if ! python3 -c "import chromadb, yaml, mcp" 2>/dev/null; then
   echo "[kms] Installing dependencies (one-time)..." >&2
   pip3 install -q -r "$PLUGIN_ROOT/kms/requirements.txt" >&2 \
