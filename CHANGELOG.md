@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.11.3] — 2026-06-10
+
+### Fixed
+- **KMS version sort in README and install-plugin.sh** — `ls -v` on macOS BSD sorts alphabetically, not by version. Replaced with `sort -t. -k1,1n -k2,2n -k3,3n` in `README.md` (personal setup and auto-install `.mcp.json` examples) and `scripts/install-plugin.sh` (version detection and `KMS_CMD` written to downstream `.mcp.json`).
+- **installer-doctor marketplace check** — `sda` marketplace is registered at user scope (`~/.claude/settings.json`), not project scope. Updated the check to point to the global settings file.
+
+---
+
 ## [10.11.2] — 2026-06-10
 
 ### Fixed
