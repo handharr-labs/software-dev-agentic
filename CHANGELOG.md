@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.11.0] — 2026-06-09
+
+### Added
+- **KMS usage logging** — `sda-kms` MCP server now supports opt-in JSONL logging of all tool calls (`kms_list`, `kms_fetch`, `kms_query`, `kms_upsert`). Each entry records timestamp, tool name, inputs, result count, and latency (ms). Disabled by default; enable via `KMS_ENABLE_LOGGING=true` in the `env` block of your MCP config or `mcp.json`. Size-based rotation: when the log exceeds `KMS_LOG_MAX_MB` (default 10 MB), the current file is renamed to `.old` and a fresh log starts. Log path defaults to `<db_parent>/logs/kms-usage.jsonl`, overridable via `KMS_LOG_PATH`.
+
+---
+
 ## [10.10.0] — 2026-06-09
 
 ### Changed
