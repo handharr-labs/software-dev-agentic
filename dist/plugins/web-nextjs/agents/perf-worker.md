@@ -204,8 +204,8 @@ Read the project's CLAUDE.md. Determine which rules apply before scoring:
 - `git add` with specific files (not `-A` or `.`) → check `bash_commands`
 - No `--no-verify` skipping hooks → check `bash_commands`
 
-**Conditional — only apply if the project's CLAUDE.md references issue tracking (e.g. mentions `tracker-issue-worker`, `pickup-issue`, a Jira/GitHub/Linear workflow):**
-- `tracker-issue-worker` / `pickup-issue` / `create-issue` called early → ✓
+**Conditional — only apply if the project's CLAUDE.md references issue tracking (e.g. mentions `developer-issue-worker`, `pickup-issue`, a Jira/GitHub/Linear workflow):**
+- `developer-issue-worker` / `pickup-issue` / `create-issue` called early → ✓
 - PR includes `Closes #N` → check `bash_commands` for `gh pr create`
 
 If the project's CLAUDE.md has no mention of issue tracking or PR workflow, skip both conditional checks entirely — do not penalise the session for omitting them.
