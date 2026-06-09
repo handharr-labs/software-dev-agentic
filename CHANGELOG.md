@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.11.1] — 2026-06-10
+
+### Fixed
+- **KMS version picker on macOS** — `ls -v` on macOS sorts alphabetically, not by version, causing `10.9.0` to sort after `10.11.0` and the server to launch an old build without logging support. Replaced with `sort -t. -k1,1n -k2,2n -k3,3n` for correct numeric ordering. Fixes in both `build-plugin.sh` (template) and `~/.claude/mcp.json` (direct config).
+
+---
+
 ## [10.11.0] — 2026-06-09
 
 ### Added
