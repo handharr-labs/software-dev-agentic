@@ -111,7 +111,7 @@ claude plugin list 2>/dev/null | grep sda || true
 
 ### 2. Marketplace configured
 
-Check `.claude/settings.json` for `extraKnownMarketplaces.sda`:
+Check `~/.claude/settings.json` (global) for `extraKnownMarketplaces.sda`:
 
 - Pass: `hndhr/software-dev-agentic` present
 - Fail: missing — run: `claude plugin marketplace add hndhr/software-dev-agentic`
