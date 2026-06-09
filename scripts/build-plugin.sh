@@ -224,7 +224,7 @@ LAUNCHER
       "command": "bash",
       "args": [
         "-c",
-        "latest=$(ls -v \"$HOME/.claude/plugins/cache/sda/sda-kms\" 2>/dev/null | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh\""
+        "latest=$(ls \"$HOME/.claude/plugins/cache/sda/sda-kms\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh\""
       ],
       "env": {
         "KMS_ENABLE_LOGGING": "false",
