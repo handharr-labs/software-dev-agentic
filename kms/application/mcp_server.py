@@ -44,7 +44,7 @@ _log_path = os.path.abspath(
 )
 
 
-def _log(tool: str, inputs: dict, result_count: int, latency_ms: float) -> None:
+def _log(tool: str, inputs: dict, result_count: int, latency_ms: float, result=None) -> None:
     if not _enable_logging:
         return
     try:
@@ -57,6 +57,7 @@ def _log(tool: str, inputs: dict, result_count: int, latency_ms: float) -> None:
             "inputs": inputs,
             "result_count": result_count,
             "latency_ms": round(latency_ms, 2),
+            "result": result,
         }
         with open(_log_path, "a") as f:
             f.write(json.dumps(entry) + "\n")
@@ -122,8 +123,7 @@ def kms_list(
     """
     t0 = time.monotonic()
     nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, topic=topic)
-    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "topic": topic}, len(nodes), (time.monotonic() - t0) * 1000)
-    return [
+    result = [
         {
             "id":         n.id,
             "platform":   n.platform,
@@ -136,6 +136,8 @@ def kms_list(
         }
         for n in nodes
     ]
+    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "topic": topic}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    return result
 
 
 @mcp.tool()
@@ -159,10 +161,7 @@ def kms_fetch(
         platform=platform,
         project=project,
     )
-    _log("kms_fetch", {"discipline": discipline, "topic": topic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000)
-    if node is None:
-        return None
-    return {
+    result = None if node is None else {
         "id":          node.id,
         "platform":    node.platform,
         "project":     node.project,
@@ -175,6 +174,8 @@ def kms_fetch(
         "updated_at":  node.updated_at,
         "content":     node.content,
     }
+    _log("kms_fetch", {"discipline": discipline, "topic": topic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
+    return result
 
 
 @mcp.tool()
@@ -198,8 +199,7 @@ def kms_query(
 
     t0 = time.monotonic()
     nodes = _query_uc.execute(text=text, where=where or None, n_results=n_results)
-    _log("kms_query", {"text": text, "platform": platform, "discipline": discipline, "n_results": n_results}, len(nodes), (time.monotonic() - t0) * 1000)
-    return [
+    result = [
         {
             "id":         n.id,
             "discipline": n.discipline,
@@ -210,6 +210,8 @@ def kms_query(
         }
         for n in nodes
     ]
+    _log("kms_query", {"text": text, "platform": platform, "discipline": discipline, "n_results": n_results}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    return result
 
 
 @mcp.tool()
