@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [10.12.0] — 2026-06-10
+
+### Changed
+- **KMS usage log format** — replaced `kms-usage.jsonl` with `kms-usage.log`, a human-readable plain-text format. Each entry shows timestamp, tool, latency, inputs, and a compact result summary (count + top IDs / content_chars) instead of the full payload. Removes 200KB+ per `kms_list` call from the log file.
+
+---
+
 ## [10.11.4] — 2026-06-10
 
 ### Added
