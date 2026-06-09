@@ -14,7 +14,7 @@ Decision tree — apply in order:
 
 **Strategist** — coordinates multiple workers across phases. Never writes files directly — all writes go through workers. Has `agents:` frontmatter field.
 
-**New Persona** — multiple related agents forming a coherent new workflow category not covered by existing personas (`developer`, `debugger`, `tracker`, `auditor`, `installer`). Requires: new subdirectory + `.pkg` file + at least one worker or strategist.
+**New Persona** — multiple related agents forming a coherent new workflow category not covered by existing personas (`developer`, `debugger`, `auditor`, `installer`). Requires: new subdirectory + `.pkg` file + at least one worker or strategist.
 
 ---
 

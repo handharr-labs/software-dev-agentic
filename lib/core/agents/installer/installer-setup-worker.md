@@ -55,8 +55,8 @@ What's installed:
   CLAUDE.md          — project instructions (fill in placeholders)
 
 Start working:
-  tracker-issue "feature name"  → create GH issue + branch
-  tracker-issue 42              → pick up existing issue
+  developer-issue "feature name"  → create GH issue + branch
+  developer-issue 42              → pick up existing issue
 
 Extend without modifying:
   .claude/agents.local/extensions/<agent-name>.md  → additive rules only

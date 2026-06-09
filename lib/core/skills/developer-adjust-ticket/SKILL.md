@@ -1,5 +1,5 @@
 ---
-name: tracker-adjust-ticket
+name: developer-adjust-ticket
 description: Adjust a locally fetched Jira ticket (.md file) based on session discussion. Updates only the Session Adjustment section — never touches any other content.
 user-invocable: true
 allowed-tools: Read, Edit, AskUserQuestion
@@ -30,6 +30,7 @@ Verify the file exists before continuing. If it does not exist, report the path 
    - "Any open questions or blockers remaining?"
    - "What is the current development status? (e.g. In Progress, Ready for Review, Blocked)"
    - "Which work items were completed this session? List them so I can mark the checklist."
+   - "Any bugs found during this session? (optional)"
 
 4. Compose the adjustment section using the answers. Use today's date (ISO 8601) as the last-updated date.
 
@@ -37,6 +38,7 @@ Verify the file exists before continuing. If it does not exist, report the path 
    - Populate `## Work Items` with a checklist of granular tasks worked on this session. Mark each item done (`- [x]`) if the user confirmed it completed; leave the rest `- [ ]`.
    - Write `## Decisions` as prose bullets — one bullet per decision, including the rationale.
    - Write `## Open Questions` as a checklist — one `- [ ]` item per unresolved question or blocker. Omit the section if empty.
+   - Write `## Bugs` as a checklist — one `- [ ]` item per bug found during this session. Omit the section if none were found.
 
    Do NOT edit, reorder, or remove any other existing content in the file.
 
@@ -70,6 +72,10 @@ Verify the file exists before continuing. If it does not exist, report the path 
 
    <checklist of unresolved questions or blockers — omit section if none>
 
+   ## Bugs
+
+   <checklist of bugs found during this session — omit section if none>
+
    ## Status
 
    <current development status>
@@ -83,6 +89,6 @@ Verify the file exists before continuing. If it does not exist, report the path 
 - Always duplicate the Acceptance Criteria from the ticket body into the Session Adjustment section. When criteria change, update only the copy inside Session Adjustment — never the original.
 - Always include a `## Work Items` checklist to track progress. Mark items `- [x]` as confirmed done, `- [ ]` otherwise.
 - `## Decisions` and `## Open Questions` are always separate sections — never combined.
-- Omit `## Decisions` if no decisions were made; omit `## Open Questions` if none remain.
+- Omit `## Decisions` if no decisions were made; omit `## Open Questions` if none remain; omit `## Bugs` if none were found.
 - There is always exactly one `# Session Adjustment` section — update it in place, never append a second one.
 - Use `Edit` to replace the existing section, or to append if none exists yet.

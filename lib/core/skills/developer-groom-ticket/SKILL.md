@@ -1,6 +1,6 @@
 ---
 name: developer-groom-ticket
-description: Groom a locally fetched Jira ticket against the codebase — maps acceptance criteria to Clean Architecture layers, identifies work items and open questions, then updates the ticket via tracker-adjust-ticket. Run before /developer-plan-feature.
+description: Groom a locally fetched Jira ticket against the codebase — maps acceptance criteria to Clean Architecture layers, identifies work items and open questions, then updates the ticket via developer-adjust-ticket. Run before /developer-plan-feature.
 user-invocable: true
 allowed-tools: Agent, AskUserQuestion, Read
 ---
@@ -90,4 +90,4 @@ Spawn `developer-groom-strategist` with mode `synthesize`:
 
 The strategist produces the grooming summary and returns it.
 
-Once the strategist completes, invoke `tracker-adjust-ticket` directly with the ticket path — pass the grooming summary as session context so the skill can write the Session Adjustment section without asking the user again.
+Once the strategist completes, invoke `developer-adjust-ticket` directly with the ticket path — pass the grooming summary as session context so the skill can write the Session Adjustment section without asking the user again.

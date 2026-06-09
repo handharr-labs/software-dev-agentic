@@ -1,6 +1,6 @@
 ---
-name: tracker-jira-ticket-worker
-description: Creates Jira tickets under an epic from a platform breakdown list — parses platform/scope/duration, fetches PRD and optional Figma design context, generates requirement-focused descriptions, and creates tickets via Atlassian MCP. Invoked only by /tracker-jira-ticket.
+name: developer-jira-ticket-worker
+description: Creates Jira tickets under an epic from a platform breakdown list — parses platform/scope/duration, fetches PRD and optional Figma design context, generates requirement-focused descriptions, and creates tickets via Atlassian MCP. Invoked only by /developer-jira-ticket.
 model: sonnet
 tools: Read, mcp__atlassian__getConfluencePage, mcp__atlassian__createJiraIssue, mcp__claude_ai_Figma__get_design_context
 ---
@@ -216,7 +216,7 @@ To fix:
 1. Install the Atlassian MCP: https://developer.atlassian.com/cloud/mcp
 2. Authenticate with your Atlassian account
 3. Ensure cloud_id "<cloud_id>" is correct
-4. Re-run /tracker-jira-ticket once connected
+4. Re-run /developer-jira-ticket once connected
 ```
 
 For field validation errors on individual tickets, report the error and continue with remaining tickets.
@@ -242,4 +242,4 @@ Run /developer-groom-ticket on each ticket to map implementation to the codebase
 
 ## Extension Point
 
-After completing, check for `.claude/agents.local/extensions/tracker-jira-ticket-worker.md` — if it exists, read and follow its additional instructions.
+After completing, check for `.claude/agents.local/extensions/developer-jira-ticket-worker.md` — if it exists, read and follow its additional instructions.

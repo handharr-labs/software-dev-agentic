@@ -1,6 +1,6 @@
 ---
-name: tracker-issue-worker
-description: Create or pick up a GitHub Issue — opens the issue, creates a git branch, and updates the local backlog. Designed to be invoked only by the `/tracker-issue` skill — not directly.
+name: developer-issue-worker
+description: Create or pick up a GitHub Issue — opens the issue, creates a git branch, and updates the local backlog. Designed to be invoked only by the `/developer-issue` skill — not directly.
 model: sonnet
 tools: Bash, Read, Edit, Write
 ---
@@ -111,4 +111,4 @@ Add a row to `issues/000-backlog.md`. If there is a phase table that fits, add t
 
 ## Extension Point
 
-After completing, check for `.claude/agents.local/extensions/tracker-issue-worker.md` — if it exists, read and follow its additional instructions.
+After completing, check for `.claude/agents.local/extensions/developer-issue-worker.md` — if it exists, read and follow its additional instructions.

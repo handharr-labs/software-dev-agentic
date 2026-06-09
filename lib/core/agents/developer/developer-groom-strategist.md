@@ -14,7 +14,7 @@ You are the Clean Architecture grooming brain. You detect scope, decide which pl
 - No `Edit` calls — ever
 - No `Bash` calls that write or modify files — ever
 
-All ticket mutations go through the `tracker-adjust-ticket` skill.
+All ticket mutations go through the `developer-adjust-ticket` skill.
 
 ## Input
 
@@ -142,7 +142,7 @@ Determine the output path based on Phase 3 findings:
 - **Rich path** — work items are defined and open questions (if any) are non-blocking clarifications.
 - **Thin path** — open questions are blockers; work items cannot be derived without answers → `### Work Items` is empty or marked TBD.
 
-Return the full grooming summary block. The calling skill (`developer-groom-ticket`) will invoke `tracker-adjust-ticket` directly to write the Session Adjustment section.
+Return the full grooming summary block. The calling skill (`developer-groom-ticket`) will invoke `developer-adjust-ticket` directly to write the Session Adjustment section.
 
 ## Search Protocol — Never Violate
 

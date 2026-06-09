@@ -1,5 +1,5 @@
 ---
-name: tracker-jira-ticket
+name: developer-jira-ticket
 description: Create Jira tickets under an epic from a platform breakdown list — fetches PRD and optional Figma context, generates requirement-focused descriptions, and creates tickets via Atlassian MCP.
 user-invocable: true
 allowed-tools: Agent
@@ -11,6 +11,6 @@ allowed-tools: Agent
 
 ## Steps
 
-Spawn `tracker-jira-ticket-worker` with:
+Spawn `developer-jira-ticket-worker` with:
 
 > <$ARGUMENTS>
