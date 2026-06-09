@@ -1,7 +1,7 @@
 {
   "name": "sda-kms",
   "description": "software-dev-agentic KMS — knowledge MCP server for Clean Architecture projects",
-  "version": "10.11.0",
+  "version": "10.11.1",
   "author": {
     "name": "Jurnal Engineering"
   }
