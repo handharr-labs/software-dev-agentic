@@ -1,0 +1,34 @@
+{
+  "platforms": [
+    {
+      "id": "flutter",
+      "kms_id": "flutter",
+      "label": "Flutter / Dart / BLoC",
+      "detection_markers": ["pubspec.yaml"]
+    },
+    {
+      "id": "ios-swift",
+      "kms_id": "ios",
+      "label": "iOS / Swift / UIKit",
+      "detection_markers": ["*.xcodeproj", "*.xcworkspace"]
+    },
+    {
+      "id": "android-kotlin",
+      "kms_id": "android",
+      "label": "Android / Kotlin",
+      "detection_markers": ["build.gradle", "build.gradle.kts"]
+    },
+    {
+      "id": "web-nextjs",
+      "kms_id": "web",
+      "label": "Web / Next.js",
+      "detection_markers": ["next.config.js", "next.config.ts", "next.config.mjs"]
+    }
+  ],
+  "projects": [
+    { "id": "talenta",     "label": "Talenta" },
+    { "id": "jurnal",      "label": "Jurnal" },
+    { "id": "qontak-crm",  "label": "Qontak CRM" },
+    { "id": "qontak-chat", "label": "Qontak Chat" }
+  ]
+}

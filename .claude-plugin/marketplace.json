@@ -7,37 +7,16 @@
   },
   "plugins": [
     {
-      "name": "sda-android-kotlin",
-      "source": "./dist/plugins/android-kotlin",
-      "description": "Builder, detective, tracker, auditor personas for android-kotlin",
-      "category": "development-workflows",
-      "version": "10.12.0"
-    },
-    {
-      "name": "sda-flutter",
-      "source": "./dist/plugins/flutter",
-      "description": "Builder, detective, tracker, auditor personas for flutter",
-      "category": "development-workflows",
-      "version": "10.12.0"
-    },
-    {
-      "name": "sda-ios-swift",
-      "source": "./dist/plugins/ios-swift",
-      "description": "Builder, detective, tracker, auditor personas for ios-swift",
-      "category": "development-workflows",
-      "version": "10.12.0"
-    },
-    {
-      "name": "sda-web-nextjs",
-      "source": "./dist/plugins/web-nextjs",
-      "description": "Builder, detective, tracker, auditor personas for web-nextjs",
-      "category": "development-workflows",
-      "version": "10.12.0"
-    },
-    {
       "name": "sda-kms",
-      "source": "./dist/plugins/kms",
+      "source": "./dist/plugins/sda-kms",
       "description": "KMS knowledge MCP server for Clean Architecture projects",
+      "category": "development-workflows",
+      "version": "10.12.0"
+    },
+    {
+      "name": "sda-core",
+      "source": "./dist/plugins/sda-core",
+      "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
       "category": "development-workflows",
       "version": "10.12.0"
     }
