@@ -135,7 +135,7 @@ Extension files contain only the delta — not a full copy. Updates to the submo
 
 ## Convention Compliance System
 
-software-dev-agentic enforces its own conventions through an automated internal review system. This is separate from the downstream code reviewer (`lib/core/agents/auditor/arch-review-worker.md`) — the internal system reviews *agent and skill files in this repo*, not *application code in downstream projects*.
+CipherPol enforces its own conventions through an automated internal review system. This is separate from the downstream code reviewer (`lib/core/agents/auditor/arch-review-worker.md`) — the internal system reviews *agent and skill files in this repo*, not *application code in downstream projects*.
 
 **Two Distinct Reviewers**
 
@@ -248,7 +248,7 @@ software-dev-agentic/scripts/sync.sh --platform=<platform>
 **Post-setup checklist:**
 1. Edit `CLAUDE.md` — fill in `[AppName]` and stack placeholders
 2. Edit `.claude/settings.local.json` — replace `PROJECT_ROOT` with your project's `.claude/` absolute path
-3. `git add .claude/ && git commit -m "chore: wire software-dev-agentic (<version>)"`
+3. `git add .claude/ && git commit -m "chore: wire cipherpol (<version>)"`
 
 ---
 
@@ -291,7 +291,7 @@ software-dev-agentic/scripts/sync.sh --platform=<platform>
 ## Related Links
 
 - [Agentic Coding Assistant — Core Design Principles](https://jurnal.atlassian.net/wiki/spaces/~611df3da650a26006e44928d/pages/51126370416)
-- software-dev-agentic repository
+- CipherPol repository
 
 ---
 

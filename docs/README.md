@@ -1,6 +1,6 @@
 # docs/
 
-Internal design docs for the software-dev-agentic repo. Not shipped to downstream projects.
+Internal design docs for the CipherPol repo. Not shipped to downstream projects.
 
 | File | Description | Confluence |
 |---|---|---|

@@ -1,5 +1,5 @@
 {
-  "name": "sda-core",
+  "name": "cipherpol-aegis",
   "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
   "include": {
     "agents": ["lib/core/agents"],

@@ -4,11 +4,11 @@
 #
 # Usage:
 #   scripts/build-plugin.sh                  # build all plugins
-#   scripts/build-plugin.sh --target=sda-core
-#   scripts/build-plugin.sh --target=sda-kms
+#   scripts/build-plugin.sh --target=cipherpol-aegis
+#   scripts/build-plugin.sh --target=cipherpol-8
 #
 # Output: dist/plugins/<plugin-name>/
-# Test:   claude --plugin-dir dist/plugins/sda-core
+# Test:   claude --plugin-dir dist/plugins/cipherpol-aegis
 
 set -euo pipefail
 
@@ -56,5 +56,5 @@ echo ""
 echo "Done. Version: $VERSION"
 echo ""
 echo "Next steps:"
-echo "  Test locally:  claude --plugin-dir dist/plugins/sda-core"
+echo "  Test locally:  claude --plugin-dir dist/plugins/cipherpol-aegis"
 echo "  Distribute:    git add dist/plugins/ .claude-plugin/marketplace.json && git commit -m 'chore(plugin): build $VERSION'"

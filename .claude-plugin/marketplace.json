@@ -1,5 +1,5 @@
 {
-  "name": "sda",
+  "name": "cipherpol",
   "description": "software-dev-agentic \u2014 multi-platform agentic toolkit for Clean Architecture projects",
   "owner": {
     "name": "Jurnal Engineering",
@@ -7,15 +7,15 @@
   },
   "plugins": [
     {
-      "name": "sda-kms",
-      "source": "./dist/plugins/sda-kms",
+      "name": "cipherpol-8",
+      "source": "./dist/plugins/cipherpol-8",
       "description": "KMS knowledge MCP server for Clean Architecture projects",
       "category": "development-workflows",
       "version": "11.0.2"
     },
     {
-      "name": "sda-core",
-      "source": "./dist/plugins/sda-core",
+      "name": "cipherpol-aegis",
+      "source": "./dist/plugins/cipherpol-aegis",
       "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
       "category": "development-workflows",
       "version": "11.0.2"

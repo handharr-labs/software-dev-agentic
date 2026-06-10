@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# install-plugin.sh — Add the sda marketplace and install sda-core + sda-kms.
+# install-plugin.sh — Add the cipherpol marketplace and install cipherpol-aegis + cipherpol-8.
 #
 # Usage:
 #   scripts/install-plugin.sh --platform=<id> [--project=<id>]
 #
-# Available platforms and projects: see sda.json in the repo root
+# Available platforms and projects: see cipherpol.json in the repo root
 # --project defaults to the current directory name if not specified
 
 set -euo pipefail
@@ -12,8 +12,8 @@ set -euo pipefail
 SCRIPTS="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPTS/.." && pwd)"
 REPO="hndhr/software-dev-agentic"
-MARKETPLACE="sda"
-PLATFORMS_FILE="$REPO_ROOT/sda.json"
+MARKETPLACE="cipherpol"
+PLATFORMS_FILE="$REPO_ROOT/cipherpol.json"
 PROJECT_ROOT="$PWD"
 
 # ── Args ──────────────────────────────────────────────────────────────────────
@@ -79,9 +79,9 @@ data = json.load(open('$PLATFORMS_FILE'))
 match = next((p for p in data['projects'] if p['id'] == '$PROJECT_ID'), None)
 if not match:
     known = [(p['id'], p.get('kms_id', p['id']), p['label']) for p in data['projects']]
-    print(f'Note: \"$PROJECT_ID\" is not in the known projects list in sda.json.', file=sys.stderr)
+    print(f'Note: \"$PROJECT_ID\" is not in the known projects list in cipherpol.json.', file=sys.stderr)
     print(f'      Known: {[p[0] for p in known]}', file=sys.stderr)
-    print(f'      Add it to sda.json if this is a permanent project.', file=sys.stderr)
+    print(f'      Add it to cipherpol.json if this is a permanent project.', file=sys.stderr)
     print('$PROJECT_ID')
 else:
     print(match.get('kms_id', match['id']))
@@ -98,14 +98,14 @@ echo "Adding marketplace: $MARKETPLACE → $REPO"
 claude plugin marketplace add "$REPO"
 
 echo ""
-echo "Installing sda-core (scope: project)"
-claude plugin install "sda-core@${MARKETPLACE}" --scope project
+echo "Installing cipherpol-aegis (scope: project)"
+claude plugin install "cipherpol-aegis@${MARKETPLACE}" --scope project
 
 echo ""
-echo "Installing sda-kms (scope: project)"
-claude plugin install "sda-kms@${MARKETPLACE}" --scope project
+echo "Installing cipherpol-8 (scope: project)"
+claude plugin install "cipherpol-8@${MARKETPLACE}" --scope project
 
-# ── settings.local.json — SDA_PLATFORM + skillListingBudgetFraction ──────────
+# ── settings.local.json — CIPHERPOL_PLATFORM + skillListingBudgetFraction ──────────
 
 echo ""
 SETTINGS_LOCAL="$PROJECT_ROOT/.claude/settings.local.json"
@@ -118,13 +118,13 @@ data = {}
 if os.path.exists(path):
     with open(path) as f:
         data = json.load(f)
-data.setdefault("env", {})["SDA_PLATFORM"] = kms_id
-data["env"]["SDA_PROJECT"] = project_kms_id
+data.setdefault("env", {})["CIPHERPOL_PLATFORM"] = kms_id
+data["env"]["CIPHERPOL_PROJECT"] = project_kms_id
 data["skillListingBudgetFraction"] = 0.03
 with open(path, "w") as f:
     json.dump(data, f, indent=2)
     f.write("\n")
-print(f"patch .claude/settings.local.json (SDA_PLATFORM={kms_id}, SDA_PROJECT={project_kms_id})")
+print(f"patch .claude/settings.local.json (CIPHERPOL_PLATFORM={kms_id}, CIPHERPOL_PROJECT={project_kms_id})")
 PYEOF
 
 # ── CLAUDE.md — managed section ───────────────────────────────────────────────
@@ -171,7 +171,7 @@ fi
 # ── .mcp.json — KMS MCP server ────────────────────────────────────────────────
 
 echo ""
-PLUGIN_CACHE="$HOME/.claude/plugins/cache/$MARKETPLACE/sda-kms"
+PLUGIN_CACHE="$HOME/.claude/plugins/cache/$MARKETPLACE/cipherpol-8"
 LATEST_VERSION="$(ls "$PLUGIN_CACHE" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)"
 
 if [ -n "$LATEST_VERSION" ] && [ -f "$PLUGIN_CACHE/$LATEST_VERSION/kms/server.sh" ]; then
@@ -194,7 +194,7 @@ with open(mcp_path, "w") as f:
 print("patch .mcp.json (kms → version-agnostic launcher)")
 PYEOF
 else
-  echo "skip  .mcp.json (sda-kms not found in plugin cache — re-run after install completes)"
+  echo "skip  .mcp.json (cipherpol-8 not found in plugin cache — re-run after install completes)"
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────

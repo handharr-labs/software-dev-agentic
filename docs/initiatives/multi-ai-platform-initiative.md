@@ -1,7 +1,7 @@
 # Multi-AI Platform Initiative
 
 **Status:** In Progress
-**Scope:** Extend software-dev-agentic to support GitHub Copilot and Gemini CLI alongside Claude Code.
+**Scope:** Extend CipherPol to support GitHub Copilot and Gemini CLI alongside Claude Code.
 
 ---
 
@@ -174,7 +174,7 @@ Templates are lean — they reference paths, never embed content. Gemini uses `@
 **Scripts:**
 - `scripts/setup-ai.sh --ai=copilot|gemini --platform=<platform>` — generates the config file
 - `scripts/clean-ai.sh --ai=copilot|gemini` — removes the config file
-- Both wired into `sda.sh` as `Add AI` and `Remove AI` menu options
+- Both wired into `install-plugin.sh` as `Add AI` and `Remove AI` menu options
 
 ---
 
@@ -229,7 +229,7 @@ Copilot hooks (preview) support the same lifecycle events as Claude Code hooks. 
 
 | Phase | Status | Notes |
 |---|---|---|
-| Phase 1 — Project Conventions | ✅ Done | Templates, scripts, and `sda.sh` integration shipped |
+| Phase 1 — Project Conventions | ✅ Done | Templates, scripts, and `install-plugin.sh` integration shipped |
 | Phase 2 — Skills (Gemini CLI) | ✅ Done | `setup-ai.sh` symlinks Type A contract skills → `.agents/skills/`; generates TOML for Type T/U → `.gemini/commands/` |
 | Phase 2 — Skills (Copilot) | ✅ Done | `setup-ai.sh` generates `.agent.md` for Type T/U → `.github/agents/`; `.instructions.md` for Type A → `.github/instructions/` with derived `applyTo:` glob |
 | Phase 3 — Hooks (Copilot) | ⏸ Blocked | Waiting on Copilot hooks API moving out of preview |

@@ -11,19 +11,19 @@ Detect the current project's platform and project id. Stop at the first resolved
 
 **1. Env var**
 ```bash
-echo "$SDA_PLATFORM"
+echo "$CIPHERPOL_PLATFORM"
 ```
-If non-empty → `PLATFORM=$SDA_PLATFORM`. Done.
+If non-empty → `PLATFORM=$CIPHERPOL_PLATFORM`. Done.
 
 **2. CLAUDE.md managed section**
 ```bash
 grep -i "^\*\*Platform:\*\*" CLAUDE.md 2>/dev/null
 ```
-Extract value after `**Platform:**`. Map to kms_id via `sda.json`. If found → `PLATFORM=<kms_id>`. Done.
+Extract value after `**Platform:**`. Map to kms_id via `cipherpol.json`. If found → `PLATFORM=<kms_id>`. Done.
 
 **3. Codebase markers**
 
-Glob for each marker defined in `sda.json`:
+Glob for each marker defined in `cipherpol.json`:
 - `pubspec.yaml` → `PLATFORM=flutter`
 - `*.xcodeproj` or `*.xcworkspace` → `PLATFORM=ios`
 - `build.gradle` or `build.gradle.kts` → `PLATFORM=android`
@@ -36,9 +36,9 @@ Return: `MISSING INPUT: platform — run install-plugin.sh --platform=<id>`
 
 **1. Env var**
 ```bash
-echo "$SDA_PROJECT"
+echo "$CIPHERPOL_PROJECT"
 ```
-If non-empty → `PROJECT=$SDA_PROJECT`. Done.
+If non-empty → `PROJECT=$CIPHERPOL_PROJECT`. Done.
 
 **2. CLAUDE.md managed section**
 ```bash
@@ -57,8 +57,8 @@ Use as `PROJECT`. Note: may not match a KMS project node — agents should still
 If env var and CLAUDE.md both resolved but disagree for either field — warn:
 
 ```
-WARNING: SDA_PLATFORM (flutter) conflicts with CLAUDE.md **Platform:** (ios).
-Using SDA_PLATFORM. Re-run install-plugin.sh --platform=<id> to realign.
+WARNING: CIPHERPOL_PLATFORM (flutter) conflicts with CLAUDE.md **Platform:** (ios).
+Using CIPHERPOL_PLATFORM. Re-run install-plugin.sh --platform=<id> to realign.
 ```
 
 ## Output

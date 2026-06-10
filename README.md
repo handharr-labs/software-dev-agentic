@@ -1,4 +1,4 @@
-# software-dev-agentic
+# CipherPol
 
 > Claude Code toolkit for Clean Architecture projects
 
@@ -10,11 +10,11 @@ A multi-platform agentic toolkit — agents, skills, and architecture knowledge 
 
 ## How it works
 
-Agents are organized into **personas** — coherent workflow groups (developer, debugger, tracker, auditor, qa). All personas ship in a single `sda-core` plugin.
+Agents are organized into **personas** — coherent workflow groups (developer, debugger, tracker, auditor, qa). All personas ship in a single `cipherpol-aegis` plugin.
 
-Platform-specific knowledge lives in the **KMS** (ChromaDB-backed MCP server, `sda-kms`). Agents query `kms_list` → `kms_query` at runtime, scoped to the project's platform. Project-specific context (feature inventory, deviations, API endpoints) is seeded per project via `/kms-seed`.
+Platform-specific knowledge lives in the **KMS** (ChromaDB-backed MCP server, `cipherpol-8`). Agents query `kms_list` → `kms_query` at runtime, scoped to the project's platform. Project-specific context (feature inventory, deviations, API endpoints) is seeded per project via `/kms-seed`.
 
-Platform is declared once in `settings.local.json` (`SDA_PLATFORM`) and cross-checked against `CLAUDE.md`. Agents resolve it automatically — no per-platform plugin needed.
+Platform is declared once in `settings.local.json` (`CIPHERPOL_PLATFORM`) and cross-checked against `CLAUDE.md`. Agents resolve it automatically — no per-platform plugin needed.
 
 ---
 
@@ -38,8 +38,8 @@ Available platforms:
 | `web-nextjs` | `web` | Web / Next.js |
 
 The installer:
-- Adds the `sda` marketplace and installs `sda-core` + `sda-kms` at project scope
-- Writes `SDA_PLATFORM=<kms_id>` to `.claude/settings.local.json` (gitignored)
+- Adds the `cipherpol` marketplace and installs `cipherpol-aegis` + `cipherpol-8` at project scope
+- Writes `CIPHERPOL_PLATFORM=<kms_id>` to `.claude/settings.local.json` (gitignored)
 - Writes `**Platform:** <id>` to the managed section of `CLAUDE.md`
 - Patches `.mcp.json` with the KMS server entry
 - Adds `.claude/agentic-state/` to `.gitignore`
@@ -51,7 +51,7 @@ In `~/.claude/settings.json`:
 ```json
 {
   "extraKnownMarketplaces": {
-    "sda": {
+    "cipherpol": {
       "source": { "source": "github", "repo": "hndhr/software-dev-agentic" }
     }
   }
@@ -65,8 +65,8 @@ Written by the installer. Edit manually to override any value.
 ```json
 {
   "env": {
-    "SDA_PLATFORM": "flutter",
-    "SDA_PROJECT": "talenta"
+    "CIPHERPOL_PLATFORM": "flutter",
+    "CIPHERPOL_PROJECT": "talenta"
   },
   "skillListingBudgetFraction": 0.03
 }
@@ -74,15 +74,15 @@ Written by the installer. Edit manually to override any value.
 
 | Key | Values | Purpose |
 |---|---|---|
-| `SDA_PLATFORM` | `flutter` · `ios` · `android` · `web` | KMS scope for platform knowledge queries |
-| `SDA_PROJECT` | `talenta` · `jurnal` · `qontak-crm` · `qontak-chat` · any string | KMS scope for project-specific knowledge |
+| `CIPHERPOL_PLATFORM` | `flutter` · `ios` · `android` · `web` | KMS scope for platform knowledge queries |
+| `CIPHERPOL_PROJECT` | `talenta` · `jurnal` · `qontak-crm` · `qontak-chat` · any string | KMS scope for project-specific knowledge |
 | `skillListingBudgetFraction` | `0.03` (recommended) | Fraction of context budget reserved for skill listing |
 
-`SDA_PLATFORM` and `SDA_PROJECT` are read by every agent via `detect-platform` before making KMS calls. If both `env` and `CLAUDE.md` are set and disagree, the env var takes precedence and `/sda-status` will flag the conflict.
+`CIPHERPOL_PLATFORM` and `CIPHERPOL_PROJECT` are read by every agent via `detect-platform` before making KMS calls. If both `env` and `CLAUDE.md` are set and disagree, the env var takes precedence and `/cipherpol-status` will flag the conflict.
 
 ### 4. Activate
 
-Run `/reload-plugins` in Claude Code, then verify with `/sda-status`.
+Run `/reload-plugins` in Claude Code, then verify with `/cipherpol-status`.
 
 ### 5. Seed project knowledge
 
@@ -101,7 +101,7 @@ Or extract directly from the codebase:
 ### Updates
 
 ```
-/plugin marketplace update sda
+/plugin marketplace update cipherpol
 ```
 
 ---
@@ -203,7 +203,7 @@ Or extract directly from the codebase:
 | Skill | Purpose |
 |---|---|
 | `/installer-doctor` | Audit the plugin setup — plugin, KMS, CLAUDE.md, settings, gh auth |
-| `/sda-status` | Full SDA health check — platform, project, plugin versions, KMS connectivity, knowledge coverage |
+| `/cipherpol-status` | Full SDA health check — platform, project, plugin versions, KMS connectivity, knowledge coverage |
 | `/kms-seed` | Seed ChromaDB from registered knowledge sources |
 | `/kms-extract-codebase` | Scan a local project repo and extract project-reality docs into KMS |
 | `/agentic-perf-review` | Score a Claude session on D1–D7 dimensions, write a report |
@@ -297,7 +297,7 @@ Presentation  →  Domain  ←  Data
 | Android | Kotlin | Presenter |
 | Web | TypeScript | Custom hooks |
 
-Platform pattern knowledge lives in ChromaDB (primary via KMS MCP). Agents always query with `platform=$SDA_PLATFORM`.
+Platform pattern knowledge lives in ChromaDB (primary via KMS MCP). Agents always query with `platform=$CIPHERPOL_PLATFORM`.
 
 ---
 
@@ -309,14 +309,14 @@ lib/
     agents/       ← all persona agents (flat in plugin)
     skills/       ← all skills (flat in plugin)
   plugins/
-    sda-core/     ← build.config.json + build.sh
-    sda-kms/      ← build.config.json + build.sh
+    cipherpol-aegis/     ← build.config.json + build.sh
+    cipherpol-8/      ← build.config.json + build.sh
 kms/              ← ChromaDB MCP server source
 scripts/
   build-plugin.sh      ← discovers lib/plugins/*/build.sh and runs them
   install-plugin.sh    ← downstream project setup
   plugin-lib.sh        ← shared build helpers
-sda.json         ← canonical platform registry (id → kms_id + detection markers)
+cipherpol.json   ← canonical platform registry (id → kms_id + detection markers)
 ```
 
 ---

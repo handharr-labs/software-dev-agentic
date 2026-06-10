@@ -1,6 +1,6 @@
 # We Gave Our Engineers an AI Team
 
-> software-dev-agentic — Engineering Stakeholder Brief
+> CipherPol — Engineering Stakeholder Brief
 > April 2026
 
 ---
@@ -19,7 +19,7 @@ This is not a people problem. It is a **system problem**.
 
 ## What We Built
 
-We built a shared AI engineering toolkit — **software-dev-agentic** — that gives every engineer on every platform access to the same specialized AI team, following the same standards, every time.
+We built a shared AI engineering toolkit — **CipherPol** — that gives every engineer on every platform access to the same specialized AI team, following the same standards, every time.
 
 It is not a chatbot. It is not autocomplete.
 

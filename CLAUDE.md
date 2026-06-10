@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-**software-dev-agentic** — Multi-platform Claude Code toolkit for Clean Architecture projects.
+**CipherPol** — Multi-platform Claude Code toolkit for Clean Architecture projects.
 Consumed as a git submodule at `software-dev-agentic/` (project root) in downstream projects. No app to run — this repo is agents, skills, hooks, and architecture reference docs.
 
 Platforms: **web** (Next.js 15) · **ios** (Swift/UIKit) · **flutter** (Dart/BLoC)

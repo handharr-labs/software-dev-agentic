@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# lib/plugins/sda-kms/build.sh
-# Builds sda-kms — ChromaDB MCP server for KMS knowledge retrieval.
+# lib/plugins/cipherpol-8/build.sh
+# Builds cipherpol-8 — ChromaDB MCP server for KMS knowledge retrieval.
 # Called by scripts/build-plugin.sh. Expects $SUBMODULE and $VERSION to be set.
 
 set -euo pipefail
@@ -64,7 +64,7 @@ cat > "$out/kms/project-mcp-template.json" <<'MCP_TEMPLATE'
       "command": "bash",
       "args": [
         "-c",
-        "latest=$(ls \"$HOME/.claude/plugins/cache/sda/sda-kms\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/sda/sda-kms/$latest/kms/server.sh\""
+        "latest=$(ls \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8/$latest/kms/server.sh\""
       ],
       "env": {
         "KMS_ENABLE_LOGGING": "false",
