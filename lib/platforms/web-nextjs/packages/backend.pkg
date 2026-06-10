@@ -1,4 +1,0 @@
-name=backend
-description=DB-backed backend scaffolding — domain, DB data source, repository, and server actions
-agents=developer-backend-worker developer-test-worker
-skills=domain-create-entity domain-create-usecase domain-create-repository domain-create-service data-create-mapper data-create-db-datasource data-create-db-repository data-create-datasource data-create-repository-impl pres-create-server-action pres-wire-di test-create-mock test-create-domain test-create-data

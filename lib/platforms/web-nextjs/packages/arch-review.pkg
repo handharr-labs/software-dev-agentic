@@ -1,4 +1,0 @@
-name=arch-review
-description=Architecture review worker — audits Clean Architecture layer violations and DI wiring
-agents=auditor-arch-review-worker
-skills=
