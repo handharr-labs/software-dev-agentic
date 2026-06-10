@@ -67,8 +67,9 @@ Report node counts and topic lists for each call.
 
 ## Step 5 — Project knowledge snapshot
 
-Take the first two topics from the project-scoped engineering probe (Step 4).
-For each: call `kms_fetch(platform, project, discipline="engineering", topic)` and extract a 2–3 line excerpt.
+Take the first two topics from the project-scoped engineering probe (Step 4) that have meaningful content.
+Skip any topic whose fetched body is under 100 characters — those are file-header stub nodes produced by the `##`-chunking strategy (the actual content lives in child nodes like `account`, `auth`, `attendance`, etc.).
+For each qualifying topic: call `kms_fetch(platform, project, discipline="engineering", topic)` and extract a 2–3 line excerpt.
 
 ## Report
 
@@ -118,7 +119,7 @@ Project snapshot — {PROJECT}
 - `⚠ not installed` — plugin missing; run `install-plugin.sh`
 - `⚠ stale session` — MCP server is running an older sda-kms version; restart Claude Code to pick up the latest
 - `⚠ 0 nodes` on project-scoped probe — run `/kms-seed`
-- `⚠ empty body` — node seeded but no content; rebuild plugin
+- `⚠ empty body` — node has content under 100 chars after skipping header stubs; may need `/kms-seed` to populate
 
 **KMS OFFLINE block:**
 ```
