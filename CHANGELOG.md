@@ -7,6 +7,32 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [11.0.0] — 2026-06-10
+
+### Added
+- `sda.json` — canonical platform registry mapping platform ids to KMS ids, labels, and codebase detection markers
+- `lib/plugins/sda-core/` and `lib/plugins/sda-kms/` — per-plugin `build.config.json` + `build.sh` sourcing shared `plugin-lib.sh`
+- `scripts/plugin-lib.sh` — shared build helpers (`copy_agents`, `copy_skills`, `write_manifest`, `update_marketplace`)
+- `lib/core/skills/detect-platform/` — 4-tier platform/project detection (env var → CLAUDE.md → codebase markers → fail)
+- `lib/core/skills/sda-status/` — full SDA health check: platform, project, plugin versions, KMS connectivity, knowledge coverage
+- `scripts/install-plugin.sh` — new installer: validates `--platform` against `sda.json`, writes `SDA_PLATFORM`/`SDA_PROJECT` to `settings.local.json`, patches CLAUDE.md, installs `sda-core` + `sda-kms`
+
+### Changed
+- `scripts/build-plugin.sh` — now a thin orchestrator that discovers and runs `lib/plugins/*/build.sh`; replaced `--platform` with `--target`
+- `lib/core/skills/installer-doctor/` — rewritten for plugin-only checks (no submodule assumptions)
+- `.claude-plugin/marketplace.json` — now contains only `sda-core` and `sda-kms`
+
+### Removed
+- Per-platform plugins (`flutter`, `ios-swift`, `android-kotlin`, `web-nextjs`) — replaced by single `sda-core` with runtime platform detection
+- Standalone `kms` plugin — replaced by `sda-kms`
+- Installer persona agent and submodule installer skills (`installer-setup`, `installer-sync`, `installer-update`, `installer-migrate-plugin`)
+- `kms-status` skill — replaced by `sda-status`
+- Submodule-era scripts (`setup-symlinks.sh`, `sync.sh`, `check-skill-contracts.sh`, `setup-ai.sh`, `clean-ai.sh`, `sda.sh`)
+- `lib/platforms/` directory (ios-swift, web-nextjs platform-specific files)
+- `docs/contract/installer-skill-contract.md`
+
+---
+
 ## [10.12.0] — 2026-06-10
 
 ### Changed
