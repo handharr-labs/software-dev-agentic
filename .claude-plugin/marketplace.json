@@ -11,14 +11,14 @@
       "source": "./dist/plugins/sda-kms",
       "description": "KMS knowledge MCP server for Clean Architecture projects",
       "category": "development-workflows",
-      "version": "11.0.1"
+      "version": "11.0.2"
     },
     {
       "name": "sda-core",
       "source": "./dist/plugins/sda-core",
       "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
       "category": "development-workflows",
-      "version": "11.0.1"
+      "version": "11.0.2"
     }
   ]
 }
