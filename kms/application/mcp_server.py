@@ -5,9 +5,9 @@ Run:
   KMS_DB_PATH=/path/to/chroma python -m kms.application.mcp_server
 
 Logging (opt-in):
-  KMS_ENABLE_LOGGING=true   enable usage log
+  CP8_ENABLE_LOGGING=true   enable usage log
   KMS_LOG_PATH=<path>       log file path (default: <db_parent>/logs/kms-usage.log)
-  KMS_LOG_MAX_MB=<n>        rotate when log exceeds this size in MB (default: 10)
+  CP8_LOG_MAX_MB=<n>        rotate when log exceeds this size in MB (default: 10)
 """
 from __future__ import annotations
 import os
@@ -33,8 +33,8 @@ _db_path_abs = os.path.abspath(_db_path)
 _repo = ChromaKnowledgeRepository(db_path=_db_path_abs)
 
 # --- Usage logger ---
-_enable_logging = os.environ.get("KMS_ENABLE_LOGGING", "false").lower() == "true"
-_log_max_bytes = float(os.environ.get("KMS_LOG_MAX_MB", "10")) * 1024 * 1024
+_enable_logging = os.environ.get("CP8_ENABLE_LOGGING", "false").lower() == "true"
+_log_max_bytes = float(os.environ.get("CP8_LOG_MAX_MB", "10")) * 1024 * 1024
 _log_path = os.path.abspath(
     os.environ.get(
         "KMS_LOG_PATH",

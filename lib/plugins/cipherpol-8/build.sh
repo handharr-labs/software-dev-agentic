@@ -30,8 +30,8 @@ cat > "$out/kms/server.sh" <<'LAUNCHER'
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 export KMS_DB_PATH="$PLUGIN_ROOT/chroma"
 export PYTHONPATH="$PLUGIN_ROOT"
-export KMS_ENABLE_LOGGING="${KMS_ENABLE_LOGGING:-false}"
-export KMS_LOG_MAX_MB="${KMS_LOG_MAX_MB:-10}"
+export CP8_ENABLE_LOGGING="${CP8_ENABLE_LOGGING:-false}"
+export CP8_LOG_MAX_MB="${CP8_LOG_MAX_MB:-10}"
 
 # Kill stale KMS server processes from older plugin versions.
 for _pid in $(pgrep -f "kms.application.mcp_server" 2>/dev/null); do
@@ -67,8 +67,8 @@ cat > "$out/kms/project-mcp-template.json" <<'MCP_TEMPLATE'
         "latest=$(ls \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8/$latest/kms/server.sh\""
       ],
       "env": {
-        "KMS_ENABLE_LOGGING": "false",
-        "KMS_LOG_MAX_MB": "10"
+        "CP8_ENABLE_LOGGING": "false",
+        "CP8_LOG_MAX_MB": "10"
       }
     }
   }

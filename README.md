@@ -203,7 +203,7 @@ Or extract directly from the codebase:
 | Skill | Purpose |
 |---|---|
 | `/installer-doctor` | Audit the plugin setup — plugin, KMS, CLAUDE.md, settings, gh auth |
-| `/cipherpol-status` | Full SDA health check — platform, project, plugin versions, KMS connectivity, knowledge coverage |
+| `/cipherpol-status` | Full CipherPol health check — platform, project, plugin versions, KMS connectivity, knowledge coverage |
 | `/kms-seed` | Seed ChromaDB from registered knowledge sources |
 | `/kms-extract-codebase` | Scan a local project repo and extract project-reality docs into KMS |
 | `/agentic-perf-review` | Score a Claude session on D1–D7 dimensions, write a report |

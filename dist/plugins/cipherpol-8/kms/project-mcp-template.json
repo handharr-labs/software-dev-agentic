@@ -7,8 +7,8 @@
         "latest=$(ls \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8/$latest/kms/server.sh\""
       ],
       "env": {
-        "KMS_ENABLE_LOGGING": "false",
-        "KMS_LOG_MAX_MB": "10"
+        "CP8_ENABLE_LOGGING": "false",
+        "CP8_LOG_MAX_MB": "10"
       }
     }
   }

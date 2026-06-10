@@ -2,8 +2,8 @@
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 export KMS_DB_PATH="$PLUGIN_ROOT/chroma"
 export PYTHONPATH="$PLUGIN_ROOT"
-export KMS_ENABLE_LOGGING="${KMS_ENABLE_LOGGING:-false}"
-export KMS_LOG_MAX_MB="${KMS_LOG_MAX_MB:-10}"
+export CP8_ENABLE_LOGGING="${CP8_ENABLE_LOGGING:-false}"
+export CP8_LOG_MAX_MB="${CP8_LOG_MAX_MB:-10}"
 
 # Kill stale KMS server processes from older plugin versions.
 for _pid in $(pgrep -f "kms.application.mcp_server" 2>/dev/null); do
