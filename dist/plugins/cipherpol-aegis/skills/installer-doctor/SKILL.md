@@ -1,6 +1,6 @@
 ---
 name: installer-doctor
-description: Audit the software-dev-agentic plugin setup in a downstream project — checks plugin installation, marketplace config, settings, CLAUDE.md markers, and GitHub CLI auth.
+description: Audit the CipherPol plugin setup in a downstream project — checks plugin installation, marketplace config, settings, CLAUDE.md markers, and GitHub CLI auth.
 user-invocable: true
 allowed-tools: Bash, Read, Glob
 ---
@@ -15,13 +15,13 @@ Audit the plugin setup. Collect all results, then print a single formatted repor
 cat .claude/settings.json 2>/dev/null
 ```
 
-Check both `sda-core` and `sda-kms` are in `enabledPlugins` and installed.
+Check both `cipherpol-aegis` and `cipherpol-8` are in `enabledPlugins` and installed.
 
 ```bash
-claude plugin list 2>/dev/null | grep sda || true
+claude plugin list 2>/dev/null | grep cipherpol || true
 ```
 
-- Pass: both `sda-core` and `sda-kms` present in `settings.json` and installed
+- Pass: both `cipherpol-aegis` and `cipherpol-8` present in `settings.json` and installed
 - Warn: present in `settings.json` but not yet installed — run the install command
 - Fail: either plugin missing from `settings.json`
 
@@ -79,9 +79,9 @@ gh auth status 2>&1
 ## Report format
 
 ```
-software-dev-agentic doctor
+CipherPol doctor
 ──────────────────────────────────────────
-✓  plugin        sda-core@10.12.0 + sda-kms@10.12.0 installed
+✓  plugin        cipherpol-aegis@10.12.0 + cipherpol-8@10.12.0 installed
 ✓  marketplace   hndhr/software-dev-agentic configured
 ✓  symlinks      none (clean)
 ⚠  budget        skillListingBudgetFraction missing — add 0.03 to .claude/settings.json

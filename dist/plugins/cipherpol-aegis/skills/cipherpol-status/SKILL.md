@@ -1,6 +1,6 @@
 ---
-name: sda-status
-description: Full SDA health check — shows platform, project, plugin versions, KMS connectivity, and knowledge coverage for the current project.
+name: cipherpol-status
+description: Full CipherPol health check — shows platform, project, plugin versions, KMS connectivity, and knowledge coverage for the current project.
 user-invocable: true
 ---
 
@@ -9,8 +9,8 @@ Run every step in order. Collect all results, then print a single combined repor
 ## Step 1 — Resolve context
 
 ```bash
-echo "$SDA_PLATFORM"
-echo "$SDA_PROJECT"
+echo "$CIPHERPOL_PLATFORM"
+echo "$CIPHERPOL_PROJECT"
 ```
 
 Also grep CLAUDE.md for the managed section:
@@ -20,27 +20,27 @@ grep -E "^\*\*(Platform|Project):\*\*" CLAUDE.md 2>/dev/null
 ```
 
 Determine:
-- `PLATFORM` — from `$SDA_PLATFORM`; fallback to CLAUDE.md `**Platform:**`
-- `PROJECT` — from `$SDA_PROJECT`; fallback to CLAUDE.md `**Project:**`; fallback to `basename $(pwd)`
+- `PLATFORM` — from `$CIPHERPOL_PLATFORM`; fallback to CLAUDE.md `**Platform:**`
+- `PROJECT` — from `$CIPHERPOL_PROJECT`; fallback to CLAUDE.md `**Project:**`; fallback to `basename $(pwd)`
 
-Cross-check: if `$SDA_PLATFORM` and CLAUDE.md `**Platform:**` both exist but disagree — flag `⚠ conflict`.
+Cross-check: if `$CIPHERPOL_PLATFORM` and CLAUDE.md `**Platform:**` both exist but disagree — flag `⚠ conflict`.
 Same for project.
 
 ## Step 2 — Plugin versions
 
 ```bash
-claude plugin list 2>/dev/null | grep sda || true
+claude plugin list 2>/dev/null | grep cipherpol || true
 ```
 
-Check for `sda-core` and `sda-kms` in the output. Note versions.
+Check for `cipherpol-aegis` and `cipherpol-8` in the output. Note versions.
 
 Also detect the active KMS server path and its version:
 
 ```bash
-# Resolve which sda-kms version the MCP server is actually running from
+# Resolve which cipherpol-8 version the MCP server is actually running from
 cat .mcp.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('mcpServers',{}).get('kms',{}).get('args',[''])[1])" 2>/dev/null || true
 # Find the latest cached version on disk
-ls ~/.claude/plugins/cache/sda/sda-kms/ 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1
+ls ~/.claude/plugins/cache/cipherpol/cipherpol-8/ 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1
 ```
 
 The MCP server may be running a different version than what `claude plugin list` reports if the session was not restarted after an update. Flag a mismatch.
@@ -76,20 +76,20 @@ For each qualifying topic: call `kms_fetch(platform, project, discipline="engine
 Print one combined report. Do not add text beyond the blocks below.
 
 ```
-SDA Status
+CipherPol Status
 ══════════════════════════════════════════════════════
 
 Context
 ───────────────────────────────────────────────────────
 Platform   {PLATFORM} (kms_id)   source: {env | CLAUDE.md | inferred}
 Project    {PROJECT}              source: {env | CLAUDE.md | dirname}
-⚠ conflict: SDA_PLATFORM=flutter but CLAUDE.md says ios  ← only if mismatch
+⚠ conflict: CIPHERPOL_PLATFORM=flutter but CLAUDE.md says ios  ← only if mismatch
 
 Plugins
 ───────────────────────────────────────────────────────
-sda-core   {version | ✗ not installed}
-sda-kms    {version | ✗ not installed}
-  MCP server  running from: ~/.claude/plugins/cache/sda/sda-kms/{active-version}/
+cipherpol-aegis   {version | ✗ not installed}
+cipherpol-8    {version | ✗ not installed}
+  MCP server  running from: ~/.claude/plugins/cache/cipherpol/cipherpol-8/{active-version}/
               latest on disk: {latest-version}
               ⚠ stale session: MCP is {active-version} but latest is {latest-version} — restart Claude Code  ← only if mismatch
 
@@ -117,7 +117,7 @@ Project snapshot — {PROJECT}
 **Flags:**
 - `⚠ conflict` — env var and CLAUDE.md disagree; env var takes precedence
 - `⚠ not installed` — plugin missing; run `install-plugin.sh`
-- `⚠ stale session` — MCP server is running an older sda-kms version; restart Claude Code to pick up the latest
+- `⚠ stale session` — MCP server is running an older cipherpol-8 version; restart Claude Code to pick up the latest
 - `⚠ 0 nodes` on project-scoped probe — run `/kms-seed`
 - `⚠ empty body` — node has content under 100 chars after skipping header stubs; may need `/kms-seed` to populate
 

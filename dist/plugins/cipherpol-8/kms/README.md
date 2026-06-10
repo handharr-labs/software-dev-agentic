@@ -1,6 +1,6 @@
 # KMS — Knowledge Management System
 
-ChromaDB-backed knowledge store for the software-dev-agentic toolkit. Agents retrieve implementation patterns and SDLC knowledge via MCP tools instead of grepping flat files.
+ChromaDB-backed knowledge store for the CipherPol toolkit. Agents retrieve implementation patterns and SDLC knowledge via MCP tools instead of grepping flat files.
 
 See `docs/principles/kms-design-principles.md` for the full design rationale and decisions.
 
