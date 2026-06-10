@@ -64,7 +64,7 @@ match = next(p for p in data['platforms'] if p['id'] == '$PLATFORM_ID')
 print(match['label'])
 ")"
 
-# ── Resolve project id ────────────────────────────────────────────────────────
+# ── Resolve project id + kms_id ───────────────────────────────────────────────
 
 if [ -z "$PROJECT_ID" ]; then
   PROJECT_ID="$(basename "$PROJECT_ROOT")"
@@ -72,20 +72,24 @@ if [ -z "$PROJECT_ID" ]; then
   echo "No --project specified, using directory name: $PROJECT_ID"
 fi
 
-# Warn if project is not in the known list (not a hard error — unknown projects are valid)
-python3 -c "
+# Resolve project kms_id (falls back to project id if not in known list)
+PROJECT_KMS_ID="$(python3 -c "
 import json, sys
 data = json.load(open('$PLATFORMS_FILE'))
-known = [p['id'] for p in data['projects']]
-if '$PROJECT_ID' not in known:
-    print(f'Note: \"$PROJECT_ID\" is not in the known projects list in sda.json.')
-    print(f'      Known: {known}')
-    print(f'      Add it to sda.json if this is a permanent project.')
-" 2>/dev/null || true
+match = next((p for p in data['projects'] if p['id'] == '$PROJECT_ID'), None)
+if not match:
+    known = [(p['id'], p.get('kms_id', p['id']), p['label']) for p in data['projects']]
+    print(f'Note: \"$PROJECT_ID\" is not in the known projects list in sda.json.', file=sys.stderr)
+    print(f'      Known: {[p[0] for p in known]}', file=sys.stderr)
+    print(f'      Add it to sda.json if this is a permanent project.', file=sys.stderr)
+    print('$PROJECT_ID')
+else:
+    print(match.get('kms_id', match['id']))
+" 2>/dev/null)" || PROJECT_KMS_ID="$PROJECT_ID"
 
 echo ""
 echo "Platform: $PLATFORM_LABEL ($PLATFORM_ID → kms: $KMS_ID)"
-echo "Project:  $PROJECT_ID"
+echo "Project:  $PROJECT_ID (kms: $PROJECT_KMS_ID)"
 
 # ── Marketplace + plugins ─────────────────────────────────────────────────────
 
@@ -107,20 +111,20 @@ echo ""
 SETTINGS_LOCAL="$PROJECT_ROOT/.claude/settings.local.json"
 mkdir -p "$PROJECT_ROOT/.claude"
 
-python3 - "$SETTINGS_LOCAL" "$KMS_ID" "$PROJECT_ID" <<'PYEOF'
+python3 - "$SETTINGS_LOCAL" "$KMS_ID" "$PROJECT_KMS_ID" <<'PYEOF'
 import json, os, sys
-path, kms_id, project_id = sys.argv[1], sys.argv[2], sys.argv[3]
+path, kms_id, project_kms_id = sys.argv[1], sys.argv[2], sys.argv[3]
 data = {}
 if os.path.exists(path):
     with open(path) as f:
         data = json.load(f)
 data.setdefault("env", {})["SDA_PLATFORM"] = kms_id
-data["env"]["SDA_PROJECT"] = project_id
+data["env"]["SDA_PROJECT"] = project_kms_id
 data["skillListingBudgetFraction"] = 0.03
 with open(path, "w") as f:
     json.dump(data, f, indent=2)
     f.write("\n")
-print(f"patch .claude/settings.local.json (SDA_PLATFORM={kms_id}, SDA_PROJECT={project_id})")
+print(f"patch .claude/settings.local.json (SDA_PLATFORM={kms_id}, SDA_PROJECT={project_kms_id})")
 PYEOF
 
 # ── CLAUDE.md — managed section ───────────────────────────────────────────────

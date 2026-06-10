@@ -26,9 +26,12 @@
     }
   ],
   "projects": [
-    { "id": "talenta",     "label": "Talenta" },
-    { "id": "jurnal",      "label": "Jurnal" },
-    { "id": "qontak-crm",  "label": "Qontak CRM" },
-    { "id": "qontak-chat", "label": "Qontak Chat" }
+    { "id": "talenta-ios",            "kms_id": "talenta-ios",            "label": "Talenta iOS",            "platform": "ios-swift" },
+    { "id": "mobile-talenta",         "kms_id": "mobile-talenta",         "label": "Talenta Flutter",        "platform": "flutter" },
+    { "id": "talenta-mobile-android", "kms_id": "talenta-mobile-android", "label": "Talenta Android",        "platform": "android-kotlin" },
+    { "id": "flex-mobile",            "kms_id": "flex-mobile",            "label": "Flex Mobile Flutter",    "platform": "flutter" },
+    { "id": "jurnal",                 "kms_id": "jurnal",                 "label": "Jurnal" },
+    { "id": "qontak-crm",             "kms_id": "qontak-crm",             "label": "Qontak CRM" },
+    { "id": "qontak-chat",            "kms_id": "qontak-chat",            "label": "Qontak Chat" }
   ]
 }
