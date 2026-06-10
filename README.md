@@ -306,6 +306,30 @@ sda.json         ← canonical platform registry (id → kms_id + detection mark
 
 ---
 
+## Project configuration — `.claude/settings.local.json`
+
+Written by `install-plugin.sh`. Gitignored. Edit manually to override any value.
+
+```json
+{
+  "env": {
+    "SDA_PLATFORM": "flutter",
+    "SDA_PROJECT": "talenta"
+  },
+  "skillListingBudgetFraction": 0.03
+}
+```
+
+| Key | Values | Purpose |
+|---|---|---|
+| `SDA_PLATFORM` | `flutter` · `ios` · `android` · `web` | KMS scope for platform knowledge queries |
+| `SDA_PROJECT` | `talenta` · `jurnal` · `qontak-crm` · `qontak-chat` · any string | KMS scope for project-specific knowledge |
+| `skillListingBudgetFraction` | `0.03` (recommended) | Fraction of context budget reserved for skill listing |
+
+`SDA_PLATFORM` and `SDA_PROJECT` are read by every agent via `detect-platform` before making KMS calls. If both `env` and `CLAUDE.md` are set and disagree, the env var takes precedence and `/sda-status` will flag the conflict.
+
+---
+
 ## .gitignore recommendations
 
 ```gitignore
