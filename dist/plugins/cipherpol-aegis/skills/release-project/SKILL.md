@@ -1,6 +1,8 @@
 ---
-name: release
+name: release-project
 description: Cut a new release of this project — bumps VERSION, prepends a CHANGELOG entry, commits, and creates a git tag.
+user-invocable: true
+disable-model-invocation: true
 context: fork
 allowed-tools: Read, Write, Edit, Bash
 ---
