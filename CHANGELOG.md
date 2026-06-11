@@ -7,6 +7,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.1.0] — 2026-06-11
+
+### Added
+- `docs/initiatives/kms-retrieval-strategy-initiative.md` — fetch-by-topic KMS retrieval strategy, verified contract table of real KMS slugs per skill
+
+### Changed
+- 10 `lib/core/agents/**` agents (planners, workers, debugger, auditor, qa) migrated from `kms_list`->`kms_query` to `kms_list`->`kms_fetch` (fetch-by-topic), with `artifact` threaded through every call; `kms_query` reserved for cold-start discovery only
+- 18 `lib/core/skills/**` leaf skills converted to fetch-by-topic KMS retrieval, removing dead flat-file fallbacks to deleted `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` paths
+- All `mcp__kms__*` tool references renamed to `mcp__cp8__*` to match the registered MCP server name
+- `kms/db` wiped and cleanly reseeded (653 nodes; dropped 726 stale pre-restructure flat nodes + 8 template nodes)
+
+### Fixed
+- 8 of 10 KMS-calling agents declared only `mcp__cp8__kms_query` in `tools:` while calling `kms_list` (undeclared) — now declare `kms_list, kms_fetch, kms_query`
+- `developer-feature-worker`'s null-safety `kms_fetch` used an invalid schema (`topic="null_safety_extensions"`) — corrected to `artifact="conventions", topic="conventions", pattern="null_safety_extensions"`
+- 4 skills (`debugger-add-logs`, `debugger-remove-logs`, `auditor-arch-check`, `developer-test-procedure`) had `allowed-tools` excluding KMS entirely — now granted `mcp__cp8__kms_list, mcp__cp8__kms_fetch`
+
+---
+
 ## [12.0.3] — 2026-06-11
 
 ### Fixed
