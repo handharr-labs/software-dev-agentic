@@ -5,11 +5,14 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create presentation tests following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
+Create presentation tests following the {platform} standard architecture, loaded from the KMS.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_query(text="testing presentation bloc cubit test naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). The testing topic is platform-specific (flutter → `testing`; android → `instrumented_tests`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", topic="<testing topic>", platform={platform})` — scan the testing TOC for the presenter/stateholder-test pattern slug (e.g. `presenter_test`).
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<testing topic>", pattern="<presenter-test slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
+   - If the TOC has no presenter-test pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (testing topic) — do not guess.
 2. **Read** the StateHolder implementation and stateholder-contract.md completely
 3. **Identify** all events/methods and resulting state transitions to cover
 4. **Locate** path per the impl doc's test directory convention

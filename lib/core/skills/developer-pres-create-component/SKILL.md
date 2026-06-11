@@ -5,11 +5,14 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a presentational component following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
+Create a presentational component following the {platform} standard architecture, loaded from the KMS.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_query(text="presentation component widget naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform={platform})` — scan the presentation TOC for the component pattern slug (e.g. `component`).
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<component slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
+   - If the TOC has no component pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/presentation` — do not guess.
 2. **Check** `## Shared Component Paths` for existing reusable components before creating a new one
 3. **Identify** the entity or data type the component displays
 4. **Locate** the path per the impl doc's component directory convention

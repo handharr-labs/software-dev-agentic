@@ -2,15 +2,18 @@
 name: debugger-remove-logs
 description: Remove all debug logs added by debugger-add-logs.
 user-invocable: false
-allowed-tools: Read, Edit, Glob, Grep
+allowed-tools: Read, Edit, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch
 knowledge_scope: engineering
 ---
 
-Remove all debug instrumentation logs using the platform's log prefix from `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
+Remove all debug instrumentation logs using the platform's log prefix, loaded from the KMS.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_query(text="debug logging format prefix naming convention", platform={platform}, discipline="engineering", n_results=3)` for the platform's debug log prefix (e.g. `[DebugTest]`). **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). Logging lives under a platform-specific topic (flutter → `utilities`/`logger`; android → `presentation`/`logging`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC for the logger/logging pattern slug.
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<logging topic>", pattern="<logger slug from list>", platform={platform})` — full content: the debug log prefix (e.g. `[DebugTest]`).
+   - If the TOC has no logger pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (logging) — do not guess.
 2. `Grep` the codebase for the debug prefix to find all instrumented files
 3. For each file: `Read` the file, then `Edit` to remove every debug log line
 4. Confirm no debug logs remain

@@ -2,7 +2,7 @@
 name: developer-test-procedure
 description: Four-step unit test creation procedure — create or extend a test file, determine if mocks are needed, generate missing mocks using the platform-specific procedure, then verify correctness of all test cases.
 user-invocable: false
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch
 ---
 
 ## Inputs
@@ -23,21 +23,20 @@ Unit tests only. No UI/integration tests. No modifications to production source 
 
 ## Platform Reference
 
-Before executing any step, load the platform implementation guide:
+Before executing any step, load the platform testing patterns from the KMS (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). The testing topic is platform-specific (flutter → `testing`; android → `instrumented_tests`):
 
-```
-kms/knowledge-sources/engineering/{platform}-standard-architecture.md
-```
+- `kms_list(discipline="engineering", artifact="standard-architecture", topic="<testing topic>", platform={platform})` — list available testing patterns (naming convention, mock generation, test pyramid, per-layer test patterns).
+- `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<testing topic>", pattern="<slug>", platform={platform})` — fetch only the pattern(s) relevant to the current step; do not fetch everything upfront.
 
-Grep `^## ` to list all headings. Read only the sections relevant to the current step — do not read the full file upfront.
+If the testing topic has no patterns, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (testing topic).
 
-All variable details (file naming, mock location, mock generation command, test runner) come from this file. The steps below are the fixed procedure; the platform file fills in the variables.
+All variable details (file naming, mock location, mock generation command, test runner) come from these fetched patterns. The steps below are the fixed procedure; the fetched patterns fill in the variables.
 
 ---
 
 ## Step 1 — Resolve Test File
 
-1. Derive the test file path from `target` using the naming convention in the platform reference (`## Test File Naming`).
+1. Derive the test file path from `target` using the naming convention from the fetched testing patterns (the naming-convention pattern).
 2. `Glob` for the test file path.
    - **Not found** → create the test file with the correct scaffold (class declaration, imports, `setUp`/`tearDown` or equivalent).
    - **Found** → open and read the existing test file — add the new test cases without removing existing ones.
@@ -63,11 +62,11 @@ If no mocks are needed, skip to Step 4.
 
 For each required mock:
 
-1. Derive the expected mock path using `## Mock Location` from the platform reference.
+1. Derive the expected mock path using the mock-location details from the fetched testing patterns.
 2. `Glob` for the mock file.
    - **Found** → reuse. Note the path for Step 4.
    - **Not found** → create or generate the mock:
-     - Read `## Mock Strategy` and `## Mock Generation` from the platform reference.
+     - Fetch the mock-generation pattern from the testing topic for the strategy and generation command.
      - If the platform uses code generation (e.g., `build_runner`, `MockGen.sh`): add the mock spec annotation to the appropriate helper file, then run the generation command via `Bash`.
      - If the platform uses manual mocks: write the mock class file following the platform's mock pattern.
 
@@ -81,7 +80,7 @@ For each required mock:
    - Mock setup matches the expected call count for the execution path.
    - Assertions target the correct output field or state.
 3. Fix any incorrect test cases inline via `Edit`.
-4. Run the test suite using the command from `## Test Runner` in the platform reference.
+4. Run the test suite using the test-runner command from the fetched testing patterns.
 5. If tests fail, diagnose using the platform reference's failure patterns and fix — repeat until green.
 
 ## Output
