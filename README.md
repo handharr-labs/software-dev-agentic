@@ -76,25 +76,19 @@ Written by the installer. Edit manually to override any value.
 
 `CIPHERPOL_PLATFORM` and `CIPHERPOL_PROJECT` are read by every agent via `detect-platform` before making KMS calls. If both `env` and `CLAUDE.md` are set and disagree, the env var takes precedence and `/cipherpol-status` will flag the conflict.
 
-### 4. Wire the KMS MCP server (`.mcp.json`)
+### 4. Wire the KMS MCP server (user scope, once per machine)
 
-`cipherpol-8` runs as an MCP server. The installer patches this automatically, but if you're setting up manually, add to `.mcp.json` at your project root:
+`cipherpol-8` runs as an MCP server. Register it at user scope in `~/.claude.json` under `mcpServers`:
 
 ```json
-{
-  "mcpServers": {
-    "cp8": {
-      "command": "bash",
-      "args": [
-        "-c",
-        "latest=$(ls \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8/$latest/kms/server.sh\""
-      ],
-      "env": {
-        "CP8_ENABLE_LOGGING": "false",
-        "CP8_LOG_MAX_MB": "10"
-      }
-    }
-  }
+"cp8": {
+  "type": "stdio",
+  "command": "bash",
+  "args": [
+    "-c",
+    "latest=$(ls \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8\" 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1) && exec bash \"$HOME/.claude/plugins/cache/cipherpol/cipherpol-8/$latest/kms/server.sh\""
+  ],
+  "env": {}
 }
 ```
 
@@ -102,6 +96,10 @@ Written by the installer. Edit manually to override any value.
 |---|---|---|
 | `CP8_ENABLE_LOGGING` | `false` | Enable MCP server request/response logging |
 | `CP8_LOG_MAX_MB` | `10` | Max log file size in MB before rotation |
+
+Set these in `~/.claude/settings.json` under `env` to apply globally (see Step 3).
+
+> **Migrating from `kms`?** Remove any `kms` entry from `.mcp.json` or `~/.claude.json` and replace with the `cp8` entry above.
 
 ### 5. Activate
 
