@@ -20,46 +20,36 @@ Platform is declared once in `settings.local.json` (`CIPHERPOL_PLATFORM`) and cr
 
 ## Setup
 
-### 1. Install
+### 1. Register marketplace (once per machine)
 
-From inside the downstream project directory:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/hndhr/software-dev-agentic/main/scripts/install-plugin.sh | bash -s -- --platform=<id>
-```
-
-Available platforms:
-
-| `--platform` | KMS id | Stack |
-|---|---|---|
-| `flutter` | `flutter` | Flutter / Dart / BLoC |
-| `ios-swift` | `ios` | iOS / Swift / UIKit |
-| `android-kotlin` | `android` | Android / Kotlin |
-| `web-nextjs` | `web` | Web / Next.js |
-
-The installer:
-- Adds the `cipherpol` marketplace and installs `cipherpol-aegis` + `cipherpol-8` at project scope
-- Writes `CIPHERPOL_PLATFORM=<kms_id>` to `.claude/settings.local.json` (gitignored)
-- Writes `**Platform:** <id>` to the managed section of `CLAUDE.md`
-- Patches `.mcp.json` with the KMS server entry
-- Adds `.claude/agentic-state/` to `.gitignore`
-
-### 2. Register marketplace at user scope (once per machine)
-
+**CLI:**
 ```bash
 claude plugin marketplace add hndhr/software-dev-agentic
 ```
 
-This writes the `cipherpol` entry to `~/.claude/plugins/known_marketplaces.json` — the live Claude Code registry.
+**Manual** — add to `~/.claude/settings.json`:
+```json
+{
+  "extraKnownMarketplaces": {
+    "cipherpol": {
+      "source": { "source": "github", "repo": "hndhr/software-dev-agentic" }
+    }
+  }
+}
+```
 
-> **Migrating from `sda`?** The CLI command above replaces the old entry automatically. If you added `sda` manually via `extraKnownMarketplaces` in `~/.claude/settings.json`, remove that entry.
+> **Migrating from `sda`?** Remove the old `sda` entry from `extraKnownMarketplaces` if present.
 
-### 3. Configure project env (`.claude/settings.local.json`)
+### 2. Enable plugins and configure env
 
-Written by the installer. Edit manually to override any value.
+Written by the installer. Edit manually to override any value. Use `.claude/settings.json` to share with the team or `.claude/settings.local.json` to keep it personal (gitignored).
 
 ```json
 {
+  "enabledPlugins": {
+    "cipherpol-aegis@cipherpol": true,
+    "cipherpol-8@cipherpol": true
+  },
   "env": {
     "CIPHERPOL_PLATFORM": "flutter",
     "CIPHERPOL_PROJECT": "talenta"
@@ -76,7 +66,7 @@ Written by the installer. Edit manually to override any value.
 
 `CIPHERPOL_PLATFORM` and `CIPHERPOL_PROJECT` are read by every agent via `detect-platform` before making KMS calls. If both `env` and `CLAUDE.md` are set and disagree, the env var takes precedence and `/cipherpol-status` will flag the conflict.
 
-### 4. Wire the KMS MCP server (user scope, once per machine)
+### 3. Wire the KMS MCP server (user scope, once per machine)
 
 `cipherpol-8` runs as an MCP server. Register it at user scope in `~/.claude.json` under `mcpServers`:
 
@@ -101,11 +91,11 @@ Set these in `~/.claude/settings.json` under `env` to apply globally (see Step 3
 
 > **Migrating from `kms`?** Remove any `kms` entry from `.mcp.json` or `~/.claude.json` and replace with the `cp8` entry above.
 
-### 5. Activate
+### 4. Activate
 
 Run `/reload-plugins` in Claude Code, then verify with `/cipherpol-status`.
 
-### 6. Seed project knowledge
+### 5. Seed project knowledge
 
 The plugin ships with platform-level patterns pre-seeded. Add your project's specific knowledge:
 
