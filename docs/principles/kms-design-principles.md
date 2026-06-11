@@ -11,7 +11,7 @@ A ChromaDB-backed knowledge store shipped inside the Claude Code plugin. Agents 
 
 ## Design Goals
 
-1. **Drop-in knowledge** — drop any doc into `kms/knowledge-sources/` and the system derives discipline, platform, topic, and pattern from the path — no frontmatter or manual structuring required
+1. **Drop-in knowledge** — drop any doc into `kms/knowledge-sources/` and the system derives scope, platform, discipline, artifact, topic, and pattern from the path — frontmatter is documentation-only, not required by the seeder
 2. **Cascade by specificity** — project overrides platform overrides universal; agents always get the most relevant knowledge
 3. **Section ownership** — each source owns specific sections of a node; no source can corrupt another's contribution
 4. **Resilient seeding** — unavailable sources are skipped silently; existing knowledge is never removed by a failed seed
@@ -23,7 +23,7 @@ A ChromaDB-backed knowledge store shipped inside the Claude Code plugin. Agents 
 
 ### 1. Single collection — cascade via metadata
 
-One ChromaDB collection for all knowledge. Scope is enforced by `scope + platform + project` metadata fields, not by collection separation. Splitting by platform would break cascade fallthrough which requires all tiers queryable in a single call.
+One ChromaDB collection for all knowledge. Scope is enforced by `scope + platform + project + discipline + artifact` metadata fields, not by collection separation. Splitting by platform would break cascade fallthrough which requires all tiers queryable in a single call.
 
 Nodes from multiple platforms and projects naturally accumulate in a single ChromaDB instance — this is expected. Agents always query with explicit `platform` and `project` filters, so cross-platform nodes are never surfaced to an agent working in a different context. The presence of flutter or android nodes in an iOS plugin's ChromaDB is not an error.
 
@@ -52,7 +52,7 @@ Each knowledge source declares which sections it owns. `UpsertKnowledge` use cas
 
 ### 4. `kms/domain/schema.py` is the single vocabulary contract
 
-All allowed values for `scope`, `platform`, `project`, `discipline`, `schema_version`, and field classifications (mandatory vs optional) live here. Seed runner, adapters, use cases, and agents all import from this file. Never hardcode vocabulary elsewhere.
+All allowed values for `scope`, `platform`, `project`, `discipline`, `schema_version`, and field classifications (mandatory vs optional) live here. `artifact` is mandatory but open-ended — no controlled enum, any folder name under a discipline dir is valid. Seed runner, adapters, use cases, and agents all import from this file. Never hardcode vocabulary elsewhere.
 
 ### 5. Incremental seeding via content hash
 
@@ -64,44 +64,57 @@ If a source path or URL is inaccessible at seed time, that source is skipped wit
 
 ### 7. `kms/knowledge-sources/` is the primary knowledge store
 
-Raw documents live here — any format (`.md`, `.txt`), any origin. Engineers drop files in the right location; the seed runner derives all metadata from the path automatically. No frontmatter, no manual structuring.
+Raw documents live here — any format (`.md`, `.txt`), any origin. Engineers drop files in the right location; the seed runner derives all metadata from the path automatically.
 
-**Discipline templates — schema-first seeding:**
+Four path segments map directly to metadata fields. Three top-level buckets mirror the cascade tiers:
 
-Each discipline folder contains a `_template.md` (universal) and/or `{platform}-_template.md` (platform-specific) that defines the canonical `##` heading vocabulary for that discipline. These are seeded as `content_type: stub` nodes — they populate the TOC so agents can discover what topics exist even before real content is written. When real content is seeded, it overwrites the stub. The rule is one-way: **stubs never overwrite real content**.
-
-| Template file | Scope | Example |
-|---|---|---|
-| `{discipline}/_template.md` | universal or discipline-wide | `qa/_template.md`, `agile/_template.md` |
-| `{discipline}/{platform}-_template.md` | platform | `engineering/flutter-_template.md` |
+```
+kms/knowledge-sources/
+├── universal/              → scope=universal — general principles, all platforms
+│   ├── engineering/        → discipline
+│   │   └── conventions/    → artifact
+│   └── qa/
+├── platform/               → scope=platform — implemented for a specific platform
+│   ├── flutter/            → platform
+│   │   ├── engineering/    → discipline
+│   │   │   ├── conventions/          → artifact
+│   │   │   └── standard-architecture/
+│   │   └── design/
+│   └── ios/
+│       └── engineering/
+└── projects/               → scope=project — deviations for a specific project
+    └── mobile-talenta/
+        ├── feature-inventory/  → artifact
+        └── api-endpoints/
+```
 
 Three path conventions:
 
-**1. Platform / universal knowledge — `{discipline}/{filename}.md`:**
+**1. Universal knowledge — `universal/{discipline}/{artifact}/{filename}.md`:**
 ```
-engineering/flutter-standard-architecture.md  → platform=flutter, discipline=engineering, scope=platform
-agile/sprint-retrospective-guide.md           → platform=None, discipline=agile, scope=universal
-```
-
-- `discipline` → subdirectory name (must match `DISCIPLINE_VALUES`)
-- `platform` → filename prefix (`flutter-*`, `ios-*`, `android-*`, `web-*`) — absent means universal
-- `scope` → `platform` if prefix found, `universal` otherwise
-
-**2. Discipline templates — `{discipline}/_template.md` or `{discipline}/{platform}-_template.md`:**
-```
-engineering/flutter-_template.md  → platform=flutter, discipline=engineering, content_type=stub
-qa/_template.md                   → platform=None, discipline=qa, content_type=stub
+universal/agile/sprint-ceremonies/sprint-ceremonies.md   → scope=universal, discipline=agile, artifact=sprint-ceremonies
+universal/engineering/conventions/conventions.md         → scope=universal, discipline=engineering, artifact=conventions
 ```
 
-- Same path derivation rules as platform/universal knowledge above
-- Seeded as `content_type: stub` — populate the TOC before real content exists
-- Each `##` heading in the template seeds one stub node
-- `UpsertKnowledge` skips upsert if an incoming stub would overwrite an existing real node
+- `discipline` → subdirectory (must match `DISCIPLINE_VALUES`)
+- `artifact` → next subdirectory — the named body of knowledge within the discipline
+- `scope` → always `universal`
 
-**3. Project-specific knowledge — `projects/{project-name}/{filename}.md`:**
+**2. Platform knowledge — `platform/{platform}/{discipline}/{artifact}/{filename}.md`:**
 ```
-projects/flutter-mobile-talenta/feature-inventory.md  → project=flutter-mobile-talenta, scope=project
-projects/flutter-mobile-talenta/api-endpoints.md      → project=flutter-mobile-talenta, scope=project
+platform/flutter/engineering/conventions/conventions.md           → scope=platform, platform=flutter, discipline=engineering, artifact=conventions
+platform/flutter/engineering/standard-architecture/standard-architecture.md  → scope=platform, platform=flutter, discipline=engineering, artifact=standard-architecture
+```
+
+- `platform` → subdirectory under `platform/` (one of `flutter`, `ios`, `android`, `web`)
+- `discipline` → next subdirectory (must match `DISCIPLINE_VALUES`)
+- `artifact` → next subdirectory — named knowledge body
+- `scope` → always `platform`
+
+**3. Project-specific knowledge — `projects/{project-name}/{artifact}/{filename}.md`:**
+```
+projects/mobile-talenta/feature-inventory/feature-inventory.md  → project=mobile-talenta, artifact=feature-inventory, scope=project
+projects/mobile-talenta/api-endpoints/api-endpoints.md          → project=mobile-talenta, artifact=api-endpoints, scope=project
 ```
 
 - `platform` and `project` read from `repo.yaml` in the project directory — not encoded in filenames
@@ -112,9 +125,9 @@ Each project directory requires a `repo.yaml`:
 ```yaml
 name: flutter-mobile-talenta
 platform: flutter
-remote: null            # auto-populated from git remote get-url origin on first scan
+remote: null
 last_scanned: null
-last_scanned_local_path: null  # path used by the last engineer who ran the scan
+last_scanned_local_path: null
 ```
 
 **What belongs in project docs** — things unique to the project, not covered by the platform standard architecture doc:
@@ -154,42 +167,56 @@ Additional sources (codebase scans, Confluence) are registered as separate entri
 | URL matching `confluence.` | `confluence` |
 | GitHub URL | `codebase` (remote) |
 
-### 10. Chunk strategy — one `##` heading, one node
+### 10. Chunk strategy — heading hierarchy maps to metadata
 
-`DirectorySource` splits every document at `##` heading boundaries before seeding. Each section becomes its own `KnowledgeNode`; `topic` and `pattern` are derived from the heading slug. A file with no `##` headings seeds as a single node using the filename as `topic`/`pattern`.
+`DirectorySource` uses a three-level heading hierarchy. Each `##` heading produces one `KnowledgeNode`; its parent `#` heading sets the `topic` context carried on that node.
 
 ```
-## Naming Convention          → topic=naming_convention, pattern=naming_convention
-## Repository Implementation  → topic=repository_implementation, pattern=repository_implementation
-(no headings)                 → topic=<filename-stem>, pattern=<filename-stem>
+# Domain             → topic=domain  (context carrier, not a node itself)
+## Creation Order    → node: topic=domain, pattern=creation_order
+## Entity            → node: topic=domain, pattern=entity
+
+# Data               → topic=data
+## Creation Order    → node: topic=data, pattern=creation_order  ← no collision with the one above
+## Repository        → node: topic=data, pattern=repository
+
+## Standalone        → node: topic=<artifact-name>, pattern=standalone  (no # parent → artifact as topic)
+(no headings at all) → one node: topic=<artifact-name>, pattern=<artifact-name>
 ```
 
-**Consequence for authoring:** any knowledge that must be retrievable by topic via `kms_fetch` must live under its own `##` heading. Content embedded inline within a broader section is indexed but only reachable via vector search — it cannot be fetched by exact metadata match.
+| Heading level | Role | Maps to |
+|---|---|---|
+| `#` | Topic — groups related sub-topics | `topic` field on all child nodes |
+| `##` | Sub-topic — the actual chunk boundary and retrieval unit | `pattern` field; one node per `##` |
+| `###` | Section — internal structure within a sub-topic | Content body only; not chunked |
 
-**Rule:** when adding a new topic to an existing platform doc (e.g. naming conventions, error handling rules), give it a dedicated `##` heading. Never bury distinct topics as prose under an unrelated section.
+**Why `###` is not chunked:** `###` headings are internal structure (`### Theory`, `### Code Pattern`, `### Example`). A sub-topic node is only useful if it's self-contained — splitting at `###` produces fragments that are meaningless in isolation.
 
-**Content hash** is computed per-section after chunking, not per-file. Only sections that changed are re-upserted on the next seed run.
+**Consequence for authoring:** every distinct concept that must be retrievable by exact metadata match needs its own `##` heading. Content under `###` is indexed but only reachable via vector search. The `#` heading is mandatory whenever a file contains multiple thematic groups — it prevents `topic` collision across `##` headings with the same name.
+
+**Content hash** is computed per `##` section after chunking, not per-file. Only sections that changed are re-upserted on the next seed run.
 
 ---
 
 ## Metadata Schema
 
-| Field | Mandatory | Values |
-|---|---|---|
-| `scope` | ✅ | `universal`, `platform`, `project` |
-| `discipline` | ✅ | `engineering`, `design`, `qa`, `devops`, `security`, `code_review`, `product`, `architecture`, `agile` |
-| `topic` | ✅ | free string — process area or architecture layer |
-| `pattern` | ✅ | free string — neutral term across all disciplines |
-| `schema_version` | ✅ | `"1"` — increment on breaking field changes |
-| `platform` | ⬜ | `flutter`, `ios`, `android`, `web` — omit if `scope=universal` |
-| `project` | ⬜ | `talenta`, `jurnal`, `qontak-crm`, `qontak-chat` — omit if `scope != project` |
-| `tags` | ⬜ | JSON array string |
-| `source_file` | ⬜ | absolute path to source file |
-| `updated_at` | ⬜ | ISO date string |
-| `content_hash` | ⬜ | SHA hash of document body — used for incremental seed detection |
-| `content_type` | ⬜ | `"real"` (default) \| `"stub"` — stubs seed schema; never overwrite real nodes |
+| Field | Mandatory | Source | Values |
+|---|---|---|---|
+| `scope` | ✅ | path (tier) | `universal`, `platform`, `project` — encoded as `platform/flutter` or `project/name` in frontmatter |
+| `discipline` | ✅ | path (dir) | `engineering`, `design`, `qa`, `devops`, `security`, `code_review`, `product`, `architecture`, `agile` |
+| `artifact` | ✅ | path (dir) | named knowledge body within a discipline — `conventions`, `standard-architecture`, `feature-inventory`, etc. |
+| `topic` | ✅ | `#` heading | slug of the parent `#` heading; artifact name if no `#` present |
+| `pattern` | ✅ | `##` heading | slug of the `##` heading — the sub-topic and retrieval key |
+| `schema_version` | ✅ | constant | `"1"` — increment on breaking field changes |
+| `platform` | ⬜ | path / repo.yaml | `flutter`, `ios`, `android`, `web` — omit if `scope=universal` |
+| `project` | ⬜ | repo.yaml | project name — omit if `scope != project` |
+| `tags` | ⬜ | manual | JSON array string |
+| `source_file` | ⬜ | derived | absolute path to source file |
+| `updated_at` | ⬜ | derived | ISO date string |
+| `content_hash` | ⬜ | derived | SHA hash of `##` section body — used for incremental seed detection |
+| `content_type` | ⬜ | derived | `"real"` (default) — reserved, stub seeding removed |
 
-**`pattern` is a neutral term** — it means code pattern in engineering, checklist type in QA, ceremony template in agile. Convention, not a type constraint.
+**`pattern` is discipline-neutral** — it means sub-topic in engineering, checklist item in QA, ceremony step in agile. The field name is stable; its meaning is domain-relative.
 
 ---
 
@@ -250,7 +277,7 @@ Three MCP tools serve different retrieval needs. Agents should combine them, not
 
 **Combination pattern:**
 1. `kms_list(discipline, platform)` — scan the TOC, reason over which topics exist
-2. For known, uniform topics — same heading seeded across every platform doc (e.g. `Null Safety Extensions` → `topic=null_safety_extensions`): `kms_fetch(topic, pattern, discipline, platform)` — guaranteed, cascade-resolved retrieval
+2. For known, exact nodes — when artifact, topic, and pattern are known (e.g. `## Null Safety Extensions` under `platform/flutter/engineering/conventions/` → `artifact=conventions, topic=conventions, pattern=null_safety_extensions`): `kms_fetch(discipline, artifact, topic, pattern, platform)` — guaranteed, cascade-resolved retrieval
 3. For exploratory or intent-based needs (e.g. "what conventions apply when writing this artifact type"): `kms_query(text, discipline, platform, n_results)` — semantic ranking
 
 **Why this matters:** `kms_query` ranks top-k across *all* matching nodes — a cross-cutting convention that applies to nearly every artifact (e.g. null-safety unwrapping) can be crowded out of the top-k by more numerous architecture-pattern nodes. When a topic's heading is uniform across platforms, prefer `kms_fetch` for guaranteed retrieval over hoping `kms_query` surfaces it.
