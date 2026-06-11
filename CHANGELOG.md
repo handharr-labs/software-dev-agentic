@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.3.2] — 2026-06-12
+
+### Changed
+- `saturn-descend` skill: run_dir slug now prefers the ticket ID extracted from the current git branch (e.g. `feature/PROJ-123-foo` → `proj-123`); falls back to task description if no ticket pattern found
+
+---
+
 ## [12.3.1] — 2026-06-12
 
 ### Fixed
