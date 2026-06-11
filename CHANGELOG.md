@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.2.1] — 2026-06-11
+
+### Changed
+- Renamed `lib/core/skills/release` to `lib/core/skills/release-project` to avoid colliding with the internal `/release` skill (`.claude/skills/release`); added `user-invocable: true` and `disable-model-invocation: true` so it only fires on explicit `/release-project`
+
 ## [12.2.0] — 2026-06-11
 
 ### Added
