@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.0.3] — 2026-06-11
+
+### Fixed
+- `server.sh`: replace PATH prepend with a `_find_python3` discovery function covering pyenv, asdf, rye, conda, homebrew, and system python3 — works in non-login shells regardless of version manager
+
+---
+
 ## [12.0.2] — 2026-06-11
 
 ### Changed
