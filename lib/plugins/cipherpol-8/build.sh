@@ -60,7 +60,7 @@ fi
 cat > "$out/kms/project-mcp-template.json" <<'MCP_TEMPLATE'
 {
   "mcpServers": {
-    "kms": {
+    "cp8": {
       "command": "bash",
       "args": [
         "-c",

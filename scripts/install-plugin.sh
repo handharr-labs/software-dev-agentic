@@ -184,14 +184,14 @@ data = {}
 if os.path.exists(mcp_path):
     with open(mcp_path) as f:
         data = json.load(f)
-data.setdefault("mcpServers", {})["kms"] = {
+data.setdefault("mcpServers", {})["cp8"] = {
     "command": "bash",
     "args": ["-c", kms_cmd]
 }
 with open(mcp_path, "w") as f:
     json.dump(data, f, indent=2)
     f.write("\n")
-print("patch .mcp.json (kms → version-agnostic launcher)")
+print("patch .mcp.json (cp8 → version-agnostic launcher)")
 PYEOF
 else
   echo "skip  .mcp.json (cipherpol-8 not found in plugin cache — re-run after install completes)"

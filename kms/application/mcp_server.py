@@ -93,7 +93,7 @@ _upsert_uc = UpsertKnowledge(_repo)
 _knowledge_dir = os.environ.get("KMS_KNOWLEDGE_DIR", os.path.join(os.path.dirname(__file__), "..", "..", "knowledge"))
 _knowledge_dir_abs = os.path.abspath(_knowledge_dir)
 
-mcp = FastMCP("kms")
+mcp = FastMCP("cp8")
 
 
 @mcp.tool()
