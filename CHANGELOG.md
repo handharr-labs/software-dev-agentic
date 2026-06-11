@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.3.0] — 2026-06-12
+
+### Changed
+- Renamed `saturn-calamity` skill and reference dir to `saturn-descend` — better reflects the One Piece lore (Saturn personally descending signals the highest-priority task)
+
+---
+
 ## [12.2.1] — 2026-06-11
 
 ### Changed
