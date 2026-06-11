@@ -2,15 +2,18 @@
 name: auditor-arch-check
 description: Audit a feature's code against the platform's layer dependency rules and invariants.
 user-invocable: false
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch
 knowledge_scope: engineering
 ---
 
-Audit the specified feature against `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` knowledge docs.
+Audit the specified feature against the {platform} standard architecture, loaded from the KMS.
 
 ## Steps
 
-1. **List patterns** — `kms_query(text="architecture naming conventions dependency rules layer invariants", platform={platform}, discipline="engineering", n_results=5)` to get architecture patterns and rules. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and collect `## Dependency Rule` and `### Layer Invariants` (or `## Layer Invariants`) sections for each layer
+1. **Load rules** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC for `dependency_rule` and `layer_invariants` patterns across the domain, data, presentation, and error_handling topics.
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<layer topic>", pattern="<dependency_rule | layer_invariants slug>", platform={platform})` — fetch each rule node found. Full rule text per layer.
+   - If the TOC has no dependency_rule/layer_invariants patterns, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` — do not guess.
 2. **Grep** the feature's files for forbidden imports per each layer's dependency rule
 3. **Check** each layer's invariants against the actual code
 4. Report violations grouped by layer and file

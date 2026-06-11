@@ -14,18 +14,19 @@ _NULL = "null"  # ChromaDB metadata can't store None; sentinel string used inste
 
 def _to_meta(node: KnowledgeNode) -> dict:
     return {
-        "scope":         node.scope,
-        "platform":      node.platform or _NULL,
-        "project":       node.project or _NULL,
-        "discipline":    node.discipline,
-        "topic":         node.topic,
-        "pattern":       node.pattern,
-        "summary":       node.summary,
-        "tags":          json.dumps(node.tags),
-        "source_file":   node.source_file or "",
-        "updated_at":    node.updated_at or "",
-        "content_hash":  node.content_hash or "",
-        "content_type":  node.content_type,
+        "scope":          node.scope,
+        "platform":       node.platform or _NULL,
+        "project":        node.project or _NULL,
+        "discipline":     node.discipline,
+        "artifact":       node.artifact or _NULL,
+        "topic":          node.topic,
+        "pattern":        node.pattern,
+        "summary":        node.summary,
+        "tags":           json.dumps(node.tags),
+        "source_file":    node.source_file or "",
+        "updated_at":     node.updated_at or "",
+        "content_hash":   node.content_hash or "",
+        "content_type":   node.content_type,
         "schema_version": "1",
     }
 
@@ -41,9 +42,10 @@ def _build_where(filters: dict) -> Optional[dict]:
 def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
     return KnowledgeNode(
         scope=meta.get("scope", "universal"),
-        platform=None if meta["platform"] == _NULL else meta["platform"],
-        project=None if meta["project"] == _NULL else meta["project"],
+        platform=None if meta.get("platform") == _NULL else meta.get("platform"),
+        project=None if meta.get("project") == _NULL else meta.get("project"),
         discipline=meta["discipline"],
+        artifact=None if meta.get("artifact") == _NULL else meta.get("artifact"),
         topic=meta["topic"],
         pattern=meta["pattern"],
         summary=meta.get("summary", ""),
@@ -71,6 +73,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         platform: Optional[str] = None,
         project: Optional[str] = None,
         discipline: Optional[str] = None,
+        artifact: Optional[str] = None,
         topic: Optional[str] = None,
     ) -> list[KnowledgeNode]:
         def _resolve(v: Optional[str]) -> Optional[str]:
@@ -87,6 +90,8 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             where["project"] = pj
         if discipline is not None:
             where["discipline"] = discipline
+        if artifact is not None:
+            where["artifact"] = artifact
         if topic is not None:
             where["topic"] = topic
 
@@ -102,6 +107,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         platform: Optional[str],
         project: Optional[str],
         discipline: str,
+        artifact: Optional[str],
         topic: str,
         pattern: str,
     ) -> Optional[KnowledgeNode]:
@@ -109,6 +115,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             "platform":   platform or _NULL,
             "project":    project or _NULL,
             "discipline": discipline,
+            "artifact":   artifact or _NULL,
             "topic":      topic,
             "pattern":    pattern,
         }

@@ -2,7 +2,7 @@
 name: developer-backend-worker
 description: Build the Domain and Data layers for a feature — entities, repository interfaces, use cases, mappers, datasources, and repository implementations. Calls skills directly in layer order. No sub-agents.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_query
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
   - developer-domain-create-entity
   - developer-domain-create-repository
@@ -30,9 +30,12 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 
 Derive: `project` = `basename $(pwd)`, `platform` from spawn prompt.
 
-`kms_query(text="domain data layer entity use case repository interface dto mapper data source implementation", platform="{platform}", discipline="engineering", n_results=5)`
+Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
 
-Fallback — if no results or tool unavailable: proceed without pattern reference.
+1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the domain and data TOCs.
+2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain | data", pattern="<slug>", platform="{platform}")` — fetch the entity, use_case, repository_interface, dto, mapper, data_source, and repository_implementation patterns. Reserve `kms_query(...)` for cold-start only.
+
+Fallback — if the list is empty or the tool is unavailable: proceed without pattern reference.
 
 ## Search Protocol — Never Violate
 

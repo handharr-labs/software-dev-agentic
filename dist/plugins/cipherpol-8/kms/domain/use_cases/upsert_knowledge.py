@@ -46,7 +46,7 @@ class UpsertKnowledge:
             raise ValueError(f"node.content is required for upsert: {node.id}")
 
         existing = self._repo.fetch_exact(
-            node.platform, node.project, node.discipline, node.topic, node.pattern
+            node.platform, node.project, node.discipline, node.artifact, node.topic, node.pattern
         )
 
         if node.content_type == "stub" and existing is not None and existing.content_type == "real":

@@ -5,11 +5,14 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create the StateHolder following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
+Create the StateHolder following the {platform} standard architecture, loaded from the KMS.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_query(text="state management bloc cubit naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC; locate the state-holder topic (`state_management` with `bloc`/`cubit`, or `presentation` with `presenter`/`mvp_contract`).
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<state-holder topic>", pattern="<slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
+   - If the TOC has no state-holder pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` — do not guess.
 2. **Confirm** use cases exist in domain layer before proceeding
 3. **Locate** path per `### Creation Order` in the impl doc
 4. **Create** the StateHolder file(s) following the implementation pattern

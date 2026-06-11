@@ -5,14 +5,17 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a Use Case following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
+Create a Use Case following the {platform} standard architecture, loaded from the KMS.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_query(text="domain use case naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", topic="domain", platform={platform})` — scan the domain TOC for the use-case pattern slug (e.g. `use_case`).
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain", pattern="<use-case slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
+   - If the TOC has no use-case pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/domain` — do not guess.
 2. **Identify** the single business operation this use case performs
-3. **Locate** path per the impl doc's use case directory convention
-4. **Create** the use case file following the impl doc pattern
+3. **Locate** path per the fetched doc's use case directory convention
+4. **Create** the use case file following the fetched pattern
 
 ## Rules
 

@@ -2,7 +2,7 @@
 name: developer-ui-worker
 description: Execute the UI layer of an approved feature plan — Screen, Component, and Navigator artifacts only. Spawned by /developer-plan-feature after developer-feature-worker emits Layers Complete. Starts with a clean context: loads plan.md, context.md, stateholder-contract, and Figma references fresh.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_query
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
   - developer-pres-create-screen
   - developer-pres-create-component
@@ -48,11 +48,12 @@ Extract from the inlined content:
 
 Read the stateholder contract from disk using the `Read` tool on the path from `stateholder_contract`. If the path is `"none"` or null, skip — UI wiring will use only the plan description.
 
-Load the UI-relevant presentation knowledge reference before writing any code.
+Load the UI-relevant presentation knowledge reference before writing any code (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
 
-`kms_query(text="presentation layer screen structure navigation router component widget state management", platform="{platform}", discipline="engineering", n_results=5)`
+1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform="{platform}")` — scan the presentation TOC (screen_structure, component, bloc_listener).
+2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<slug>", platform="{platform}")` — fetch the screen/component patterns.
 
-Fallback — if no results or tool unavailable: proceed without pattern reference.
+Fallback — if the list is empty or the tool is unavailable: proceed without pattern reference.
 
 Check state.json to resume from a previous run:
 ```bash

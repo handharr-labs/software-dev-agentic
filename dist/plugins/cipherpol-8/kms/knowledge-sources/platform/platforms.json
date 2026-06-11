@@ -1,0 +1,20 @@
+{
+  "platforms": [
+    {
+      "id": "flutter",
+      "name": "Flutter"
+    },
+    {
+      "id": "ios",
+      "name": "iOS"
+    },
+    {
+      "id": "android",
+      "name": "Android"
+    },
+    {
+      "id": "web",
+      "name": "Web"
+    }
+  ]
+}

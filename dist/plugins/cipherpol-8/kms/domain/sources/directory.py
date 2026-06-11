@@ -15,6 +15,8 @@ from .base import KnowledgeSource
 
 _SUPPORTED_SUFFIXES = {".md", ".txt"}
 _FIRST_SENTENCE_RE = re.compile(r"^[^#\n].+?(?<=[.!?])\s", re.DOTALL)
+_UNIVERSAL_DIR = "universal"
+_PLATFORM_DIR = "platform"
 _PROJECTS_DIR = "projects"
 _REPO_YAML = "repo.yaml"
 
@@ -67,18 +69,14 @@ def _extract_summary(content: str) -> str:
     return ""
 
 
-def _parse_filename(stem: str) -> tuple[str | None, str, str]:
-    """Derive (platform, topic, pattern) from filename stem.
+def _parse_filename(stem: str) -> tuple[str, str]:
+    """Derive (topic, pattern) from filename stem. Platform is directory-derived, not filename-derived.
 
-    flutter-standard-architecture → (flutter, standard_architecture, flutter_standard_architecture)
-    feature-inventory             → (None, feature_inventory, feature_inventory)
+    standard-architecture → (standard_architecture, standard_architecture)
+    feature-inventory     → (feature_inventory, feature_inventory)
     """
     snake = stem.replace("-", "_")
-    for platform in PLATFORM_VALUES:
-        if snake.startswith(platform + "_"):
-            topic = snake[len(platform) + 1:]
-            return platform, topic, snake
-    return None, snake, snake
+    return snake, snake
 
 
 def _heading_to_slug(heading: str) -> str:
@@ -87,39 +85,58 @@ def _heading_to_slug(heading: str) -> str:
     return re.sub(r"\s+", "_", slug.strip())
 
 
-def _chunk_by_sections(content: str) -> list[tuple[str, str]]:
-    """Split content by ## headings. Returns [(heading, section_content), ...].
+def _strip_frontmatter(content: str) -> str:
+    """Remove YAML frontmatter block (--- ... ---) if present."""
+    if not content.startswith("---"):
+        return content
+    end = content.find("\n---\n", 3)
+    if end == -1:
+        return content
+    return content[end + 5:].strip()
 
-    Only chunks when at least one ## heading is present. Returns the whole
-    content as a single unnamed chunk when no ## headings exist.
+
+def _chunk_by_sections(content: str) -> list[tuple[str, str, str]]:
+    """Split content by ## headings. Returns [(topic_slug, pattern_slug, section_content), ...].
+
+    # heading  → updates topic context; not a chunk boundary
+    ## heading → chunk boundary; pattern derived from this heading
+    ### +      → content within the ## chunk; not split further
+
+    Returns [] when no ## headings found — caller yields file as a single node.
+    topic_slug is "" when no # heading precedes the ## — caller uses artifact name as fallback.
+    Lines before the first ## (preamble) are discarded.
     """
     lines = content.splitlines()
-    sections: list[tuple[str, str]] = []
-    current_heading: str | None = None
+    sections: list[tuple[str, str, str]] = []
+    current_topic: str = ""
+    current_pattern: str | None = None
     current_lines: list[str] = []
 
     for line in lines:
-        if line.startswith("## "):
-            if current_heading is not None or current_lines:
-                sections.append((current_heading or "", "\n".join(current_lines).strip()))
-            current_heading = line[3:].strip()
+        if line.startswith("# ") and not line.startswith("## "):
+            if current_pattern is not None:
+                sections.append((current_topic, current_pattern, "\n".join(current_lines).strip()))
+                current_pattern = None
+                current_lines = []
+            current_topic = _heading_to_slug(line[2:].strip())
+        elif line.startswith("## "):
+            if current_pattern is not None:
+                sections.append((current_topic, current_pattern, "\n".join(current_lines).strip()))
+            current_pattern = _heading_to_slug(line[3:].strip())
             current_lines = [line]
-        else:
+        elif current_pattern is not None:
             current_lines.append(line)
+        # else: preamble before first ## — discard
 
-    if current_heading is not None or current_lines:
-        sections.append((current_heading or "", "\n".join(current_lines).strip()))
+    if current_pattern is not None:
+        sections.append((current_topic, current_pattern, "\n".join(current_lines).strip()))
 
-    has_headings = any(h for h, _ in sections)
-    if not has_headings:
-        return []  # caller yields as single node
-
-    return [(h, c) for h, c in sections if c.strip()]
+    return [(t, p, c) for t, p, c in sections if c.strip()]
 
 
 def _is_template_file(path: Path) -> bool:
-    """True for _template.md and {platform}-_template.md files."""
-    return path.name == "_template.md" or path.stem.endswith("-_template")
+    """True for _template.md files."""
+    return path.name == "_template.md"
 
 
 def _derive_scope(platform: str | None, project: str | None) -> str:
@@ -133,21 +150,16 @@ def _derive_scope(platform: str | None, project: str | None) -> str:
 class DirectorySource(KnowledgeSource):
     """Reads any supported file from kms/knowledge-sources/ — no frontmatter required.
 
-    Two path conventions:
+    Three path conventions mirror the cascade tiers:
 
-    1. Platform/universal knowledge:
-       {root}/{discipline}/{filename}.md
-       discipline → subdirectory name (must match DISCIPLINE_VALUES)
-       platform   → filename prefix (flutter-*, ios-*, android-*, web-*)
-       scope      → platform if prefix found, universal otherwise
+    1. Universal knowledge: {root}/universal/{discipline}/{artifact}/{filename}.md
+       scope=universal, platform=None, discipline and artifact from subdirectory names
 
-    2. Project-specific knowledge:
-       {root}/projects/{project-name}/{filename}.md
-       Project metadata (platform, remote, local_path) read from repo.yaml in the project dir.
-       discipline → always "engineering" (codebase scan output)
-       project    → directory name
-       scope      → always "project"
-       platform   → from repo.yaml
+    2. Platform knowledge: {root}/platform/{platform}/{discipline}/{artifact}/{filename}.md
+       scope=platform, platform/discipline/artifact from subdirectory names
+
+    3. Project-specific knowledge: {root}/projects/{project-name}/{artifact}/{filename}.md
+       scope=project, platform and project read from repo.yaml, artifact from subdirectory name
     """
 
     def __init__(self, name: str, path: str, owns: list[str]) -> None:
@@ -171,71 +183,101 @@ class DirectorySource(KnowledgeSource):
         return self._path.exists()
 
     def read(self) -> Iterator[KnowledgeNode]:
+        yield from self._read_universal_docs()
         yield from self._read_platform_docs()
         yield from self._read_project_docs()
 
     # ------------------------------------------------------------------
-    # Platform / universal docs: {root}/{discipline}/{file}.md
+    # Universal docs: {root}/universal/{discipline}/{file}.md
+    # ------------------------------------------------------------------
+
+    def _read_universal_docs(self) -> Iterator[KnowledgeNode]:
+        yield from self._read_scope_dir(self._path / _UNIVERSAL_DIR, platform=None)
+
+    # ------------------------------------------------------------------
+    # Platform docs: {root}/platform/{platform}/{discipline}/{file}.md
     # ------------------------------------------------------------------
 
     def _read_platform_docs(self) -> Iterator[KnowledgeNode]:
-        for discipline_dir in sorted(self._path.iterdir()):
-            if not discipline_dir.is_dir():
+        platform_root = self._path / _PLATFORM_DIR
+        if not platform_root.exists():
+            return
+        for platform_dir in sorted(platform_root.iterdir()):
+            if not platform_dir.is_dir():
                 continue
-            if discipline_dir.name == _PROJECTS_DIR:
+            if platform_dir.name not in PLATFORM_VALUES:
+                continue
+            yield from self._read_scope_dir(platform_dir, platform=platform_dir.name)
+
+    # ------------------------------------------------------------------
+    # Shared discipline traversal
+    # ------------------------------------------------------------------
+
+    def _read_scope_dir(self, scope_dir: Path, platform: Optional[str]) -> Iterator[KnowledgeNode]:
+        if not scope_dir.exists():
+            return
+        scope = _derive_scope(platform, None)
+
+        for discipline_dir in sorted(scope_dir.iterdir()):
+            if not discipline_dir.is_dir():
                 continue
             if discipline_dir.name not in DISCIPLINE_VALUES:
                 continue
-
             discipline = discipline_dir.name
 
-            for path in sorted(discipline_dir.rglob("*")):
-                if path.is_dir() or path.name in ("README.md",):
+            for artifact_dir in sorted(discipline_dir.iterdir()):
+                if not artifact_dir.is_dir():
                     continue
-                if path.suffix not in _SUPPORTED_SUFFIXES:
-                    continue
-                if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
-                    print(f"  skip (excluded): {path.name}")
-                    continue
+                artifact = artifact_dir.name
 
-                platform, file_topic, file_pattern = _parse_filename(path.stem)
-                content = path.read_text(encoding="utf-8").strip()
-                scope = _derive_scope(platform, None)
-                chunks = _chunk_by_sections(content)
-                node_content_type = "stub" if _is_template_file(path) else "real"
+                for path in sorted(artifact_dir.rglob("*")):
+                    if path.is_dir() or path.name in ("README.md",):
+                        continue
+                    if path.suffix not in _SUPPORTED_SUFFIXES:
+                        continue
+                    if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
+                        print(f"  skip (excluded): {path.name}")
+                        continue
 
-                if chunks:
-                    for heading, section_content in chunks:
-                        section_slug = _heading_to_slug(heading) if heading else file_topic
+                    file_topic, file_pattern = _parse_filename(path.stem)
+                    raw = path.read_text(encoding="utf-8").strip()
+                    content = _strip_frontmatter(raw)
+                    chunks = _chunk_by_sections(content)
+                    node_content_type = "stub" if _is_template_file(path) else "real"
+
+                    if chunks:
+                        for topic_slug, pattern_slug, section_content in chunks:
+                            yield KnowledgeNode(
+                                scope=scope,
+                                platform=platform,
+                                project=None,
+                                discipline=discipline,
+                                artifact=artifact,
+                                topic=topic_slug if topic_slug else file_topic,
+                                pattern=pattern_slug,
+                                summary=_extract_summary(section_content),
+                                source_file=str(path),
+                                updated_at=date.today().isoformat(),
+                                content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                                content=section_content,
+                                content_type=node_content_type,
+                            )
+                    else:
                         yield KnowledgeNode(
                             scope=scope,
                             platform=platform,
                             project=None,
                             discipline=discipline,
-                            topic=section_slug,
-                            pattern=section_slug,
-                            summary=_extract_summary(section_content),
+                            artifact=artifact,
+                            topic=file_topic,
+                            pattern=file_pattern,
+                            summary=_extract_summary(content),
                             source_file=str(path),
                             updated_at=date.today().isoformat(),
-                            content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
-                            content=section_content,
+                            content_hash=hashlib.sha256(content.encode()).hexdigest(),
+                            content=content,
                             content_type=node_content_type,
                         )
-                else:
-                    yield KnowledgeNode(
-                        scope=scope,
-                        platform=platform,
-                        project=None,
-                        discipline=discipline,
-                        topic=file_topic,
-                        pattern=file_pattern,
-                        summary=_extract_summary(content),
-                        source_file=str(path),
-                        updated_at=date.today().isoformat(),
-                        content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                        content=content,
-                        content_type=node_content_type,
-                    )
 
     # ------------------------------------------------------------------
     # Project-specific docs: {root}/projects/{project}/{file}.md
@@ -252,48 +294,55 @@ class DirectorySource(KnowledgeSource):
 
             repo = _load_repo_meta(project_dir)
 
-            for path in sorted(project_dir.rglob("*")):
-                if path.is_dir():
+            for artifact_dir in sorted(project_dir.iterdir()):
+                if not artifact_dir.is_dir():
                     continue
-                if path.name in ("README.md", _REPO_YAML):
-                    continue
-                if path.suffix not in _SUPPORTED_SUFFIXES:
-                    continue
-                if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
-                    print(f"  skip (excluded): {path.name}")
-                    continue
+                artifact = artifact_dir.name
 
-                stem = path.stem.replace("-", "_")
-                content = path.read_text(encoding="utf-8").strip()
-                chunks = _chunk_by_sections(content)
+                for path in sorted(artifact_dir.rglob("*")):
+                    if path.is_dir():
+                        continue
+                    if path.name in ("README.md", _REPO_YAML):
+                        continue
+                    if path.suffix not in _SUPPORTED_SUFFIXES:
+                        continue
+                    if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
+                        print(f"  skip (excluded): {path.name}")
+                        continue
 
-                if chunks:
-                    for heading, section_content in chunks:
-                        section_slug = _heading_to_slug(heading) if heading else stem
+                    stem = path.stem.replace("-", "_")
+                    raw = path.read_text(encoding="utf-8").strip()
+                    content = _strip_frontmatter(raw)
+                    chunks = _chunk_by_sections(content)
+
+                    if chunks:
+                        for topic_slug, pattern_slug, section_content in chunks:
+                            yield KnowledgeNode(
+                                scope="project",
+                                platform=repo.platform,
+                                project=repo.name,
+                                discipline="engineering",
+                                artifact=artifact,
+                                topic=topic_slug if topic_slug else stem,
+                                pattern=pattern_slug,
+                                summary=_extract_summary(section_content),
+                                source_file=str(path),
+                                updated_at=date.today().isoformat(),
+                                content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                                content=section_content,
+                            )
+                    else:
                         yield KnowledgeNode(
                             scope="project",
                             platform=repo.platform,
                             project=repo.name,
                             discipline="engineering",
-                            topic=section_slug,
-                            pattern=section_slug,
-                            summary=_extract_summary(section_content),
+                            artifact=artifact,
+                            topic=stem,
+                            pattern=stem,
+                            summary=_extract_summary(content),
                             source_file=str(path),
                             updated_at=date.today().isoformat(),
-                            content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
-                            content=section_content,
+                            content_hash=hashlib.sha256(content.encode()).hexdigest(),
+                            content=content,
                         )
-                else:
-                    yield KnowledgeNode(
-                        scope="project",
-                        platform=repo.platform,
-                        project=repo.name,
-                        discipline="engineering",
-                        topic=stem,
-                        pattern=stem,
-                        summary=_extract_summary(content),
-                        source_file=str(path),
-                        updated_at=date.today().isoformat(),
-                        content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                        content=content,
-                    )

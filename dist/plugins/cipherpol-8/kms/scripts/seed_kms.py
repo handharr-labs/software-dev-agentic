@@ -156,7 +156,7 @@ def _register_source(target: str, repo_root: Path) -> dict | None:
 def _seed_source(adapter: KnowledgeSource, upsert: UpsertKnowledge, repo: ChromaKnowledgeRepository, force: bool = False) -> tuple[int, int]:
     ok = skipped = 0
     for node in adapter.read():
-        existing = repo.fetch_exact(node.platform, node.project, node.discipline, node.topic, node.pattern)
+        existing = repo.fetch_exact(node.platform, node.project, node.discipline, node.artifact, node.topic, node.pattern)
         if not force and existing and existing.content_hash and existing.content_hash == node.content_hash and existing.content:
             skipped += 1
             continue

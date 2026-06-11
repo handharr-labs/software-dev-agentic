@@ -2,7 +2,7 @@
 name: auditor-arch-review-worker
 description: Review code for Clean Architecture violations — layer boundary breaches, entity immutability, service purity, mapper patterns, and naming conventions. Designed to be invoked only by the `/auditor-arch-review` skill — not directly.
 model: sonnet
-tools: Read, Glob, Grep, mcp__kms__kms_query
+tools: Read, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 permissionMode: plan
 related_skills:
   - auditor-arch-check
@@ -54,8 +54,10 @@ Defer to the platform skill for the full naming table. Flag deviations as Warnin
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths (step 2 below).
 
-1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics to understand what conventions are documented
-2. `kms_query(text="naming conventions architecture dependency rules layer invariants deviation patterns", platform="{platform}", discipline="engineering", n_results=5)` — documented conventions for U5 and project-specific rules
+Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
+
+1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC for `naming_convention`, `dependency_rule`, and `layer_invariants` patterns across layers.
+2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<layer topic>", pattern="<naming_convention | dependency_rule | layer_invariants>", platform="{platform}")` — documented conventions for U5 and the dependency rules. For project-specific deviations, also `kms_list(discipline="engineering", artifact="deviations", project="<project>")` and fetch any relevant nodes. Reserve `kms_query(...)` for cold-start only.
 3. Codebase explore — `Grep` for the most representative well-structured file per layer under review (e.g., a complete UseCase, a complete RepositoryImpl) excluding `test/` paths → extract live naming conventions and dependency patterns
 
 Combine KMS documented rules with codebase evidence as authoritative reference for the review.

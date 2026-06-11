@@ -16,6 +16,7 @@ class KnowledgeRepository(ABC):
         platform: Optional[str] = None,
         project: Optional[str] = None,
         discipline: Optional[str] = None,
+        artifact: Optional[str] = None,
         topic: Optional[str] = None,
     ) -> list[KnowledgeNode]:
         """Return metadata-only nodes matching all supplied filters (no content)."""
@@ -26,6 +27,7 @@ class KnowledgeRepository(ABC):
         platform: Optional[str],
         project: Optional[str],
         discipline: str,
+        artifact: Optional[str],
         topic: str,
         pattern: str,
     ) -> Optional[KnowledgeNode]:

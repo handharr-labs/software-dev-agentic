@@ -2,7 +2,7 @@
 name: developer-feature-worker
 description: Execute an approved feature plan for Domain, Data, Presentation (StateHolder), and App layers — reads plan.md, calls skills in layer order, validates each artifact inline. UI layer (Screen/Component/Navigator) is handled by developer-ui-worker after this worker completes. Invoked by /developer-plan-feature or /developer-build-feature skills after plan approval.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__kms__kms_list, mcp__kms__kms_fetch, mcp__kms__kms_query
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
   - developer-domain-create-entity
   - developer-domain-create-repository
@@ -56,13 +56,13 @@ Load cross-cutting convention references before writing any code — knowledge f
 
 Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 
-1. `kms_list(platform="{platform}", discipline="engineering")` — scan available topics
-2. `kms_fetch(topic="null_safety_extensions", pattern="null_safety_extensions", discipline="engineering", platform="{platform}")` — deterministic load of the optional-handling convention (`.orEmpty()`, `.orZero()`, `.orFalse()`, etc.). This is uniform across every platform's `{platform}-conventions.md` — fetch by exact topic rather than relying on `kms_query` ranking. Apply throughout every artifact that unwraps a nullable value.
-3. `kms_query(text="syntax conventions utilities error handling code patterns", platform="{platform}", discipline="engineering", n_results=5)` — additional cross-cutting conventions via semantic search
-3. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
+1. `kms_list(discipline="engineering", artifact="conventions", platform="{platform}")` — scan the cross-cutting conventions TOC (e.g. `null_safety_extensions`, `helper_extensions`, `magic_constants`).
+2. `kms_fetch(discipline="engineering", artifact="conventions", topic="conventions", pattern="null_safety_extensions", platform="{platform}")` — deterministic load of the optional-handling convention (`.orEmpty()`, `.orZero()`, `.orFalse()`, etc.). Apply throughout every artifact that unwraps a nullable value.
+3. `kms_fetch` the remaining convention patterns surfaced in Step 1 (e.g. `helper_extensions`, `magic_constants`) — cross-cutting utilities and constants rules. Use `kms_query(discipline="engineering", platform="{platform}")` only as a cold-start fallback if the conventions artifact is absent.
+4. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
 
 **Design system — optional, non-blocking:**
-`kms_query(text="design system component catalog", platform="{platform}", discipline="design", n_results=3)` — if results found, keep available for StateHolder and App layer artifact steps. If no results: log `[design system] no catalog for {platform} — skipping` and continue.
+`kms_query(text="design system component catalog", platform="{platform}", discipline="design", n_results=3)` — discipline=design discovery (cold-start; the design catalog vocabulary is not known ahead of time). If results found, keep available for StateHolder and App layer artifact steps. If no results: log `[design system] no catalog for {platform} — skipping` and continue.
 
 Apply every loaded convention throughout all artifacts — this is not optional.
 
@@ -110,8 +110,8 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific reference for this artifact type:
-   - `kms_query(text="{artifact_type} naming convention code pattern", platform="{platform}", discipline="engineering", n_results=3)` — documented pattern
+2. Load the layer-specific reference for this artifact type (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", topic="<layer of {artifact_type}>", platform="{platform}")` then `kms_fetch(... pattern="<{artifact_type} slug>" ...)` — documented pattern. The called skill re-fetches as needed; this primes naming/path conventions.
    - Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):
    - Look up this artifact's name in the `Figma Alignment` table — read the `Figma Files` column directly to get the list of `.md` file paths. No Glob needed.
@@ -153,7 +153,7 @@ App layer wiring is always direct `Read` + `Edit` — no skill is needed. For ea
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
 2. Load the app-layer reference:
-   - `kms_query(text="app layer wiring {pattern} registration pattern", platform="{platform}", discipline="engineering", n_results=3)` — documented wiring pattern
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="app", pattern="<wiring pattern>", platform="{platform}")` — documented wiring pattern (fetch-by-topic; `kms_list` the `app` topic first if the exact slug is unknown)
    - Codebase explore — `Grep` for existing DI/route registration calls in the target file → use as live wiring reference
 3. `Read` the target file using `offset` + `limit` around the insertion point (Grep for a known symbol or section marker first).
 4. Apply the targeted edit — add only what the plan specifies.

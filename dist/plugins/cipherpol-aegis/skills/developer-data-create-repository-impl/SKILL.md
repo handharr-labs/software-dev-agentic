@@ -5,11 +5,14 @@ user-invocable: false
 knowledge_scope: engineering
 ---
 
-Create a Repository Implementation following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md`.
+Create a Repository Implementation following the {platform} standard architecture, loaded from the KMS.
 
 ## Steps
 
-1. **Fetch pattern** — `kms_query(text="data repository implementation naming convention code pattern", platform={platform}, discipline="engineering", n_results=3)` for the canonical pattern and path convention. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", topic="data", platform={platform})` — scan the data TOC for the repository-implementation pattern slug (e.g. `repository_implementation`).
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="<repository-impl slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
+   - If the TOC has no repository-implementation pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/data` — do not guess.
 2. **Confirm** the domain repository interface, data source, and mapper all exist
 3. **Locate** path per the impl doc's repository impl directory convention
 4. **Create** the repository implementation file following the impl doc pattern

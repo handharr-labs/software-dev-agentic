@@ -9,8 +9,9 @@ class KnowledgeNode:
     discipline: str            # see schema.DISCIPLINE_VALUES
     topic: str
     pattern: str
-    platform: Optional[str] = None   # flutter | web | ios | android — required if scope != universal
-    project: Optional[str] = None    # talenta | jurnal | ... — required if scope == project
+    artifact: Optional[str] = None           # conventions | standard-architecture | feature-inventory | ...
+    platform: Optional[str] = None          # flutter | web | ios | android — required if scope != universal
+    project: Optional[str] = None           # talenta | jurnal | ... — required if scope == project
     summary: str = ""                # first sentence of ## Theory, populated at seed time
     tags: list[str] = field(default_factory=list)
     source_file: Optional[str] = None
@@ -23,7 +24,8 @@ class KnowledgeNode:
     def id(self) -> str:
         p = self.platform or "null"
         pr = self.project or "null"
-        return f"{p}:{pr}:{self.discipline}:{self.topic}:{self.pattern}"
+        a = self.artifact or "null"
+        return f"{p}:{pr}:{self.discipline}:{a}:{self.topic}:{self.pattern}"
 
     @property
     def specificity(self) -> int:

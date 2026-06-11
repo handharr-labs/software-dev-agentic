@@ -2,17 +2,20 @@
 name: debugger-add-logs
 description: Add strategic debug logs to trace execution flow or diagnose a bug.
 user-invocable: false
-allowed-tools: Read, Edit, Glob, Grep
+allowed-tools: Read, Edit, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch
 knowledge_scope: engineering
 ---
 
-Add debug instrumentation logs following the {platform} standard architecture in `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` for format and prefix rules.
+Add debug instrumentation logs following the {platform} standard architecture (loaded from the KMS) for format and prefix rules.
 
 ## Steps
 
 Follow the `INSTRUMENTATION_BRIEF` provided by the caller:
 
-1. **Fetch pattern** — `kms_query(text="debug logging format prefix naming convention", platform={platform}, discipline="engineering", n_results=3)` for the platform's log format and prefix. **Fallback** if no results: Read `kms/knowledge-sources/engineering/{platform}-standard-architecture.md` and locate the relevant section.
+1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). Logging lives under a platform-specific topic (flutter → `utilities`/`logger`; android → `presentation`/`logging`):
+   - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC for the logger/logging pattern slug.
+   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<logging topic>", pattern="<logger slug from list>", platform={platform})` — full content: log format and prefix.
+   - If the TOC has no logger pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (logging) — do not guess.
 2. `Grep` each target method name to locate the exact line
 3. `Read` only the method body — not the full file
 4. Insert logs at entry, exit, branch points, and error handlers as specified in the brief

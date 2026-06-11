@@ -134,22 +134,24 @@ def kms_list(
     platform: Optional[str] = None,
     project: Optional[str] = None,
     discipline: Optional[str] = None,
+    artifact: Optional[str] = None,
     topic: Optional[str] = None,
 ) -> list[dict]:
     """
     Return a scoped table of contents — metadata only, no content.
     Merges project-specific + platform-base + universal nodes; more specific overrides less specific
-    when (discipline, topic, pattern) collides.
+    when (discipline, artifact, topic, pattern) collides.
     Use this as Step 0 before kms_fetch — reason over the TOC to decide what to fetch.
     """
     t0 = time.monotonic()
-    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, topic=topic)
+    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, artifact=artifact, topic=topic)
     result = [
         {
             "id":         n.id,
             "platform":   n.platform,
             "project":    n.project,
             "discipline": n.discipline,
+            "artifact":   n.artifact,
             "topic":      n.topic,
             "pattern":    n.pattern,
             "summary":    n.summary,
@@ -157,13 +159,14 @@ def kms_list(
         }
         for n in nodes
     ]
-    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "topic": topic}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "artifact": artifact, "topic": topic}, len(nodes), (time.monotonic() - t0) * 1000, result)
     return result
 
 
 @mcp.tool()
 def kms_fetch(
     discipline: str,
+    artifact: str,
     topic: str,
     pattern: str,
     platform: Optional[str] = None,
@@ -177,6 +180,7 @@ def kms_fetch(
     t0 = time.monotonic()
     node = _fetch_uc.execute(
         discipline=discipline,
+        artifact=artifact,
         topic=topic,
         pattern=pattern,
         platform=platform,
@@ -187,6 +191,7 @@ def kms_fetch(
         "platform":    node.platform,
         "project":     node.project,
         "discipline":  node.discipline,
+        "artifact":    node.artifact,
         "topic":       node.topic,
         "pattern":     node.pattern,
         "summary":     node.summary,
@@ -195,7 +200,7 @@ def kms_fetch(
         "updated_at":  node.updated_at,
         "content":     node.content,
     }
-    _log("kms_fetch", {"discipline": discipline, "topic": topic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
+    _log("kms_fetch", {"discipline": discipline, "artifact": artifact, "topic": topic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
     return result
 
 

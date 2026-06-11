@@ -18,7 +18,7 @@ DISCIPLINE_VALUES = [
     "agile",
 ]
 
-MANDATORY_FIELDS = ["scope", "discipline", "topic", "pattern", "schema_version"]
+MANDATORY_FIELDS = ["scope", "discipline", "artifact", "topic", "pattern", "schema_version"]
 
 OPTIONAL_FIELDS = ["platform", "project", "tags", "source_file", "updated_at", "content_hash"]
 

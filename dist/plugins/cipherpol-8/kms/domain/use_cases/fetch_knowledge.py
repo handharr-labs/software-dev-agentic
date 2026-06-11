@@ -16,6 +16,7 @@ class FetchKnowledge:
     def execute(
         self,
         discipline: str,
+        artifact: Optional[str],
         topic: str,
         pattern: str,
         platform: Optional[str] = None,
@@ -30,7 +31,7 @@ class FetchKnowledge:
         candidates.append((None, None))
 
         for plat, proj in candidates:
-            node = self._repo.fetch_exact(plat, proj, discipline, topic, pattern)
+            node = self._repo.fetch_exact(plat, proj, discipline, artifact, topic, pattern)
             if node is not None:
                 return node
 
