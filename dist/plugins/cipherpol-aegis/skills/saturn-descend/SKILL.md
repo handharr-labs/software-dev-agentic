@@ -42,7 +42,7 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
 1. Generate a slug — prefer ticket ID from the current branch, fall back to task description:
    ```bash
    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
-   ticket=$(echo "$branch" | grep -oE '[A-Z]+-[0-9]+' | head -1 | tr '[:upper:]' '[:lower:]')
+   ticket=$(echo "$branch" | grep -oE '[A-Z]+-[0-9]+' | head -1)
    if [ -n "$ticket" ]; then
      slug="$ticket"
    else
