@@ -1,0 +1,40 @@
+{
+  "disciplines": [
+    {
+      "id": "engineering",
+      "name": "Engineering"
+    },
+    {
+      "id": "design",
+      "name": "Design"
+    },
+    {
+      "id": "qa",
+      "name": "Quality Assurance"
+    },
+    {
+      "id": "agile",
+      "name": "Agile"
+    },
+    {
+      "id": "architecture",
+      "name": "Architecture"
+    },
+    {
+      "id": "devops",
+      "name": "DevOps"
+    },
+    {
+      "id": "security",
+      "name": "Security"
+    },
+    {
+      "id": "product",
+      "name": "Product"
+    },
+    {
+      "id": "code_review",
+      "name": "Code Review"
+    }
+  ]
+}
