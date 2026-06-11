@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.0.2] — 2026-06-11
+
+### Changed
+- MCP server key renamed from `kms` to `cp8` in `.mcp.json` template and installer
+- `FastMCP` server name updated to `cp8`
+
+### Added
+- README: Step 4 — MCP server setup with `.mcp.json` snippet and `CP8_*` env var table
+- README: Step 2 now uses `claude plugin marketplace add` CLI command with migration note for `sda` users
+
+---
+
 ## [12.0.1] — 2026-06-10
 
 ### Changed
