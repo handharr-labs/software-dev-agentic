@@ -27,7 +27,7 @@ Five building blocks compose every agentic workflow. Each has one defined job �
 
 | Component | Role | One-line rule |
 |---|---|---|
-| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded via KMS tools (`kms_list` → `kms_query`). Agents fall back to minimal codebase exploration when KMS is unavailable. Never embedded in agents or skills. |
+| **Reference** | The Knowledge | Persistent facts — patterns, contracts, conventions. Loaded via KMS tools (`kms_list` → `kms_fetch`/`kms_query`). Agents fall back to minimal codebase exploration when KMS is unavailable. Never embedded in agents or skills. |
 | **Skill** | The Hands | Procedural instructions that run in the caller's session. Type O (Orchestrator) is the user-facing entry tier of the agentic stack; Type P (Procedure) is the action tier called by agents. |
 | **Agent** | The Brain | Isolated reasoning in its own context window. Handles ambiguity, makes decisions, returns structured output to the caller. |
 | **MCP** | The Reach | Structured tool calls into external systems — Jira, Figma, IDE, build tools. Agents call MCP tools directly; no copy-paste relay. |
@@ -171,7 +171,7 @@ When a worker reads reference docs, scans existing files, and writes code — no
 | Core agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
 | Platform-specific agents (descriptions) | ~3–5 lines each in main session | Agent tool definition |
 | Preloaded skills | Loaded at worker startup only | `skills` field |
-| Knowledge patterns | `kms_list` → `kms_query` (theory + conventions) + codebase explore (live code) — always both | `knowledge_scope` in agent frontmatter |
+| Knowledge patterns | `kms_list` → `kms_fetch`/`kms_query` (theory + conventions) + codebase explore (live code) — always both | `knowledge_scope` in agent frontmatter |
 | `agents.local/extensions/` | 1 Read call (conditional) | Extension hook in shared agent |
 | Dead weight (unselected groups) | Zero | Persona groups not linked if not selected |
 | Strategist context accumulation | Minimal — disk-based hand-offs | Agents write findings to disk; skill passes paths not content; state file prevents re-reads |

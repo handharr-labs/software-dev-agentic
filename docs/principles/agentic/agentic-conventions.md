@@ -404,28 +404,34 @@ Any agent with `AskUserQuestion` in its `tools` that reaches a confirm/decision 
 |---|---|---|
 | 1 | `CLAUDE.md` | Universal rules applying to every task — naming, principles, build command. ~1 page max |
 | 2 | Agent body | Decision logic for that agent only — what to do, when to do it |
-| 3 | `kms/knowledge-sources/` | Shared pattern knowledge — theory, definitions, code patterns. Loaded via `kms_list` → `kms_query`. |
+| 3 | `kms/knowledge-sources/` | Shared pattern knowledge — theory, definitions, code patterns. Loaded via `kms_list` → `kms_fetch`/`kms_query`. |
 
 > Folder structure for reference docs: see [agentic-repo-structure.md](agentic-repo-structure.md).
 
-**Reference vocabulary — Topic and Term:**
+**Reference vocabulary — Topic and Pattern:**
 
-- **Topic** — the subject area a knowledge directory covers. Not engineering-specific: `domain` covers domain layer patterns; `components` covers design components; `unit_testing` covers QA patterns.
-- **Pattern** — one concrete concept within a topic. Each pattern is a self-contained `.md` file with `## Theory`, `## Definition`, `## Code Pattern` sections. The filename is the pattern key.
+All KMS terms (`scope`, `platform`, `project`, `discipline`, `artifact`, `topic`, `pattern`) are fully defined in [kms-glossary.md](../kms/kms-glossary.md) — read that doc for the canonical mapping. Summary for agent authors:
+
+- **Artifact** — the named body of knowledge a reference doc covers (a directory under `{discipline}/`), e.g. `standard-architecture`, `conventions`, `feature-inventory`.
+- **Topic** — a `#` heading inside an artifact file, grouping related concepts. Not engineering-specific: `domain` groups domain-layer patterns; `components` groups design components; `auth_flow` groups QA checklist items.
+- **Pattern** — a `##` heading inside an artifact file — one self-contained, retrievable concept and the canonical concept name (same `pattern` key across all platforms for the same concept).
 
 | Level | Example | Location |
 |---|---|---|
-| Platform-base | `engineering/flutter-standard-architecture.md` | `kms/knowledge-sources/engineering/` — shared across all projects on that platform |
-| Project-specific | `projects/flutter-mobile-talenta/deviations.md` | `kms/knowledge-sources/projects/{name}/` — deviations only |
-| Pattern node | `use_case` under `topic=domain` | Stored in ChromaDB with `discipline`, `topic`, `pattern` metadata |
+| Platform-base | `# Domain` / `## Use Case` | `kms/knowledge-sources/platform/flutter/engineering/standard-architecture/standard-architecture.md` |
+| Project-specific | `# Time Management` / `## Clock In/Out` | `kms/knowledge-sources/projects/mobile-talenta/feature-inventory/feature-inventory.md` |
+| Pattern node | `use_case` under `topic=domain` | Stored in ChromaDB with `discipline`, `artifact`, `topic`, `pattern` metadata |
 | Catalog file | queryable symbol/component inventory | `lib/core/<persona>/reference/<name>-catalog.md` |
 
-**Agent knowledge loading — canonical flow (always both):**
-1. `kms_list(platform, discipline)` → scoped TOC, metadata only — agent reasons over what topics exist
-2. `kms_query(text, platform, discipline, n_results)` → theory, definitions, and documented patterns with full content
-3. Codebase explore — `Grep` for existing implementations of the relevant pattern (e.g., `class.*UseCase`, `class.*RepositoryImpl`) excluding `test/` paths → read the most complete match as live code reference
+**Agent knowledge loading — canonical flow (always both KMS + codebase):**
+1. `kms_list(platform, discipline[, artifact, topic])` → scoped TOC, metadata only — agent reasons over what artifacts/topics/patterns exist, narrowing with `artifact`/`topic` as the TOC allows
+2. Exact retrieval — once `artifact`, `topic`, and `pattern` are known from the TOC: `kms_fetch(discipline, artifact, topic, pattern, platform)` → guaranteed, cascade-resolved (`project → platform → universal`) full content
+3. Semantic fallback — only when the exact `pattern` isn't known: `kms_query(text, platform, discipline, n_results)` → top-k nodes ranked by similarity, full content
+4. Codebase explore — `Grep` for existing implementations of the relevant pattern (e.g., `class.*UseCase`, `class.*RepositoryImpl`) excluding `test/` paths → read the most complete match as live code reference
 
-KMS provides theory and documented convention. Codebase provides the live ground truth. Both are loaded before any artifact decision.
+KMS provides theory and documented convention — prefer `kms_fetch` for guaranteed retrieval, `kms_query` only when the exact pattern is unknown. Codebase provides the live ground truth. Both KMS and codebase are loaded before any artifact decision.
+
+> For the full term-to-parameter mapping and the `kms_list` → `kms_fetch` narrowing funnel, see [kms-glossary.md](../kms/kms-glossary.md#terms-as-a-scoping-funnel-for-retrieval).
 
 **Placement decision rule — reference vs agent body:**
 
@@ -442,7 +448,8 @@ KMS provides theory and documented convention. Codebase provides the live ground
 
 | What you need | Tool |
 |---|---|
-| Implementation patterns (theory, code) | `kms_list` → `kms_query` (theory) + `Grep` codebase for most complete existing implementation (code) |
+| Implementation patterns (theory, code) — exact `pattern` known | `kms_list` → `kms_fetch` (theory, guaranteed) + `Grep` codebase for most complete existing implementation (code) |
+| Implementation patterns (theory, code) — exact `pattern` unknown | `kms_list` → `kms_query` (theory, ranked) + `Grep` codebase for most complete existing implementation (code) |
 | A specific class, function, or type in source | `Grep` for the name |
 | The full file structure (style-matching a new file) | `Read` — justified |
 | Whether a file exists | `Glob` |
@@ -455,7 +462,7 @@ KMS provides theory and documented convention. Codebase provides the live ground
 
 **Canonical pattern names (ubiquitous language):**
 
-KMS `pattern` values are **Terms** — the canonical name for one concept within a topic. The same concept must use the same `pattern` key across all platforms.
+KMS `pattern` values are the canonical name for one concept within a topic — the ubiquitous-language term used across all platforms. The same concept must use the same `pattern` key across all platforms.
 
 ```
 discipline=engineering, topic=domain, pattern=use_case, platform=flutter
