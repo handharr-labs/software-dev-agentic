@@ -2951,6 +2951,54 @@ The ViewModel protocol and its concrete implementation must exist before any UI 
 
 ---
 
+## Screen Entry Points
+
+### Theory
+
+When tracing a screen's full layer stack for system design extraction or exploration, start from the ViewController and follow the ViewModel → UseCase → Repository chain inward through each layer.
+
+### Definition
+
+**Layer file patterns:**
+
+| Layer | Glob | Grep |
+|---|---|---|
+| ViewController | `**/Presentation/**/*ViewController.swift` | `class.*ViewController.*:` |
+| Coordinator | `**/Presentation/Coordinator/**/*Coordinator.swift` | `class.*Coordinator.*:`, `final class.*Coordinator` |
+| ViewModel | `**/Presentation/**/*ViewModel.swift` | `class.*ViewModel.*:`, `final class.*ViewModel` |
+| UseCase protocol | `**/Domain/UseCases/**/*UseCase.swift` | `protocol.*UseCase` |
+| UseCase impl | `**/Domain/UseCases/**/*UseCase.swift` | `class.*UseCase.*:.*UseCase`, `final class.*UseCase` |
+| Repository protocol | `**/Domain/Repositories/**/*Repository.swift` | `protocol.*Repository` |
+| Repository impl | `**/Data/**/*RepositoryImpl.swift`, `**/Data/**/*Repository.swift` | `class.*Repository.*:.*Repository`, `final class.*Repository` |
+| Remote DataSource | `**/Data/DataSource/Remote/**/*DataSource.swift`, `**/Data/Services/**/*.swift` | `class.*DataSource`, `struct.*DataSource` |
+| DTO / Response | `**/Data/Models/**/*DTO.swift`, `**/Data/Models/**/*Response.swift` | `struct.*DTO.*:.*Codable`, `struct.*Response.*:.*Codable` |
+| Mapper | `**/Data/Mapper/**/*Mapper.swift` | `class.*Mapper`, `struct.*Mapper` |
+
+**Tracing strategy:**
+1. Read the ViewController — find the ViewModel class name from the property declaration (`private let viewModel:`, `var viewModel:`)
+2. Read the ViewModel — find UseCase protocol names from constructor parameters
+3. Grep `protocol.*{UseCaseName}` to confirm the protocol, then grep `class.*{UseCaseName}Impl` or `final class.*{UseCaseName}:` for the implementation
+4. Read the UseCase — find the Repository protocol from the constructor parameter
+5. Grep `class.*Repository.*:.*{RepositoryProtocol}` or `final class.*:.*{RepositoryProtocol}` — find the implementation
+6. Read the RepositoryImpl — find DataSource class names from constructor parameters
+7. Read each DataSource — extract endpoint path strings and DTO class names
+
+### Code Pattern
+
+```bash
+# Find the ViewModel injected into a ViewController
+grep -n "ViewModel\|viewModel" path/to/{Name}ViewController.swift
+
+# Find UseCases injected into a ViewModel
+grep -n "UseCase\|Interactor" path/to/{Name}ViewModel.swift
+
+# Find the concrete Repository for a protocol
+grep -rn "class.*:.*{RepositoryProtocol}" --include="*.swift" .
+
+# Find API endpoint path strings in a DataSource
+grep -n '"/\|path:.*"' path/to/{Name}DataSource.swift
+```
+
 # Project Structure
 
 ## Project Structure

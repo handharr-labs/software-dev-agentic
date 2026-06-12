@@ -1077,6 +1077,52 @@ class _EmployeeView extends StatelessWidget {
 }
 ```
 
+## Screen Entry Points
+
+### Theory
+
+When tracing a screen's full layer stack for system design extraction or exploration, start from the screen widget and follow imports inward through each layer.
+
+### Definition
+
+**Layer file patterns:**
+
+| Layer | Glob | Grep |
+|---|---|---|
+| Screen | `**/presentation/**/*screen.dart`, `**/presentation/**/*page.dart` | `class.*Screen.*extends`, `class.*Page.*extends` |
+| BLoC / Cubit | `**/presentation/**/*bloc.dart`, `**/presentation/**/*cubit.dart` | `class.*Bloc extends Bloc`, `class.*Cubit extends Cubit` |
+| UseCase | `**/domain/usecases/**/*use_case.dart` | `class.*UseCase` |
+| Repository interface | `**/domain/repositories/**/*repository.dart` | `abstract class.*Repository` |
+| Repository impl | `**/data/repositories/**/*repository_impl.dart` | `class.*RepositoryImpl.*implements` |
+| Remote DataSource | `**/data/datasources/**/*remote_data_source.dart` | `class.*RemoteDataSource` |
+| Local DataSource | `**/data/datasources/**/*local_data_source.dart` | `class.*LocalDataSource` |
+| DTO / Model | `**/data/models/**/*dto.dart`, `**/data/models/**/*model.dart` | `class.*Dto`, `class.*Model` |
+| Mapper | `**/data/mappers/**/*mapper.dart` | `class.*Mapper` |
+
+**Tracing strategy:**
+1. Read the screen file — find the BLoC/Cubit class name from `BlocProvider.of<...>()` or `context.read<...>()`
+2. Read the BLoC/Cubit — find UseCase class names from constructor parameters
+3. Read each UseCase — find the Repository interface from the constructor parameter type
+4. Grep `class.*RepositoryImpl.*implements.*{RepositoryName}` — find the concrete implementation
+5. Read the RepositoryImpl — find DataSource class names from constructor parameters
+6. Read each DataSource — extract HTTP method, endpoint string, and DTO class names
+
+### Code Pattern
+
+```bash
+# Find the BLoC/Cubit associated with a screen (replace {ScreenName} with PascalCase)
+grep -rn "BlocProvider\|context.read\|context.watch" path/to/{screen_name}_screen.dart
+
+# Find UseCases injected into a BLoC/Cubit
+grep -n "UseCase" path/to/{screen_name}_bloc.dart
+
+# Find the concrete repository for a given interface
+grep -rn "class.*RepositoryImpl.*implements.*{RepositoryName}" --include="*.dart" lib/
+
+# Find HTTP endpoint strings in a remote data source
+grep -n "\"/" path/to/{feature}_remote_data_source.dart
+```
+
 # State Management
 
 ## BLoC

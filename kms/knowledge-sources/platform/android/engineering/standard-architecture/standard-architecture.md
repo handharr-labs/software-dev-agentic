@@ -2921,6 +2921,53 @@ find . -path "*/presentation/common/views/*" -name "*.kt"
 find . -name "*NavigationImpl.kt" -path "*/navigation/*"
 ```
 
+## Screen Entry Points
+
+### Theory
+
+When tracing a screen's full layer stack for system design extraction or exploration, start from the Fragment or Activity and follow the ViewModel → UseCase → Repository chain inward through each layer.
+
+### Definition
+
+**Layer file patterns:**
+
+| Layer | Glob | Grep |
+|---|---|---|
+| Fragment | `**/presentation/**/*Fragment.kt` | `class.*Fragment.*:.*Fragment<` |
+| Activity | `**/presentation/**/*Activity.kt` | `class.*Activity.*:.*AppCompatActivity`, `class.*Activity.*:.*BaseActivity` |
+| ViewModel | `**/presentation/**/*ViewModel.kt` | `class.*ViewModel.*:.*BaseViewModel`, `class.*ViewModel.*:.*ViewModel()` |
+| UseCase | `**/domain/usecase/**/*UseCase.kt` | `class.*UseCase` |
+| Repository interface | `**/domain/repository/**/*Repository.kt` | `interface.*Repository` |
+| Repository impl | `**/data/repository/**/*RepositoryImpl.kt` | `class.*RepositoryImpl.*:.*Repository` |
+| Remote DataSource | `**/data/datasource/remote/**/*.kt` | `class.*RemoteDataSource`, `interface.*RemoteDataSource` |
+| Local DataSource | `**/data/datasource/local/**/*.kt` | `class.*LocalDataSource`, `interface.*LocalDataSource` |
+| DTO / Response | `**/data/model/**/*Dto.kt`, `**/data/model/**/*Response.kt` | `data class.*Dto`, `data class.*Response` |
+| Mapper | `**/data/mapper/**/*Mapper.kt` | `class.*Mapper`, `object.*Mapper` |
+
+**Tracing strategy:**
+1. Read the Fragment/Activity — find the ViewModel class name via `viewModels<...>()` or `activityViewModels<...>()`
+2. Read the ViewModel — find UseCase class names from `@Inject` constructor parameters
+3. Read each UseCase — find the Repository interface from the constructor parameter
+4. Grep `class.*RepositoryImpl.*:.*{RepositoryName}` — find the concrete implementation
+5. Read the RepositoryImpl — find DataSource class names from constructor parameters
+6. Read each DataSource — extract Retrofit `@GET`/`@POST`/`@PUT` annotations with path strings and DTO class names
+
+### Code Pattern
+
+```bash
+# Find the ViewModel for a Fragment
+grep -n "viewModels\|activityViewModels" path/to/{Name}Fragment.kt
+
+# Find UseCases injected into a ViewModel
+grep -n "UseCase" path/to/{Name}ViewModel.kt
+
+# Find the concrete Repository implementation
+grep -rn "class.*RepositoryImpl.*:.*{RepositoryName}" --include="*.kt" .
+
+# Find Retrofit endpoint annotations in a DataSource
+grep -n "@GET\|@POST\|@PUT\|@DELETE\|@PATCH" path/to/{Name}DataSource.kt
+```
+
 ## Screen
 
 ### Theory
