@@ -385,44 +385,7 @@ mkdir -p <root>/.claude/agentic-state/runs/developer/<feature>
 <root>/.claude/agentic-state/runs/developer/<feature>/plan.md
 ```
 
-Format:
-
-```markdown
----
-feature: <name>
-status: pending
-operations: [get-list, get-single, post, put, delete]
-separate-ui-layer: true | false
----
-
-# Feature Plan: <name>
-
-## Domain Layer
-| Artifact | Type | Status | Progress | Notes |
-|---|---|---|---|---|
-
-## Data Layer
-| Artifact | Type | Status | Progress | Notes |
-|---|---|---|---|---|
-
-## Presentation Layer
-| Artifact | Type | Status | Progress | Notes |
-|---|---|---|---|---|
-
-## UI Layer
-| Artifact | Type | Status | Progress | Notes |
-|---|---|---|---|---|
-
-## App Layer
-| Concern | File | Action | Progress | Notes |
-|---|---|---|---|---|
-
-## Skipped Layers
-<list any layers skipped and why>
-
-## Risks and Notes
-<anything the engineer should review before approving>
-```
+Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §plan.md Schema.
 
 **Step 5 — Write context.md:**
 
@@ -432,53 +395,7 @@ Before writing, check all planner findings blocks for a `### Figma Alignment` se
 <root>/.claude/agentic-state/runs/developer/<feature>/context.md
 ```
 
-Format:
-
-```markdown
----
-feature: <name>
-platform: <platform>
-module-path: <detected module path>
----
-
-## Discovered Artifacts
-
-### Domain
-| Artifact | Type | Path | Status |
-|---|---|---|---|
-
-### Data
-| Artifact | Type | Path | Status |
-|---|---|---|---|
-
-### Presentation
-| Artifact | Type | Path | Status |
-|---|---|---|---|
-
-### App
-| Concern | File | Action | Notes |
-|---|---|---|---|
-
-## Naming Conventions
-- Entity suffix: `<suffix>`
-- UseCase suffix: `<suffix>`
-- ViewModel/BLoC suffix: `<suffix>`
-- File location pattern: `<ModuleName>/<Layer>/<Type>/`
-
-## Figma Alignment
-(omit this section entirely if no `### Figma Alignment` table was found in planner findings)
-
-| Screen (parent_frame) | Artifact | Figma Files | States | Key Interactions |
-|---|---|---|---|---|
-<rows copied verbatim from pres-planner's ### Figma Alignment table>
-
-## Key Symbols
-(omit entirely for new-only features)
-
-### <FileName> (<artifact type>)
-- constructor_params: <param>: <Type>, ...
-- execute_signature / primary_method_signature: ...
-```
+Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §context.md Schema.
 
 **Step 6 — Return plan summary** as a flat numbered list (one line per artifact, layer + status). Do not return file contents — the entry skill handles the approval interaction.
 

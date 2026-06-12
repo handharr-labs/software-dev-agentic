@@ -24,12 +24,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Search Protocol
 
-| What you need | Use |
-|---|---|
-| Files by name pattern | `Glob` |
-| Class / struct / protocol names, signatures | `Grep` |
-| Content around a Grepped symbol | `symbol-query` |
-| A section of a reference doc | `section-query` |
+See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Input Contract, Search Protocol, and Output Contract (Impact Recommendations + Findings Written format).
 
 ## Workflow
 
@@ -144,22 +139,12 @@ File content — exactly this structure, no prose:
 | <screen name from figma_groups> | <ArtifactClassName> | <comma-separated abs paths to figma-*.md files for this screen> | empty, loading, content, error | pull-to-refresh, FAB opens bottom sheet |
 
 ### Impact Recommendations
-| Layer | Reason | Urgency |
-|---|---|---|
-| domain | <why domain layer is affected, e.g. new screen needs a use case that doesn't exist> | required / optional |
-| app | <why app layer is affected, e.g. new screen needs route registration> | required / optional |
-
-Omit rows for layers with no impact. Omit the section entirely if no other layer is affected.
+This layer typically impacts `domain` (new screen needs a use case) and `app` (route registration).
 ```
 
 Write `none detected` for any naming convention that cannot be inferred. Omit `mark_sections` if the platform doesn't use MARK comments.
 
-Then return exactly:
-
-```
-## Findings Written
-file: <run_dir>/findings/pres-findings.md
-```
+Then follow the shared `## Findings Written` return format from `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md`, with `<layer>` = `pres`.
 
 ## Extension Point
 
