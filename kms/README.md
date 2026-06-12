@@ -2,7 +2,7 @@
 
 ChromaDB-backed knowledge store for the CipherPol toolkit. Agents retrieve implementation patterns and SDLC knowledge via MCP tools instead of grepping flat files.
 
-See `docs/principles/kms/kms-design-principles.md` for the full design rationale and decisions.
+See `docs/principles/kms/kms-design-principles.md` for design rationale, `kms-conventions.md` for path conventions and retrieval protocol, and `kms-seeding.md` for seeding strategy.
 
 ---
 

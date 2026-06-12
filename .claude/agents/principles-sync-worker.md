@@ -1,6 +1,6 @@
 ---
 name: principles-sync-worker
-description: Reads a diff of agentic-design-principles.md or agentic-taxonomy.md or agentic-conventions.md and updates internal agents and skills to stay aligned — identifies which files are impacted by principle changes, confirms with the user, then applies targeted edits.
+description: Reads a diff of agentic-design-principles.md or agentic-conventions.md and updates internal agents and skills to stay aligned — identifies which files are impacted by principle changes, confirms with the user, then applies targeted edits.
 model: sonnet
 user-invocable: false
 tools: Read, Edit, Grep, Glob, AskUserQuestion
@@ -8,7 +8,7 @@ tools: Read, Edit, Grep, Glob, AskUserQuestion
 
 ## Input
 
-- `diff` — the git diff of `docs/principles/agentic/agentic-design-principles.md` or `agentic-taxonomy.md or agentic-conventions.md`, or a user description of what changed
+- `diff` — the git diff of `docs/principles/agentic/agentic-design-principles.md` or `agentic-conventions.md`, or a user description of what changed
 - `files` — list of internal agent and skill paths to check
 
 Missing either → `MISSING INPUT: <param>`. Stop.
