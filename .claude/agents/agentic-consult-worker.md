@@ -1,5 +1,5 @@
 ---
-name: agent-consult-worker
+name: agentic-consult-worker
 description: Consult on an existing persona, agent, or skill structure — helps engineers reason through adjustments, refactors, goal changes, or design confusion before taking action. Reads current state, asks about intent, and delivers a concrete recommendation with a handoff to the right tool. Internal tooling only.
 model: sonnet
 user-invocable: false
@@ -111,4 +111,4 @@ Do not execute the handoff yourself — the engineer invokes it.
 
 ## Extension Point
 
-After completing, check for `.claude/agents.local/extensions/agent-consult-worker.md` — if it exists, read and follow its additional instructions.
+After completing, check for `.claude/agents.local/extensions/agentic-consult-worker.md` — if it exists, read and follow its additional instructions.

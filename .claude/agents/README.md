@@ -5,7 +5,7 @@ Internal tooling for maintaining this repo — convention review and component s
 | Agent | Purpose |
 |---|---|
 | `arch-review-strategist` | Audit all agents and skills in this repo against the convention checklist |
-| `arch-review-worker` | Review a specific scope (agent file, skill dir) for convention violations |
+| `agentic-arch-review-worker` | Review a specific scope (agent file, skill dir) for convention violations |
 | `scaffold-worker` | Consult on and scaffold new agents, skills, or personas for this repo |
 
 ---

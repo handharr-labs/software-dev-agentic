@@ -115,7 +115,7 @@ Strategists never use Edit, Write, or file-writing Bash — zero inline work.
 
 | Type | Pattern | Example |
 |---|---|---|
-| Worker | `<domain>-worker.md` | `agent-scaffold-worker.md` |
+| Worker | `<domain>-worker.md` | `agentic-scaffold-worker.md` |
 | Strategist | `<domain>-strategist.md` | `arch-review-strategist.md` |
 | Skill directory | `<layer>-<action>-<target>` | `domain-create-entity` |
 

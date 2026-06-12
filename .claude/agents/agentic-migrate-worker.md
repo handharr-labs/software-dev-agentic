@@ -1,5 +1,5 @@
 ---
-name: agent-migrate-worker
+name: agentic-migrate-worker
 description: Migrate an existing agent or skill file to comply with software-dev-agentic conventions — reads the file, identifies violations against the convention reference, confirms fixes with the user, then applies them. Internal tooling only.
 model: sonnet
 user-invocable: false
@@ -76,7 +76,7 @@ Apply all confirmed fixes in a single Edit pass per file. Fix order:
 3. Section corrections (wrong model, naming)
 4. Platform-agnosticism violations (remove embedded platform content — flag to user if the fix requires delegating to a skill, as that is out of scope for this worker)
 
-For platform-agnosticism violations that require creating a new skill: report them as `OUT OF SCOPE — requires agent-scaffold-worker to create the delegating skill` and skip.
+For platform-agnosticism violations that require creating a new skill: report them as `OUT OF SCOPE — requires agentic-scaffold-worker to create the delegating skill` and skip.
 
 ## Step 6 — Verify
 
@@ -103,4 +103,4 @@ Out of scope (<n>):
 
 ## Extension Point
 
-After completing, check for `.claude/agents.local/extensions/agent-migrate-worker.md` — if it exists, read and follow its additional instructions.
+After completing, check for `.claude/agents.local/extensions/agentic-migrate-worker.md` — if it exists, read and follow its additional instructions.

@@ -1,5 +1,5 @@
 ---
-name: agent-generate-platform-worker
+name: agentic-generate-platform-worker
 description: Scan a downstream repo and generate or sync platform reference impl files and contract skills — called by generate-platform and sync-platform trigger skills. Internal tooling only.
 model: sonnet
 user-invocable: false
@@ -171,4 +171,4 @@ Warnings:
 
 ## Extension Point
 
-After completing, check for `.claude/agents.local/extensions/agent-generate-platform-worker.md` — if it exists, read and follow its additional instructions.
+After completing, check for `.claude/agents.local/extensions/agentic-generate-platform-worker.md` — if it exists, read and follow its additional instructions.
