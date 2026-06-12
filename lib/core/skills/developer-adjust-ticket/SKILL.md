@@ -44,7 +44,13 @@ Verify the file exists before continuing. If it does not exist, report the path 
 
 5. Check if a `# Session Adjustment` section already exists in the file.
 
-   - **If it exists:** replace the entire block (from the preceding `---` separator through the end of the section) with the updated content below.
+   - **If it exists:**
+     a. Scan its subsections (lines starting with `##`) for any that are **not** in the defined set: `Acceptance Criteria`, `Work Items`, `Progress`, `Decisions`, `Open Questions`, `Bugs`, `Status`.
+     b. If any custom subsections are found, list them to the user and use `AskUserQuestion` to ask:
+        > "Found custom subsections in the existing Session Adjustment: [list]. What would you like to do?"
+        - Options: "Keep all", "Remove all", "Remove specific ones" (if the last option is chosen, follow up asking which ones to remove by name).
+     c. Preserve any custom subsections the user chose to keep — append them after `## Status` in the replacement block.
+     d. Replace the entire block (from the preceding `---` separator through the end of the section) with the updated content (including any kept custom subsections).
    - **If it does not exist:** append the block at the end of the file.
 
    ```
@@ -85,7 +91,8 @@ Verify the file exists before continuing. If it does not exist, report the path 
 
 ## Rules
 
-- NEVER edit, reorder, or strip any content outside the `## Session Adjustment` section. The only writable area is between the `---` separator and the end of that section.
+- NEVER edit, reorder, or strip any content outside the `# Session Adjustment` section. The only writable area is between the `---` separator and the end of that section.
+- When an existing Session Adjustment section contains custom subsections (not in the defined set), always ask the user before removing them — never silently discard.
 - Always duplicate the Acceptance Criteria from the ticket body into the Session Adjustment section. When criteria change, update only the copy inside Session Adjustment — never the original.
 - Always include a `## Work Items` checklist to track progress. Mark items `- [x]` as confirmed done, `- [ ]` otherwise.
 - `## Decisions` and `## Open Questions` are always separate sections — never combined.
