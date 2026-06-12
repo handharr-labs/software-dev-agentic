@@ -23,12 +23,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Search Protocol
 
-| What you need | Use |
-|---|---|
-| Files by name pattern | `Glob` |
-| Class / struct / protocol names, signatures | `Grep` |
-| Content around a Grepped symbol | `symbol-query` |
-| A section of a reference doc | `section-query` |
+See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Input Contract, Search Protocol, and Output Contract (Impact Recommendations + Findings Written format).
 
 ## Workflow
 
@@ -113,22 +108,12 @@ File content — exactly this structure, no prose:
 - primary_method_signature: `func map(<params>) -> <return>`
 
 ### Impact Recommendations
-| Layer | Reason | Urgency |
-|---|---|---|
-| domain | <why domain layer is affected, e.g. repository interface contract needs updating> | required / optional |
-| app | <why app layer is affected, e.g. new repository impl needs DI binding> | required / optional |
-
-Omit rows for layers with no impact. Omit the section entirely if no other layer is affected.
+This layer typically impacts `domain` (repository interface contract) and `app` (new repository impl → DI binding).
 ```
 
 Write `none detected` for any naming convention that cannot be inferred.
 
-Then return exactly:
-
-```
-## Findings Written
-file: <run_dir>/findings/data-findings.md
-```
+Then follow the shared `## Findings Written` return format from `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md`, with `<layer>` = `data`.
 
 ## Extension Point
 

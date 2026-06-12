@@ -39,6 +39,8 @@ Provided inline by the calling skill — not passed as parameters:
 | Artifact tables per layer (Domain / Data / Presentation / UI / App) | plan.md body | yes |
 | Key Symbols per existing artifact | context.md | yes |
 
+Full plan.md/context.md schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md`.
+
 Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-plan-feature` or `/developer-build-feature`.
 
 ## Pre-flight

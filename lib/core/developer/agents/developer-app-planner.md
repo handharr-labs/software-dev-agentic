@@ -23,12 +23,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Search Protocol
 
-| What you need | Use |
-|---|---|
-| Files by name pattern | `Glob` |
-| Class / struct / protocol names, signatures | `Grep` |
-| Content around a Grepped symbol | `symbol-query` |
-| A section of a reference doc | `section-query` |
+See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Input Contract, Search Protocol, and Output Contract (Impact Recommendations + Findings Written format).
 
 ## Workflow
 
@@ -143,22 +138,12 @@ File content — exactly this structure, no prose:
 - feature_flag_pattern: `<pattern>`
 
 ### Impact Recommendations
-| Layer | Reason | Urgency |
-|---|---|---|
-| domain | <why domain layer is affected, e.g. feature flag requires a domain-level toggle use case> | required / optional |
-| presentation | <why presentation layer is affected, e.g. route change requires navigator update> | required / optional |
-
-Omit rows for layers with no impact. Omit the section entirely if no other layer is affected.
+This layer typically impacts `domain` (feature flag → domain toggle use case) and `presentation` (route change → navigator update).
 ```
 
 Write `none detected` for any convention that cannot be inferred. Write `N/A` for steps that do not apply to the platform.
 
-Then return exactly:
-
-```
-## Findings Written
-file: <run_dir>/findings/app-findings.md
-```
+Then follow the shared `## Findings Written` return format from `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md`, with `<layer>` = `app`.
 
 ## Extension Point
 
