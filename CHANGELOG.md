@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.9.1] — 2026-06-13
+
+### Added
+- `docs/principles/kms/kms-glossary.md` — canonical "Rosetta Stone" for the 7 KMS vocabulary terms (`scope`, `platform`, `project`, `discipline`, `artifact`, `topic`, `pattern`), including the `kms_list` → `kms_fetch`/`kms_query` retrieval funnel
+
+### Changed
+- `docs/principles/kms/kms-conventions.md`, `kms-design-principles.md`, `kms-seeding.md`, `kms/docs/kms-knowledge-source-rules.md` — cross-link the new glossary and rewrite the Retrieval Protocol's combination pattern around the scoping-funnel model
+- `docs/principles/agentic/agentic-conventions.md`, `agentic-design-principles.md` — align topic/pattern definitions and the knowledge-loading flow/Search Protocol with the glossary, adding `kms_fetch` where only `kms_query` was documented
+- `.claude/agents/kms-source-audit-worker.md` — rewrote R1-R7 to match `kms-knowledge-source-rules.md` verbatim (R4/R5/R6 were mislabeled, R7 was a dead file-naming check)
+- `.claude/skills/kms-audit/SKILL.md` — fixed a dead `/kms-audit engineering/` example path
+
+### Fixed
+- `kms/application/mcp_server.py` — `kms_upsert` was missing `scope`/`artifact` when constructing `KnowledgeNode`, causing a `TypeError` on every call
+
 ## [12.9.0] — 2026-06-13
 
 ### Added
