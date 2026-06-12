@@ -13,7 +13,7 @@ Validates every file in `kms/knowledge-sources/` against the rules in `kms/docs/
 
 ```
 /kms-audit                        — audit all files
-/kms-audit engineering/           — audit one discipline directory
+/kms-audit platform/flutter/engineering/  — audit one discipline directory
 /kms-audit projects/flutter-mobile-talenta/  — audit one project
 ```
 
