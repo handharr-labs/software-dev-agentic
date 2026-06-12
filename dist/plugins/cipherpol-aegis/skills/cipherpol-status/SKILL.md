@@ -68,8 +68,10 @@ Report node counts and topic lists for each call.
 ## Step 5 — Project knowledge snapshot
 
 Take the first two topics from the project-scoped engineering probe (Step 4) that have meaningful content.
-Skip any topic whose fetched body is under 100 characters — those are file-header stub nodes produced by the `##`-chunking strategy (the actual content lives in child nodes like `account`, `auth`, `attendance`, etc.).
-For each qualifying topic: call `kms_fetch(platform, project, discipline="engineering", topic)` and extract a 2–3 line excerpt.
+Skip any topic whose first pattern body is under 100 characters — those are file-header stub nodes produced by the `##`-chunking strategy (the actual content lives in child nodes like `account`, `auth`, `attendance`, etc.).
+For each qualifying topic:
+1. `kms_list(platform, project, discipline="engineering", topic=<topic>)` — get available patterns for that topic.
+2. `kms_fetch(platform, project, discipline="engineering", topic=<topic>, pattern=<first pattern from list>)` — extract a 2–3 line excerpt.
 
 ## Report
 

@@ -33,10 +33,9 @@ Return `MISSING INPUT: <param>` immediately if either is absent.
 
 Load the architecture patterns for the platform before reading any source file:
 
-1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the TOC to identify available layer topics
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="screen_entry_points", platform="{platform}")` — file patterns, grep hints, and tracing strategy per layer. For iOS and Android this node lives under `topic="ui"` — try `topic="ui"` if `topic="presentation"` returns no result.
-3. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain", pattern="use_case", platform="{platform}")` — UseCase structure and naming
-4. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="repository", platform="{platform}")` — Repository/DataSource structure
+1. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="screen_entry_points", platform="{platform}")` — file patterns, grep hints, and tracing strategy per layer. For iOS and Android this node lives under `topic="ui"` — try `topic="ui"` if `topic="presentation"` returns no result.
+2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain", pattern="use_case", platform="{platform}")` — UseCase structure and naming
+3. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="repository", platform="{platform}")` — Repository/DataSource structure
 
 Use the `screen_entry_points` node as the authoritative source for file glob patterns, grep hints, and tracing order. If KMS is unavailable, fall back to generic Clean Architecture layer conventions.
 
