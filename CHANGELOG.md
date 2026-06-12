@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.6.0] — 2026-06-12
+
+### Added
+- `developer-sysdesign-extract-worker` — traces a screen entry point through all Clean Architecture layers (Presentation → Domain → Data) and writes a structured Screen System Design document
+- `developer-sysdesign-consolidate-worker` — merges two or more Screen System Designs into a consolidated Flow System Design with deduplicated APIs and data models
+- `/developer-extract-sysdesign` skill — orchestrates single-screen extraction or parallel multi-screen extraction followed by flow consolidation
+- `screen_entry_points` KMS pattern added to `standard-architecture` for Flutter, iOS, and Android — provides layer-to-file glob patterns and grep tracing hints loaded by the extract worker at runtime
+
+---
+
 ## [12.5.2] — 2026-06-12
 
 ### Fixed
