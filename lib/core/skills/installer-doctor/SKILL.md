@@ -32,16 +32,7 @@ Check `~/.claude/settings.json` (global) for `extraKnownMarketplaces`:
 - Pass: `hndhr/software-dev-agentic` present
 - Fail: missing — run: `claude plugin marketplace add hndhr/software-dev-agentic`
 
-### 3. No stale symlinks
-
-```bash
-find .claude/agents .claude/skills .claude/reference -type l 2>/dev/null | wc -l
-```
-
-- Pass: 0 symlinks
-- Warn: symlinks found — leftover from submodule migration; run: `find .claude/agents .claude/skills .claude/reference -type l -delete`
-
-### 4. skillListingBudgetFraction set
+### 3. skillListingBudgetFraction set
 
 ```bash
 grep "skillListingBudgetFraction" .claude/settings.json 2>/dev/null || true
@@ -50,7 +41,7 @@ grep "skillListingBudgetFraction" .claude/settings.json 2>/dev/null || true
 - Pass: present (recommended: 0.03)
 - Warn: missing — skill descriptions will be truncated; add `"skillListingBudgetFraction": 0.03` to `.claude/settings.json`
 
-### 5. CLAUDE.md managed markers
+### 4. CLAUDE.md managed markers
 
 Check `CLAUDE.md` for `<!-- BEGIN software-dev-agentic -->` and `<!-- END software-dev-agentic -->`.
 
@@ -58,7 +49,7 @@ Check `CLAUDE.md` for `<!-- BEGIN software-dev-agentic -->` and `<!-- END softwa
 - Warn: one present but not the other
 - Fail: neither present
 
-### 6. .gitignore — agentic-state
+### 5. .gitignore — agentic-state
 
 ```bash
 grep -q "agentic-state" .gitignore && echo "present" || echo "missing"
@@ -67,7 +58,7 @@ grep -q "agentic-state" .gitignore && echo "present" || echo "missing"
 - Pass: `.claude/agentic-state/` in `.gitignore`
 - Warn: missing — add `.claude/agentic-state/` to `.gitignore`
 
-### 7. GitHub CLI auth
+### 6. GitHub CLI auth
 
 ```bash
 gh auth status 2>&1
@@ -83,7 +74,6 @@ CipherPol doctor
 ──────────────────────────────────────────
 ✓  plugin        cipherpol-aegis@10.12.0 + cipherpol-8@10.12.0 installed
 ✓  marketplace   hndhr/software-dev-agentic configured
-✓  symlinks      none (clean)
 ⚠  budget        skillListingBudgetFraction missing — add 0.03 to .claude/settings.json
 ✓  CLAUDE.md     managed markers found
 ✓  .gitignore    agentic-state/ present

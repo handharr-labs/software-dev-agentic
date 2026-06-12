@@ -3,20 +3,9 @@
 
 ## Delivery Mechanism
 
-> **Distribution:** Two supported paths. (1) **Submodule + symlinks** — proven on iOS · Flutter · Android · Web; projects pin a commit and run `setup-symlinks.sh`. (2) **Claude Plugin** — `install-plugin.sh --platform=<platform>` patches `enabledPlugins` in `.claude/settings.json`; no submodule or symlinks needed. Both paths are maintained. This doc describes the submodule path. For the plugin path see `scripts/install-plugin.sh` and `.claude-plugin/marketplace.json`.
+> **Distribution:** **Claude Plugin** — `install-plugin.sh --platform=<platform>` patches `enabledPlugins` in `.claude/settings.json`. Plugins are built from `lib/` via `build-plugin.sh` and published to the marketplace at `hndhr/software-dev-agentic`. For plugin config see `scripts/install-plugin.sh` and `.claude-plugin/marketplace.json`.
 
-`software-dev-agentic` is consumed as a git submodule at the project root:
-
-```
-/
-  software-dev-agentic/      ← submodule (project root, not inside .claude/)
-  .claude/
-    agents/                  ← symlinks only (core + platform)
-    skills/                  ← symlinks only (platform)
-    reference/               ← symlinks only (builder + platform)
-```
-
-The submodule is the single source of truth — downstream projects get agents, skills, and reference docs via symlinks. For the agent design principles that govern what goes into these files, see [core-design-principles.md](core-design-principles.md).
+`software-dev-agentic` is the single source of truth — agents, skills, and reference docs ship to downstream projects via the built plugin. For the agent design principles that govern what goes into these files, see [core-design-principles.md](core-design-principles.md).
 
 ---
 
@@ -50,15 +39,13 @@ Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/strateg
 
 ---
 
-### 3. Setup-Time Platform Resolution — No `.claude/platform` File
+### 3. Build-Time Platform Resolution — No `.claude/platform` File
 
-**Decision:** The correct platform skill files are linked at project setup time via the `--platform=` flag. There is no `.claude/platform` file — platform identity is baked into the symlinks themselves. At runtime, strategists also pass `platform` explicitly in every worker spawn prompt so workers can resolve skill paths without relying solely on symlink structure.
+**Decision:** The correct platform skill files are bundled at plugin build time via the `--platform=` flag. There is no `.claude/platform` file — platform identity is baked into the plugin itself. At runtime, strategists also pass `platform` explicitly in every worker spawn prompt so workers can resolve skill paths without relying on any ambient platform state.
 
-**Rationale:** With workers being platform-agnostic files in `lib/core/agents/`, and skills being the platform-specific layer, setup-time symlinks wire the right skill implementations into `.claude/skills/`. Workers resolve skills via the symlinked path `.claude/skills/<name>/SKILL.md` — no runtime platform path construction needed. The runtime platform parameter (`web`/`ios`/`flutter`/`android`) is still passed in every spawn prompt for workers that need to reference platform-specific conventions, but skill execution always goes through the downstream symlink.
+**Rationale:** With workers being platform-agnostic files in `lib/core/agents/`, and skills being the platform-specific layer, the plugin build bundles the right skill implementations for the target platform. Workers resolve skills by name — the plugin provides the correct platform implementation automatically. The runtime platform parameter (`web`/`ios`/`flutter`/`android`) is still passed in every spawn prompt for workers that need to reference platform-specific conventions.
 
-Three-pass linking priority: `agents.local` > platform > core (first link wins)
-
-**Result:** `.claude/skills/<skill-name>/` points to the correct platform skill implementation (from `lib/platforms/<platform>/skills/contract/<skill-name>/`). `.claude/agents/<worker-name>.md` points to the single shared core worker. The worker calls the skill by name and gets the right platform implementation automatically.
+**Result:** The installed plugin exposes `<skill-name>/SKILL.md` pointing to the correct platform skill implementation (from `lib/platforms/<platform>/skills/contract/<skill-name>/`). Core workers are shared across all platforms. The worker calls the skill by name and gets the right platform implementation automatically.
 
 ---
 
@@ -89,33 +76,13 @@ See [core-design-principles.md — Reference vocabulary](core-design-principles.
 
 ### 5. `lib/` Boundary — Distributable vs Internal Content
 
-**Decision:** All content that gets symlinked into downstream projects lives under `lib/`. Internal tooling stays at the repo root.
+**Decision:** All content that gets bundled into downstream plugins lives under `lib/`. Internal tooling stays at the repo root.
 
 **Rationale:** The boundary is explicit and self-documenting. `lib/` = the library surface. Everything outside `lib/` is build/repo tooling. Engineers contributing a new agent know exactly which folder it belongs in without needing to know the implicit contract.
 
 ---
 
-### 6. Symlink Architecture
-
-**Decision:** `.claude/agents/` and `.claude/skills/` contain only symlinks — never real files. Real files live in `agents.local/` and `skills.local/`.
-
-> The setup scripts recurse into persona subdirectories when linking agents — all agents land flat in `.claude/agents/` regardless of their subdir in the submodule.
-
-**Skills vs References — different downstream behavior:**
-
-| Source location | Downstream path | Subdir preserved? |
-|---|---|---|
-| `lib/platforms/<platform>/skills/contract/<name>/` | `.claude/skills/<name>/` | No — lands flat |
-| `lib/platforms/<platform>/skills/<name>/` | `.claude/skills/<name>/` | No — already flat |
-| `lib/core/reference/code-architecture/<name>-theory.md` | `.claude/reference/code-architecture/<name>-theory.md` | **Yes** — `code-architecture/` preserved |
-| `lib/platforms/<platform>/reference/code-architecture/<name>-impl.md` | `.claude/reference/code-architecture/<name>-impl.md` | **Yes** — `code-architecture/` preserved |
-| `lib/platforms/<platform>/reference/<name>.md` | `.claude/reference/<name>.md` | No — already flat |
-
-Skills land flat because workers resolve via `.claude/skills/<name>/SKILL.md` — the `contract/` grouping is a source-level convention only. Both theory and impl reference files land under `code-architecture/` downstream — agents resolve via `reference/code-architecture/<topic>-theory.md` and `reference/code-architecture/<topic>-impl.md`.
-
----
-
-### 7. Three Modes: Use, Extend, Override
+### 6. Three Modes: Use, Extend, Override
 
 > For the principle, see [core-design-principles.md — P3](core-design-principles.md#3-skills--hands-thin-procedures).
 
@@ -144,7 +111,7 @@ CipherPol enforces its own conventions through an automated internal review syst
 | `arch-review-strategist` + `arch-review-worker` | `.claude/agents/` | Agent `.md` files and `SKILL.md` files in this repo — convention compliance |
 | `arch-review-worker` | `lib/core/agents/auditor/` | Application code in downstream projects — CLEAN Architecture violations |
 
-> Why separate locations? `.claude/agents/` and `.claude/skills/` are this repo's internal tooling — they are NOT symlinked into downstream projects. `lib/core/agents/` and `lib/core/skills/` ARE symlinked. The distinction prevents internal review tooling from polluting downstream project contexts.
+> Why separate locations? `.claude/agents/` and `.claude/skills/` are this repo's internal tooling — they are NOT bundled into downstream plugins. `lib/core/agents/` and `lib/core/skills/` ARE bundled. The distinction prevents internal review tooling from polluting downstream project contexts.
 
 **What `arch-check-conventions` enforces:**
 
@@ -179,7 +146,7 @@ CipherPol enforces its own conventions through an automated internal review syst
 | Persona subdirectories | Workflow cohesion; selective installation; self-documenting |
 | `perf-worker.md` stays flat | No persona peers yet |
 | `.claude/agents/` and `.claude/skills/` | Internal tooling — not downstream API surface |
-| `lib/` boundary | Explicit distributable surface — everything under `lib/` ships, everything outside is tooling |
+| `lib/` boundary | Explicit distributable surface — everything under `lib/` bundles into plugins, everything outside is tooling |
 | `arch-review-worker` platform-agnostic (P6) | Core workers must not embed platform knowledge |
 | `setup-worker` in `lib/core/agents/installer/` | Platform-agnostic setup logic; delegates mechanical steps to platform setup skills |
 
@@ -195,12 +162,12 @@ CipherPol enforces its own conventions through an automated internal review syst
 | Auditor agents | `software-dev-agentic/lib/core/agents/auditor/` | Architecture review — platform-agnostic CLEAN checker; delegates platform rules to skills |
 | Installer agents | `software-dev-agentic/lib/core/agents/installer/` | Platform-agnostic project setup + onboarding; delegates mechanical steps to platform setup skills |
 | Meta/observability agents | `software-dev-agentic/lib/core/agents/debugger/` | Performance analysis + agent prompt debugging |
-| Internal repo tooling | `software-dev-agentic/agents/` | Convention reviewer — NOT symlinked to downstream projects |
+| Internal repo tooling | `software-dev-agentic/agents/` | Convention reviewer — NOT bundled into downstream plugins |
 | Platform-specific agents (`test-strategist`, `pr-review-worker`) | `software-dev-agentic/lib/platforms/<platform>/agents/` | Agent itself is inherently platform-specific |
 | Core skills | `software-dev-agentic/lib/core/skills/` | Identical across platforms |
 | Platform-contract skills | `software-dev-agentic/lib/platforms/<platform>/skills/contract/` | Same name on all platforms, platform-specific implementation; create-only (`create-*`) — no update skills; lands flat in `.claude/skills/<name>/` downstream |
 | Platform-only skills | `software-dev-agentic/lib/platforms/<platform>/skills/` (flat) | Called by platform agents only |
-| Internal repo skills | `software-dev-agentic/skills/` | Convention checklist, report formatter — NOT symlinked to downstream projects |
+| Internal repo skills | `software-dev-agentic/skills/` | Convention checklist, report formatter — NOT bundled into downstream plugins |
 | Reference docs — theory | `software-dev-agentic/lib/core/reference/code-architecture/<topic>-theory.md` | What/why — single source of truth, platform-agnostic |
 | Reference docs — impl | `software-dev-agentic/lib/platforms/<platform>/reference/code-architecture/<topic>-impl.md` | How in that language — platform-specific |
 | Platform-specific reference docs | `software-dev-agentic/lib/platforms/<platform>/reference/` (flat) | Platform-unique patterns; lands flat in `.claude/reference/<name>.md` downstream |
@@ -217,61 +184,51 @@ CipherPol enforces its own conventions through an automated internal review syst
 ## Setup & Installation
 
 ```bash
-software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
+# Build the plugin for a platform
+software-dev-agentic/scripts/build-plugin.sh --platform=ios-talenta
+
+# Install into a downstream project (patches enabledPlugins in .claude/settings.json)
+software-dev-agentic/scripts/install-plugin.sh --platform=ios-talenta
 ```
 
-Idempotent — re-running never overwrites existing files (`link_if_absent` guard). All personas are installed; no menu or selection needed.
+**What `install-plugin.sh` does:**
+1. Adds the marketplace (`hndhr/software-dev-agentic`) to global `~/.claude/settings.json` if absent
+2. Patches `enabledPlugins` in the project's `.claude/settings.json` for `cipherpol-aegis` and `cipherpol-8`
+3. Syncs the managed section in `CLAUDE.md`
 
-**What `setup-symlinks.sh` does:**
-1. Convert any old-style directory symlinks to real directories
-2. Create `.claude/agents/`, `.claude/skills/`, `.claude/reference/`, `.claude/agents.local/extensions/`, `.claude/skills.local/extensions/`
-3. Pass 1: Link local overrides from `agents.local/` and `skills.local/`
-4. Pass 2: Link platform agents, skills, and reference from `lib/platforms/<platform>/`
-5. Pass 3: Link core agents, skills, and reference from `lib/core/` (recurse into persona subdirs; skip if name already linked)
-6. Make hooks executable
-7. Copy `settings-template.json` → `.claude/settings.local.json` if not present
-8. Copy or sync managed section in `CLAUDE.md`
-
-> Note: `.claude/agents/` and `.claude/skills/` (internal tooling) are NOT linked to downstream projects. Only content under `lib/` is symlinked.
-
-**Adopting Updates (`sync.sh`)**
+**Adopting Updates**
 
 ```bash
-software-dev-agentic/scripts/sync.sh --platform=<platform>
+# Rebuild and reinstall
+software-dev-agentic/scripts/build-plugin.sh --platform=<platform>
+software-dev-agentic/scripts/install-plugin.sh --platform=<platform>
 ```
 
-1. `git pull` inside the submodule
-2. Calls `setup-symlinks.sh` — re-links everything, syncs the managed section in `CLAUDE.md`
-3. Prints the commit command to lock in the updated submodule pointer
-
-**Post-setup checklist:**
+**Post-install checklist:**
 1. Edit `CLAUDE.md` — fill in `[AppName]` and stack placeholders
-2. Edit `.claude/settings.local.json` — replace `PROJECT_ROOT` with your project's `.claude/` absolute path
-3. `git add .claude/ && git commit -m "chore: wire cipherpol (<version>)"`
+2. `git add .claude/ && git commit -m "chore: wire cipherpol (<version>)"`
 
 ---
 
 ## Repository Structure
 
-**Per-Project Layout (after `setup-symlinks.sh --platform=ios-talenta`)**
+**Per-Project Layout (after plugin install)**
 
 ```
 /
   .claude/
-    software-dev-agentic/    ← submodule
-    agents/                  ← symlinks: core + ios platform agents
-    skills/                  ← symlinks: ios platform skills
-    reference/               ← symlinks: builder + ios reference
+    plugins/
+      cipherpol-aegis/       ← plugin: core agents + platform skills + reference
+      cipherpol-8/           ← plugin: supplementary agents
     agents.local/
       extensions/
     skills.local/
       extensions/
-    settings.local.json
+    settings.json
     CLAUDE.md
 ```
 
-> `.claude/agents/` and `.claude/skills/` (internal tooling) are never symlinked here. Only content under `lib/` reaches downstream projects.
+> Internal tooling (`.claude/agents/`, `.claude/skills/` in this repo) is never bundled into downstream plugins. Only content under `lib/` reaches downstream projects.
 
 ---
 
@@ -282,9 +239,8 @@ software-dev-agentic/scripts/sync.sh --platform=<platform>
 1. Engineer identifies a new agent/skill or improvement
 2. PR to `software-dev-agentic` with the new/updated file (under `lib/core/` or `lib/platforms/<platform>/`)
 3. Review by peers (same process as any code PR)
-4. Merge to main
-5. Each project adopts: `./scripts/sync.sh --platform=<platform>`
-6. Commit the updated submodule pointer: `git add software-dev-agentic && git commit -m "chore: update agentic submodule"`
+4. Merge to main + cut a release (`/release`)
+5. Each project adopts: rebuild + reinstall the plugin (`build-plugin.sh` → `install-plugin.sh`)
 
 ---
 

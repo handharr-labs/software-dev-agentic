@@ -8,16 +8,15 @@ Platforms: **web** (Next.js 15) · **ios** (Swift/UIKit) · **flutter** (Dart/BL
 ## Dev Commands
 
 ```bash
-# Wire into a downstream project (submodule path)
-software-dev-agentic/scripts/setup-symlinks.sh --platform=web
-software-dev-agentic/scripts/setup-symlinks.sh --platform=ios-talenta
-
-# Build a Claude Code plugin for a platform (plugin path)
+# Build a Claude Code plugin for a platform
 software-dev-agentic/scripts/build-plugin.sh --platform=flutter-mobile-talenta
 software-dev-agentic/scripts/build-plugin.sh --platform=all
 
+# Install a plugin into a downstream project
+software-dev-agentic/scripts/install-plugin.sh --platform=flutter-mobile-talenta
+
 # Test a built plugin locally
-claude --plugin-dir software-dev-agentic/dist/plugins/flutter-mobile-talenta
+claude --plugin-dir software-dev-agentic/dist/plugins/cipherpol-aegis
 
 # Cut a release
 /release

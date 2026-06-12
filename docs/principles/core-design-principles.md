@@ -304,7 +304,7 @@ Downstream projects interact with shared agents, skills, and reference docs in o
 
 | Mode | Applies to | Mechanism | When to use |
 |---|---|---|---|
-| **Use** | agents, skills, reference | Shared symlink → submodule file | Works as-is — standard workflow |
+| **Use** | agents, skills, reference | Plugin-bundled file | Works as-is — standard workflow |
 | **Extend** | agents only | Shared symlink + `agents.local/extensions/<name>.md` | Add behavior without losing submodule updates |
 | **Override** | agents, skills, reference | Real file in `*.local/` | Fundamentally different behavior needed |
 
@@ -474,7 +474,7 @@ Requirements:
 - Agents within the group relate to and can depend on each other
 - Requires a `.pkg` file for selective installation
 
-Shared to all downstream projects via symlink. Current personas: `developer`, `debugger`, `tracker`, `auditor`.
+Shipped to all downstream projects via plugin. Current personas: `developer`, `debugger`, `tracker`, `auditor`.
 
 **Persona → SDLC role mapping:**
 
@@ -546,10 +546,10 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 | Scope | Location | Ships downstream? |
 |---|---|---|
 | **Toolkit skill** | `lib/core/skills/` | Yes — all platforms. Platform-agnostic, intended for use in downstream projects. |
-| **Platform-contract skill** | `lib/platforms/<platform>/skills/contract/` | Yes — matching platform. Same name across all platforms; each implements for its syntax — called by persona workers. Lands flat in `.claude/skills/<name>/` downstream. |
+| **Platform-contract skill** | `lib/platforms/<platform>/skills/contract/` | Yes — matching platform. Same name across all platforms; each implements for its syntax — called by persona workers. Bundled flat as `<name>/SKILL.md` in the plugin. |
 | **Platform-only skill** | `lib/platforms/<platform>/skills/` (flat) | Yes — matching platform only. Called by platform agents. |
 | **Project skill** | `.claude/skills.local/` | No — project-owned, not in this repo. |
-| **Repo skill** | `.claude/skills/` | No — internal tooling only. Used by this repo's internal agents; never symlinked to downstream projects. |
+| **Repo skill** | `.claude/skills/` | No — internal tooling only. Used by this repo's internal agents; never bundled into downstream plugins. |
 
 > "Core-dependency skill" used in earlier sections of this doc refers to platform-contract skills — skills all platforms must implement under the same name (`developer-domain-create-entity`, `developer-data-create-mapper`, etc.).
 
