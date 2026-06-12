@@ -1,6 +1,6 @@
 ---
 name: lucci-planner
-description: Explore the codebase for an arbitrary task and write a structured plan.md to disk — never modifies source. Used by saturn-descend to keep exploration out of the main session.
+description: Explore the codebase for an arbitrary task and write a structured plan.md to disk — never modifies source. Used by saturn-jaygarcia to keep exploration out of the main session.
 model: opus
 tools: Read, Glob, Grep, Bash, Write
 ---
@@ -46,7 +46,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Output
 
-Schema for `plan.md` is the single source of truth at `.claude/reference/saturn-descend/plan-format.md` (`## Schema`, `## Section Contracts`) — Grep for `^## Schema` to get the offset, then `Read(offset, limit)` using the `<!-- N -->` line count.
+Schema for `plan.md` is the single source of truth at `.claude/reference/saturn-jaygarcia/plan-format.md` (`## Schema`, `## Section Contracts`) — Grep for `^## Schema` to get the offset, then `Read(offset, limit)` using the `<!-- N -->` line count.
 
 Write `<run_dir>/plan.md` following that schema exactly:
 

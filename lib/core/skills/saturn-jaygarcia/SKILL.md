@@ -1,5 +1,5 @@
 ---
-name: saturn-descend
+name: saturn-jaygarcia
 description: Plan then build any task — lucci-planner (opus) explores and writes plan.md to disk, you review/discuss/approve it, then kaku-worker (sonnet) executes unattended. Cheap opusplan-style hand-off — exploration never pollutes the main session.
 user-invocable: true
 disable-model-invocation: true
@@ -21,7 +21,7 @@ Never explore the codebase, read source files, or write code directly — all of
 ## Preflight — Detect Existing Runs
 
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/saturn-descend" -maxdepth 2 -name "plan.md" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/saturn-jaygarcia" -maxdepth 2 -name "plan.md" 2>/dev/null
 ```
 
 If results found, `AskUserQuestion`:
@@ -48,7 +48,7 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
    else
      slug=$(echo "<task>" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//;s/-*$//' | cut -c1-50)
    fi
-   run_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/saturn-descend/$slug"
+   run_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/saturn-jaygarcia/$slug"
    mkdir -p "$run_dir"
    ```
 2. Spawn `lucci-planner`:
@@ -63,7 +63,7 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
 
 ## Step 2 — Present Plan
 
-`plan.md` follows the schema in `.claude/reference/saturn-descend/plan-format.md` — `## Open Questions` is the only section this skill branches on, and is omitted entirely when there's nothing to ask.
+`plan.md` follows the schema in `.claude/reference/saturn-jaygarcia/plan-format.md` — `## Open Questions` is the only section this skill branches on, and is omitted entirely when there's nothing to ask.
 
 1. `Read` `<run_dir>/plan.md` and show its full content to the user.
 
@@ -97,7 +97,7 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
        ```
        Wait for `## Plan Written`, then restart Step 2 from the top (re-read the updated plan).
      - **No change needed** (discussion was just clarification) → return to step 3's `AskUserQuestion` without re-spawning.
-   - **Cancel** → tell the user the plan is saved at `<run_dir>/plan.md` and can be resumed by re-running `/saturn-descend`. Stop.
+   - **Cancel** → tell the user the plan is saved at `<run_dir>/plan.md` and can be resumed by re-running `/saturn-jaygarcia`. Stop.
 
 ## Step 3 — Build
 

@@ -1,6 +1,6 @@
 # Plan Document Format
 
-Single source of truth for the `plan.md` schema used by the saturn-descend plan-then-build flow — written by `lucci-planner`, consumed by `kaku-worker` and `saturn-descend`.
+Single source of truth for the `plan.md` schema used by the saturn-jaygarcia plan-then-build flow — written by `lucci-planner`, consumed by `kaku-worker` and `saturn-jaygarcia`.
 
 ---
 
@@ -43,5 +43,5 @@ Single source of truth for the `plan.md` schema used by the saturn-descend plan-
 | `## Context` | always | lucci-planner | user | Exploration findings — why the plan looks this way |
 | `## Steps` | always | lucci-planner | kaku-worker | Ordered execution list |
 | `## Files Affected` | always | lucci-planner | kaku-worker | Verification checklist after build |
-| `## Open Questions` | conditional | lucci-planner | saturn-descend | If present, triggers a clarification + `revise` round before Approve/Discuss/Cancel is offered |
+| `## Open Questions` | conditional | lucci-planner | saturn-jaygarcia | If present, triggers a clarification + `revise` round before Approve/Discuss/Cancel is offered |
 | `## Risks / Notes` | conditional | lucci-planner | user | Surfaced during review, no automated handling |
