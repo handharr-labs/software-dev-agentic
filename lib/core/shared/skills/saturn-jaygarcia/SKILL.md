@@ -62,7 +62,7 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
 
 ## Step 2 — Present Plan
 
-`plan.md` follows the schema in `.claude/reference/saturn-jaygarcia/plan-format.md` — `## Open Questions` is the only section this skill branches on, and is omitted entirely when there's nothing to ask.
+`plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` — `## Open Questions` is the only section this skill branches on, and is omitted entirely when there's nothing to ask.
 
 1. `Read` `<run_dir>/plan.md` and show its full content to the user.
 

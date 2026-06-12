@@ -46,7 +46,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Output
 
-Schema for `plan.md` is the single source of truth at `.claude/reference/saturn-jaygarcia/plan-format.md` (`## Schema`, `## Section Contracts`) — Grep for `^## Schema` to get the offset, then `Read(offset, limit)` using the `<!-- N -->` line count.
+Schema for `plan.md` is the single source of truth at `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` (`## Schema`, `## Section Contracts`) — Grep for `^## Schema` to get the offset, then `Read(offset, limit)` using the `<!-- N -->` line count.
 
 Write `<run_dir>/plan.md` following that schema exactly:
 

@@ -18,7 +18,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Preconditions
 
-`plan.md` follows the schema in `.claude/reference/saturn-jaygarcia/plan-format.md` (`## Section Contracts`) — `## Steps` and `## Files Affected` are always present.
+`plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` (`## Section Contracts`) — `## Steps` and `## Files Affected` are always present.
 
 - `Read` `<plan_path>` in full before doing anything else.
 - For each file in `## Files Affected` marked `create`: confirm it does NOT already exist (`Glob`) before creating.
