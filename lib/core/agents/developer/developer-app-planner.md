@@ -48,7 +48,7 @@ Skip all other steps entirely. Always run Step 1 (platform reference) regardless
 
 **Step 1 — Load reference (always — run before any codebase search, regardless of scope or mode)**
 
-Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
+Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC for the wiring topics (dependency_injection, navigation, app).
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="app", pattern="planner_search_patterns", platform="{platform}")` — the per-concern search-pattern table Steps 2–6 depend on. Also `kms_fetch` the dependency_injection, navigation, and app wiring patterns relevant to the scoped concerns (analytics_constants, route_registration, module_registration, feature_flag_registration, etc.). Reserve `kms_query(...)` for cold-start only.

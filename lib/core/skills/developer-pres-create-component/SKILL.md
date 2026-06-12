@@ -9,7 +9,7 @@ Create a presentational component following the {platform} standard architecture
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform={platform})` — scan the presentation TOC for the component pattern slug (e.g. `component`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<component slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
    - If the TOC has no component pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/presentation` — do not guess.

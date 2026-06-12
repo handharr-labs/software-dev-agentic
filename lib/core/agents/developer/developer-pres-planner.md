@@ -35,7 +35,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
-Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`). The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`):
+Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`). The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC; locate the presentation patterns (screen_structure, component) and the state-holder patterns (`state_management`/bloc·cubit, or `presentation`/presenter·mvp_contract).
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<presentation | state_management>", pattern="<slug>", platform="{platform}")` — fetch the presentation and state-holder patterns for naming conventions and code patterns. Reserve `kms_query(text="...", discipline="engineering", platform="{platform}")` for cold-start only.

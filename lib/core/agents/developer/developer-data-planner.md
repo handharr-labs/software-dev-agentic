@@ -34,7 +34,7 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
-Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
+Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="data", platform="{platform}")` — scan the data TOC (dto, payload, mapper, data_source, local_data_source, repository_implementation, http_client, dependency_rule, creation_order).
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="<slug>", platform="{platform}")` — fetch the patterns needed for naming conventions, the dependency rule, and a documented code pattern. Reserve `kms_query(text="...", discipline="engineering", platform="{platform}")` for cold-start only — when the TOC vocabulary can't be mapped to what you need.

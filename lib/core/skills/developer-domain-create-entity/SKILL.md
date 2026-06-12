@@ -9,7 +9,7 @@ Create a domain Entity following the {platform} standard architecture, loaded fr
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="domain", platform={platform})` — scan the domain TOC for the entity pattern slug (e.g. `entity`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain", pattern="<entity slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
    - If the TOC has no entity pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/domain` — do not guess.

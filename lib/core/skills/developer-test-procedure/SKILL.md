@@ -23,7 +23,7 @@ Unit tests only. No UI/integration tests. No modifications to production source 
 
 ## Platform Reference
 
-Before executing any step, load the platform testing patterns from the KMS (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+Before executing any step, load the platform testing patterns from the KMS (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
 
 - `kms_list(discipline="engineering", artifact="standard-architecture", topic="testing", platform={platform})` — list available testing patterns (naming convention, mock generation, test pyramid, per-layer test patterns).
 - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="testing", pattern="<slug>", platform={platform})` — fetch only the pattern(s) relevant to the current step; do not fetch everything upfront.
