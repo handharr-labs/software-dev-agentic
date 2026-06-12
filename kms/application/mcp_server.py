@@ -245,6 +245,7 @@ def kms_upsert(
     platform: Optional[str],
     project: Optional[str],
     discipline: str,
+    artifact: str,
     topic: str,
     pattern: str,
     content: str,
@@ -257,12 +258,16 @@ def kms_upsert(
     Write or overwrite a knowledge node.
     Used by the dashboard (live edits) and the scan agent (code_pattern extraction).
     content must be the full document body (## Theory ... ## Definition ... ## Code Pattern ...).
+    scope is derived: project set → "project", else platform set → "platform", else "universal".
     """
     from datetime import date
+    scope = "project" if project else "platform" if platform else "universal"
     node = KnowledgeNode(
+        scope=scope,
         platform=platform,
         project=project,
         discipline=discipline,
+        artifact=artifact,
         topic=topic,
         pattern=pattern,
         content=content,
@@ -273,7 +278,7 @@ def kms_upsert(
     )
     t0 = time.monotonic()
     _upsert_uc.execute(node)
-    _log("kms_upsert", {"platform": platform, "project": project, "discipline": discipline, "topic": topic, "pattern": pattern}, 1, (time.monotonic() - t0) * 1000)
+    _log("kms_upsert", {"platform": platform, "project": project, "discipline": discipline, "artifact": artifact, "topic": topic, "pattern": pattern}, 1, (time.monotonic() - t0) * 1000)
     return {"id": node.id, "status": "ok"}
 
 
