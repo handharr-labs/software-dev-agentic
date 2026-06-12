@@ -168,11 +168,11 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 |---|---|---|
 | **Platform-base knowledge** | `kms/knowledge-sources/engineering/{platform}-*.md` | Yes — via pre-seeded ChromaDB bundled in plugin. Theory + definition + code pattern per node. Shared across all projects on that platform. |
 | **Project knowledge** | `kms/knowledge-sources/projects/{name}/` | Yes — via pre-seeded ChromaDB. Project-specific deviations only — created only when real divergence exists. |
-| **Shared reference** | `lib/core/shared/reference/<topic>/` | Yes — all personas, all platforms. Cross-cutting facts/contracts shared by multiple agents (e.g. `saturn-jaygarcia/plan-format.md`). Bundled to `reference/shared/` in the plugin. |
-| **Core catalog** | `lib/core/<persona>/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. Bundled to `reference/<persona>/` in the plugin. |
+| **Shared reference** | `lib/core/shared/reference/<topic>/` | Yes — all personas, all platforms. Cross-cutting facts/contracts shared by multiple agents (e.g. `saturn-jaygarcia/plan-format.md`). Topic-grouped. Bundled to `reference/shared/<topic>/` in the plugin. |
+| **Persona reference** | `lib/core/<persona>/reference/` | Yes — all platforms. Flat — no topic subfolders. Contains `<name>-catalog.md` (queryable symbol/component inventory — agents `symbol-query` these, never load in full) and cross-agent schema/contract docs (e.g. `plan-format.md`, `findings-format.md`). Bundled flat to `reference/<persona>/` in the plugin. |
 | **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides for project-specific conventions not in KMS. |
 
-> **Runtime path from agent body:** `copy_reference` (in `scripts/plugin-lib.sh`) bundles `lib/core/<persona>/reference/**` (including `lib/core/shared/reference/`) into `dist/plugins/<name>/reference/<persona-or-shared>/**` at build time. Agents must reference these docs as `$CLAUDE_PLUGIN_ROOT/reference/<persona-or-shared>/<path>` — never `.claude/reference/...` (that path is project-owned via `.claude/reference.local/`, not plugin-shipped, and resolves against the downstream project root, not the plugin cache).
+> **Runtime path from agent body:** `copy_reference` (in `scripts/plugin-lib.sh`) bundles `lib/core/<persona>/reference/**` (including `lib/core/shared/reference/`) into `dist/plugins/<name>/reference/<persona-or-shared>/**` at build time, preserving whatever structure exists under each `reference/` dir — flat for persona reference, topic-grouped for shared reference. Agents must reference these docs as `$CLAUDE_PLUGIN_ROOT/reference/<persona-or-shared>/<path>` — never `.claude/reference/...` (that path is project-owned via `.claude/reference.local/`, not plugin-shipped, and resolves against the downstream project root, not the plugin cache).
 
 ---
 
@@ -418,7 +418,7 @@ Any agent with `AskUserQuestion` in its `tools` that reaches a confirm/decision 
 | Platform-base | `engineering/flutter-standard-architecture.md` | `kms/knowledge-sources/engineering/` — shared across all projects on that platform |
 | Project-specific | `projects/flutter-mobile-talenta/deviations.md` | `kms/knowledge-sources/projects/{name}/` — deviations only |
 | Pattern node | `use_case` under `topic=domain` | Stored in ChromaDB with `discipline`, `topic`, `pattern` metadata |
-| Catalog file | queryable symbol/component inventory | `lib/core/<persona>/reference/<topic>/<name>-catalog.md` |
+| Catalog file | queryable symbol/component inventory | `lib/core/<persona>/reference/<name>-catalog.md` |
 
 **Agent knowledge loading — canonical flow (always both):**
 1. `kms_list(platform, discipline)` → scoped TOC, metadata only — agent reasons over what topics exist
@@ -476,7 +476,7 @@ One concept = one pattern key, everywhere. When adding a new node to the KMS, ch
 | New code generation pattern for one platform | Platform-contract skill (same name, platform implements) → `lib/platforms/<platform>/skills/contract/` |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
 | Architecture pattern knowledge (any topic) | `kms/knowledge-sources/engineering/{platform}-*.md` — theory + definition + code pattern per `##` section, seeded as KMS nodes. Project-specific deviations in `kms/knowledge-sources/projects/{name}/` |
-| Queryable symbol/component inventory | `lib/core/<persona>/reference/<topic>/<name>-catalog.md` — `### Symbol` entries; agents `symbol-query` by name directly |
+| Queryable symbol/component inventory | `lib/core/<persona>/reference/<name>-catalog.md` — `### Symbol` entries; agents `symbol-query` by name directly |
 
 **Planner vs Worker — when to use which:**
 
