@@ -313,6 +313,8 @@ Decision tree — apply in order when deciding what to add:
 
 ## Required Sections by Role <!-- 30 -->
 
+> "Worker" and "Strategist" below refer to functional categories, not literal role names. **Worker** means any agent that writes source files, regardless of its role label (`writer`, `planner`-turned-executor, etc.). **Strategist** means any agent that coordinates/spawns other agents without writing files itself. Apply the matching requirements based on what the agent does, not what it's called.
+
 **Workers** must have these sections in their body:
 
 | Section | Purpose |
