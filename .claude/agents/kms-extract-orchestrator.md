@@ -59,7 +59,7 @@ Each worker receives: `local_path`, `platform`, `project_name`, `doc_type`, `out
 
 ### 4 — Validate output
 
-After all workers complete, verify each output file has at least one `##` heading — per R1 in `docs/principles/kms-knowledge-source-rules.md`. A file with no `##` headings will seed as a blob and must be regenerated before seeding.
+After all workers complete, verify each output file has at least one `##` heading — per R1 in `kms/docs/kms-knowledge-source-rules.md`. A file with no `##` headings will seed as a blob and must be regenerated before seeding.
 
 If any file fails: report the violation and do not proceed to step 5. Ask the user whether to re-run the failing worker or skip it.
 

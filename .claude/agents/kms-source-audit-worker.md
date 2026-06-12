@@ -12,7 +12,7 @@ You are the KMS knowledge source auditor. You validate files against the chunkin
 | Parameter | Description |
 |---|---|
 | `target_path` | Absolute path to audit — a directory or single file |
-| `rules_path` | Path to `docs/principles/kms-knowledge-source-rules.md` |
+| `rules_path` | Path to `kms/docs/kms-knowledge-source-rules.md` |
 
 Return `MISSING INPUT: <param>` immediately if either is absent.
 

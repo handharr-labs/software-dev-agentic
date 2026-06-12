@@ -195,7 +195,7 @@ One `##` per integration. Heading = SDK/service name. Each section is one search
 
 ## Writing Rules
 
-Rules are governed by `docs/principles/kms-knowledge-source-rules.md`. The non-negotiable constraints for this worker:
+Rules are governed by `kms/docs/kms-knowledge-source-rules.md`. The non-negotiable constraints for this worker:
 
 - **Every doc must use `##` headings** (R1) — one `##` per entity (feature, endpoint group, component, integration, deviation). Files without `##` headings seed as a single unsearchable blob.
 - **One concept per `##`** (R2) — do not bundle multiple features or components under one heading.

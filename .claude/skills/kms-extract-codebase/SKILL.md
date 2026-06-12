@@ -76,7 +76,7 @@ doc_types:    {selected doc types from step 2}
 
 ### 4 — Audit
 
-Run `/kms-audit projects/{name}/` to validate the extracted docs against `docs/principles/kms-knowledge-source-rules.md`.
+Run `/kms-audit projects/{name}/` to validate the extracted docs against `kms/docs/kms-knowledge-source-rules.md`.
 
 If any **Error**-severity findings are reported: surface them to the user and stop.
 
