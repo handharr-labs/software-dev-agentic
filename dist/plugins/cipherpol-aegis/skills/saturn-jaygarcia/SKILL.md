@@ -2,7 +2,6 @@
 name: saturn-jaygarcia
 description: Plan then build any task — lucci-planner (opus) explores and writes plan.md to disk, you review/discuss/approve it, then kaku-worker (sonnet) executes unattended. Cheap opusplan-style hand-off — exploration never pollutes the main session.
 user-invocable: true
-disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read
 ---
 
