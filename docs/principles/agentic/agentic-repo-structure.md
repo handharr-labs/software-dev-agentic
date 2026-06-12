@@ -112,7 +112,7 @@ projects/               → project-specific deviations only
 
 Agents always query with explicit `platform` and `project` filters. The cascade resolves `project → platform → universal` — agents always get the most specific matching knowledge.
 
-> For the full KMS design, metadata schema, and retrieval protocol, see [kms-design-principles.md](../kms/kms-design-principles.md).
+> For KMS design rationale see [kms-design-principles.md](../kms/kms-design-principles.md). For path conventions, metadata schema, and retrieval protocol see [kms-conventions.md](../kms/kms-conventions.md). For seeding strategy see [kms-seeding.md](../kms/kms-seeding.md).
 
 ---
 

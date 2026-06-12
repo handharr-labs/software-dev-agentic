@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-04-08
-> Related: [agentic-taxonomy.md](agentic-taxonomy.md) · [agentic-conventions.md](agentic-conventions.md) · [agentic-repo-structure.md](agentic-repo-structure.md)
+> Related: [agentic-conventions.md](agentic-conventions.md) · [agentic-repo-structure.md](agentic-repo-structure.md)
 
 ## What is an Agentic Coding Assistant?
 
@@ -244,7 +244,7 @@ Extension files contain only the delta — not a full copy. Updates to the submo
 
 Reference docs are override-only (no extension mechanism). Pattern knowledge lives in `kms/knowledge-sources/` — agents load it via `kms_list` → `kms_query`; the structure is the contract, not grep offsets.
 
-> Naming conventions and orchestrator design checklist: see [agentic-conventions.md](agentic-conventions.md). Scope taxonomy: see [agentic-taxonomy.md](agentic-taxonomy.md).
+> Naming conventions, component types, and orchestrator design checklist: see [agentic-conventions.md](agentic-conventions.md).
 
 ---
 
