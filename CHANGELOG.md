@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.6.2] — 2026-06-12
+
+### Changed
+- `kms-knowledge-source-rules.md` moved from `docs/principles/` to `kms/docs/` — it's an authoring spec for `kms/knowledge-sources/`, not a design principle; all path references updated across agents and skills
+
+---
+
 ## [12.6.1] — 2026-06-12
 
 ### Fixed
