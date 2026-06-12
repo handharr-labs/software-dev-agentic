@@ -1,6 +1,6 @@
 ---
 name: sync-principles
-description: Sync internal agents and skills after core-design-principles.md is updated — diffs the principles doc, collects internal files, and spawns principles-sync-worker to apply targeted updates.
+description: Sync internal agents and skills after agentic-design-principles.md, agentic-taxonomy.md, or agentic-conventions.md is updated — diffs the principles docs, collects internal files, and spawns principles-sync-worker to apply targeted updates.
 user-invocable: true
 disable-model-invocation: true
 tools: Bash, Glob, Agent
@@ -12,15 +12,15 @@ tools: Bash, Glob, Agent
 
 Run:
 ```bash
-git diff HEAD -- docs/principles/core-design-principles.md
+git diff HEAD -- docs/principles/agentic/agentic-design-principles.md docs/principles/agentic/agentic-taxonomy.md docs/principles/agentic/agentic-conventions.md
 ```
 
 If empty (change already committed), run:
 ```bash
-git diff HEAD~1 HEAD -- docs/principles/core-design-principles.md
+git diff HEAD~1 HEAD -- docs/principles/agentic/agentic-design-principles.md docs/principles/agentic/agentic-taxonomy.md docs/principles/agentic/agentic-conventions.md
 ```
 
-If still empty, ask the user: "What changed in core-design-principles.md? Describe the principle(s) that were added, removed, or modified."
+If still empty, ask the user: "What changed in the principles docs? Describe the principle(s) that were added, removed, or modified."
 
 ### 2 — Collect internal files
 

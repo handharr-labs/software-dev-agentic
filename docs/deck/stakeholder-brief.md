@@ -254,4 +254,4 @@ We built a system where an engineer describes what they want to build, and a tea
 ---
 
 *Prepared by Engineering · April 2026*
-*Technical details: `docs/principles/core-design-principles.md`*
+*Technical details: `docs/principles/agentic/agentic-design-principles.md`*

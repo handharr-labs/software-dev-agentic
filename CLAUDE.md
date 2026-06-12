@@ -28,7 +28,7 @@ No build, lint, or test commands — all files are Markdown and Bash.
 
 `lib/` — ships downstream · `.claude/` — internal tooling (agents, skills, reference) · `docs/` — design docs, observations, perf reports · `scripts/` — setup and sync scripts
 
-See `docs/principles/core-design-principles.md` and `docs/principles/submodule-repo-structure.md` for the full structure and decision rules.
+See `docs/principles/agentic/agentic-design-principles.md` and `docs/principles/agentic/agentic-repo-structure.md` for the full structure and decision rules.
 
 ## Workflow
 
@@ -43,7 +43,7 @@ Then work directly on the relevant files in `lib/core/` or `lib/platforms/<platf
 
 ## Agent Architecture
 
-See `docs/principles/core-design-principles.md` — read it before adding any agent, worker, or skill.
+See `docs/principles/agentic/agentic-design-principles.md`, `docs/principles/agentic/agentic-taxonomy.md`, and `docs/principles/agentic/agentic-conventions.md` — read them before adding any agent, worker, or skill.
 
 ## Conventions
 

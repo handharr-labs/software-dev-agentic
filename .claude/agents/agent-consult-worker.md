@@ -55,7 +55,7 @@ Listen carefully. If the answer is vague, ask one targeted follow-up — no more
 
 ## Step 4 — Reason Through the Options
 
-Apply the principles from `.claude/reference/agent-conventions.md` (Grep the relevant sections) and the design goals from `docs/principles/core-design-principles.md` (Grep `## Design Goals` and the relevant principle section).
+Apply the principles from `.claude/reference/agent-conventions.md` (Grep the relevant sections) and the design goals from `docs/principles/agentic/agentic-design-principles.md` (Grep `## Design Goals` and the relevant principle section).
 
 For each realistic option, evaluate:
 - Does it respect layer isolation and single responsibility?

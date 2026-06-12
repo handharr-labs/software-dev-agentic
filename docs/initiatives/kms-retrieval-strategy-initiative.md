@@ -40,7 +40,7 @@ The restructure added the `artifact` axis and changed on-disk paths, but the con
 
 ### 4. DRY via shared protocol, inline params
 
-The list/fetch/query recipe is authored once in `docs/principles/kms-design-principles.md §Retrieval Protocol`. Agents/skills cite it rather than re-explaining. Each skill keeps only its own `kms_fetch` params inline (inherently specific).
+The list/fetch/query recipe is authored once in `docs/principles/kms/kms-design-principles.md §Retrieval Protocol`. Agents/skills cite it rather than re-explaining. Each skill keeps only its own `kms_fetch` params inline (inherently specific).
 
 ### 5. Server standardizes on `cp8`
 

@@ -334,8 +334,10 @@ cipherpol.json   ← canonical platform registry (id → kms_id + detection mark
 
 ## Design docs
 
-- [`docs/principles/core-design-principles.md`](docs/principles/core-design-principles.md) — architecture, taxonomy, decision rules
-- [`docs/principles/kms-design-principles.md`](docs/principles/kms-design-principles.md) — KMS design, metadata schema, cascade resolution
+- [`docs/principles/agentic/agentic-design-principles.md`](docs/principles/agentic/agentic-design-principles.md) — architecture philosophy and core design principles
+- [`docs/principles/agentic/agentic-taxonomy.md`](docs/principles/agentic/agentic-taxonomy.md) — persona, agent, skill, and reference doc classification
+- [`docs/principles/agentic/agentic-conventions.md`](docs/principles/agentic/agentic-conventions.md) — naming conventions, authoring rules, decision rules
+- [`docs/principles/kms/kms-design-principles.md`](docs/principles/kms/kms-design-principles.md) — KMS design, metadata schema, cascade resolution
 
 ---
 
