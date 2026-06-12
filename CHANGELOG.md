@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.5.2] — 2026-06-12
+
+### Fixed
+- `developer-adjust-ticket`: detect custom subsections in existing Session Adjustment and ask user to keep or remove them before replacing
+
+---
+
 ## [12.5.1] — 2026-06-12
 
 ### Fixed
