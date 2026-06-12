@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.4.0] — 2026-06-12
+
+### Changed
+- Renamed `saturn-descend` skill and reference dir to `saturn-jaygarcia` — named after Saturn's full One Piece name, Saint Jaygarcia Saturn
+
+---
+
 ## [12.3.3] — 2026-06-12
 
 ### Fixed
