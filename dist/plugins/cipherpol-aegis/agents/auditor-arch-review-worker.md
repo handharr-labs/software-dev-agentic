@@ -54,7 +54,7 @@ Defer to the platform skill for the full naming table. Flag deviations as Warnin
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths (step 2 below).
 
-Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
+Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC for `naming_convention`, `dependency_rule`, and `layer_invariants` patterns across layers.
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<layer topic>", pattern="<naming_convention | dependency_rule | layer_invariants>", platform="{platform}")` — documented conventions for U5 and the dependency rules. For project-specific deviations, also `kms_list(discipline="engineering", artifact="deviations", project="<project>")` and fetch any relevant nodes. Reserve `kms_query(...)` for cold-start only.

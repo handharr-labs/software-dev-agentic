@@ -9,7 +9,7 @@ Create the StateHolder following the {platform} standard architecture, loaded fr
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`). The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC; locate the state-holder topic (`state_management` with `bloc`/`cubit`, or `presentation` with `presenter`/`mvp_contract`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<state-holder topic>", pattern="<slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
    - If the TOC has no state-holder pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` — do not guess.

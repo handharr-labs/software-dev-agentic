@@ -9,7 +9,7 @@ Create mocks following the {platform} standard architecture, loaded from the KMS
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="testing", platform={platform})` — scan the testing TOC for the mock-generation pattern slug (e.g. `mock_generation`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="testing", pattern="<mock-generation slug from list>", platform={platform})` — full content: naming, path convention, codegen vs manual approach.
    - If the TOC has no mock-generation pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (testing topic) — do not guess.

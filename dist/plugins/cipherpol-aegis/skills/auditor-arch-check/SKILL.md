@@ -10,7 +10,7 @@ Audit the specified feature against the {platform} standard architecture, loaded
 
 ## Steps
 
-1. **Load rules** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load rules** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC for `dependency_rule` and `layer_invariants` patterns across the domain, data, presentation, and error_handling topics.
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<layer topic>", pattern="<dependency_rule | layer_invariants slug>", platform={platform})` — fetch each rule node found. Full rule text per layer.
    - If the TOC has no dependency_rule/layer_invariants patterns, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` — do not guess.

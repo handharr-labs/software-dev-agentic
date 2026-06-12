@@ -110,7 +110,7 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific reference for this artifact type (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+2. Load the layer-specific reference for this artifact type (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="<layer of {artifact_type}>", platform="{platform}")` then `kms_fetch(... pattern="<{artifact_type} slug>" ...)` — documented pattern. The called skill re-fetches as needed; this primes naming/path conventions.
    - Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):

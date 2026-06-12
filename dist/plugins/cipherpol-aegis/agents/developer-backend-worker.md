@@ -30,7 +30,7 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 
 Derive: `project` = `basename $(pwd)`, `platform` from spawn prompt.
 
-Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
+Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the domain and data TOCs.
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain | data", pattern="<slug>", platform="{platform}")` — fetch the entity, use_case, repository_interface, dto, mapper, data_source, and repository_implementation patterns. Reserve `kms_query(...)` for cold-start only.

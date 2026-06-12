@@ -12,7 +12,7 @@ Add debug instrumentation logs following the {platform} standard architecture (l
 
 Follow the `INSTRUMENTATION_BRIEF` provided by the caller:
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`). Logging lives under a platform-specific topic (flutter → `utilities`/`logger`; android → `presentation`/`logging`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`). Logging lives under a platform-specific topic (flutter → `utilities`/`logger`; android → `presentation`/`logging`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", platform={platform})` — scan the TOC for the logger/logging pattern slug.
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<logging topic>", pattern="<logger slug from list>", platform={platform})` — full content: log format and prefix.
    - If the TOC has no logger pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (logging) — do not guess.

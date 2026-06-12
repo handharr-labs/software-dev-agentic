@@ -9,7 +9,7 @@ Create a Mapper following the {platform} standard architecture, loaded from the 
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="data", platform={platform})` — scan the data TOC for the mapper pattern slug (e.g. `mapper`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="<mapper slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
    - If the TOC has no mapper pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/data` — do not guess.

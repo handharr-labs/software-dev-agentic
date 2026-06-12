@@ -9,7 +9,7 @@ Create a Repository Implementation following the {platform} standard architectur
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="data", platform={platform})` — scan the data TOC for the repository-implementation pattern slug (e.g. `repository_implementation`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="<repository-impl slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
    - If the TOC has no repository-implementation pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture/data` — do not guess.

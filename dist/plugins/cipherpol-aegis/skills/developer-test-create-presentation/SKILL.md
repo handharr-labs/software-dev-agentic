@@ -9,7 +9,7 @@ Create presentation tests following the {platform} standard architecture, loaded
 
 ## Steps
 
-1. **Load pattern** (fetch-by-topic — see `kms-design-principles.md §Retrieval Protocol`):
+1. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="testing", platform={platform})` — scan the testing TOC for the presenter/stateholder-test pattern slug (e.g. `presenter_test`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="testing", pattern="<presenter-test slug from list>", platform={platform})` — full content: naming, path convention, code pattern.
    - If the TOC has no presenter-test pattern, STOP and report a KMS seed gap for `{platform}/engineering/standard-architecture` (testing topic) — do not guess.

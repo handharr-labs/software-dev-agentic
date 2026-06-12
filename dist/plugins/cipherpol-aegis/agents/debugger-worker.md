@@ -40,7 +40,7 @@ Never use `find`/`ls` to navigate a vendor directory speculatively. If the patte
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths in the error/stack trace.
 
-Fetch-by-topic (see `kms-design-principles.md §Retrieval Protocol`):
+Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="error_handling", platform="{platform}")` — scan the error-handling TOC (error_flow, error_mapping, failure_types, layer_invariants).
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="error_handling", pattern="<slug>", platform="{platform}")` — documented error-handling patterns. Reserve `kms_query(...)` for cold-start only.
