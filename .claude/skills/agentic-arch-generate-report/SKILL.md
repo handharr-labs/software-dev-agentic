@@ -1,5 +1,5 @@
 ---
-name: arch-generate-report
+name: agentic-arch-generate-report
 description: Format raw arch-check-conventions findings into a structured review report. Called after all workers complete.
 user-invocable: false
 tools: Read
