@@ -102,7 +102,12 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 | **Platform agent** | `lib/platforms/<platform>/agents/` | Yes — matching platform only |
 | **Project agent** | `.claude/agents.local/` | No — project-owned, not in this repo |
 
-> Persona agents must be platform-agnostic — no platform paths, framework references, or language syntax in the body (Critical per P6).
+> Persona agents must be platform-agnostic (Critical per P6). The body must not contain:
+> - Hardcoded platform paths: `src/domain/`, `src/data/`, `Talenta/Module/`, `lib/`, `app/`
+> - Framework references as rules: `React`, `Next.js`, `RxSwift`, `UIKit`, `BLoC`, `axios`
+> - Language-specific syntax as rules: `'use client'`, `readonly` (TypeScript), `BehaviorRelay`
+>
+> Platform knowledge must be delegated to a skill in `related_skills` — never embedded inline. Does not apply to files under `.claude/agents/`.
 
 ---
 
@@ -118,6 +123,14 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 > For automated bash execution without model involvement, use hooks in `settings.json` — not a skill.
 
 **Why no default skill type (invocable by both user and agent):** Every default skill's description loads into the main session context on every turn. Types P and O eliminate this overhead.
+
+**Orchestrator subtypes — by config:**
+
+| Subtype | Config | Use for |
+|---|---|---|
+| Trigger | `user-invocable: true` + uses `Agent` tool | Entry point that spawns an agent workflow |
+| Utility | `user-invocable: true`, no `Agent` tool | Self-contained interactive tool, runs with model |
+| Destructive | `disable-model-invocation: true` | Pure bash, destructive or side-effect operations — user only |
 
 #### By Scope
 
@@ -259,6 +272,72 @@ Every Type O skill that is the entry point for a persona must be prefixed with t
 
 ---
 
+## Choosing a Component Type <!-- 14 -->
+
+Decision tree — apply in order when deciding what to add:
+
+**Skill** — single focused procedure, no branching, under ~30 lines of instruction. No decision-making; the calling agent decides which skill to invoke.
+
+**Worker** — specialist in one domain or CLEAN layer. Sequences skills, handles branching and edge cases, enforces preconditions. No coordination of other agents.
+
+**Strategist** — coordinates multiple workers across phases. Never writes files directly — all writes go through workers. Has `agents:` frontmatter field.
+
+**New Persona** — multiple related agents forming a coherent new workflow category not covered by existing personas (`developer`, `debugger`, `auditor`, `installer`). Requires: new subdirectory + `.pkg` file + at least one worker or strategist.
+
+---
+
+## Frontmatter — Required Fields <!-- 12 -->
+
+**All agents:** `name`, `description`, `model`, `tools`
+
+**Workers additionally:** `user-invocable: true|false`
+
+**Strategists additionally:** `agents:` listing only the workers actually spawned
+
+**Skills:** `name`, `description`, `user-invocable: false` (or omit only for user-facing skills)
+
+---
+
+## Model Selection <!-- 10 -->
+
+| Role | Model | When |
+|---|---|---|
+| Strategist | `sonnet` | Always |
+| Worker | `sonnet` | Default — any reasoning, decision-making, or architectural judgment |
+| Worker | `haiku` | Only for truly mechanical leaf tasks with no architectural judgment |
+
+---
+
+## Required Sections by Role <!-- 30 -->
+
+**Workers** must have these sections in their body:
+
+| Section | Purpose |
+|---|---|
+| `## Search Rules` | Grep-before-Read decision gate table |
+| `## Extension Point` | Hook at end: check `agents.local/extensions/<name>.md` |
+
+Workers must also:
+- Validate preconditions before writing (`create-*` → target must NOT exist; `update-*` → target MUST exist)
+- Glob + Grep verify each output file before listing paths in the report
+
+**Strategists** must have these sections in their body:
+
+| Section | Purpose |
+|---|---|
+| Phase sections (`## Phase N`) | One per coordination phase |
+| State file write | After each phase: `.claude/agentic-state/runs/<feature>/state.json` |
+| Output validation | Glob each worker output path — STOP if missing |
+| `## Extension Point` | Hook at end |
+
+Strategists never use Edit, Write, or file-writing Bash — zero inline work.
+
+**Extension Point — standard hook.** Every agent body must end with a `## Extension Point` heading reading: "After completing, check for `agents.local/extensions/<name>.md` — if it exists, read and follow its additional instructions."
+
+For repo agents (`.claude/agents/`), the path is `.claude/agents.local/extensions/<name>.md`.
+
+---
+
 ## Building an Orchestrator Skill
 
 **Runtime environment:**
@@ -297,6 +376,18 @@ Agents load their procedure skills at startup via the `skills` field — full sk
 - Preload skills the agent needs in >50% of its invocations
 - Load on demand (via `Read`) skills needed rarely or only in edge cases
 - Monitor total preloaded size — if it exceeds ~500 lines, split the agent or move low-frequency skills to on-demand
+
+---
+
+## User Confirmation Gates
+
+Any agent with `AskUserQuestion` in its `tools` that reaches a confirm/decision gate — "apply these fixes?", "register this entry?", "re-run or skip?", "does this match what you wanted?" — must call `AskUserQuestion` directly. Never end the turn with the question as plain text.
+
+**Why this matters:** plain text returns to whatever spawned the agent — an Orchestrator skill, a strategist, or another worker. That caller may answer the question on the user's behalf without ever surfacing the choice to the actual user. `AskUserQuestion` blocks for the real user regardless of call depth — it is the only mechanism guaranteed to reach them.
+
+**Applies to:** any closed yes/no/choice gate before a write or before ending a workflow.
+
+**Does not apply to:** open-ended information-gathering questions with no fixed option set (e.g. "what would you like to discuss?") — `AskUserQuestion` requires 2-4 concrete options, so these may remain plain text and rely on the calling skill to relay them.
 
 ---
 

@@ -18,7 +18,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 |---|---|
 | Whether a file or directory exists | `Glob` |
 | A frontmatter field, section heading, or referenced name | `Grep` |
-| A section of a reference doc | `Grep` for `^## SectionName` → heading returns `<!-- N -->` — use N as limit → `Read(file, offset=line, limit=N)` |
+| A `## ` section of a reference doc | `Grep` for `^## SectionName` → heading returns `<!-- N -->` — use N as limit → `Read(file, offset=line, limit=N)` |
+| A `#### ` subsection (no `<!-- N -->`, e.g. under `### Agents` / `### Skills`) | `Grep` for `^#### SectionName` → `Read(file, offset=line, limit=20)` |
 | Full file content (needed to reason about design) | `Read` — justified |
 
 Read-once rule: start with Glob to understand shape, Grep to extract specifics, Read only when full context is required for design reasoning. Never re-read the same file.
@@ -55,7 +56,7 @@ Listen carefully. If the answer is vague, ask one targeted follow-up — no more
 
 ## Step 4 — Reason Through the Options
 
-Apply the principles from `.claude/reference/agent-conventions.md` (Grep the relevant sections) and the design goals from `docs/principles/agentic/agentic-design-principles.md` (Grep `## Design Goals` and the relevant principle section).
+Apply the principles from `docs/principles/agentic/agentic-conventions.md` (Grep the relevant sections — e.g. `## Component Types`, `## Required Sections by Role`, `## Choosing a Component Type`) and the design goals from `docs/principles/agentic/agentic-design-principles.md` (Grep `## Design Goals` and the relevant principle section).
 
 For each realistic option, evaluate:
 - Does it respect layer isolation and single responsibility?
@@ -91,7 +92,11 @@ NEXT STEP
 <concrete action: /scaffold, /migrate, /audit, or a specific manual edit>
 ```
 
-Ask: "Does this match what you had in mind, or do you want to explore a different direction?"
+Use the `AskUserQuestion` tool directly — do not end your turn with this as plain text — to ask:
+
+> "Does this match what you had in mind, or do you want to explore a different direction?"
+
+Offer options like "Yes, proceed to handoff" and "Explore a different direction."
 
 If the engineer wants to explore further, return to Step 3 with the new direction. There is no limit on consultation rounds.
 

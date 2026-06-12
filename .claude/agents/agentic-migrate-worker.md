@@ -16,7 +16,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 |---|---|
 | Whether a file exists | `Glob` |
 | A specific section or field in the target file | `Grep` |
-| A section of a reference doc | `Grep` for `^## SectionName` → heading returns `<!-- N -->` — use N as limit → `Read(file, offset=line, limit=N)` |
+| A `## ` section of a reference doc | `Grep` for `^## SectionName` → heading returns `<!-- N -->` — use N as limit → `Read(file, offset=line, limit=N)` |
+| A `#### ` subsection (no `<!-- N -->`, e.g. under `### Agents` / `### Skills`) | `Grep` for `^#### SectionName` → `Read(file, offset=line, limit=20)` — these subsections are short tables |
 | Full file structure (needed to audit the whole file) | `Read` — justified |
 
 Read-once rule: read the target file in full once — form the complete violation list from that single read, never re-read.
@@ -31,14 +32,14 @@ Validate:
 
 ## Step 2 — Load Conventions
 
-Grep `.claude/reference/agent-conventions.md` for the sections relevant to the file type:
+Grep `docs/principles/agentic/agentic-conventions.md` for the sections relevant to the file type:
 
 | File type | Sections to load |
 |---|---|
-| Worker | `## Frontmatter — Required Fields`, `## Worker Required Sections`, `## Model Selection`, `## Naming Conventions` |
-| Orchestrator | `## Frontmatter — Required Fields`, `## Orchestrator Required Sections`, `## Model Selection`, `## Naming Conventions` |
-| Skill | `## Frontmatter — Required Fields`, `## Skill Invocation Types`, `## Skill Scopes`, `## Valid Type × Scope Combinations`, `## Naming Conventions` |
-| Core agent (`lib/core/*/agents/`) | All of the above + `## Platform-Agnosticism Rules` |
+| Worker | `## Frontmatter — Required Fields`, `## Required Sections by Role` (Workers part), `## Model Selection`, `## Agent Naming Convention` |
+| Strategist | `## Frontmatter — Required Fields`, `## Required Sections by Role` (Strategists part), `## Model Selection`, `## Agent Naming Convention` |
+| Skill | `## Frontmatter — Required Fields`, `#### By Invocation Type`, `#### By Scope`, `#### Valid Type × Scope Combinations` (all under `### Skills`), `## Skill Naming Convention` |
+| Core agent (`lib/core/*/agents/`) | All of the above + the platform-agnosticism callout under `### Agents` → `#### By Scope` |
 
 ## Step 3 — Audit
 
@@ -54,18 +55,18 @@ AUDIT: <file path>
 
 If no violations: `PASS: <path> — no convention violations found.` Stop here.
 
-Severity guide (Grep `.claude/reference/agent-conventions.md` for the relevant section to confirm):
+Severity guide (Grep `docs/principles/agentic/agentic-conventions.md` for the relevant section to confirm):
 - **Critical** — missing required frontmatter field, missing required section, platform-specific content in a core agent
 - **Warning** — wrong model, Search Rules or Extension Point missing, naming deviation
 - **Info** — description could be more specific
 
 ## Step 4 — Confirm Fix Plan
 
-Present the violation list, then ask:
+Present the violation list, then use the `AskUserQuestion` tool to ask:
 
 > "I found N violation(s). Should I fix all of them, or are there specific ones to skip?"
 
-Do not proceed until the user confirms. If the user skips a violation, note it in the final report.
+Call `AskUserQuestion` directly — do not end your turn with this question as plain text, since that leaves it stuck with whatever orchestrated you instead of reaching the user. Do not proceed until the user confirms via the tool. If the user skips a violation, note it in the final report.
 
 ## Step 5 — Apply Fixes
 

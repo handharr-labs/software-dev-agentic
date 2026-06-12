@@ -16,7 +16,8 @@ Before any Read call, ask: "Do I need the full file, or just a specific symbol/s
 |---|---|
 | Whether a file exists | `Glob` |
 | A specific section heading or field | `Grep` |
-| A section of a reference doc | `Grep` for `^## SectionName` → heading returns `<!-- N -->` — use N as limit → `Read(file, offset=line, limit=N)` |
+| A `## ` section of a reference doc | `Grep` for `^## SectionName` → heading returns `<!-- N -->` — use N as limit → `Read(file, offset=line, limit=N)` |
+| A `#### ` subsection (no `<!-- N -->`, e.g. under `### Agents` / `### Skills`) | `Grep` for `^#### SectionName` → `Read(file, offset=line, limit=20)` |
 | Full file structure (style-matching a new file) | `Read` — justified |
 
 Read a full file only when you need its complete structure to write a matching file. Read-once rule: never re-read the same file in a single session.
@@ -51,11 +52,11 @@ After the answer, check which signals are still unclear. For each unclear signal
 
 ## Step 2 — Classify
 
-Grep `.claude/reference/agent-conventions.md` for `## Component Types` to load the decision tree, `## Skill Invocation Types` and `## Skill Scopes` for skill classification, and `## Valid Type × Scope Combinations` to confirm the chosen type × scope pair is valid.
+Grep `docs/principles/agentic/agentic-conventions.md` for `## Choosing a Component Type` to load the decision tree, `#### By Invocation Type` and `#### By Scope` (under `### Skills`) for skill classification, and `#### Valid Type × Scope Combinations` to confirm the chosen type × scope pair is valid.
 
 Apply the decision tree to the four signals. Determine:
 - Component type: Skill / Worker / Strategist / New Persona
-- If Skill: invocation type (P / W) and scope
+- If Skill: invocation type (P / O) and scope
 - If Worker or Strategist: scope (Persona agent / Platform agent / Repo agent)
 - Persona fit: which existing persona, or new persona needed
 
@@ -73,7 +74,7 @@ Branching: <none — linear | conditional logic | phase coordination>
 
 RECOMMENDATION
 ──────────────
-Type:     <Skill Type P/W | Worker | Strategist | New Persona>
+Type:     <Skill Type P/O | Worker | Strategist | New Persona>
 Scope:    <Toolkit | Platform-contract | Platform-only | Repo | Persona agent | Platform agent>
 Location: <exact target path>
 Reason:   <one sentence — why this type fits>
@@ -99,7 +100,7 @@ Use `AskUserQuestion` for each detail — one question at a time. Do not bundle 
 **Worker — ask additionally, one at a time:**
 
 3. > "Which CLEAN layer or domain does it own?"
-4. > "Which model — `haiku` (simple reads and writes) or `sonnet` (multi-step reasoning)?" (Grep `.claude/reference/agent-conventions.md` for `## Model Selection` if unsure which to suggest)
+4. > "Which model — `haiku` (simple reads and writes) or `sonnet` (multi-step reasoning)?" (Grep `docs/principles/agentic/agentic-conventions.md` for `## Model Selection` if unsure which to suggest)
 5. > "What tools does it need?"
 6. > "Any skills to preload (`related_skills`)? List names, or say TBD."
 7. > "Should it be user-invocable? (`true` / `false`)"

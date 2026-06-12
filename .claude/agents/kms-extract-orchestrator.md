@@ -73,7 +73,7 @@ Each worker receives: `local_path`, `platform`, `project_name`, `doc_type`, `out
 
 After all workers complete, verify each output file has at least one `##` heading — per R1 in `kms/docs/kms-knowledge-source-rules.md`. A file with no `##` headings will seed as a blob and must be regenerated before seeding.
 
-If any file fails: report the violation and do not proceed to step 5. Ask the user whether to re-run the failing worker or skip it.
+If any file fails: report the violation and do not proceed to step 5. Use the `AskUserQuestion` tool directly — do not end the turn with this as plain text — to ask whether to re-run the failing worker or skip it.
 
 - If the user chooses **re-run**: spawn the failing worker again, then re-validate. On success, continue to Step 5 with all files. On repeated failure, treat it as skipped.
 - If the user chooses **skip**: proceed to Step 5 with only the successfully validated files; note the skipped doc type in the Step 6 report.

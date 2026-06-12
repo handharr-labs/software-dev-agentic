@@ -57,11 +57,11 @@ Detected source:
   type : codebase
   path : /path/to/flutter-talenta
   owns : [code_pattern, source_file]
-
-Register and seed? [yes / no / rename]
 ```
 
-If user says `rename`: ask for the new name, then re-present for final confirmation.
+Then use the `AskUserQuestion` tool directly — do not end the turn with this as plain text — to ask "Register and seed?" with options `yes`, `no`, `rename`.
+
+If the user picks `rename`: use `AskUserQuestion` again to ask for the new name (via "Other" for free text), then re-present for final confirmation.
 
 ### 3 — Register
 
