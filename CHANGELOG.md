@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.8.3] — 2026-06-13
+
+### Fixed
+- Build script now ships `lib/core/<persona>/reference/` (including `lib/core/shared/reference/`) into `dist/plugins/<name>/reference/<persona>/` via new `copy_reference` helper — previously dropped entirely despite being referenced by `lucci-planner`, `kaku-worker`, and `saturn-jaygarcia`
+- `lucci-planner`, `kaku-worker`, and `saturn-jaygarcia` now reference `plan-format.md` via `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` instead of `.claude/reference/...`, which never resolved in downstream projects
+
+### Changed
+- `docs/principles/agentic/agentic-conventions.md` — added a "Shared reference" row to the Reference Docs scope table and documented the `$CLAUDE_PLUGIN_ROOT/reference/<persona-or-shared>/...` runtime convention
+
 ## [12.8.2] — 2026-06-13
 
 ### Changed
