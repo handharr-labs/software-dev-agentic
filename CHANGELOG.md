@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.6.1] — 2026-06-12
+
+### Fixed
+- Test skills (`developer-test-create-domain/data/presentation/mock`, `developer-test-procedure`): replaced `topic="<testing topic>"` placeholder with the correct `topic="testing"` (consistent across flutter, iOS, Android); removed wrong `android → instrumented_tests` note
+- `cipherpol-status` Step 5: fixed bare `kms_fetch` missing `pattern` — now does `kms_list(topic)` first then `kms_fetch(topic, pattern=<first from list>)`
+- `developer-sysdesign-extract-worker` Step 1: removed redundant `kms_list` call whose TOC result was never used; the three `kms_fetch` calls already use hardcoded known slugs
+
+---
+
 ## [12.6.0] — 2026-06-12
 
 ### Added
