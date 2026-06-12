@@ -29,7 +29,7 @@ For each `.md` agent file:
 - [ ] All `Reference:` lines use Grep-first pattern
 - [ ] Any `Reference:` line that lists multiple files also mentions `reference/index.md` as the discovery fallback (Fix F)
 
-**Core agents** (files under `lib/core/agents/`) — Platform-Agnosticism
+**Core agents** (files under `lib/core/*/agents/`) — Platform-Agnosticism
 - [ ] Body contains no hardcoded platform-specific file paths — no `src/domain/`, `src/data/`, `src/presentation/`, `Talenta/Module/`, `lib/`, `app/`
 - [ ] Body contains no platform framework references used as rules — no `React`, `Next.js`, `RxSwift`, `UIKit`, `BLoC`, `axios`, `next-safe-action`
 - [ ] Body contains no platform language-specific syntax used as rules — no `'use client'`, `'use server'`, `readonly` (TypeScript), `BehaviorRelay`
@@ -65,7 +65,7 @@ For each `SKILL.md` skill file:
 **Reference doc reads**
 - [ ] No step says `Read .claude/reference/... completely`
 - [ ] Any step reading a reference doc uses `Grep` for section keyword first
-- [ ] All referenced file paths match actual filenames in `lib/platforms/<platform>/reference/` or `lib/core/reference/`
+- [ ] All referenced file paths match actual filenames in `lib/platforms/<platform>/reference/` or `lib/core/*/reference/`
 
 **Templates** (any `template.md` file inside a skill directory)
 - [ ] No explanatory/instructional comments that duplicate what `SKILL.md` already says (Fix G)
@@ -98,7 +98,7 @@ Severity: **Critical** — a missing required keyword means core agents cannot r
 
 ## Reference Doc Section Line-Count Check
 
-For each reference doc file being audited (`lib/platforms/<platform>/reference/**/*.md`, `lib/core/reference/**/*.md`), verify every `##` section heading carries a valid integer line-count comment.
+For each reference doc file being audited (`lib/platforms/<platform>/reference/**/*.md`, `lib/core/*/reference/**/*.md`), verify every `##` section heading carries a valid integer line-count comment.
 
 **How to check:** `Grep` for `^## ` in the file. For each match, verify the heading line matches the pattern `^## .+ <!-- \d+ -->`. A heading that matches `^## .+ <!-- [^0-9] -->` or has no `<!--` at all is a violation.
 
@@ -123,7 +123,7 @@ Severity: Warning for any prompt clarity finding.
 
 ## Severity Levels
 
-- **Critical** — missing required frontmatter field, broken reference path, "Read completely" violation, platform-specific content in a `lib/core/agents/` file
+- **Critical** — missing required frontmatter field, broken reference path, "Read completely" violation, platform-specific content in a `lib/core/*/agents/` file
 - **Warning** — wrong model for worker type, missing Search Rules, missing Extension Point, missing `reference/index.md` discovery hint on multi-file Reference lines, explanatory comments in template files, missing `## Input` or `## Output` body section
 - **Info** — naming convention deviation, description could be more specific, missing Knowledge or Reasoning body section slot
 

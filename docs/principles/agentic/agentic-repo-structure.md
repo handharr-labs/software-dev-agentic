@@ -22,13 +22,27 @@ Plugins are built from `lib/plugins/*/build.sh` via `scripts/build-plugin.sh` an
 software-dev-agentic/
   lib/
     core/
-      agents/           ← all persona agents (platform-agnostic)
-        developer/
-        debugger/
-        auditor/
-        qa/
-      skills/           ← all skills (orchestrator + procedure)
-      hooks/            ← shared hook scripts
+      developer/        ← developer persona
+        agents/
+        skills/
+        hooks/
+        reference/
+      debugger/         ← debugger persona
+        agents/
+        skills/
+        reference/
+      auditor/          ← auditor persona
+        agents/
+        skills/
+      qa/               ← qa persona
+        agents/
+        skills/
+      installer/        ← installer persona
+        skills/
+      shared/           ← cross-cutting agents + skills (kaku, lucci, perf, etc.)
+        agents/
+        skills/
+        reference/
     plugins/
       cipherpol-aegis/
         build.sh        ← assembles agents + skills from lib/core/
@@ -64,7 +78,7 @@ software-dev-agentic/
 
 ### 1. All Agents and Skills in `lib/core/`
 
-**Decision:** Agents live in `lib/core/agents/` grouped by persona. Skills live in `lib/core/skills/` as named directories. Both are platform-agnostic — they contain no platform-specific paths, syntax, or framework references.
+**Decision:** Agents and skills are organized persona-first. Each persona owns a subdirectory at `lib/core/<persona>/` containing its `agents/`, `skills/`, and optionally `reference/`. Cross-cutting agents and skills (kaku, lucci, perf, cipherpol-status, etc.) live in `lib/core/shared/`. All are platform-agnostic — they contain no platform-specific paths, syntax, or framework references.
 
 Platform awareness is handled at runtime via two mechanisms:
 - **KMS** — agents load platform-specific conventions via `kms_list` → `kms_query` scoped to the current platform
@@ -116,11 +130,11 @@ Agents always query with explicit `platform` and `project` filters. The cascade 
 
 ---
 
-### 4. Persona Grouping in `lib/core/agents/`
+### 4. Persona-First Layout in `lib/core/`
 
-**Decision:** Agents are grouped into persona subdirectories. Each persona represents a coherent workflow — agents within a group relate to and can depend on each other. Ungrouped agents (no peers yet) remain flat at `lib/core/agents/`.
+**Decision:** Personas are top-level directories under `lib/core/`. Each persona owns its own `agents/`, `skills/`, and optionally `hooks/` and `reference/` subdirs. Cross-cutting components (kaku-worker, lucci-planner, perf-worker, cipherpol-status, etc.) live in `lib/core/shared/`.
 
-Adding a new persona: Create `lib/core/agents/<persona>/`, add worker(s)/strategists. The `cipherpol-aegis` build bundles all agents in `lib/core/agents/` automatically — no build config changes needed.
+Adding a new persona: Create `lib/core/<persona>/agents/` and `lib/core/<persona>/skills/`. The `cipherpol-aegis` build uses `lib/core/*/agents` and `lib/core/*/skills/*/` glob patterns — it picks up any new persona automatically with no config change.
 
 ---
 
@@ -169,16 +183,16 @@ Extension files contain only the delta. Plugin updates are inherited automatical
 
 ## Convention Compliance System
 
-CipherPol enforces its own conventions through an automated internal review system. This is separate from the downstream code reviewer (`lib/core/agents/auditor/arch-review-worker.md`) — the internal system reviews *agent and skill files in this repo*, not *application code in downstream projects*.
+CipherPol enforces its own conventions through an automated internal review system. This is separate from the downstream code reviewer (`lib/core/auditor/agents/auditor-arch-review-worker.md`) — the internal system reviews *agent and skill files in this repo*, not *application code in downstream projects*.
 
 **Two Distinct Reviewers**
 
 | Reviewer | Location | Audits |
 |---|---|---|
 | `arch-review-strategist` + `arch-review-worker` | `.claude/agents/` | Agent `.md` files and `SKILL.md` files in this repo — convention compliance |
-| `arch-review-worker` | `lib/core/agents/auditor/` | Application code in downstream projects — CLEAN Architecture violations |
+| `arch-review-worker` | `lib/core/auditor/agents/` | Application code in downstream projects — CLEAN Architecture violations |
 
-> Why separate locations? `.claude/agents/` and `.claude/skills/` are this repo's internal tooling — they are NOT bundled into downstream plugins. `lib/core/agents/` and `lib/core/skills/` ARE bundled. The distinction prevents internal review tooling from polluting downstream project contexts.
+> Why separate locations? `.claude/agents/` and `.claude/skills/` are this repo's internal tooling — they are NOT bundled into downstream plugins. `lib/core/*/agents/` and `lib/core/*/skills/` ARE bundled. The distinction prevents internal review tooling from polluting downstream project contexts.
 
 **What `arch-check-conventions` enforces:**
 
@@ -195,7 +209,7 @@ CipherPol enforces its own conventions through an automated internal review syst
 | Prompt Clarity | No ambiguous scope; no instructions spanning two CLEAN layers without a stop condition; no contradicting rules; failure paths specified | 🟡 Warning |
 
 **Severity levels:**
-- 🔴 Critical — missing required frontmatter, broken reference path, "Read completely" violation, platform-specific content in a `lib/core/agents/` file
+- 🔴 Critical — missing required frontmatter, broken reference path, "Read completely" violation, platform-specific content in a `lib/core/*/agents/` file
 - 🟡 Warning — wrong model, missing Search Protocol/Output/Extension Point, prompt clarity issues
 - 🟢 Info — naming deviation, description could be more specific
 
@@ -205,10 +219,11 @@ CipherPol enforces its own conventions through an automated internal review syst
 
 | Content | Location |
 |---|---|
-| Persona agents (strategists, planners, workers) | `lib/core/agents/<persona>/` |
-| Flat utility agents (no persona yet) | `lib/core/agents/` |
+| Persona agents (strategists, planners, workers) | `lib/core/<persona>/agents/` |
+| Cross-cutting utility agents (kaku, lucci, perf) | `lib/core/shared/agents/` |
 | Internal tooling agents (not shipped) | `.claude/agents/` |
-| All skills (orchestrator + procedure) | `lib/core/skills/<skill-name>/` |
+| Persona skills | `lib/core/<persona>/skills/<skill-name>/` |
+| Cross-cutting skills (cipherpol-status, etc.) | `lib/core/shared/skills/<skill-name>/` |
 | Internal tooling skills (not shipped) | `.claude/skills/<skill-name>/` |
 | Architecture + SDLC knowledge | `kms/knowledge-sources/{universal,platform,projects}/` |
 | Plugin definitions | `lib/plugins/<plugin-name>/` |

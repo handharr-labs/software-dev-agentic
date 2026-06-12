@@ -143,7 +143,7 @@ Strategists are pure reasoning agents — they decide what to do and return stru
 
 Agents have a second axis — where they live and what they know.
 
-- **Core** (`lib/core/agents/`) — platform-agnostic. Work on any platform. Add here when the behaviour is identical across all platforms.
+- **Core** (`lib/core/<persona>/agents/`) — platform-agnostic. Work on any platform. Add here when the behaviour is identical across all platforms.
 - **Platform-specific** (`lib/platforms/<platform>/agents/`) — exist only when the workflow diverges enough from core to need its own agent. Examples: iOS `test-strategist` (knows `xcodebuild`), iOS `pr-review-worker` (knows Swift/UIKit conventions). Do not add a platform agent unless a core agent + platform skills cannot handle it.
 
 **DI at Skill Level:**

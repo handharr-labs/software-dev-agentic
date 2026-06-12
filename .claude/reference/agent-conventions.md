@@ -33,7 +33,7 @@ Decision tree — apply in order:
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Toolkit** | `lib/core/skills/` | Yes — all platforms |
+| **Toolkit** | `lib/core/<persona>/skills/` | Yes — all platforms |
 | **Platform-contract** | `lib/platforms/<platform>/skills/contract/` | Yes — matching platform |
 | **Platform-only** | `lib/platforms/<platform>/skills/` (flat) | Yes — matching platform only |
 | **Repo** | `.claude/skills/` | No — internal tooling only |
@@ -55,7 +55,7 @@ Decision tree — apply in order:
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Persona agent** | `lib/core/agents/<persona>/` | Yes — all platforms |
+| **Persona agent** | `lib/core/<persona>/agents/` | Yes — all platforms |
 | **Platform agent** | `lib/platforms/<platform>/agents/` | Yes — matching platform only |
 | **Repo agent** | `.claude/agents/` | No — internal tooling only |
 
@@ -123,7 +123,7 @@ Strategists never use Edit, Write, or file-writing Bash — zero inline work.
 
 ## Platform-Agnosticism Rules <!-- 14 -->
 
-Applies to all files under `lib/core/agents/`. Critical violation if the body contains:
+Applies to all files under `lib/core/*/agents/`. Critical violation if the body contains:
 
 - Hardcoded platform paths: `src/domain/`, `src/data/`, `Talenta/Module/`, `lib/`, `app/`
 - Framework references as rules: `React`, `Next.js`, `RxSwift`, `UIKit`, `BLoC`, `axios`

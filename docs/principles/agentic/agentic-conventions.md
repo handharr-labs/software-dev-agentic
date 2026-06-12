@@ -12,7 +12,7 @@ Component types, naming conventions, authoring rules, and decision rules for con
 A named group of related agents serving a coherent workflow.
 
 Requirements:
-- Lives in `lib/core/agents/<persona>/`
+- Lives in `lib/core/<persona>/agents/`
 - Has at least one worker or strategist
 - Agents within the group relate to and can depend on each other
 - Requires a `.pkg` file for selective installation
@@ -67,7 +67,7 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Persona agent** | `lib/core/agents/<persona>/` | Yes — all platforms |
+| **Persona agent** | `lib/core/<persona>/agents/` | Yes — all platforms |
 | **Platform agent** | `lib/platforms/<platform>/agents/` | Yes — matching platform only |
 | **Project agent** | `.claude/agents.local/` | No — project-owned, not in this repo |
 
@@ -92,7 +92,7 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Toolkit skill** | `lib/core/skills/` | Yes — all platforms. Platform-agnostic, intended for use in downstream projects. |
+| **Toolkit skill** | `lib/core/<persona>/skills/` | Yes — all platforms. Platform-agnostic, intended for use in downstream projects. |
 | **Platform-contract skill** | `lib/platforms/<platform>/skills/contract/` | Yes — matching platform. Same name across all platforms; each implements for its syntax — called by persona workers. Bundled flat as `<name>/SKILL.md` in the plugin. |
 | **Platform-only skill** | `lib/platforms/<platform>/skills/` (flat) | Yes — matching platform only. Called by platform agents. |
 | **Project skill** | `.claude/skills.local/` | No — project-owned, not in this repo. |
@@ -124,7 +124,7 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 |---|---|---|
 | **Platform-base knowledge** | `kms/knowledge-sources/engineering/{platform}-*.md` | Yes — via pre-seeded ChromaDB bundled in plugin. Theory + definition + code pattern per node. Shared across all projects on that platform. |
 | **Project knowledge** | `kms/knowledge-sources/projects/{name}/` | Yes — via pre-seeded ChromaDB. Project-specific deviations only — created only when real divergence exists. |
-| **Core catalog** | `lib/core/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. |
+| **Core catalog** | `lib/core/<persona>/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. |
 | **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides for project-specific conventions not in KMS. |
 
 ---
@@ -291,7 +291,7 @@ Agents load their procedure skills at startup via the `skills` field — full sk
 | Platform-base | `engineering/flutter-standard-architecture.md` | `kms/knowledge-sources/engineering/` — shared across all projects on that platform |
 | Project-specific | `projects/flutter-mobile-talenta/deviations.md` | `kms/knowledge-sources/projects/{name}/` — deviations only |
 | Pattern node | `use_case` under `topic=domain` | Stored in ChromaDB with `discipline`, `topic`, `pattern` metadata |
-| Catalog file | queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` |
+| Catalog file | queryable symbol/component inventory | `lib/core/<persona>/reference/<topic>/<name>-catalog.md` |
 
 **Agent knowledge loading — canonical flow (always both):**
 1. `kms_list(platform, discipline)` → scoped TOC, metadata only — agent reasons over what topics exist
@@ -349,7 +349,7 @@ One concept = one pattern key, everywhere. When adding a new node to the KMS, ch
 | New code generation pattern for one platform | Platform-contract skill (same name, platform implements) → `lib/platforms/<platform>/skills/contract/` |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
 | Architecture pattern knowledge (any topic) | `kms/knowledge-sources/engineering/{platform}-*.md` — theory + definition + code pattern per `##` section, seeded as KMS nodes. Project-specific deviations in `kms/knowledge-sources/projects/{name}/` |
-| Queryable symbol/component inventory | `lib/core/reference/<topic>/<name>-catalog.md` — `### Symbol` entries; agents `symbol-query` by name directly |
+| Queryable symbol/component inventory | `lib/core/<persona>/reference/<topic>/<name>-catalog.md` — `### Symbol` entries; agents `symbol-query` by name directly |
 
 **Planner vs Worker — when to use which:**
 

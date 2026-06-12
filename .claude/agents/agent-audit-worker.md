@@ -26,7 +26,7 @@ Read-once rule: never Read a file when Grep can extract the value. Never re-read
 Accept one of:
 - `<persona>` (e.g. `developer`, `debugger`) — audit the full persona: pkg, directory, agents, skills, hooks
 - `<file path>` — audit that single agent or skill file's cross-references only
-- `full` — audit all personas in `packages/` and all agents in `lib/core/agents/` and `agents/`
+- `full` — audit all personas in `packages/` and all agents in `lib/core/*/agents/` and `agents/`
 
 If scope is not provided, ask:
 > "What scope to audit? Options: a persona name (`developer`, `debugger`, `tracker`, `auditor`, `installer`), a specific file path, or `full`."
@@ -39,10 +39,9 @@ If scope is not provided, ask:
 
 For each `packages/<persona>.pkg`:
 
-1. **Directory exists** — `Glob lib/core/agents/<persona>/` — BROKEN if missing
+1. **Directory exists** — `Glob lib/core/<persona>/agents/` — BROKEN if missing
 2. **Agent files exist** — for each name in `agents=` field:
-   - Glob `lib/core/agents/<persona>/<name>.md` — BROKEN if missing
-   - Glob `lib/core/agents/<name>.md` (flat fallback) — BROKEN if neither exists
+   - Glob `lib/core/<persona>/agents/<name>.md` — BROKEN if missing
 3. **Hook scripts exist** — for each name in `hooks=` field:
    - Glob `scripts/hooks/<hook-name>` or `scripts/<hook-name>.sh` — BROKEN if neither exists
 
@@ -52,7 +51,7 @@ For each worker `.md` file in scope:
 
 4. **related_skills resolve** — Grep the file for `related_skills:` block; for each skill name listed:
    - Glob `lib/platforms/*/skills/contract/<name>/SKILL.md` — at least one platform must have it
-   - Glob `lib/core/skills/<name>/SKILL.md` — fallback for toolkit skills
+   - Glob `lib/core/*/skills/<name>/SKILL.md` — fallback for toolkit skills
    - Glob `skills/<name>/SKILL.md` — fallback for repo skills
    - BROKEN if none found; WARNING if only one platform has it (expected: all platforms)
 
@@ -61,7 +60,7 @@ For each worker `.md` file in scope:
 For each strategist `.md` file (has `agents:` frontmatter field) in scope:
 
 5. **Spawned agents exist** — Grep the file for `agents:` block; for each agent name listed:
-   - Glob `lib/core/agents/**/<name>.md`
+   - Glob `lib/core/*/agents/<name>.md`
    - Glob `agents/<name>.md` (internal tooling fallback)
    - BROKEN if neither found
 

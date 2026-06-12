@@ -299,7 +299,7 @@ tools: <tools — include Agent if the workflow delegates to agents>
 
 ### New Persona
 
-1. Create `lib/core/agents/<persona>/` directory
+1. Create `lib/core/<persona>/agents/` directory (also `lib/core/<persona>/skills/` and optionally `lib/core/<persona>/reference/`)
 2. Create `packages/<persona>.pkg`:
 ```
 name=<persona>

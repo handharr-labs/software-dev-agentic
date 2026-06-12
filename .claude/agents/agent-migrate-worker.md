@@ -27,7 +27,7 @@ Ask: "Which file do you want to migrate to convention? Provide the path."
 
 Validate:
 - `Glob` the provided path — stop with `FILE NOT FOUND: <path>` if it does not exist
-- Confirm the file is an agent (`.md` in `agents/` or `lib/core/agents/` or `lib/platforms/`) or a skill (`SKILL.md`)
+- Confirm the file is an agent (`.md` in `agents/` or `lib/core/*/agents/` or `lib/platforms/`) or a skill (`SKILL.md`)
 
 ## Step 2 — Load Conventions
 
@@ -38,7 +38,7 @@ Grep `.claude/reference/agent-conventions.md` for the sections relevant to the f
 | Worker | `## Frontmatter — Required Fields`, `## Worker Required Sections`, `## Model Selection`, `## Naming Conventions` |
 | Orchestrator | `## Frontmatter — Required Fields`, `## Orchestrator Required Sections`, `## Model Selection`, `## Naming Conventions` |
 | Skill | `## Frontmatter — Required Fields`, `## Skill Invocation Types`, `## Skill Scopes`, `## Valid Type × Scope Combinations`, `## Naming Conventions` |
-| Core agent (`lib/core/agents/`) | All of the above + `## Platform-Agnosticism Rules` |
+| Core agent (`lib/core/*/agents/`) | All of the above + `## Platform-Agnosticism Rules` |
 
 ## Step 3 — Audit
 
