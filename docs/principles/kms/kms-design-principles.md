@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-04
-> Related: [kms-conventions.md](kms-conventions.md) · [kms-seeding.md](kms-seeding.md)
+> Related: [kms-glossary.md](kms-glossary.md) · [kms-conventions.md](kms-conventions.md) · [kms-seeding.md](kms-seeding.md)
 
 ## What is the KMS?
 

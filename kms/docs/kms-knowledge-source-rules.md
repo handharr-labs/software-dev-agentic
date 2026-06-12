@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-04
-> Related: [kms-design-principles.md](../docs/principles/kms/kms-design-principles.md) · [kms-conventions.md](../docs/principles/kms/kms-conventions.md)
+> Related: [kms-glossary.md](../../docs/principles/kms/kms-glossary.md) · [kms-design-principles.md](../docs/principles/kms/kms-design-principles.md) · [kms-conventions.md](../docs/principles/kms/kms-conventions.md)
 
 ## What This Doc Covers
 

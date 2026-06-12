@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-12
-> Related: [kms-design-principles.md](kms-design-principles.md) · [kms-conventions.md](kms-conventions.md)
+> Related: [kms-glossary.md](kms-glossary.md) · [kms-design-principles.md](kms-design-principles.md) · [kms-conventions.md](kms-conventions.md)
 
 Seeding strategy — how knowledge gets into the KMS. Covers source registration, change detection, failure behavior, and the agentic seeding workflow.
 

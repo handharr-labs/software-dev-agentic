@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-12
-> Related: [kms-design-principles.md](kms-design-principles.md) · [kms-seeding.md](kms-seeding.md)
+> Related: [kms-glossary.md](kms-glossary.md) · [kms-design-principles.md](kms-design-principles.md) · [kms-seeding.md](kms-seeding.md)
 
 Path conventions, chunk strategy, metadata schema, discipline vocabulary, and retrieval protocol — the practical reference for authoring knowledge docs and writing agents that query the KMS.
 
@@ -161,10 +161,13 @@ Three MCP tools serve different retrieval needs. Agents should combine them, not
 | `kms_fetch` | Full content of one exact node, cascade-resolved (`project → platform → universal`) | The agent already knows the exact `topic`/`pattern` — deterministic retrieval |
 | `kms_query` | Full content of top-k nodes, ranked by similarity | The agent doesn't know the exact topic — semantic / intent-based discovery |
 
-**Combination pattern:**
-1. `kms_list(discipline, platform)` — scan the TOC, reason over which topics exist
-2. For known, exact nodes — when artifact, topic, and pattern are known (e.g. `## Null Safety Extensions` under `platform/flutter/engineering/conventions/` → `artifact=conventions, topic=conventions, pattern=null_safety_extensions`): `kms_fetch(discipline, artifact, topic, pattern, platform)` — guaranteed, cascade-resolved retrieval
-3. For exploratory or intent-based needs (e.g. "what conventions apply when writing this artifact type"): `kms_query(text, discipline, platform, n_results)` — semantic ranking
+**Combination pattern — `kms_list` narrows, `kms_fetch` retrieves:**
+1. `kms_list(discipline, platform)` — scan the TOC, reason over which artifacts/topics exist
+2. If the TOC is still large, narrow further with the same call — `kms_list(discipline, platform, artifact)` or `kms_list(discipline, platform, artifact, topic)` — each added param shrinks the TOC by one level. `pattern` is never a `kms_list` filter; it's what step 1-2 are narrowing down *to*.
+3. Once `artifact`, `topic`, and `pattern` are known (e.g. `## Null Safety Extensions` under `platform/flutter/engineering/conventions/` → `artifact=conventions, topic=conventions, pattern=null_safety_extensions`): `kms_fetch(discipline, artifact, topic, pattern, platform)` — guaranteed, cascade-resolved retrieval
+4. For exploratory or intent-based needs (e.g. "what conventions apply when writing this artifact type"): `kms_query(text, discipline, platform, n_results)` — semantic ranking, bypasses the narrowing steps entirely
+
+See [kms-glossary.md](kms-glossary.md#terms-as-a-scoping-funnel-for-retrieval) for the full term-to-parameter mapping and a worked example of this narrowing.
 
 **Why this matters:** `kms_query` ranks top-k across *all* matching nodes — a cross-cutting convention that applies to nearly every artifact (e.g. null-safety unwrapping) can be crowded out of the top-k by more numerous architecture-pattern nodes. When a topic's heading is uniform across platforms, prefer `kms_fetch` for guaranteed retrieval over hoping `kms_query` surfaces it.
 
