@@ -168,8 +168,11 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 |---|---|---|
 | **Platform-base knowledge** | `kms/knowledge-sources/engineering/{platform}-*.md` | Yes — via pre-seeded ChromaDB bundled in plugin. Theory + definition + code pattern per node. Shared across all projects on that platform. |
 | **Project knowledge** | `kms/knowledge-sources/projects/{name}/` | Yes — via pre-seeded ChromaDB. Project-specific deviations only — created only when real divergence exists. |
-| **Core catalog** | `lib/core/<persona>/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. |
+| **Shared reference** | `lib/core/shared/reference/<topic>/` | Yes — all personas, all platforms. Cross-cutting facts/contracts shared by multiple agents (e.g. `saturn-jaygarcia/plan-format.md`). Bundled to `reference/shared/` in the plugin. |
+| **Core catalog** | `lib/core/<persona>/reference/<topic>/` | Yes — all platforms. Contains `<name>-catalog.md` — queryable symbol/component inventory. Agents `symbol-query` these; never load in full. Bundled to `reference/<persona>/` in the plugin. |
 | **Project reference** | `.claude/reference.local/` | No — project-owned, not in this repo. Overrides for project-specific conventions not in KMS. |
+
+> **Runtime path from agent body:** `copy_reference` (in `scripts/plugin-lib.sh`) bundles `lib/core/<persona>/reference/**` (including `lib/core/shared/reference/`) into `dist/plugins/<name>/reference/<persona-or-shared>/**` at build time. Agents must reference these docs as `$CLAUDE_PLUGIN_ROOT/reference/<persona-or-shared>/<path>` — never `.claude/reference/...` (that path is project-owned via `.claude/reference.local/`, not plugin-shipped, and resolves against the downstream project root, not the plugin cache).
 
 ---
 
