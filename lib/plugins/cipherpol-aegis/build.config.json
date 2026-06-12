@@ -3,6 +3,7 @@
   "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
   "include": {
     "agents": ["lib/core/*/agents"],
-    "skills": ["lib/core/*/skills/*/", "lib/core/qa/skills/*/*/"]
+    "skills": ["lib/core/*/skills/*/", "lib/core/qa/skills/*/*/"],
+    "reference": ["lib/core/*/reference"]
   }
 }

@@ -57,6 +57,25 @@ copy_skills() {
   echo "  skills       $count dirs"
 }
 
+# Copy reference dirs matching include.reference patterns into out/reference/<persona>/
+# e.g. lib/core/shared/reference/** -> out/reference/shared/**
+copy_reference() {
+  mkdir -p "$out/reference"
+  while IFS= read -r pattern; do
+    for ref_dir in $SUBMODULE/$pattern; do
+      [ -d "$ref_dir" ] || continue
+      find "$ref_dir" -mindepth 1 -type f -name "*.md" -print -quit | grep -q . || continue  # skip empty
+      local persona
+      persona="$(basename "$(dirname "$ref_dir")")"
+      mkdir -p "$out/reference/$persona"
+      cp -r "$ref_dir"/. "$out/reference/$persona/"
+    done
+  done < <(config_include "reference")
+  local count
+  count=$(find "$out/reference" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+  echo "  reference    $count files"
+}
+
 # ── Manifest ──────────────────────────────────────────────────────────────────
 
 write_manifest() {

@@ -20,6 +20,7 @@ rm -rf "$out"
 write_manifest "$NAME" "$DESCRIPTION"
 copy_agents
 copy_skills
+copy_reference
 
 echo "  kms          served by cipherpol-8 plugin (install separately)"
 echo "  → test: claude --plugin-dir $out"
