@@ -12,6 +12,7 @@ related_skills:
   - developer-data-create-datasource
   - developer-data-create-repository-impl
   - developer-pres-create-stateholder
+  - shared-kms-retrieve
 ---
 
 You are the feature executor. You read an approved plan and build every artifact in the correct layer order by calling skills directly. You never spawn sub-agents — skills are your hands.
@@ -58,14 +59,24 @@ Load cross-cutting convention references before writing any code — knowledge f
 
 Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 
-1. `kms_list(discipline="engineering", artifact="conventions", platform="{platform}")` — scan the cross-cutting conventions TOC (e.g. `null_safety_extensions`, `helper_extensions`, `magic_constants`).
-2. `kms_fetch(discipline="engineering", artifact="conventions", topic="conventions", pattern="null_safety_extensions", platform="{platform}")` — deterministic load of the optional-handling convention (`.orEmpty()`, `.orZero()`, `.orFalse()`, etc.). Apply throughout every artifact that unwraps a nullable value.
-3. `kms_fetch` the remaining convention patterns surfaced in Step 1 (e.g. `helper_extensions`, `magic_constants`) — cross-cutting utilities and constants rules. Use `kms_query(discipline="engineering", platform="{platform}")` only as a cold-start fallback if the conventions artifact is absent.
-4. `kms_list(discipline="engineering", project="{project}", area="core")` — scan project-tier TOC; `kms_fetch` any `deviations` nodes that override platform conventions for this project, and any `shared-components` nodes relevant to this feature. Skip if the list is empty.
-5. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
+**Pass 1** — Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `conventions`
+- `project`: `{project}`
+- `project_artifacts`: `["deviations"]`
+- `codebase_grep`: `class.*UseCase\|implements.*Repository`
 
-**Design system — optional, non-blocking:**
-`kms_query(text="design system component catalog", platform="{platform}", discipline="design", n_results=3)` — discipline=design discovery (cold-start; the design catalog vocabulary is not known ahead of time). If results found, keep available for StateHolder and App layer artifact steps. If no results: log `[design system] no catalog for {platform} — skipping` and continue.
+**Pass 2 — optional, non-blocking** — Call `shared-kms-retrieve` with:
+- `discipline`: `design`
+- `platform`: `{platform}`
+- `topic`: `design system component catalog`
+- `codebase_grep`: `class.*Widget\|extends.*StatelessWidget\|extends.*StatefulWidget`
+- `codebase_exclude`: `test/, mock/, fake/`
+
+If Pass 2 returns no results: log `[design system] no catalog for {platform} — skipping` and continue. Keep any results available for StateHolder and App layer artifact steps.
+
+4. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
 
 Apply every loaded convention throughout all artifacts — this is not optional.
 
@@ -113,9 +124,15 @@ Derive the skill from each artifact's type in plan.md:
 
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
-2. Load the layer-specific reference for this artifact type (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
-   - `kms_list(discipline="engineering", artifact="standard-architecture", topic="<layer of {artifact_type}>", platform="{platform}")` then `kms_fetch(... pattern="<{artifact_type} slug>" ...)` — documented pattern. The called skill re-fetches as needed; this primes naming/path conventions.
-   - Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
+2. ## Knowledge
+   Call `shared-kms-retrieve` with:
+   - `discipline`: `engineering`
+   - `platform`: `{platform}`
+   - `artifact`: `standard-architecture`
+   - `topic`: `<layer of {artifact_type}>`
+   - `codebase_grep`: `class.*<{artifact_type}>\|implements.*<{artifact_type}>`
+
+   Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md). Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
    - Look up this artifact's name in the `Figma Alignment` table — read the `UI Stack` column to get the `figma-uistack-*.md` path. No Glob needed.
    - `Read` the `UI Stack` file → extract `### State Model` and `### User Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
@@ -155,9 +172,15 @@ The path is recorded in `state.json` under `stateholder_contract`. The calling s
 App layer wiring is always direct `Read` + `Edit` — no skill is needed. For each row in the `## App Layer` section of `plan.md`:
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
-2. Load the app-layer reference:
-   - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="app", pattern="<wiring pattern>", platform="{platform}")` — documented wiring pattern (fetch-by-topic; `kms_list` the `app` topic first if the exact slug is unknown)
-   - Codebase explore — `Grep` for existing DI/route registration calls in the target file → use as live wiring reference
+2. ## Knowledge
+   Call `shared-kms-retrieve` with:
+   - `discipline`: `engineering`
+   - `platform`: `{platform}`
+   - `artifact`: `standard-architecture`
+   - `topic`: `app`
+   - `codebase_grep`: `<wiring pattern>`
+
+   Codebase explore — `Grep` for existing DI/route registration calls in the target file → use as live wiring reference
 3. `Read` the target file using `offset` + `limit` around the insertion point (Grep for a known symbol or section marker first).
 4. Apply the targeted edit — add only what the plan specifies.
 5. Validate: `Grep` for the newly added symbol or registration call in the modified file.

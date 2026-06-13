@@ -4,6 +4,8 @@ description: Trace a runtime error or unexpected behavior through the Clean Arch
 model: sonnet
 user-invocable: true
 tools: Read, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
+related_skills:
+  - shared-kms-retrieve
 agents:
   - debugger-log-worker
 ---
@@ -40,13 +42,14 @@ Never use `find`/`ls` to navigate a vendor directory speculatively. If the patte
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths in the error/stack trace.
 
-Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
-
-1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="error_handling", platform="{platform}")` — scan the error-handling TOC (error_flow, error_mapping, failure_types, layer_invariants).
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="error_handling", pattern="<slug>", platform="{platform}")` — documented error-handling patterns. Reserve `kms_query(...)` for cold-start only.
-3. Codebase explore — `Grep` for `catch\|Result\|Either\|onError` in the affected layer excluding `test/` paths → use the most representative file to understand the live expected error flow
-
-Combine KMS knowledge with codebase evidence to confirm expected vs actual behaviour.
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `error_handling`
+- `project`: `{project}`
+- `project_artifacts`: `[error_flow, error_mapping, failure_types, layer_invariants]`
+- `codebase_grep`: `catch\|Result\|Either\|onError`
 
 ## Step 1 — Understand the Symptom
 

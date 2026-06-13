@@ -3,6 +3,8 @@ name: developer-sysdesign-extract-worker
 description: Extract a Screen System Design document from a single screen entry point — traces through presentation, domain, and data layers to produce a structured system design covering API, data model, layer diagram, data flows, and UI stack. Invoked by /developer-extract-sysdesign.
 model: sonnet
 tools: Read, Write, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
+related_skills:
+  - shared-kms-retrieve
 ---
 
 You extract a Screen System Design from a single screen entry point by tracing through all Clean Architecture layers.
@@ -25,19 +27,22 @@ Return `MISSING INPUT: <param>` immediately if either is absent.
 | Whether a file exists | `Glob` |
 | Class, function, symbol in source | `Grep` |
 | Full file content (when Grep gives insufficient context) | `Read` with `offset` + `limit` |
-| Architecture patterns | `kms_list` → `kms_fetch` or `kms_query` |
+| Architecture patterns | `shared-kms-retrieve` |
 
 **Read-once rule.** Note all relevant content from a single read. Never re-read the same file.
 
 ## Step 1 — Load Architecture Reference
 
-Load the architecture patterns for the platform before reading any source file:
+Load the architecture patterns for the platform before reading any source file.
 
-1. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="screen_entry_points", platform="{platform}")` — file patterns, grep hints, and tracing strategy per layer. For iOS and Android this node lives under `topic="ui"` — try `topic="ui"` if `topic="presentation"` returns no result.
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain", pattern="use_case", platform="{platform}")` — UseCase structure and naming
-3. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="repository", platform="{platform}")` — Repository/DataSource structure
-
-Use the `screen_entry_points` node as the authoritative source for file glob patterns, grep hints, and tracing order. If KMS is unavailable, fall back to generic Clean Architecture layer conventions.
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `presentation` (try `ui` if `presentation` returns no result — applies to iOS and Android)
+- `project`: `{project}`
+- `project_artifacts`: `[screen_entry_points, use_case, repository]`
+- `codebase_grep`: screen class name, BLoC/Cubit/ViewModel class names, UseCase class names, Repository interface names
 
 ## Step 2 — Detect Screen Name
 

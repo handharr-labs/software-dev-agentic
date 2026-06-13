@@ -3,6 +3,8 @@ name: developer-app-planner
 description: Explore app-layer wiring for a given feature — discovers existing DI registration, route registration, and module registration patterns. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: opus
 tools: Glob, Grep, Read, Bash, Write, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
+related_skills:
+  - shared-kms-retrieve
 ---
 
 You are the App Layer explorer. You discover what wiring patterns already exist for DI registration, route registration, and module registration. You write findings to disk — you never modify source files.
@@ -45,12 +47,15 @@ Skip all other steps entirely. Always run Step 1 (platform reference) regardless
 
 Derive: `project` = `basename $(pwd)`.
 
-Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
-
-1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC for the wiring topics (dependency_injection, navigation, app).
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="app", pattern="planner_search_patterns", platform="{platform}")` — the per-concern search-pattern table Steps 2–6 depend on. Also `kms_fetch` the dependency_injection, navigation, and app wiring patterns relevant to the scoped concerns (analytics_constants, route_registration, module_registration, feature_flag_registration, etc.). Reserve `kms_query(...)` for cold-start only.
-3. `kms_list(discipline="engineering", project="{project}", artifact="deviations")` — scan deviations TOC; `kms_fetch` any nodes that override app-layer wiring conventions for this project. Skip if empty.
-4. Codebase explore — `Grep` for existing DI registration files (`*module*`, `*di*`, `*injection*`, `*locator*`) excluding `test/` paths → read the most complete match as live wiring reference
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `app`
+- `project`: `{project}`
+- `project_artifacts`: `["deviations"]`
+- `codebase_grep`: `*module*, *di*, *injection*, *locator*`
+- `codebase_exclude`: `test/, mock/, fake/`
 
 Use combined result as reference for wiring patterns, including `## Planner Search Patterns` if present — Steps 2–6 depend on it. Sections marked with a stub (`> No convention established yet`) have no wiring pattern to enforce — skip codebase discovery for those sections.
 

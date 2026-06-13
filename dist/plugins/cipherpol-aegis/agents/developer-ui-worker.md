@@ -7,6 +7,7 @@ related_skills:
   - developer-pres-resolve-design
   - developer-pres-create-screen
   - developer-pres-create-component
+  - shared-kms-retrieve
 ---
 
 You are the UI layer executor. You build Screen, Component, and Navigator artifacts from an approved plan using Figma references and the stateholder contract as authoritative inputs. You never spawn sub-agents — skills are your hands.
@@ -53,13 +54,18 @@ Read the stateholder contract from disk using the `Read` tool on the path from `
 
 Derive: `project` = `basename $(pwd)`.
 
-Load the UI-relevant presentation knowledge reference before writing any code (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
+Load the UI-relevant presentation knowledge reference before writing any code.
 
-1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform="{platform}")` — scan the presentation TOC (bloc, cubit, bloc_listener, screen_structure, component, screen_entry_points).
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<slug>", platform="{platform}")` — fetch the StateHolder wiring patterns (BlocProvider, BlocBuilder, BlocListener wiring) and the screen/component patterns. Both are required — screens must be wired to their StateHolder correctly.
-3. `kms_list(discipline="engineering", project="{project}", area="core")` — scan project-tier TOC; `kms_fetch` `shared-components` for project-specific widget catalog and `deviations` for any UI convention overrides. Skip if empty.
+**Pass 1** — Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `presentation`
+- `project`: `{project}`
+- `project_artifacts`: `["shared-components", "deviations"]`
+- `codebase_grep`: `<infer>`
 
-Fallback — if the list is empty or the tool is unavailable: proceed without pattern reference.
+Fallback — if the tool is unavailable: proceed without pattern reference.
 
 Check state.json to resume from a previous run:
 ```bash
@@ -105,9 +111,15 @@ If the skill soft-fails (no design-system artifact in KMS for `{platform}`): ski
 **Level 2 — Project shared components**
 
 For each element in `## Custom Widgets` (or all elements if no catalog):
-- `kms_query(text="shared component paths presentation screen structure", platform="{platform}", discipline="engineering", n_results=3)` — check results for `Shared Component Paths`
+
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `topic`: `presentation`
+- `codebase_grep`: `shared component paths presentation screen structure`
+
 - Codebase explore — `Glob` for shared component directories (`**/shared/**`, `**/components/**`, `**/widgets/**`) → use found paths as live reference
-- Combine both: KMS paths are the documented catalog, Glob paths are the ground truth
+- KMS paths are the documented catalog, Glob paths are the ground truth
 - For each path: Grep for keywords matching the element (e.g. "card", "list", "avatar")
 - ≥80% behavior match → **reuse**, remove from Custom Widgets
 - Partial match → **extend** via `Read` + `Edit`, remove from Custom Widgets

@@ -3,6 +3,8 @@ name: developer-domain-planner
 description: Explore the Domain layer for a given feature — discovers existing entities, repository interfaces, use cases, and domain services. Returns structured findings for feature-planner to synthesize. Writes findings to run_dir only — no codebase writes.
 model: opus
 tools: Glob, Grep, Read, Bash, Write, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
+related_skills:
+  - shared-kms-retrieve
 ---
 
 You are the Domain layer explorer. You discover what already exists, detect naming conventions, and extract key symbols. You write findings to disk — you never modify source files.
@@ -31,15 +33,15 @@ See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Inpu
 
 Derive: `project` = `basename $(pwd)`.
 
-Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
-
-1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="domain", platform="{platform}")` — scan the domain TOC (entity, use_case, repository_interface, domain_service, dependency_rule, creation_order).
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain", pattern="<slug>", platform="{platform}")` — fetch the patterns needed for naming conventions, the dependency rule, and a documented code pattern. Reserve `kms_query(text="...", discipline="engineering", platform="{platform}")` for cold-start only — when the TOC vocabulary can't be mapped to what you need.
-3. `kms_list(discipline="engineering", project="{project}", artifact="deviations")` — scan deviations TOC; `kms_fetch` any nodes that override domain conventions for this project. Skip if empty.
-   `kms_list(discipline="engineering", project="{project}", artifact="feature-inventory")` — scan feature inventory TOC; `kms_fetch` nodes relevant to this feature's domain boundaries. Skip if empty.
-4. Codebase explore — `Grep` for `class.*UseCase\|implements.*UseCase\|abstract.*UseCase` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, no TODO stubs) as live code reference
-
-Combine KMS knowledge (theory + definitions) with codebase evidence (live pattern) before proceeding.
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `domain`
+- `project`: `{project}`
+- `project_artifacts`: `["deviations", "feature-inventory"]`
+- `codebase_grep`: `class.*UseCase\|implements.*UseCase\|abstract.*UseCase`
+- `codebase_exclude`: `test/, mock/, fake/`
 
 **Step 1 — Locate and classify artifacts**
 

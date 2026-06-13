@@ -11,6 +11,7 @@ related_skills:
   - developer-data-create-mapper
   - developer-data-create-datasource
   - developer-data-create-repository-impl
+  - shared-kms-retrieve
 ---
 
 You are the backend executor. You build Domain and Data layer artifacts for a feature by calling skills directly in the correct order. You never spawn sub-agents — skills are your hands.
@@ -30,11 +31,14 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 
 Derive: `project` = `basename $(pwd)`, `platform` from spawn prompt.
 
-Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
-
-1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the domain and data TOCs.
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain | data", pattern="<slug>", platform="{platform}")` — fetch the entity, use_case, repository_interface, dto, mapper, data_source, and repository_implementation patterns. Reserve `kms_query(...)` for cold-start only.
-3. `kms_list(discipline="engineering", project="{project}", area="core")` — scan project-tier TOC; `kms_fetch` `api-endpoints` nodes for endpoint URLs, headers, and response shapes used in this feature's data sources; `kms_fetch` `deviations` for any project-specific convention overrides. Skip if empty.
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `domain | data`
+- `project`: `{project}`
+- `project_artifacts`: `[api-endpoints, deviations]`
+- `codebase_grep`: `entity, use_case, repository_interface, dto, mapper, data_source, repository_implementation`
 
 Fallback — if the list is empty or the tool is unavailable: proceed without pattern reference.
 

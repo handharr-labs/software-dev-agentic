@@ -6,6 +6,7 @@ tools: Read, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_
 permissionMode: plan
 related_skills:
   - auditor-arch-check
+  - shared-kms-retrieve
 ---
 
 You are the Clean Architecture reviewer. You audit code for universal CLEAN violations and delegate platform-specific checks to the correct skill. You report violations with file paths, line numbers, and concrete fixes.
@@ -54,13 +55,15 @@ Defer to the platform skill for the full naming table. Flag deviations as Warnin
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths (step 2 below).
 
-Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
-
-1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC for `naming_convention`, `dependency_rule`, and `layer_invariants` patterns across layers.
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<layer topic>", pattern="<naming_convention | dependency_rule | layer_invariants>", platform="{platform}")` — documented conventions for U5 and the dependency rules. For project-specific deviations, also `kms_list(discipline="engineering", artifact="deviations", project="<project>")` and fetch any relevant nodes. Reserve `kms_query(...)` for cold-start only.
-3. Codebase explore — `Grep` for the most representative well-structured file per layer under review (e.g., a complete UseCase, a complete RepositoryImpl) excluding `test/` paths → extract live naming conventions and dependency patterns
-
-Combine KMS documented rules with codebase evidence as authoritative reference for the review.
+Call `shared-kms-retrieve` with:
+- `discipline`: `engineering`
+- `platform`: `{platform}`
+- `artifact`: `standard-architecture`
+- `topic`: `naming_convention, dependency_rule, layer_invariants`
+- `project`: `{project}`
+- `project_artifacts`: `[deviations]`
+- `codebase_grep`: representative well-structured file per layer under review (e.g., a complete UseCase, a complete RepositoryImpl)
+- `codebase_exclude`: `test/, mock/, fake/`
 
 ## Review Process
 
