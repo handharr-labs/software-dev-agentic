@@ -4,7 +4,7 @@ Single source of truth for the `plan.md` schema used by the saturn-jaygarcia pla
 
 ---
 
-## Schema <!-- 29 -->
+## Schema
 
 ```markdown
 # Plan: <short title>
@@ -35,7 +35,7 @@ Single source of truth for the `plan.md` schema used by the saturn-jaygarcia pla
 
 ---
 
-## Section Contracts <!-- 10 -->
+## Section Contracts
 
 | Section | Required | Written by | Read by | Purpose |
 |---|---|---|---|---|

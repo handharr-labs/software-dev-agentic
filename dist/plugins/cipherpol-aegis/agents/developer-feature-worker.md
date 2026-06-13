@@ -115,7 +115,7 @@ Derive the skill from each artifact's type in plan.md:
 2. Load the layer-specific reference for this artifact type (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="<layer of {artifact_type}>", platform="{platform}")` then `kms_fetch(... pattern="<{artifact_type} slug>" ...)` — documented pattern. The called skill re-fetches as needed; this primes naming/path conventions.
    - Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
-3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md):
+3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md). Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
    - Look up this artifact's name in the `Figma Alignment` table — read the `Figma Files` column directly to get the list of `.md` file paths. No Glob needed.
    - `Read` each listed `.md` file body only — extract `State` and `Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
 4. Resolve skill path: `.claude/skills/<skill-name>/SKILL.md`

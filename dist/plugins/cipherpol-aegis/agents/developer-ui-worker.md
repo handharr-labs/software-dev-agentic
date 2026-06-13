@@ -126,7 +126,7 @@ Elements remaining in `## Custom Widgets` after Level 2 are created fresh using 
 
 2. Run UI Resolution Priority (Level 1 → 2 → 3) for this artifact.
 
-3. Read Figma files — execute in order, do not proceed to step 4 until all reads are complete:
+3. Read Figma files — execute in order, do not proceed to step 4 until all reads are complete. Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
    - Look up this artifact's name in the `## Figma Alignment` table in context.md → get the `Figma Files` list
    - For each `.md` file in the list:
      a. `Read` the `.md` file → record `layout_file` and `screenshot` paths from frontmatter, extract `Components`, `State`, `Interactions`, `Annotations` from body

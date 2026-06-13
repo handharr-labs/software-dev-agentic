@@ -1,10 +1,10 @@
 # Reference Taxonomy
 
-This directory contains shared knowledge loaded on demand by workers and planners via Grep-first. Read this file before adding a new reference doc or deciding where a piece of knowledge belongs.
+This directory contains shared Reference docs — extracted formats, patterns, and contracts loaded on demand by workers and planners. See [Reference vs Knowledge](../../../../docs/principles/agentic/agentic-design-principles.md#reference-vs-knowledge) for how this differs from KMS-managed Knowledge. Read this file before adding a new reference doc or deciding where a piece of knowledge belongs.
 
 ---
 
-## What Belongs in Reference <!-- 12 -->
+## What Belongs in Reference
 
 A piece of knowledge belongs here if it passes all three tests:
 
@@ -16,7 +16,7 @@ If it only makes sense addressed to a specific agent ("before writing, check X")
 
 ---
 
-## What Belongs in the Agent Body <!-- 10 -->
+## What Belongs in the Agent Body
 
 Keep in the agent if:
 
@@ -26,7 +26,7 @@ Keep in the agent if:
 
 ---
 
-## What Belongs in Skills <!-- 10 -->
+## What Belongs in Skills
 
 Keep in skills if:
 
@@ -36,7 +36,7 @@ Keep in skills if:
 
 ---
 
-## Directory Structure <!-- 27 -->
+## Directory Structure
 
 ```
 lib/core/shared/reference/
@@ -61,9 +61,9 @@ lib/platforms/<platform>/reference/
 
 ---
 
-## How Agents Use This Directory <!-- 6 -->
+## How Agents Use This Directory
 
-- Always Grep by section heading (`^## SectionName`) before reading a full file — the heading line contains `<!-- N -->` (auto-maintained line count); use N as the `limit` in the subsequent `Read(file, offset=matched_line, limit=N)` call
+- Thin format/contract docs (e.g. `saturn-jaygarcia/plan-format.md`) — `Read` in full at the fixed path; these files are short by design
+- Catalog files (`<name>-catalog.md`, if added under a persona's `reference/`) — `symbol-query` only (`Grep <name>` → `Read(offset, limit=60)`), never `Read` in full
 - If uncertain which file covers a topic, Grep `reference/index.md` (platform level) or this README first
-- Never Read a reference file in full speculatively — target the section you need
 - After adding a new reference file, add an entry to the relevant `index.md` and this README's directory map
