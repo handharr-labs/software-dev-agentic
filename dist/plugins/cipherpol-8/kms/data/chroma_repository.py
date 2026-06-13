@@ -20,6 +20,7 @@ def _to_meta(node: KnowledgeNode) -> dict:
         "discipline":     node.discipline,
         "artifact":       node.artifact or _NULL,
         "topic":          node.topic,
+        "subtopic":       node.subtopic or node.pattern,
         "pattern":        node.pattern,
         "summary":        node.summary,
         "tags":           json.dumps(node.tags),
@@ -47,6 +48,7 @@ def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
         discipline=meta["discipline"],
         artifact=None if meta.get("artifact") == _NULL else meta.get("artifact"),
         topic=meta["topic"],
+        subtopic=meta.get("subtopic") or meta.get("pattern", ""),
         pattern=meta["pattern"],
         summary=meta.get("summary", ""),
         tags=json.loads(meta.get("tags", "[]")),
@@ -75,6 +77,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         discipline: Optional[str] = None,
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
+        subtopic: Optional[str] = None,
     ) -> list[KnowledgeNode]:
         def _resolve(v: Optional[str]) -> Optional[str]:
             if v is None:
@@ -94,6 +97,8 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             where["artifact"] = artifact
         if topic is not None:
             where["topic"] = topic
+        if subtopic is not None:
+            where["subtopic"] = subtopic
 
         result = self._col.get(
             where=_build_where(where),
@@ -109,6 +114,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         discipline: str,
         artifact: Optional[str],
         topic: str,
+        subtopic: str,
         pattern: str,
     ) -> Optional[KnowledgeNode]:
         where = {
@@ -117,6 +123,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             "discipline": discipline,
             "artifact":   artifact or _NULL,
             "topic":      topic,
+            "subtopic":   subtopic or pattern,
             "pattern":    pattern,
         }
         result = self._col.get(where=_build_where(where), include=["metadatas", "documents"])

@@ -197,6 +197,7 @@ All vocabulary constants are in `kms/domain/schema.py`. Never hardcode allowed v
 | `scope` | ✅ | `universal`, `platform`, `project` |
 | `discipline` | ✅ | see `DISCIPLINE_VALUES` in `schema.py` |
 | `topic` | ✅ | free string |
+| `subtopic` | ✅ | free string — equals `pattern` when no `###` children exist |
 | `pattern` | ✅ | free string — neutral term across all disciplines |
 | `schema_version` | ✅ | `"1"` — increment on breaking changes |
 | `platform` | ⬜ | `flutter`, `ios`, `android`, `web` |
@@ -212,7 +213,7 @@ All vocabulary constants are in `kms/domain/schema.py`. Never hardcode allowed v
 
 | Tool | Input | Output |
 |---|---|---|
-| `kms_list` | `platform?, project?, discipline?, topic?` | Scoped TOC — metadata only |
-| `kms_fetch` | `platform, project, discipline, topic, pattern` | Full node content (cascade applied) |
+| `kms_list` | `platform?, project?, discipline?, topic?, subtopic?` | Scoped TOC — metadata only |
+| `kms_fetch` | `platform, project, discipline, topic, subtopic, pattern` | Full node content (cascade applied) |
 | `kms_query` | `text, where?` | Top-k nodes by semantic similarity |
 | `kms_upsert` | full node + content | Written/updated node |

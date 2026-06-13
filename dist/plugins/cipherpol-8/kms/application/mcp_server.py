@@ -136,15 +136,16 @@ def kms_list(
     discipline: Optional[str] = None,
     artifact: Optional[str] = None,
     topic: Optional[str] = None,
+    subtopic: Optional[str] = None,
 ) -> list[dict]:
     """
     Return a scoped table of contents — metadata only, no content.
     Merges project-specific + platform-base + universal nodes; more specific overrides less specific
-    when (discipline, artifact, topic, pattern) collides.
+    when (discipline, artifact, topic, subtopic, pattern) collides.
     Use this as Step 0 before kms_fetch — reason over the TOC to decide what to fetch.
     """
     t0 = time.monotonic()
-    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, artifact=artifact, topic=topic)
+    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, artifact=artifact, topic=topic, subtopic=subtopic)
     result = [
         {
             "id":         n.id,
@@ -153,13 +154,14 @@ def kms_list(
             "discipline": n.discipline,
             "artifact":   n.artifact,
             "topic":      n.topic,
+            "subtopic":   n.subtopic,
             "pattern":    n.pattern,
             "summary":    n.summary,
             "tags":       n.tags,
         }
         for n in nodes
     ]
-    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "artifact": artifact, "topic": topic}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "artifact": artifact, "topic": topic, "subtopic": subtopic}, len(nodes), (time.monotonic() - t0) * 1000, result)
     return result
 
 
@@ -168,6 +170,7 @@ def kms_fetch(
     discipline: str,
     artifact: str,
     topic: str,
+    subtopic: str,
     pattern: str,
     platform: Optional[str] = None,
     project: Optional[str] = None,
@@ -182,6 +185,7 @@ def kms_fetch(
         discipline=discipline,
         artifact=artifact,
         topic=topic,
+        subtopic=subtopic,
         pattern=pattern,
         platform=platform,
         project=project,
@@ -193,6 +197,7 @@ def kms_fetch(
         "discipline":  node.discipline,
         "artifact":    node.artifact,
         "topic":       node.topic,
+        "subtopic":    node.subtopic,
         "pattern":     node.pattern,
         "summary":     node.summary,
         "tags":        node.tags,
@@ -200,7 +205,7 @@ def kms_fetch(
         "updated_at":  node.updated_at,
         "content":     node.content,
     }
-    _log("kms_fetch", {"discipline": discipline, "artifact": artifact, "topic": topic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
+    _log("kms_fetch", {"discipline": discipline, "artifact": artifact, "topic": topic, "subtopic": subtopic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
     return result
 
 
@@ -230,6 +235,7 @@ def kms_query(
             "id":         n.id,
             "discipline": n.discipline,
             "topic":      n.topic,
+            "subtopic":   n.subtopic,
             "pattern":    n.pattern,
             "summary":    n.summary,
             "content":    n.content,
@@ -249,6 +255,7 @@ def kms_upsert(
     topic: str,
     pattern: str,
     content: str,
+    subtopic: Optional[str] = None,
     summary: str = "",
     tags: list[str] = [],
     source_file: Optional[str] = None,
@@ -259,6 +266,7 @@ def kms_upsert(
     Used by the dashboard (live edits) and the scan agent (code_pattern extraction).
     content must be the full document body (## Theory ... ## Definition ... ## Code Pattern ...).
     scope is derived: project set → "project", else platform set → "platform", else "universal".
+    subtopic defaults to pattern when not supplied (no ### children — pattern is its own subtopic).
     """
     from datetime import date
     scope = "project" if project else "platform" if platform else "universal"
@@ -269,6 +277,7 @@ def kms_upsert(
         discipline=discipline,
         artifact=artifact,
         topic=topic,
+        subtopic=subtopic or pattern,
         pattern=pattern,
         content=content,
         summary=summary,
@@ -278,7 +287,7 @@ def kms_upsert(
     )
     t0 = time.monotonic()
     _upsert_uc.execute(node)
-    _log("kms_upsert", {"platform": platform, "project": project, "discipline": discipline, "artifact": artifact, "topic": topic, "pattern": pattern}, 1, (time.monotonic() - t0) * 1000)
+    _log("kms_upsert", {"platform": platform, "project": project, "discipline": discipline, "artifact": artifact, "topic": topic, "subtopic": node.subtopic, "pattern": pattern}, 1, (time.monotonic() - t0) * 1000)
     return {"id": node.id, "status": "ok"}
 
 

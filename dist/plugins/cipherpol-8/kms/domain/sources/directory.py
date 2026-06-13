@@ -95,43 +95,77 @@ def _strip_frontmatter(content: str) -> str:
     return content[end + 5:].strip()
 
 
-def _chunk_by_sections(content: str) -> list[tuple[str, str, str]]:
-    """Split content by ## headings. Returns [(topic_slug, pattern_slug, section_content), ...].
+def _chunk_by_sections(content: str) -> list[tuple[str, str, str, str]]:
+    """Split content by ## and ### headings. Returns [(topic_slug, subtopic_slug, pattern_slug, section_content), ...].
 
-    # heading  → updates topic context; not a chunk boundary
-    ## heading → chunk boundary; pattern derived from this heading
-    ### +      → content within the ## chunk; not split further
+    # heading   → updates topic context; not a chunk boundary
+    ## heading  → subtopic boundary; becomes the pattern node UNLESS it has ### children
+    ### heading → when present under a ##, becomes its own pattern node (subtopic = ## slug)
+    #### +      → content within the enclosing node; not split further
 
     Returns [] when no ## headings found — caller yields file as a single node.
     topic_slug is "" when no # heading precedes the ## — caller uses artifact name as fallback.
-    Lines before the first ## (preamble) are discarded.
+    Lines before the first ## (preamble), and lines between a ## heading and its first
+    ### child (if any), are discarded.
     """
     lines = content.splitlines()
-    sections: list[tuple[str, str, str]] = []
+
+    # Pass 1: split into ##-sections — (topic_slug, subtopic_slug, lines)
+    raw_sections: list[tuple[str, str, list[str]]] = []
     current_topic: str = ""
-    current_pattern: str | None = None
+    current_subtopic: str | None = None
     current_lines: list[str] = []
 
     for line in lines:
         if line.startswith("# ") and not line.startswith("## "):
-            if current_pattern is not None:
-                sections.append((current_topic, current_pattern, "\n".join(current_lines).strip()))
-                current_pattern = None
+            if current_subtopic is not None:
+                raw_sections.append((current_topic, current_subtopic, current_lines))
+                current_subtopic = None
                 current_lines = []
             current_topic = _heading_to_slug(line[2:].strip())
         elif line.startswith("## "):
-            if current_pattern is not None:
-                sections.append((current_topic, current_pattern, "\n".join(current_lines).strip()))
-            current_pattern = _heading_to_slug(line[3:].strip())
+            if current_subtopic is not None:
+                raw_sections.append((current_topic, current_subtopic, current_lines))
+            current_subtopic = _heading_to_slug(line[3:].strip())
             current_lines = [line]
-        elif current_pattern is not None:
+        elif current_subtopic is not None:
             current_lines.append(line)
         # else: preamble before first ## — discard
 
-    if current_pattern is not None:
-        sections.append((current_topic, current_pattern, "\n".join(current_lines).strip()))
+    if current_subtopic is not None:
+        raw_sections.append((current_topic, current_subtopic, current_lines))
 
-    return [(t, p, c) for t, p, c in sections if c.strip()]
+    # Pass 2: split each ##-section further by ### if present
+    sections: list[tuple[str, str, str, str]] = []
+    for topic_slug, subtopic_slug, sec_lines in raw_sections:
+        sub_sections: list[tuple[str, list[str]]] = []
+        current_pattern: str | None = None
+        current_sub_lines: list[str] = []
+
+        for line in sec_lines:
+            if line.startswith("### "):
+                if current_pattern is not None:
+                    sub_sections.append((current_pattern, current_sub_lines))
+                current_pattern = _heading_to_slug(line[4:].strip())
+                current_sub_lines = [line]
+            elif current_pattern is not None:
+                current_sub_lines.append(line)
+            # else: lines before first ### (incl. the ## heading line) — discard
+
+        if current_pattern is not None:
+            sub_sections.append((current_pattern, current_sub_lines))
+
+        if sub_sections:
+            for pattern_slug, sub_lines in sub_sections:
+                section_content = "\n".join(sub_lines).strip()
+                if section_content:
+                    sections.append((topic_slug, subtopic_slug, pattern_slug, section_content))
+        else:
+            section_content = "\n".join(sec_lines).strip()
+            if section_content:
+                sections.append((topic_slug, subtopic_slug, subtopic_slug, section_content))
+
+    return sections
 
 
 def _is_template_file(path: Path) -> bool:
@@ -246,7 +280,7 @@ class DirectorySource(KnowledgeSource):
                     node_content_type = "stub" if _is_template_file(path) else "real"
 
                     if chunks:
-                        for topic_slug, pattern_slug, section_content in chunks:
+                        for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
                             yield KnowledgeNode(
                                 scope=scope,
                                 platform=platform,
@@ -254,6 +288,7 @@ class DirectorySource(KnowledgeSource):
                                 discipline=discipline,
                                 artifact=artifact,
                                 topic=topic_slug if topic_slug else file_topic,
+                                subtopic=subtopic_slug,
                                 pattern=pattern_slug,
                                 summary=_extract_summary(section_content),
                                 source_file=str(path),
@@ -270,6 +305,7 @@ class DirectorySource(KnowledgeSource):
                             discipline=discipline,
                             artifact=artifact,
                             topic=file_topic,
+                            subtopic=file_pattern,
                             pattern=file_pattern,
                             summary=_extract_summary(content),
                             source_file=str(path),
@@ -316,7 +352,7 @@ class DirectorySource(KnowledgeSource):
                     chunks = _chunk_by_sections(content)
 
                     if chunks:
-                        for topic_slug, pattern_slug, section_content in chunks:
+                        for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
                             yield KnowledgeNode(
                                 scope="project",
                                 platform=repo.platform,
@@ -324,6 +360,7 @@ class DirectorySource(KnowledgeSource):
                                 discipline="engineering",
                                 artifact=artifact,
                                 topic=topic_slug if topic_slug else stem,
+                                subtopic=subtopic_slug,
                                 pattern=pattern_slug,
                                 summary=_extract_summary(section_content),
                                 source_file=str(path),
@@ -339,6 +376,7 @@ class DirectorySource(KnowledgeSource):
                             discipline="engineering",
                             artifact=artifact,
                             topic=stem,
+                            subtopic=stem,
                             pattern=stem,
                             summary=_extract_summary(content),
                             source_file=str(path),
