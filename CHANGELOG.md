@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.11.0] — 2026-06-13
+
+### Added
+- `lib/core/developer/reference/figma-artifact-format.md` — new `figma-uistack-<screen-slug>.md` schema: per-screen (and per-overlay) merged State Model, Component Hierarchy, Design Tokens, and User Interactions, synthesized from all state frames in a cluster
+- `developer-figma-worker.md` (`group-frames` mode) — clusters dialogs/filters/bottom sheets as separate `overlay` clusters linked to their `parent_screen` via `overlays`/`parent_screen`, and writes one `figma-uistack-*.md` per cluster (Step 4b/4c); `## Figma Groups` output now carries `type`/`parent_screen`/`uistack_file`
+- `CIPHERPOL_THINKER_MODEL` env var (`.claude/settings.local.json` → `env`) — `cost-saving` overrides `developer-feature-strategist`, `developer-groom-strategist`, and the four layer planners to `sonnet` at spawn time; unset/`optimized` uses each agent's default (`opus`). Wired into `developer-plan-feature` and `developer-groom-ticket` preflights, surfaced in `/cipherpol-status`
+
+### Changed
+- `developer-feature-strategist.md`, `developer-groom-strategist.md`, `developer-domain/data/pres/app-planner.md` — default model changed from `sonnet` to `opus`
+- `developer-pres-planner.md` — Step 0a now reads the single merged `uistack_file` per screen/overlay instead of stitching together per-state `.md` sections; `### Figma Alignment` table gains a `UI Stack` column
+- `lib/core/developer/reference/plan-format.md` — `## Figma Alignment` table schema gains the `UI Stack` column
+- `developer-feature-worker.md`, `developer-ui-worker.md` — Figma resolution reads the UI Stack file (`### State Model`, `### User Interactions`, `### Component Hierarchy`) as the primary reference, with overlay-aware traversal for ui-worker
+- `lib/core/developer/skills/developer-plan-feature/SKILL.md` — `figma_groups` carries `type`/`parent_screen`/`uistack_file`; grouping summary separates screens from overlays; Phase 2 Figma Instruction reads the UI Stack file first
+
 ## [12.10.0] — 2026-06-13
 
 ### Added
