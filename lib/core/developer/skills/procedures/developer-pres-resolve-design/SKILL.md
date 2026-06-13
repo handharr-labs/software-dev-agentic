@@ -1,6 +1,6 @@
 ---
 name: developer-pres-resolve-design
-description: Resolve UI element descriptions against the design system catalog. Returns a Design System Bindings table (matched) and a Custom Widgets table (unmatched). Soft-fails with empty tables if the catalog is not present.
+description: Resolve UI element descriptions against the KMS design-system catalog (discipline=design, artifact=design-system). Returns a Design System Bindings table (matched) and a Custom Widgets table (unmatched). Soft-fails with empty tables if KMS has no design-system artifact for the platform.
 user-invocable: false
 ---
 
@@ -10,27 +10,26 @@ user-invocable: false
 |---|---|
 | `artifact_name` | Name of the Screen or Component artifact from plan.md |
 | `ui_description` | UI elements to resolve — use Figma section content when available, otherwise plan.md artifact description |
+| `platform` | Platform slug (e.g. `flutter`) — passed through to KMS lookups |
 
 ## Steps
 
-### 1 — Check for catalog
+### 1 — Load the design-system TOC
 
-```bash
-find "$(git rev-parse --show-toplevel)/.claude/reference/design-system" -name "*catalog.md" 2>/dev/null | head -1
-```
+`kms_list(platform="{platform}", discipline="design", artifact="design-system")` — one call, returns every `(topic, pattern)` pair (e.g. `topic=atoms, pattern=mp_button`). `pattern` slugs are derived from `## Mp<Name>` headings.
 
-If no file is found — **soft fail**: return empty tables with note `catalog not found — place a catalog.md in .claude/reference/design-system/`.
-
-Set `<catalog_path>` to the found file.
+If the TOC is empty — **soft fail**: return empty tables with note `no design-system artifact in KMS for {platform} — seed kms/knowledge-sources/platform/{platform}/design/design-system/`.
 
 ### 2 — Match each UI element
 
 Parse `ui_description` into individual keyword phrases (e.g. `"primary button, avatar, list tile"` → `["primary button", "avatar", "list tile"]`).
 
-For each keyword, `section-query` the catalog:
-- `Grep` for the keyword (case-insensitive) in `<catalog_path>`
-- For each matching `### Mp<Name>` heading: `Read(offset=<line>, limit=8)` to get description, key params, and variants
-- Select the best match based on description; if no match found, mark as unmatched
+For each keyword, in order:
+1. Name-match against the TOC `pattern` slugs from Step 1 (e.g. `"primary button"` → `mp_button`, `"avatar"` → `mp_avatar*`). For each candidate, `kms_fetch(discipline="design", artifact="design-system", topic=<topic>, pattern=<pattern>, platform="{platform}")` — exact, cascade-resolved content (description, key params, variants, Figma link). Pick the best variant by description.
+2. Only if no TOC pattern name matches the keyword, fall back to `kms_query(text=<keyword>, platform="{platform}", discipline="design", artifact="design-system", n_results=3)` — semantic search.
+3. If neither yields a match, mark the keyword as unmatched.
+
+Prefer `kms_fetch` (Step 2.1) — it's deterministic and avoids repeated semantic-similarity calls against the full ~228-widget catalog for every keyword.
 
 ### 3 — Source fallback (on-demand)
 

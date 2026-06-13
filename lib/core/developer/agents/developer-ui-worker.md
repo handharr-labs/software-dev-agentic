@@ -4,6 +4,7 @@ description: Execute the UI layer of an approved feature plan — Screen, Compon
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
+  - developer-pres-resolve-design
   - developer-pres-create-screen
   - developer-pres-create-component
 ---
@@ -90,18 +91,13 @@ Before executing any Screen or Component artifact, resolve UI elements in this o
 
 **Level 1 — Design system catalog (highest authority)**
 
-```bash
-find "$(git rev-parse --show-toplevel)/.claude/reference/design-system" -name "*catalog.md" 2>/dev/null | head -1
-```
+Call skill `developer-pres-resolve-design` — pass `artifact_name`, `ui_description` (Figma section content when available, otherwise plan.md description), and `platform="{platform}"`. It queries KMS (`discipline="design", artifact="design-system"`).
 
-If a catalog is found:
-- Read `.claude/skills/developer-pres-resolve-design/SKILL.md`
-- Follow its instructions — pass `artifact_name` and `ui_description` (Figma section content when available, otherwise plan.md description)
-- Collect both output sections:
-  - `## Design System Bindings` — catalog matches → **hard constraints for the creation skill**
-  - `## Custom Widgets` — no match → create as custom widgets
+Collect both output sections:
+- `## Design System Bindings` — catalog matches → **hard constraints for the creation skill**
+- `## Custom Widgets` — no match → create as custom widgets
 
-If no catalog: skip to Level 2.
+If the skill soft-fails (no design-system artifact in KMS for `{platform}`): skip to Level 2.
 
 **Level 2 — Project shared components**
 
@@ -269,7 +265,3 @@ After all UI artifacts are complete, run the platform type-checker — derived f
 ```
 
 Then suggest next step: run `/developer-test-worker` to generate tests for the created artifacts.
-
-## Extension Point
-
-Check for `.claude/agents.local/extensions/developer-ui-worker.md` — if it exists, read and follow its additional instructions.
