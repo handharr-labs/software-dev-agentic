@@ -186,14 +186,14 @@ class DirectorySource(KnowledgeSource):
 
     Three path conventions mirror the cascade tiers:
 
-    1. Universal knowledge: {root}/universal/{discipline}/{artifact}/{filename}.md
-       scope=universal, platform=None, discipline and artifact from subdirectory names
+    1. Universal knowledge: {root}/universal/{discipline}/{area}/{artifact}.md
+       scope=universal, platform=None, discipline/area from directory names, artifact from filename stem
 
-    2. Platform knowledge: {root}/platform/{platform}/{discipline}/{artifact}/{filename}.md
-       scope=platform, platform/discipline/artifact from subdirectory names
+    2. Platform knowledge: {root}/platform/{platform}/{discipline}/{area}/{artifact}.md
+       scope=platform, platform/discipline/area from directory names, artifact from filename stem
 
-    3. Project-specific knowledge: {root}/projects/{project-name}/{artifact}/{filename}.md
-       scope=project, platform and project read from repo.yaml, artifact from subdirectory name
+    3. Project-specific knowledge: {root}/projects/{project-name}/{area}/{artifact}.md
+       scope=project, platform and project read from repo.yaml, area from directory name, artifact from filename stem
     """
 
     def __init__(self, name: str, path: str, owns: list[str]) -> None:
@@ -266,46 +266,24 @@ class DirectorySource(KnowledgeSource):
                     continue
                 area = area_dir.name
 
-                for artifact_dir in sorted(area_dir.iterdir()):
-                    if not artifact_dir.is_dir():
+                for path in sorted(area_dir.iterdir()):
+                    if path.is_dir() or path.name in ("README.md",):
                         continue
-                    artifact = artifact_dir.name
+                    if path.suffix not in _SUPPORTED_SUFFIXES:
+                        continue
+                    if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
+                        print(f"  skip (excluded): {path.name}")
+                        continue
 
-                    for path in sorted(artifact_dir.rglob("*")):
-                        if path.is_dir() or path.name in ("README.md",):
-                            continue
-                        if path.suffix not in _SUPPORTED_SUFFIXES:
-                            continue
-                        if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
-                            print(f"  skip (excluded): {path.name}")
-                            continue
+                    artifact = path.stem.replace("-", "_")
+                    file_topic, file_pattern = _parse_filename(path.stem)
+                    raw = path.read_text(encoding="utf-8").strip()
+                    content = _strip_frontmatter(raw)
+                    chunks = _chunk_by_sections(content)
+                    node_content_type = "stub" if _is_template_file(path) else "real"
 
-                        file_topic, file_pattern = _parse_filename(path.stem)
-                        raw = path.read_text(encoding="utf-8").strip()
-                        content = _strip_frontmatter(raw)
-                        chunks = _chunk_by_sections(content)
-                        node_content_type = "stub" if _is_template_file(path) else "real"
-
-                        if chunks:
-                            for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
-                                yield KnowledgeNode(
-                                    scope=scope,
-                                    platform=platform,
-                                    project=None,
-                                    discipline=discipline,
-                                    area=area,
-                                    artifact=artifact,
-                                    topic=topic_slug if topic_slug else file_topic,
-                                    subtopic=subtopic_slug,
-                                    pattern=pattern_slug,
-                                    summary=_extract_summary(section_content),
-                                    source_file=str(path),
-                                    updated_at=date.today().isoformat(),
-                                    content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
-                                    content=section_content,
-                                    content_type=node_content_type,
-                                )
-                        else:
+                    if chunks:
+                        for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
                             yield KnowledgeNode(
                                 scope=scope,
                                 platform=platform,
@@ -313,16 +291,34 @@ class DirectorySource(KnowledgeSource):
                                 discipline=discipline,
                                 area=area,
                                 artifact=artifact,
-                                topic=file_topic,
-                                subtopic=file_pattern,
-                                pattern=file_pattern,
-                                summary=_extract_summary(content),
+                                topic=topic_slug if topic_slug else file_topic,
+                                subtopic=subtopic_slug,
+                                pattern=pattern_slug,
+                                summary=_extract_summary(section_content),
                                 source_file=str(path),
                                 updated_at=date.today().isoformat(),
-                                content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                                content=content,
+                                content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                                content=section_content,
                                 content_type=node_content_type,
                             )
+                    else:
+                        yield KnowledgeNode(
+                            scope=scope,
+                            platform=platform,
+                            project=None,
+                            discipline=discipline,
+                            area=area,
+                            artifact=artifact,
+                            topic=file_topic,
+                            subtopic=file_pattern,
+                            pattern=file_pattern,
+                            summary=_extract_summary(content),
+                            source_file=str(path),
+                            updated_at=date.today().isoformat(),
+                            content_hash=hashlib.sha256(content.encode()).hexdigest(),
+                            content=content,
+                            content_type=node_content_type,
+                        )
 
     # ------------------------------------------------------------------
     # Project-specific docs: {root}/projects/{project}/{file}.md
@@ -346,46 +342,25 @@ class DirectorySource(KnowledgeSource):
                     continue
                 area = area_dir.name
 
-                for artifact_dir in sorted(area_dir.iterdir()):
-                    if not artifact_dir.is_dir():
+                for path in sorted(area_dir.iterdir()):
+                    if path.is_dir():
                         continue
-                    artifact = artifact_dir.name
+                    if path.name in ("README.md", _REPO_YAML):
+                        continue
+                    if path.suffix not in _SUPPORTED_SUFFIXES:
+                        continue
+                    if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
+                        print(f"  skip (excluded): {path.name}")
+                        continue
 
-                    for path in sorted(artifact_dir.rglob("*")):
-                        if path.is_dir():
-                            continue
-                        if path.name in ("README.md", _REPO_YAML):
-                            continue
-                        if path.suffix not in _SUPPORTED_SUFFIXES:
-                            continue
-                        if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
-                            print(f"  skip (excluded): {path.name}")
-                            continue
+                    artifact = path.stem.replace("-", "_")
+                    stem = artifact
+                    raw = path.read_text(encoding="utf-8").strip()
+                    content = _strip_frontmatter(raw)
+                    chunks = _chunk_by_sections(content)
 
-                        stem = path.stem.replace("-", "_")
-                        raw = path.read_text(encoding="utf-8").strip()
-                        content = _strip_frontmatter(raw)
-                        chunks = _chunk_by_sections(content)
-
-                        if chunks:
-                            for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
-                                yield KnowledgeNode(
-                                    scope="project",
-                                    platform=repo.platform,
-                                    project=repo.name,
-                                    discipline="engineering",
-                                    area=area,
-                                    artifact=artifact,
-                                    topic=topic_slug if topic_slug else stem,
-                                    subtopic=subtopic_slug,
-                                    pattern=pattern_slug,
-                                    summary=_extract_summary(section_content),
-                                    source_file=str(path),
-                                    updated_at=date.today().isoformat(),
-                                    content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
-                                    content=section_content,
-                                )
-                        else:
+                    if chunks:
+                        for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
                             yield KnowledgeNode(
                                 scope="project",
                                 platform=repo.platform,
@@ -393,12 +368,29 @@ class DirectorySource(KnowledgeSource):
                                 discipline="engineering",
                                 area=area,
                                 artifact=artifact,
-                                topic=stem,
-                                subtopic=stem,
-                                pattern=stem,
-                                summary=_extract_summary(content),
+                                topic=topic_slug if topic_slug else stem,
+                                subtopic=subtopic_slug,
+                                pattern=pattern_slug,
+                                summary=_extract_summary(section_content),
                                 source_file=str(path),
                                 updated_at=date.today().isoformat(),
-                                content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                                content=content,
+                                content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                                content=section_content,
                             )
+                    else:
+                        yield KnowledgeNode(
+                            scope="project",
+                            platform=repo.platform,
+                            project=repo.name,
+                            discipline="engineering",
+                            area=area,
+                            artifact=artifact,
+                            topic=stem,
+                            subtopic=stem,
+                            pattern=stem,
+                            summary=_extract_summary(content),
+                            source_file=str(path),
+                            updated_at=date.today().isoformat(),
+                            content_hash=hashlib.sha256(content.encode()).hexdigest(),
+                            content=content,
+                        )
