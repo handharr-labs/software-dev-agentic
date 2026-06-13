@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.20.0] — 2026-06-14
+
+### Added
+- `lib/core/shared/skills/procedures/shared-kms-retrieve/SKILL.md` — shared P-skill encapsulating the canonical KMS list+fetch protocol; agents declare `discipline`, `platform`, `artifact`, `topic`, `project`, `project_artifacts`, and `codebase_grep` params and delegate all retrieval steps to the skill
+- `lib/core/shared/reference/kms-retrieval-output.md` — reference contract defining the standard `## Knowledge Loaded` output block (Theory + Code Pattern) produced by `shared-kms-retrieve`
+- `lib/core/developer/skills/procedures/developer-validate-artifact-output/SKILL.md` — P-skill for the Glob+Grep artifact validation tail shared across developer workers
+
+### Changed
+- `lib/core/developer/agents/developer-feature-worker.md`, `developer-backend-worker.md`, `developer-ui-worker.md`, `developer-domain-planner.md`, `developer-data-planner.md`, `developer-pres-planner.md`, `developer-app-planner.md`, `developer-sysdesign-extract-worker.md`, `lib/core/debugger/agents/debugger-worker.md`, `lib/core/auditor/agents/auditor-arch-review-worker.md`, `lib/core/qa/agents/qa-testcase-worker.md` — replaced embedded `kms_list`/`kms_fetch`/`kms_query` protocol steps with `shared-kms-retrieve` params declarations; `related_skills: shared-kms-retrieve` added to all frontmatters; KMS tools restored in `developer-data-planner` and `auditor-arch-review-worker` frontmatters
+
 ## [12.19.0] — 2026-06-14
 
 ### Added
