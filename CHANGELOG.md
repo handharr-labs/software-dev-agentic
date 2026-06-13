@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.16.0] — 2026-06-14
+
+### Added
+- `kms/domain/entities.py`, `kms/domain/schema.py` — new mandatory `area` field (`AREA_VALUES = ["core", "design-system"]`), included in `KnowledgeNode.id`; `MANDATORY_FIELDS` updated; `SCHEMA_VERSION` bumped to `"2"`
+- `kms/knowledge-sources/platform/flutter/design/design-system/mekari-pixel/mekari-pixel-design-system.md` — `## Package Info` node (`topic=metadata, pattern=package_info`) carrying Import/Prefix/Sync metadata that was previously discarded as preamble
+
+### Changed
+- `kms/domain/repository.py`, `kms/data/chroma_repository.py`, `kms/domain/sources/directory.py`, `kms/domain/sources/markdown.py`, `kms/domain/use_cases/*.py`, `kms/application/mcp_server.py`, `kms/dashboard/server.py`, `kms/scripts/seed_kms.py` — thread `area` through `list`/`fetch_exact`/`upsert`, `DirectorySource` path parsing (`discipline/area/artifact`), and `kms_list`/`kms_fetch`/`kms_query`/`kms_upsert`
+- `kms/knowledge-sources/` restructured to `{discipline}/{area}/{artifact}/{file}.md` (project tier: `{project}/{area}/{artifact}/{file}.md`) — 26 files moved under `area=core`; the Mekari Pixel design-system catalog moved to `platform/flutter/design/design-system/mekari-pixel/` (`area=design-system`, `artifact=mekari-pixel`)
+- `docs/principles/kms/kms-conventions.md`, `kms-directory-structure.md`, `kms-glossary.md`, `kms/docs/kms-knowledge-source-rules.md` — document the `{discipline}/{area}/{artifact}` path structure, `area` vocabulary, updated worked examples and retrieval funnel
+- `docs/initiatives/kms-knowledge-path-structure-initiative.md` — record the `area` field decision, resolving open question on design-system placement/naming
+- `lib/core/developer/skills/procedures/developer-pres-resolve-design/SKILL.md`, `lib/core/developer/agents/developer-ui-worker.md` — generalized to `discipline=design, area=design-system` without an `artifact` filter, discovering each design system's library dynamically and resolving Prefix/Import from its `package_info` node instead of hardcoded `mekari_pixel`/`Mp`
+- `kms/db/` re-seeded (1255 → 1256 nodes) for the new `area`-aware path structure
+
 ## [12.15.0] — 2026-06-13
 
 ### Added
