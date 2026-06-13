@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.14.0] — 2026-06-13
+
+### Added
+- `docs/principles/kms/kms-glossary.md`, `docs/principles/glossary.md` — new "Retrieval Protocol" glossary term, pointing at the existing Retrieval Protocol section in `kms-conventions.md`
+
+### Changed
+- `lib/core/developer/skills/procedures/developer-pres-resolve-design/SKILL.md`, `lib/core/developer/agents/developer-ui-worker.md` — design-system catalog resolution now goes through KMS (`discipline=design`, `artifact=design-system`) via `kms_list`/`kms_fetch`/`kms_query`, replacing the local `.claude/reference/design-system/*catalog.md` lookup
+
+### Removed
+- Use/Extend/Override downstream consumption model and the `## Extension Point` convention — removed from `agentic-conventions.md`, `agentic-design-principles.md`, `repo-structure.md`, `agentic-directory-structure.md`, glossaries, `CLAUDE.md`, and the `## Extension Point` section in every `lib/core/**/agents/*.md` and `.claude/agents/*.md` file
+- All references to `.claude/agents.local/`, `.claude/skills.local/`, and `.claude/reference.local/` across `docs/principles/`
+- Extend/Override portability rows in `docs/initiatives/multi-ai-platform-initiative.md`
+
 ## [12.13.0] — 2026-06-13
 
 ### Changed
