@@ -28,7 +28,7 @@ No build, lint, or test commands — all files are Markdown and Bash.
 
 `lib/` — ships downstream · `.claude/` — internal tooling (agents, skills, reference) · `docs/` — design docs, observations, perf reports · `scripts/` — setup and sync scripts
 
-See `docs/principles/agentic/agentic-design-principles.md` and `docs/principles/agentic/agentic-repo-structure.md` for the full structure and decision rules.
+See `docs/principles/agentic/agentic-design-principles.md` and `docs/principles/repo-structure.md` for the full structure and decision rules.
 
 ## Workflow
 

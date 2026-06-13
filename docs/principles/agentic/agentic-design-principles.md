@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-04-08
-> Related: [agentic-conventions.md](agentic-conventions.md) · [agentic-repo-structure.md](agentic-repo-structure.md)
+> Related: [agentic-conventions.md](agentic-conventions.md) · [agentic-directory-structure.md](agentic-directory-structure.md) · [repo-structure.md](../repo-structure.md)
 
 ## What is an Agentic Coding Assistant?
 
@@ -63,7 +63,7 @@ Both terms describe persistent facts an agent loads — but via different mechan
 | Ships as | Plugin-bundled files at `reference/<persona-or-shared>/...` | Pre-seeded ChromaDB |
 | Platform/project scope | Always agnostic | `scope=universal` is agnostic; `scope=platform`/`scope=project` are explicitly scoped |
 
-**Corollary:** agents and skills under `lib/core/` are platform- and project-agnostic by default (see [agentic-repo-structure.md](agentic-repo-structure.md)). Anything platform- or project-specific that an agent needs is **Knowledge** and belongs in KMS — never folded into `lib/core/*/reference/`, which stays a pure format/contract layer.
+**Corollary:** agents and skills under `lib/core/` are platform- and project-agnostic by default (see [repo-structure.md](../repo-structure.md)). Anything platform- or project-specific that an agent needs is **Knowledge** and belongs in KMS — never folded into `lib/core/*/reference/`, which stays a pure format/contract layer.
 
 > **Catalog files** (`<name>-catalog.md`) are the one overlap: the catalog *format/schema* is Reference (shared, queryable structure), but its *populated content* is project-instance data — neither shared format nor KMS-managed theory.
 
@@ -325,7 +325,7 @@ Hooks are shell commands that execute at defined lifecycle events — with no mo
 
 The agentic system enforces its own conventions through automated review — the same principle applied recursively. Convention compliance tooling audits agent and skill files for structural violations before they reach downstream consumers.
 
-> For the internal reviewer setup, checklist, and severity levels, see [agentic-repo-structure.md — Convention Compliance System](agentic-repo-structure.md#convention-compliance-system).
+> For the internal reviewer setup, checklist, and severity levels, see [repo-structure.md — Convention Compliance System](../repo-structure.md#convention-compliance-system).
 
 ---
 

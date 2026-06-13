@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-04-08
-> Related: [agentic-design-principles.md](agentic-design-principles.md) · [agentic-repo-structure.md](agentic-repo-structure.md)
+> Related: [agentic-design-principles.md](agentic-design-principles.md) · [agentic-directory-structure.md](agentic-directory-structure.md) · [repo-structure.md](../repo-structure.md)
 
 Component types, naming conventions, authoring rules, and decision rules for contributing agents, skills, and reference docs.
 
@@ -37,6 +37,8 @@ The sections below define each component in detail.
 ---
 
 ## Component Types
+
+> For the concrete directory layout referenced below (`lib/core/<persona>/`, `lib/core/shared/`, `.claude/`, etc.), see [agentic-directory-structure.md](agentic-directory-structure.md).
 
 ### Persona
 
@@ -415,7 +417,7 @@ Any agent with `AskUserQuestion` in its `tools` that reaches a confirm/decision 
 | 2 | Agent body | Decision logic for that agent only — what to do, when to do it |
 | 3 | `kms/knowledge-sources/` | Shared pattern knowledge — theory, definitions, code patterns. Loaded via `kms_list` → `kms_fetch`/`kms_query`. |
 
-> Folder structure for reference docs: see [agentic-repo-structure.md](agentic-repo-structure.md).
+> Folder structure for reference docs: see [repo-structure.md](../repo-structure.md).
 
 **Reference vocabulary — Topic and Pattern:**
 

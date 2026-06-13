@@ -31,13 +31,16 @@ A single, alphabetical index of every term coined — or given a project-specifi
 | Knowledge Path Structure | [KMS](kms/kms-glossary-lite.md) | The directory + heading convention every Knowledge Path is an instance of — `{scope}/[{platform}\|{project}]/{discipline}/{artifact}/{file}.md` plus `#`/`##` chunking. |
 | Knowledge | [Agentic](agentic/agentic-glossary.md) | Theory/conventions stored in KMS, retrieved via `kms_*` tools — distinct from Reference. |
 | lucci-planner | [Agentic](agentic/agentic-glossary.md#named-agents) | Generic codebase explorer that writes a `plan.md` for an arbitrary task — never modifies source. |
+| Marketplace | [Agentic](agentic/agentic-glossary.md) | The Claude Code plugin marketplace (`hndhr/software-dev-agentic`) that this repo's Plugins are published to. |
 | Mode | [Agentic](agentic/agentic-glossary.md) | A named section of an agent body, loaded only for a matching `mode:` from the calling skill. |
+| Module | [Agentic](agentic/agentic-glossary.md) | A top-level sub-project of this repo, each with its own concerns — currently `kms/` and `lib/`. |
 | Orchestrator Skill (Type O) | [Agentic](agentic/agentic-glossary.md) | User-facing entry skill — routes, pre-loads context, spawns agents, owns convergence + approval. |
 | Pattern (aka Subtopic) | [KMS](kms/kms-glossary-lite.md) | A `##` heading — one retrievable concept, canonical across all platforms. |
 | Persona | [Agentic](agentic/agentic-glossary.md) | A named group of related agents serving one coherent workflow, mapped to an SDLC role. |
 | Planner | [Agentic](agentic/agentic-glossary.md) | Read-only explorer agent scoped to one CLEAN layer; returns findings. |
 | plan.md / context.md / state.json | [Agentic](agentic/agentic-glossary.md) | The three state files passed between phases of a persona run. |
 | Platform | [KMS](kms/kms-glossary-lite.md) | Which client platform a knowledge node applies to — `flutter`, `ios`, `android`, `web`. |
+| Plugin | [Agentic](agentic/agentic-glossary.md) | A distributable unit built from `lib/plugins/*/build.sh` — `cipherpol-aegis` and `cipherpol-8`. |
 | Procedure Skill (Type P) | [Agentic](agentic/agentic-glossary.md) | Thin (~10–30 line), agent-only, create-only skill — no routing or decision logic. |
 | Project | [KMS](kms/kms-glossary-lite.md) | Specific downstream codebase a knowledge node is a deviation/inventory for. |
 | Reference | [Agentic](agentic/agentic-glossary.md) | Extracted formats/contracts/templates reused across agents/skills — file-addressable, platform-agnostic. |

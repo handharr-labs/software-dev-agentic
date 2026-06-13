@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-12
-> Related: [kms-glossary.md](kms-glossary.md) · [kms-design-principles.md](kms-design-principles.md) · [kms-seeding.md](kms-seeding.md)
+> Related: [kms-glossary.md](kms-glossary.md) · [kms-design-principles.md](kms-design-principles.md) · [kms-seeding.md](kms-seeding.md) · [kms-directory-structure.md](kms-directory-structure.md)
 
 Path conventions, chunk strategy, metadata schema, discipline vocabulary, and retrieval protocol — the practical reference for authoring knowledge docs and writing agents that query the KMS.
 
@@ -11,29 +11,9 @@ Path conventions, chunk strategy, metadata schema, discipline vocabulary, and re
 
 Raw documents live here — any format (`.md`, `.txt`), any origin. Engineers drop files in the right location; the seed runner derives all metadata from the path automatically.
 
-Four path segments map directly to metadata fields. Three top-level buckets mirror the cascade tiers:
+> For the directory tree (what's actually under `knowledge-sources/`, and the rest of `kms/`), see [kms-directory-structure.md](kms-directory-structure.md).
 
-```
-kms/knowledge-sources/
-├── universal/              → scope=universal — general principles, all platforms
-│   ├── engineering/        → discipline
-│   │   └── conventions/    → artifact
-│   └── qa/
-├── platform/               → scope=platform — implemented for a specific platform
-│   ├── flutter/            → platform
-│   │   ├── engineering/    → discipline
-│   │   │   ├── conventions/          → artifact
-│   │   │   └── standard-architecture/
-│   │   └── design/
-│   └── ios/
-│       └── engineering/
-└── projects/               → scope=project — deviations for a specific project
-    └── mobile-talenta/
-        ├── feature-inventory/  → artifact
-        └── api-endpoints/
-```
-
-Three path conventions:
+Four path segments map directly to metadata fields. Three top-level buckets mirror the cascade tiers — three path conventions:
 
 **1. Universal knowledge — `universal/{discipline}/{artifact}/{filename}.md`:**
 ```

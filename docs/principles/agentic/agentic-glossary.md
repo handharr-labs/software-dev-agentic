@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-13
-> Related: [agentic-design-principles.md](agentic-design-principles.md) · [agentic-conventions.md](agentic-conventions.md) · [agentic-repo-structure.md](agentic-repo-structure.md) · [../glossary.md](../glossary.md)
+> Related: [agentic-design-principles.md](agentic-design-principles.md) · [agentic-conventions.md](agentic-conventions.md) · [agentic-directory-structure.md](agentic-directory-structure.md) · [repo-structure.md](../repo-structure.md) · [../glossary.md](../glossary.md)
 
 ## What This Doc Covers
 
@@ -15,6 +15,9 @@ Short, one-line definitions for terms coined — or given a project-specific mea
 | **CipherPol** | The name of this whole multi-platform agentic toolkit (this repo, `software-dev-agentic`). |
 | **cipherpol-aegis** | The plugin that ships all agents and skills (all personas) to downstream projects. |
 | **cipherpol-8** | The plugin that ships the KMS MCP server (`cp8`) and pre-seeded ChromaDB. |
+| **Module** | A top-level sub-project within this repo, each with its own concerns and lifecycle — currently `kms/` (knowledge management) and `lib/` (agents, skills, personas). |
+| **Plugin** | A distributable unit built from `lib/plugins/*/build.sh` and published to the Marketplace — currently `cipherpol-aegis` (agents + skills) and `cipherpol-8` (KMS server + ChromaDB). |
+| **Marketplace** | The Claude Code plugin marketplace (`hndhr/software-dev-agentic`) that this repo's Plugins are published to for downstream installation. |
 | **Persona** | A named group of related agents serving one coherent workflow (e.g. `developer`, `debugger`, `auditor`, `qa`). Maps to a real-world SDLC role. |
 | **Strategist** | A pure-reasoning agent. Decides what to do and returns a `Decision:` block — never spawns agents or writes source files itself. |
 | **Planner** | A read-only explorer agent scoped to one CLEAN layer. Returns structured findings, including `### Impact Recommendations`. |

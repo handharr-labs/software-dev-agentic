@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-04-09
-> Related: [agentic-design-principles.md](agentic-design-principles.md)
+> Related: [agentic-design-principles.md](agentic/agentic-design-principles.md)
 
 ## Delivery Mechanism
 
@@ -12,7 +12,7 @@ Distribution: **Claude Code Plugin** — two plugins ship from this repo.
 
 Plugins are built from `lib/plugins/*/build.sh` via `scripts/build-plugin.sh` and published to the marketplace at `hndhr/software-dev-agentic`. Platform and project IDs are defined in `cipherpol.json`.
 
-`software-dev-agentic` is the single source of truth — agents, skills, and knowledge ship to downstream projects via the installed plugins. For the agent design principles that govern what goes into these files, see [agentic-design-principles.md](agentic-design-principles.md).
+`software-dev-agentic` is the single source of truth — agents, skills, and knowledge ship to downstream projects via the installed plugins. For the agent design principles that govern what goes into these files, see [agentic-design-principles.md](agentic/agentic-design-principles.md).
 
 ---
 
@@ -86,7 +86,7 @@ Platform awareness is handled at runtime via two mechanisms:
 
 There is no `lib/platforms/` directory. All agents and skills ship to all platform installs via the same `cipherpol-aegis` plugin.
 
-> For the platform-agnosticism rule, see [agentic-design-principles.md — P2](agentic-design-principles.md#2-agents--brain-decision-maker).
+> For the platform-agnosticism rule, see [agentic-design-principles.md — P2](agentic/agentic-design-principles.md#2-agents--brain-decision-maker).
 
 ---
 
@@ -126,7 +126,7 @@ projects/               → project-specific deviations only
 
 Agents always query with explicit `platform` and `project` filters. The cascade resolves `project → platform → universal` — agents always get the most specific matching knowledge.
 
-> For KMS design rationale see [kms-design-principles.md](../kms/kms-design-principles.md). For path conventions, metadata schema, and retrieval protocol see [kms-conventions.md](../kms/kms-conventions.md). For seeding strategy see [kms-seeding.md](../kms/kms-seeding.md).
+> For KMS design rationale see [kms-design-principles.md](kms/kms-design-principles.md). For path conventions, metadata schema, and retrieval protocol see [kms-conventions.md](kms/kms-conventions.md). For seeding strategy see [kms-seeding.md](kms/kms-seeding.md).
 
 ---
 
@@ -160,7 +160,7 @@ Adding a new platform or project: add an entry to `cipherpol.json`. No script ch
 
 ### 6. Three Modes: Use, Extend, Override
 
-> For the principle, see [agentic-design-principles.md — P3](agentic-design-principles.md#3-skills--hands-thin-procedures).
+> For the principle, see [agentic-design-principles.md — P3](agentic/agentic-design-principles.md#3-skills--hands-thin-procedures).
 
 Downstream projects interact with shipped agents and skills in one of three modes:
 
