@@ -222,9 +222,9 @@ platform/flutter/engineering/standard-architecture/standard-architecture.md
   # Data   → ## Repository Impl, ## Data Source
   # Presentation → ## BLoC, ## Screen
 
-platform/flutter/design/mekari-pixel-catalog/mekari-pixel-catalog.md
-  # Atoms → ## MkButton, ## MkTextField
-  # Molecules → ## MkCard, ## MkBottomSheet
+platform/flutter/design/design-system/mekari-pixel-design-system.md
+  # Atoms → ## MpButton, ## MpTextField
+  # Components → ## MpCard, ## MpBottomSheet
 
 universal/qa/mobile-regression-checklist/mobile-regression-checklist.md
   # Auth Flow → ## Login, ## SSO
