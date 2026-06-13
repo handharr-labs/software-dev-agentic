@@ -34,6 +34,7 @@ Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the domain and data TOCs.
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="domain | data", pattern="<slug>", platform="{platform}")` — fetch the entity, use_case, repository_interface, dto, mapper, data_source, and repository_implementation patterns. Reserve `kms_query(...)` for cold-start only.
+3. `kms_list(discipline="engineering", project="{project}", area="core")` — scan project-tier TOC; `kms_fetch` `api-endpoints` nodes for endpoint URLs, headers, and response shapes used in this feature's data sources; `kms_fetch` `deviations` for any project-specific convention overrides. Skip if empty.
 
 Fallback — if the list is empty or the tool is unavailable: proceed without pattern reference.
 
