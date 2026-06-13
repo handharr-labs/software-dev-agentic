@@ -72,31 +72,11 @@ Derive `<slug>` from the node name. Sanitize to lowercase-kebab (e.g. `expense-i
 
 **Step 3 — Write artifacts**
 
-Write three files to `<run_dir>/inputs/`:
+Write three files to `<run_dir>/inputs/`, per the schema in `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`figma-<slug>.md` semantic reference, frontmatter + body fields):
 
-**`figma-<slug>.md`** — compact semantic reference (planner and StateHolder use this):
-
-```markdown
----
-source: <figma_url>
-parent_frame: <parent frame or component set name>
-state: <state name this node represents>
-screenshot: <run_dir>/inputs/figma-<slug>-screenshot.png
-screenshot_url: <screenshot_url>
-layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
----
-
-## <NodeName>
-**Components:** <comma-separated component names — map JSX component names to UI element names>
-**State:** <state this frame represents — e.g. empty, loading, content, error>
-**Interactions:** <key interactions derived from event handlers — e.g. pull-to-refresh, FAB opens bottom sheet>
-**Tokens:** <key design token variables used — e.g. --color/primary, --spacing/md>
-**Annotations:** <visible text labels, aria labels, designer notes>
-```
-
-**`figma-<slug>-layout.jsx`** — raw JSX from MCP response (Screen/Component creation uses this):
-
-Write the full JSX code string exactly as returned by `get_design_context`. Do not truncate or modify.
+- `figma-<slug>.md` — compact semantic reference (planner and StateHolder use this)
+- `figma-<slug>-layout.jsx` — full JSX code string exactly as returned by `get_design_context`. Do not truncate or modify
+- `figma-<slug>-screenshot.png` — downloaded screenshot
 
 Rules:
 - One `##` section in the `.md` per fetched node — use the exact Figma node name
@@ -114,32 +94,11 @@ If the screenshot file is missing (curl failed), retry Step 2b once. If it still
 
 ## Output
 
-**Single node** — return exactly one block, no prose outside it:
+Block formats below are defined in `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`## Worker Output Blocks`).
 
-```
-## Figma Worker Output
-source: <figma_url>
-file: <run_dir>/inputs/figma-<slug>.md
-layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
-screenshot: <run_dir>/inputs/figma-<slug>-screenshot.png
-parent_frame: <parent frame or component set name>
-state: <state name this node represents>
-components: <comma-separated list of notable component names>
-notes: <1–2 sentences on design-level observations relevant to implementation>
-```
+**Single node** — return exactly one `## Figma Worker Output` block, no prose outside it.
 
-**Section node** — return exactly this block, no prose outside it:
-
-```
-## Figma Section Detected
-source: <figma_url>
-section_name: <section name from Figma response>
-fileKey: <fileKey>
-child_frames:
-  - id: <frame_id>  name: <frame_name>
-  - id: <frame_id>  name: <frame_name>
-  ...
-```
+**Section node** — return exactly one `## Figma Section Detected` block, no prose outside it.
 
 ## Mode: group-frames
 
@@ -175,21 +134,7 @@ For any frame that is visually ambiguous between two clusters: check `parent_fra
 
 **Step 5 — Return output**
 
-```
-## Figma Groups
-groups:
-  - screen: <cluster name derived from visual structure>
-    states:
-      - state: <inferred state name>
-        file: <abs-path-to-figma-*.md>
-        layout_file: <abs-path-to-figma-*-layout.jsx>
-        screenshot: <abs-path-to-figma-*-screenshot.png>
-review:
-  - frame: <figma-*.md filename>
-    reason: <one line — e.g. "Visually ambiguous between Expense List and Expense Detail — placed by parent_frame hint">
-```
-
-Omit `review` key entirely if no frames needed tiebreaking.
+Return exactly one `## Figma Groups` block per `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`## Worker Output Blocks` → Group-Frames Mode), with `screen`/`states` derived from the clustering above.
 
 ## Extension Point
 

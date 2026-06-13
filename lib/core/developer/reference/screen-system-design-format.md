@@ -82,9 +82,9 @@ Single source of truth for the "Screen System Design" document — written by `d
 ┌─────────────────────────────────────────────────┐
 │  Presentation ({platform})                      │
 │  {ScreenClass}                                  │
-│  {BlocClass / ViewModelClass}                   │
-│    states: {State1}, {State2}                   │
-│    events: {Event1}, {Event2}                   │
+│  {StateHolder}  (Bloc/Cubit, ViewModel, Presenter, Store) │
+│    state: {State1}, {State2}                    │
+│    inputs: {Event1}, {Event2}  (events/actions/methods) │
 └────────────────────┬────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────┐
@@ -136,22 +136,46 @@ Single source of truth for the "Screen System Design" document — written by `d
 |---|---|---|
 | `{StateName}` | `{type}` | {what it represents} |
 
+*(For union/sealed state — e.g. `Loading` / `Loaded(data)` / `Error(message)` — list each variant as its own row with the fields it carries.)*
+
 ### Component Hierarchy
 
 ```
 {ScreenClass}
-  ├── {ChildWidget1}  ← {state condition that shows it}
-  ├── {ChildWidget2}
-  └── {ChildWidget3}
+  ├── {ChildComponent1}  ← {state condition that shows it}
+  ├── {ChildComponent2}
+  └── {ChildComponent3}
 ```
 
-*(Flutter: `build()` structure. iOS: ViewController hierarchy. Android: Fragment/layout hierarchy. Web: JSX tree.)*
+*(Component = Flutter Widget, iOS View/Subview, Android View/Composable, Web JSX element. Hierarchy reflects the screen's render/layout structure — `build()` (Flutter), `body` (iOS/SwiftUI), Fragment+layout (Android), or JSX tree (Web).)*
+
+**Complex hierarchies** — extend the basic tree with these patterns as needed:
+
+```
+{ScreenClass}
+  ├── {LoadingComponent}        ← state is Loading
+  ├── {ErrorComponent}          ← state is Error
+  └── {ContentComponent}        ← state is Loaded
+        ├── {HeaderComponent}
+        ├── {ListComponent}
+        │     └── {ItemComponent} × N   ← repeated per item in {state.items}
+        ├── {ChildStateHolder}          ← independent state, scoped to this subtree
+        │     └── {SectionComponent}
+        └── {ModalComponent}            ← overlay shown when {state.flag} is true
+```
+
+- **Conditional branches** — one branch per state variant (Loading/Error/Loaded, etc.)
+- **Repeated components** — mark with `× N` and name the source list in state
+- **Nested StateHolders** — note where a child component manages its own state independently of the screen's StateHolder
+- **Overlays/modals** — list separately from the main tree, with the state condition that triggers them
 
 ### User Interactions
 
 | Interaction | Triggers | Effect |
 |---|---|---|
 | {e.g. "Tap submit button"} | `{EventName}` | {visible result} |
+| {e.g. "Tap item in list"} | `{EventName}({itemId})` | {navigation/effect} |
+| {e.g. "Pull to refresh"} | `{EventName}` | {state transitions back to Loading} |
 ```
 
 ---

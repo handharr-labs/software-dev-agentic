@@ -99,6 +99,8 @@ module-path: <detected module path>
 ## Figma Alignment
 (omit this section entirely if no `### Figma Alignment` table was found in planner findings)
 
+Referenced `Figma Files` (`figma-*.md`) follow the schema in `figma-artifact-format.md`.
+
 | Screen (parent_frame) | Artifact | Figma Files | States | Key Interactions |
 |---|---|---|---|---|
 <rows copied verbatim from pres-planner's ### Figma Alignment table>

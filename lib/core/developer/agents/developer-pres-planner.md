@@ -40,7 +40,7 @@ Combine KMS knowledge (theory + definitions) with codebase evidence (live patter
 
 **Step 0a — Consume Figma groups (skip if `figma_groups` not provided)**
 
-`figma_groups` is pre-verified by the user — do not re-question the grouping.
+`figma_groups` is pre-verified by the user — do not re-question the grouping. Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
 
 For each group `{ screen, states }` where each state has `{ state, file, layout_file, screenshot }`:
 1. For each entry in `states`: `Grep` for `^## ` in `state.file` to confirm available sections — do not read the whole file.
