@@ -3,7 +3,7 @@
 
 ## What This Doc Covers
 
-Short, one-line definitions for terms coined — or given a project-specific meaning — by the agentic architecture in this repo. If a term below feels unfamiliar while reading another agentic doc, this is the lookup. For the full mapping of KMS-specific vocabulary (`scope`, `platform`, `discipline`, `artifact`, `topic`, `pattern`), see [kms-glossary-lite.md](../kms/kms-glossary-lite.md).
+Short, one-line definitions for terms coined — or given a project-specific meaning — by the agentic architecture in this repo. If a term below feels unfamiliar while reading another agentic doc, this is the lookup. For the full mapping of KMS-specific vocabulary (`scope`, `platform`, `discipline`, `artifact`, `topic`, `pattern`), see [kms-glossary.md](../kms/kms-glossary.md).
 
 ---
 

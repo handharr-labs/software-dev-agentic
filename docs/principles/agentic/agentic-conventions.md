@@ -421,7 +421,7 @@ Any agent with `AskUserQuestion` in its `tools` that reaches a confirm/decision 
 
 **Reference vocabulary — Topic and Pattern:**
 
-All KMS terms (`scope`, `platform`, `project`, `discipline`, `artifact`, `topic`, `pattern`) are fully defined in [kms-glossary.md](../kms/kms-glossary.md) — read that doc for the canonical mapping. Summary for agent authors:
+All KMS terms (`scope`, `platform`, `project`, `discipline`, `artifact`, `topic`, `pattern`) are fully defined in [kms-conventions.md](../kms/kms-conventions.md) — read that doc for the canonical mapping. Summary for agent authors:
 
 - **Artifact** — the named body of knowledge a reference doc covers (a directory under `{discipline}/`), e.g. `standard-architecture`, `conventions`, `feature-inventory`.
 - **Topic** — a `#` heading inside an artifact file, grouping related concepts. Not engineering-specific: `domain` groups domain-layer patterns; `components` groups design components; `auth_flow` groups QA checklist items.
@@ -442,7 +442,7 @@ All KMS terms (`scope`, `platform`, `project`, `discipline`, `artifact`, `topic`
 
 KMS provides theory and documented convention — prefer `kms_fetch` for guaranteed retrieval, `kms_query` only when the exact pattern is unknown. Codebase provides the live ground truth. Both KMS and codebase are loaded before any artifact decision.
 
-> For the full term-to-parameter mapping and the `kms_list` → `kms_fetch` narrowing funnel, see [kms-glossary.md](../kms/kms-glossary.md#terms-as-a-scoping-funnel-for-retrieval).
+> For the full term-to-parameter mapping and the `kms_list` → `kms_fetch` narrowing funnel, see [kms-conventions.md](../kms/kms-conventions.md#terms-as-a-scoping-funnel).
 
 **Placement decision rule — reference vs agent body:**
 

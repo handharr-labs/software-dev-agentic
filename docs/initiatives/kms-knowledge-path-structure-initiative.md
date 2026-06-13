@@ -1,7 +1,7 @@
 # Knowledge Path Structure Evaluation Initiative
 
 **Status:** Proposed — evaluation phase, no implementation yet
-**Goal:** Review the current Knowledge Path Structure (`docs/principles/kms/kms-conventions.md` — path conventions + chunk strategy, summarized in [kms-glossary-lite.md](../principles/kms/kms-glossary-lite.md)) against the real authored content in `kms/knowledge-sources/`, to surface placement ambiguities, naming inconsistencies, and chunking edge cases before they compound.
+**Goal:** Review the current Knowledge Path Structure (`docs/principles/kms/kms-conventions.md` — path conventions + chunk strategy, summarized in [kms-glossary.md](../principles/kms/kms-glossary.md)) against the real authored content in `kms/knowledge-sources/`, to surface placement ambiguities, naming inconsistencies, and chunking edge cases before they compound.
 
 ---
 

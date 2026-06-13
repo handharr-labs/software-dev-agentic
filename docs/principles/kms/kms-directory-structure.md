@@ -1,5 +1,5 @@
 > Author: Puras Handharmahua · 2026-06-13
-> Related: [kms-conventions.md](kms-conventions.md) · [kms-design-principles.md](kms-design-principles.md) · [kms-glossary-lite.md](kms-glossary-lite.md) · [../repo-structure.md](../repo-structure.md)
+> Related: [kms-conventions.md](kms-conventions.md) · [kms-design-principles.md](kms-design-principles.md) · [kms-glossary.md](kms-glossary.md) · [../repo-structure.md](../repo-structure.md)
 
 What is where inside `kms/` — the map. For path → metadata rules, chunk strategy, and retrieval protocol, see [kms-conventions.md](kms-conventions.md). For the Clean Architecture rationale behind `domain/`/`data/`/`application/`, see [kms-design-principles.md](kms-design-principles.md).
 
@@ -58,7 +58,7 @@ kms/knowledge-sources/
         └── {artifact}/{file}.md   (+ repo.yaml)
 ```
 
-Each `{file}.md` is then chunked by heading: `#` → `topic`, `##` → `pattern`. See [kms-conventions.md — Path Conventions](kms-conventions.md#kmsknowledge-sources--path-conventions) and [Chunk Strategy](kms-conventions.md#chunk-strategy--heading-hierarchy) for the full rules, and [kms-glossary-lite.md](kms-glossary-lite.md) for term definitions (`scope`, `discipline`, `artifact`, `topic`, `pattern`, Knowledge Path, Knowledge Path Structure).
+Each `{file}.md` is then chunked by heading: `#` → `topic`, `##` → `pattern`. See [kms-conventions.md — Path Conventions](kms-conventions.md#kmsknowledge-sources--path-conventions) and [Chunk Strategy](kms-conventions.md#chunk-strategy--heading-hierarchy) for the full rules, and [kms-glossary.md](kms-glossary.md) for term definitions (`scope`, `discipline`, `artifact`, `topic`, `pattern`, Knowledge Path, Knowledge Path Structure).
 
 ---
 

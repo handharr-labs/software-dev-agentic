@@ -3,7 +3,7 @@
 
 Path conventions, chunk strategy, metadata schema, discipline vocabulary, and retrieval protocol — the practical reference for authoring knowledge docs and writing agents that query the KMS.
 
-> **Knowledge Path Structure** — the directory + heading convention defined across this doc (Path Conventions, Chunk Strategy, and Metadata Schema below) that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`pattern` inside the file. See [kms-glossary-lite.md](kms-glossary-lite.md#glossary) for one-line definitions of each term.
+> **Knowledge Path Structure** — the directory + heading convention defined across this doc (Path Conventions, Chunk Strategy, and Metadata Schema below) that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`pattern` inside the file. See [kms-glossary.md](kms-glossary.md#glossary) for one-line definitions of each term.
 
 ---
 
@@ -115,6 +115,67 @@ last_scanned_local_path: null
 
 **`pattern` is discipline-neutral** — it means sub-topic in engineering, checklist item in QA, ceremony step in agile. The field name is stable; its meaning is domain-relative.
 
+**"Subtopic" and `pattern` are the same thing** — not an eighth term. The `##` heading is the chunk boundary, the unit `kms_fetch`/`kms_query` return, and the retrieval key. "Sub-topic" describes its *role* (a sub-division of the parent `#` topic); `pattern` is its *field name* in ChromaDB metadata.
+
+---
+
+## Worked Examples
+
+### Platform-tier doc
+
+File: `kms/knowledge-sources/platform/flutter/engineering/standard-architecture/standard-architecture.md`
+
+```markdown
+# Domain
+## Entity
+```
+
+| Term | Value | From |
+|---|---|---|
+| scope | `platform` | top-level bucket |
+| platform | `flutter` | path segment |
+| discipline | `engineering` | path segment |
+| artifact | `standard-architecture` | path segment |
+| topic | `domain` | `#` heading slug |
+| pattern (subtopic) | `entity` | `##` heading slug |
+
+### Project-tier doc
+
+File: `kms/knowledge-sources/projects/mobile-talenta/feature-inventory/feature-inventory.md`, with `repo.yaml: { name: mobile-talenta, platform: flutter }`
+
+```markdown
+# Time Management
+## Clock In/Out
+```
+
+| Term | Value | From |
+|---|---|---|
+| scope | `project` | top-level bucket |
+| project | `mobile-talenta` | folder name / `repo.yaml: name` |
+| platform | `flutter` | `repo.yaml: platform` |
+| discipline | `engineering` | default for project docs |
+| artifact | `feature-inventory` | path segment |
+| topic | `time_management` | `#` heading slug |
+| pattern (subtopic) | `clock_in_out` | `##` heading slug |
+
+### Universal-tier doc
+
+File: `kms/knowledge-sources/universal/agile/sprint-ceremonies/sprint-ceremonies.md`
+
+```markdown
+# Planning
+## Sprint Planning Meeting
+```
+
+| Term | Value | From |
+|---|---|---|
+| scope | `universal` | top-level bucket |
+| platform | _(omitted)_ | not applicable at universal scope |
+| discipline | `agile` | path segment |
+| artifact | `sprint-ceremonies` | path segment |
+| topic | `planning` | `#` heading slug |
+| pattern (subtopic) | `sprint_planning_meeting` | `##` heading slug |
+
 ---
 
 ## Discipline Vocabulary
@@ -149,9 +210,57 @@ Three MCP tools serve different retrieval needs. Agents should combine them, not
 3. Once `artifact`, `topic`, and `pattern` are known (e.g. `## Null Safety Extensions` under `platform/flutter/engineering/conventions/` → `artifact=conventions, topic=conventions, pattern=null_safety_extensions`): `kms_fetch(discipline, artifact, topic, pattern, platform)` — guaranteed, cascade-resolved retrieval
 4. For exploratory or intent-based needs (e.g. "what conventions apply when writing this artifact type"): `kms_query(text, discipline, platform, n_results)` — semantic ranking, bypasses the narrowing steps entirely
 
-See [kms-glossary.md](kms-glossary.md#terms-as-a-scoping-funnel-for-retrieval) for the full term-to-parameter mapping and a worked example of this narrowing.
-
 **Why this matters:** `kms_query` ranks top-k across *all* matching nodes — a cross-cutting convention that applies to nearly every artifact (e.g. null-safety unwrapping) can be crowded out of the top-k by more numerous architecture-pattern nodes. When a topic's heading is uniform across platforms, prefer `kms_fetch` for guaranteed retrieval over hoping `kms_query` surfaces it.
+
+### Terms as a Scoping Funnel
+
+The Rosetta Stone terms above aren't just path/metadata mappings — they're the `kms_list` filter parameters, in narrowing order: `platform`/`project` (cascade tier) → `discipline` → `artifact` → `topic` → `pattern`. Each term you supply shrinks the TOC by one level. **`pattern` is never a `kms_list` filter** — it's the funnel's output, the value the agent is narrowing down *to*.
+
+```
+kms_list(platform="flutter", discipline="engineering")
+  → TOC across every artifact in flutter engineering (conventions, standard-architecture, ...)
+       artifact=standard-architecture  topic=domain  pattern=entity
+       artifact=standard-architecture  topic=domain  pattern=use_case
+       artifact=standard-architecture  topic=data    pattern=repository_impl
+       artifact=conventions            topic=conventions  pattern=null_safety_extensions
+       ...
+
+kms_list(platform="flutter", discipline="engineering", artifact="standard-architecture")
+  → narrowed to one artifact's TOC
+       topic=domain  pattern=entity
+       topic=domain  pattern=use_case
+       topic=data    pattern=repository_impl
+
+kms_fetch(discipline="engineering", artifact="standard-architecture",
+          topic="domain", pattern="entity", platform="flutter")
+  → exact node, cascade-resolved project → platform → universal
+```
+
+Once `kms_list` returns a TOC small enough to read every `(topic, pattern)` pair, the agent has everything `kms_fetch` needs — the four required params are exactly the path-derived terms (`discipline`, `artifact`, `topic`, `pattern`), with `platform`/`project` carried forward from the funnel to drive cascade resolution.
+
+| Tool | Funnel role | Params (Rosetta terms only) |
+|---|---|---|
+| `kms_list` | Narrow the TOC, one term at a time | `platform, project, discipline, artifact, topic` (no `pattern`) |
+| `kms_fetch` | Exact retrieval once the funnel bottoms out | `discipline, artifact, topic, pattern` required; `platform, project` for cascade |
+| `kms_query` | Bypass — semantic search when the funnel can't be walked | `platform, discipline` only |
+
+---
+
+## `kms_upsert` — Manual Mapping
+
+`kms_upsert` bypasses path-derivation entirely — the caller supplies `discipline`, `artifact`, `topic`, `pattern` directly. Same Rosetta Stone applies:
+
+- `artifact` = the artifact folder this knowledge belongs to
+- `topic` = slug of the parent `#` group (or artifact name if no grouping)
+- `pattern` = snake_case slug of the canonical concept name — equivalent to a `##` heading
+
+See [kms-knowledge-source-rules.md](../../../kms/docs/kms-knowledge-source-rules.md) for full authoring rules.
+
+---
+
+## Known Inconsistencies
+
+`kms/domain/schema.py` defines `PROJECT_VALUES = ["talenta", "jurnal", "qontak-crm", "qontak-chat"]`, but no code references this constant, and it doesn't match actual project folder names under `kms/knowledge-sources/projects/` (`mobile-talenta`, `talenta-ios`, `talenta-mobile-android`, `flex-mobile`). `project` values are sourced from `repo.yaml: name` in practice, not from an enum. Treat `PROJECT_VALUES` as stale/unused — candidate for removal in a future cleanup.
 
 ---
 
