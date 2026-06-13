@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.12.1] — 2026-06-13
+
+### Added
+- `docs/principles/agentic/agentic-glossary.md` — short, one-line definitions for agentic-coined terms (Agentic Stack, Persona, Strategist, Worker, etc.) plus a Named Agents section
+- `docs/principles/kms/kms-glossary-lite.md` — quick-reference KMS vocabulary, including new terms "Knowledge Path" and "Knowledge Path Structure"
+- `docs/principles/glossary.md` — combined alphabetical index across both module glossaries
+- `docs/initiatives/kms-knowledge-path-structure-initiative.md` — evaluates the Knowledge Path Structure against real authored content (design-system catalog as motivating example)
+
+### Changed
+- `CLAUDE.md` — points to `docs/principles/glossary.md` for unfamiliar terms
+- `docs/principles/kms/kms-conventions.md`, `docs/principles/kms/kms-design-principles.md` — reference the new "Knowledge Path Structure" term
+
 ## [12.12.0] — 2026-06-13
 
 ### Changed
