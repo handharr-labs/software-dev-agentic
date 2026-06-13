@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.19.0] — 2026-06-14
+
+### Added
+- `kms/knowledge-sources/projects/talenta-ios/design/design-system/mekari-pixel.md` — iOS UIKit design system catalog: `MPColor` tokens, `MPTextStyle` typography, all components (`MPButton`, `MPTextField`, `MPSearch`, `MPToast`, `MPDialog`, `MPBottomSheet`, `MPTabBarViewController`, `MPSelect`, `MPActionGroup`, App Bar variants, Bottom Nav), and `MPAssets` icon catalog
+- `kms/knowledge-sources/projects/talenta-mobile-android/design/design-system/mekari-pixel.md` — Android Views design system catalog: color tokens, typography, all components (`MpButton`, `MpTextField`, `MpDialog`, `MpToast`, `MpSearch`, `MpSelect`, `MpSelectTag`, `MpTabLayout`, `MpBottomNavBar`, `MpActionGroup`, `MpAppBar` variants, `MpProgressIndicator`, `MpZoomableImageView`), and icon drawable catalog
+
+### Changed
+- `kms/knowledge-sources/README.md` — updated to reflect the actual 3-scope structure (`universal/`, `platform/{platform}/`, `projects/{project}/`), the `{discipline}/{area}/{artifact}.md` path convention, a full discipline table including `design`, and the cascade resolution order
+
 ## [12.18.1] — 2026-06-14
 
 ### Changed
