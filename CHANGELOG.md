@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.17.0] — 2026-06-14
+
+### Changed
+- `kms/knowledge-sources/` — flattened artifact directory level: `{area}/{artifact}/{file}.md` → `{area}/{artifact}.md` (28 files moved); design-system file renamed `mekari-pixel-design-system.md` → `mekari-pixel.md` to match artifact name
+- `kms/domain/sources/directory.py` — `DirectorySource` now derives `artifact` directly from filename stem; removed artifact subdirectory traversal (`rglob` replaced with flat `area_dir` iteration)
+- `docs/principles/kms/kms-design-principles.md` — new Core Principle 4: Knowledge Path is the single source of truth; directory structure, seeder, and DB schema all derive from it
+- `docs/principles/kms/kms-conventions.md`, `kms-directory-structure.md`, `kms-glossary.md`, `kms/docs/kms-knowledge-source-rules.md` — updated all path patterns, worked examples, and prose to reflect flattened structure
+- `docs/principles/glossary.md` — added `Area` entry; updated `Artifact`, `Knowledge Path`, `Knowledge Path Structure`, `Scoping funnel` to include `area` and reflect filename-stem artifact
+- `docs/principles/repo-structure.md` — Section 3 KMS tree diagram updated with `{area}/` level and `{artifact}.md` flat files
+
 ## [12.16.0] — 2026-06-14
 
 ### Added
