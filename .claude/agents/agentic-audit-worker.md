@@ -51,7 +51,7 @@ For each worker `.md` file in scope:
 
 4. **related_skills resolve** — Grep the file for `related_skills:` block; for each skill name listed:
    - Glob `lib/platforms/*/skills/contract/<name>/SKILL.md` — at least one platform must have it
-   - Glob `lib/core/*/skills/<name>/SKILL.md` — fallback for toolkit skills
+   - Glob `lib/core/*/skills/*/<name>/SKILL.md` — fallback for toolkit skills (orchestrators/procedures)
    - Glob `skills/<name>/SKILL.md` — fallback for repo skills
    - BROKEN if none found; WARNING if only one platform has it (expected: all platforms)
 

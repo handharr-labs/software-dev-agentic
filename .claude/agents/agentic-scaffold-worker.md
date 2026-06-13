@@ -264,7 +264,7 @@ After completing, check for `.claude/agents.local/extensions/<name>.md` — if i
 
 ### Skill templates
 
-**Type P (Procedure):**
+**Type P (Procedure)** — write to `lib/core/<persona>/skills/procedures/<name>/SKILL.md`:
 ```
 ---
 name: <name>
@@ -276,7 +276,7 @@ tools: <tools>
 <procedure — one focused task, under 30 lines, no branching>
 ```
 
-**Type O (Orchestrator):**
+**Type O (Orchestrator)** — write to `lib/core/<persona>/skills/orchestrators/<name>/SKILL.md`:
 ```
 ---
 name: <name>
@@ -300,7 +300,7 @@ tools: <tools — include Agent if the workflow delegates to agents>
 
 ### New Persona
 
-1. Create `lib/core/<persona>/agents/` directory (also `lib/core/<persona>/skills/` and optionally `lib/core/<persona>/reference/`)
+1. Create `lib/core/<persona>/agents/` directory (also `lib/core/<persona>/skills/{orchestrators,procedures}/` and optionally `lib/core/<persona>/reference/`)
 2. Create `packages/<persona>.pkg`:
 ```
 name=<persona>
