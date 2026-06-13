@@ -127,11 +127,13 @@ Elements remaining in `## Custom Widgets` after Level 2 are created fresh using 
 2. Run UI Resolution Priority (Level 1 → 2 → 3) for this artifact.
 
 3. Read Figma files — execute in order, do not proceed to step 4 until all reads are complete. Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
-   - Look up this artifact's name in the `## Figma Alignment` table in context.md → get the `Figma Files` list
+   - Look up this artifact's name in the `## Figma Alignment` table in context.md → get the `UI Stack` and `Figma Files`
+   - `Read` the `UI Stack` file (`figma-uistack-*.md`) first → use `### Component Hierarchy` as the structural blueprint (including any `← see figma-uistack-*.md` overlay branches), `### State Model` and `### User Interactions` for behavior, `### Design Tokens` for styling. Note the `states` frontmatter list — this is the `Figma Files` list for step below
    - For each `.md` file in the list:
      a. `Read` the `.md` file → record `layout_file` and `screenshot` paths from frontmatter, extract `Components`, `State`, `Interactions`, `Annotations` from body
      b. `Read` the `layout_file` JSX at the path from step (a) — read in full, never truncate
      c. `Read` the `screenshot` PNG at the path from step (a) — visual inspection is mandatory; spacing, color, and hierarchy are not in the text
+   - If a Component artifact is itself an overlay referenced by a screen's UI Stack, repeat this step using that overlay's own `figma-uistack-*.md`
 
 4. Write a Layout Transcript from what was just read — this is an extraction, not a plan summary. Do not write any code before this transcript exists:
 

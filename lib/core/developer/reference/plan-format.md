@@ -99,10 +99,10 @@ module-path: <detected module path>
 ## Figma Alignment
 (omit this section entirely if no `### Figma Alignment` table was found in planner findings)
 
-Referenced `Figma Files` (`figma-*.md`) follow the schema in `figma-artifact-format.md`.
+Referenced `Figma Files` (`figma-*.md`) and `UI Stack` (`figma-uistack-*.md`) follow the schema in `figma-artifact-format.md`.
 
-| Screen (parent_frame) | Artifact | Figma Files | States | Key Interactions |
-|---|---|---|---|---|
+| Screen (parent_frame) | Artifact | UI Stack | Figma Files | States | Key Interactions |
+|---|---|---|---|---|---|
 <rows copied verbatim from pres-planner's ### Figma Alignment table>
 
 ## Key Symbols
@@ -122,5 +122,5 @@ Referenced `Figma Files` (`figma-*.md`) follow the schema in `figma-artifact-for
 | frontmatter (`feature`/`platform`/`module-path`) | always | feature-strategist | feature-worker, ui-worker | Run-level metadata — derives `project`/`platform` for convention lookups |
 | `## Discovered Artifacts` (Domain/Data/Presentation/App) | always | feature-strategist | feature-worker, ui-worker | Existing artifact inventory — informs new-vs-exists routing per artifact |
 | `## Naming Conventions` | always | feature-strategist | feature-worker, ui-worker | Naming and file-location conventions to follow for new artifacts |
-| `## Figma Alignment` | conditional — only if pres-planner findings included a `### Figma Alignment` table | feature-strategist | ui-worker (also referenced by feature-worker for StateHolder state/interaction shape) | Maps screens/artifacts to Figma files, states, and key interactions |
+| `## Figma Alignment` | conditional — only if pres-planner findings included a `### Figma Alignment` table | feature-strategist | ui-worker (also referenced by feature-worker for StateHolder state/interaction shape) | Maps screens/artifacts to their merged UI Stack file, source Figma files, states, and key interactions |
 | `## Key Symbols` | conditional — omit for new-only features | feature-strategist | feature-worker, ui-worker | Existing signatures (constructor params, method signatures) for targeted edits to existing artifacts |
