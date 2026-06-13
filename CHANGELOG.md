@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.10.0] — 2026-06-13
+
+### Added
+- `lib/core/developer/reference/figma-artifact-format.md` — shared schema for `figma-<slug>.md` (frontmatter + body fields) and `developer-figma-worker`'s output blocks (`Figma Worker Output`, `Figma Section Detected`, `Figma Groups`), consumed by `developer-pres-planner`, `developer-feature-worker`, and `developer-ui-worker`
+- `docs/principles/agentic/agentic-design-principles.md` — new "Reference vs Knowledge" section distinguishing file-addressable Reference (`lib/core/*/reference/`) from KMS-managed Knowledge
+
+### Changed
+- `lib/core/developer/reference/screen-system-design-format.md` — UI Stack section now platform-agnostic (`StateHolder`/`Component` instead of Flutter-specific `BlocClass/ViewModelClass`/`Widget`), with added examples for complex hierarchies (conditional branches, repeated list items, nested StateHolders, overlays/modals) and union/sealed state notes
+- `developer-figma-worker.md` — inline `figma-<slug>.md` and output-block templates replaced with pointers to `figma-artifact-format.md`, trimming the agent body from 197 to 142 lines
+- `developer-pres-planner.md`, `developer-feature-worker.md`, `developer-ui-worker.md`, `lib/core/developer/reference/plan-format.md` — point to `figma-artifact-format.md` where each reads Figma artifact fields
+- Reference-doc read pattern across `.claude/agents/agentic-arch-review-worker.md`, `.claude/skills/agentic-arch-check-conventions/SKILL.md`, `docs/principles/agentic/agentic-conventions.md`, `agentic-repo-structure.md`, `lucci-planner.md`, `lib/core/shared/reference/README.md`, and `saturn-jaygarcia/plan-format.md`: replaced Grep-first/line-count (`<!-- N -->`) reading with `Read`-in-full for thin docs and `symbol-query` for catalog files
+- `docs/principles/kms/kms-glossary.md` — cross-links the new Reference vs Knowledge section
+
 ## [12.9.1] — 2026-06-13
 
 ### Added
