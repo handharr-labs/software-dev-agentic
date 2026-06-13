@@ -91,7 +91,7 @@ Before executing any Screen or Component artifact, resolve UI elements in this o
 
 **Level 1 — Design system catalog (highest authority)**
 
-Call skill `developer-pres-resolve-design` — pass `artifact_name`, `ui_description` (Figma section content when available, otherwise plan.md description), and `platform="{platform}"`. It queries KMS (`discipline="design", artifact="design-system"`).
+Call skill `developer-pres-resolve-design` — pass `artifact_name`, `ui_description` (Figma section content when available, otherwise plan.md description), and `platform="{platform}"`. It queries KMS (`discipline="design", area="design-system"`).
 
 Collect both output sections:
 - `## Design System Bindings` — catalog matches → **hard constraints for the creation skill**
