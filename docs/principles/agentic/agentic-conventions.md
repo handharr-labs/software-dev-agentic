@@ -138,7 +138,7 @@ Sub-planners are all leaf agents: they explore, report, and return. No further s
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Toolkit skill** | `lib/core/<persona>/skills/` | Yes — all platforms. Platform-agnostic, intended for use in downstream projects. |
+| **Toolkit skill** | `lib/core/<persona>/skills/{orchestrators,procedures}/` | Yes — all platforms. Platform-agnostic, intended for use in downstream projects. |
 | **Platform-contract skill** | `lib/platforms/<platform>/skills/contract/` | Yes — matching platform. Same name across all platforms; each implements for its syntax — called by persona workers. Bundled flat as `<name>/SKILL.md` in the plugin. |
 | **Platform-only skill** | `lib/platforms/<platform>/skills/` (flat) | Yes — matching platform only. Called by platform agents. |
 | **Project skill** | `.claude/skills.local/` | No — project-owned, not in this repo. |

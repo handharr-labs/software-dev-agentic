@@ -11,7 +11,10 @@ What is where inside `lib/` and the agentic side of `.claude/` — the map. For 
 lib/core/<persona>/
 ├── agents/             → strategists, planners, workers (see Agent Naming Convention)
 ├── skills/
-│   └── <skill-name>/SKILL.md   → one directory per skill (Type O or Type P)
+│   ├── orchestrators/
+│   │   └── <skill-name>/SKILL.md   → Type O — user-facing entry skills
+│   └── procedures/
+│       └── <skill-name>/SKILL.md   → Type P — thin, agent-only, create-only skills
 ├── hooks/              → lifecycle hooks (currently developer persona only)
 └── reference/          → flat, persona-specific reference docs
     ├── <name>-catalog.md       → queryable symbol/component inventory — symbol-query, never read in full
@@ -28,11 +31,13 @@ Current personas: `developer`, `debugger`, `auditor`, `qa`, `installer`. Each li
 lib/core/shared/
 ├── agents/             → kaku-worker, lucci-planner, perf-worker, etc. — no persona prefix
 ├── skills/
-│   ├── saturn-jaygarcia/        → Type O pairing lucci-planner + kaku-worker
-│   ├── cipherpol-status/
-│   ├── agentic-perf-review/
-│   ├── detect-platform/
-│   └── release-project/
+│   ├── orchestrators/
+│   │   ├── saturn-jaygarcia/    → Type O pairing lucci-planner + kaku-worker
+│   │   ├── cipherpol-status/
+│   │   ├── agentic-perf-review/
+│   │   └── release-project/
+│   └── procedures/
+│       └── detect-platform/
 └── reference/<topic>/  → topic-grouped, shared across personas (e.g. saturn-jaygarcia/plan-format.md)
 ```
 
@@ -43,7 +48,7 @@ lib/core/shared/
 ```
 lib/plugins/
 ├── cipherpol-aegis/
-│   ├── build.sh           → assembles agents + skills from lib/core/*/agents, lib/core/*/skills/*/
+│   ├── build.sh           → assembles agents + skills from lib/core/*/agents, lib/core/*/skills/*/*/
 │   └── build.config.json
 └── cipherpol-8/
     ├── build.sh           → assembles KMS server + ChromaDB from kms/
