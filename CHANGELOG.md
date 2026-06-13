@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.18.0] — 2026-06-14
+
+### Changed
+- `kms/knowledge-sources/projects/` — added `{discipline}/` level to project tier path: `projects/{project}/{area}/` → `projects/{project}/{discipline}/{area}/`; all 4 existing projects migrated under `engineering/`
+- `kms/domain/sources/directory.py` — `_read_project_docs()` now traverses a `discipline/` directory (validated against `DISCIPLINE_VALUES`) and passes it to `KnowledgeNode.discipline` instead of hardcoding `"engineering"`; project tier path now consistent with platform tier
+
 ## [12.17.0] — 2026-06-14
 
 ### Changed
