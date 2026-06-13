@@ -56,12 +56,12 @@ No  → universal/ or platform/{platform}/ (from question 1)
 
 | Knowledge type | Example | Bucket |
 |---|---|---|
-| SDLC process applies to all platforms | Sprint retrospective guide, PR review checklist | `universal/{discipline}/` |
-| Architecture principle applies to all platforms | Clean Architecture layers, SOLID rules | `universal/engineering/` |
-| Implementation pattern tied to one platform | Flutter BLoC pattern, iOS UIKit coordinator | `platform/{platform}/engineering/{artifact}/` |
-| UI component catalog for one platform | Flutter Mekari Pixel catalog | `platform/{platform}/design/{artifact}/` |
-| Project deviates from the platform standard | Custom DI pattern, non-standard folder structure | `projects/{project-name}/{artifact}/` |
-| Project inventory (features, endpoints) | Feature list, API endpoints | `projects/{project-name}/{artifact}/` |
+| SDLC process applies to all platforms | Sprint retrospective guide, PR review checklist | `universal/{discipline}/core/` |
+| Architecture principle applies to all platforms | Clean Architecture layers, SOLID rules | `universal/engineering/core/` |
+| Implementation pattern tied to one platform | Flutter BLoC pattern, iOS UIKit coordinator | `platform/{platform}/engineering/core/{artifact}/` |
+| UI component catalog for one platform | Flutter Mekari Pixel catalog | `platform/{platform}/design/design-system/{artifact}/` |
+| Project deviates from the platform standard | Custom DI pattern, non-standard folder structure | `projects/{project-name}/core/{artifact}/` |
+| Project inventory (features, endpoints) | Feature list, API endpoints | `projects/{project-name}/core/{artifact}/` |
 
 ### The deviation test for `projects/`
 
@@ -90,34 +90,39 @@ Most knowledge lives at `universal/` or `platform/` tier. `projects/` is the exc
 
 ## File Naming Rules
 
-### Universal knowledge — `kms/knowledge-sources/universal/{discipline}/{artifact}/`
+### Universal knowledge — `kms/knowledge-sources/universal/{discipline}/{area}/{artifact}/`
 
 | Path | Example | Derived metadata |
 |---|---|---|
-| `universal/{discipline}/{artifact}/{file}.md` | `universal/agile/sprint-ceremonies/sprint-ceremonies.md` | `scope=universal, discipline=agile, artifact=sprint-ceremonies` |
+| `universal/{discipline}/{area}/{artifact}/{file}.md` | `universal/agile/core/sprint-ceremonies/sprint-ceremonies.md` | `scope=universal, discipline=agile, area=core, artifact=sprint-ceremonies` |
 
 - `{discipline}` — must match `DISCIPLINE_VALUES`
+- `{area}` — must match `AREA_VALUES` (`core` | `design-system`); fixed vocabulary, inserted between `discipline` and `artifact`
 - `{artifact}` — kebab-case folder name; the named body of knowledge within the discipline
 - `{file}.md` — typically matches the artifact name; multiple files per artifact are allowed for sub-areas
 
-### Platform knowledge — `kms/knowledge-sources/platform/{platform}/{discipline}/{artifact}/`
+### Platform knowledge — `kms/knowledge-sources/platform/{platform}/{discipline}/{area}/{artifact}/`
 
 | Path | Example | Derived metadata |
 |---|---|---|
-| `platform/{platform}/{discipline}/{artifact}/{file}.md` | `platform/flutter/engineering/conventions/conventions.md` | `scope=platform, platform=flutter, discipline=engineering, artifact=conventions` |
+| `platform/{platform}/{discipline}/{area}/{artifact}/{file}.md` | `platform/flutter/engineering/core/conventions/conventions.md` | `scope=platform, platform=flutter, discipline=engineering, area=core, artifact=conventions` |
 
 - `{platform}` — one of `flutter`, `ios`, `android`, `web`
 - `{discipline}` — must match `DISCIPLINE_VALUES`
+- `{area}` — must match `AREA_VALUES` (`core` | `design-system`); fixed vocabulary, inserted between `discipline` and `artifact`
 - `{artifact}` — kebab-case folder; the named body of knowledge
 - No platform prefix in filenames — all metadata is directory-encoded
 
-### Project knowledge — `kms/knowledge-sources/projects/{project-name}/{artifact}/`
+**`area` convention:** `core` is for standard platform-owned artifacts (conventions, standard-architecture, etc.). `design-system` is for design-system catalogs, where `{artifact}` becomes the specific design system name (e.g. `mekari-pixel`) — this lets multiple design systems coexist per platform (e.g. a future `legacy-kit`) without folder-name collisions.
+
+### Project knowledge — `kms/knowledge-sources/projects/{project-name}/{area}/{artifact}/`
 
 | Path | Example | Derived metadata |
 |---|---|---|
-| `projects/{project}/{artifact}/{file}.md` | `projects/mobile-talenta/feature-inventory/feature-inventory.md` | `scope=project, artifact=feature-inventory` |
+| `projects/{project}/{area}/{artifact}/{file}.md` | `projects/mobile-talenta/core/feature-inventory/feature-inventory.md` | `scope=project, area=core, artifact=feature-inventory` |
 
 - `platform` and `project` read from `repo.yaml` — not encoded in filename
+- `{area}` — must match `AREA_VALUES` (`core` | `design-system`); fixed vocabulary, inserted between the project directory and `artifact`
 - `{artifact}` — the aspect of the project this covers (`feature-inventory`, `api-endpoints`, `deviations`, etc.)
 
 ---
@@ -237,12 +242,12 @@ Each discipline has a natural `##` unit, and — for theory-heavy disciplines �
 
 Examples:
 ```
-platform/flutter/engineering/standard-architecture/standard-architecture.md
+platform/flutter/engineering/core/standard-architecture/standard-architecture.md
   # Domain → ## Entity (flat), ## Use Case → ### Theory, ### Code Pattern, ### Example
   # Data   → ## Repository Impl, ## Data Source
   # Presentation → ## BLoC → ### Theory, ### Code Pattern
 
-platform/flutter/design/design-system/mekari-pixel-design-system.md
+platform/flutter/design/design-system/mekari-pixel/mekari-pixel-design-system.md
   # Atoms → ## MpButton, ## MpTextField   (flat — subtopic == pattern)
   # Components → ## MpCard, ## MpBottomSheet
 
@@ -255,7 +260,7 @@ universal/qa/mobile-regression-checklist/mobile-regression-checklist.md
 
 ## Project Doc Rules
 
-Project docs live in `kms/knowledge-sources/projects/{project-name}/{artifact}/` and are generated by `kms-extract-worker`. The same chunking contract applies — artifact folder name sets the artifact metadata, `#` groups set topic, `##` headings are the subtopic/retrieval units (split into `###` only if a feature/endpoint/component needs Theory/Code Pattern/Example granularity).
+Project docs live in `kms/knowledge-sources/projects/{project-name}/{area}/{artifact}/` (typically `area=core`) and are generated by `kms-extract-worker`. The same chunking contract applies — artifact folder name sets the artifact metadata, `#` groups set topic, `##` headings are the subtopic/retrieval units (split into `###` only if a feature/endpoint/component needs Theory/Code Pattern/Example granularity).
 
 | Artifact folder | Recommended `#` groups | Recommended `##` unit |
 |---|---|---|

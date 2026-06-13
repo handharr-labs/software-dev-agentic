@@ -54,3 +54,14 @@ This is the first non-`engineering`, catalog-shaped artifact in the KMS — a go
 
 - Builds on `kms-knowledge-restructure-initiative.md` (Complete) — that initiative defined the structure; this initiative evaluates it against real, varied content
 - May feed into `kms-retrieval-strategy-initiative.md` if chunking granularity changes affect retrieval behavior
+
+---
+
+## Decision — `area` field added
+
+A new mandatory `area` field/path segment was introduced between `discipline` and `artifact` (`schema_version` 2, was 1): `{scope}/[{platform}|{project}]/{discipline}/{area}/{artifact}/{file}.md` (project tier: `projects/{project}/{area}/{artifact}/{file}.md`, `discipline` still implicit `engineering`).
+
+- `area=core` — default for all existing artifacts (conventions, standard-architecture, feature-inventory, api-endpoints, deviations, shared-components, third-party-integrations, etc.)
+- `area=design-system` — for design-system catalogs, where `artifact` becomes the specific design system/library name (e.g. `mekari-pixel`)
+
+This resolves **Open Question 1** (discipline/placement and naming for design-system catalogs): `design-system` catalogs stay under `discipline=design` but get their own `area`, with `artifact` set to the design system's name rather than a generic `design-system` label. It also sets the pattern for future design systems to coexist without collision — e.g. a second catalog would land at `platform/flutter/design/design-system/legacy-kit/legacy-kit-design-system.md` (`area=design-system, artifact=legacy-kit`), alongside `platform/flutter/design/design-system/mekari-pixel/mekari-pixel-design-system.md` (`area=design-system, artifact=mekari-pixel`), with no folder-name collision.

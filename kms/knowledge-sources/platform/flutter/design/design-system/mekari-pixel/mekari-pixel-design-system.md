@@ -1,11 +1,14 @@
+# Metadata
+
+## Package Info
+
+- **Platform:** Flutter only. Non-Flutter platforms: N/A.
+- **Import:** `package:mekari_pixel/mekari_pixel.dart`
+- **Prefix:** `Mp` (e.g. `MpButton`, `MpAvatar`, `MpListTileX`)
+- **Sync:** re-run `temp-dir/extract_catalog.py` on MekariPixel version bump.
+- **Total widgets:** 228
+
 # Atoms
-
-**Platform:** Flutter only. Non-Flutter platforms: N/A.
-**Import:** `package:mekari_pixel/mekari_pixel.dart`
-**Prefix:** `Mp` (e.g. `MpButton`, `MpAvatar`, `MpListTileX`)
-**Sync:** re-run `temp-dir/extract_catalog.py` on MekariPixel version bump.
-
-Total widgets: 228
 
 ## MpActionText
 - **Category:** `atoms/action_text`
