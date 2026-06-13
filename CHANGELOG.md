@@ -7,6 +7,21 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.15.0] — 2026-06-13
+
+### Added
+- `kms/domain/entities.py` — `KnowledgeNode.subtopic` field (`##` heading slug), included in `id` between `topic` and `pattern`
+- `kms/domain/use_cases/upsert_knowledge.py` — `_section_heading_level()` helper for depth-agnostic `_parse_sections`/`_assemble_sections`, so `###`-rooted node content merges correctly
+
+### Changed
+- `kms/domain/sources/directory.py` — `_chunk_by_sections` rewritten as a depth-aware, two-pass algorithm: `#`→`topic`, `##`→`subtopic`, `###`→`pattern` when present, else the `##` itself is both `subtopic` and `pattern`
+- `kms/domain/schema.py`, `kms/domain/repository.py`, `kms/data/chroma_repository.py`, `kms/domain/sources/markdown.py`, `kms/domain/use_cases/fetch_knowledge.py`, `kms/domain/use_cases/list_knowledge.py`, `kms/application/mcp_server.py`, `kms/scripts/seed_kms.py` — `subtopic` threaded through metadata, `fetch_exact`/`list`/`kms_list`/`kms_fetch`/`kms_query`/`kms_upsert` signatures and results
+- `docs/principles/kms/kms-conventions.md`, `kms-glossary.md`, `kms-directory-structure.md`, `kms-design-principles.md`, `kms/docs/kms-knowledge-source-rules.md`, `kms/README.md` — document the three-level `#`/`##`/`###` chunking hierarchy, the `subtopic` field, and updated worked examples
+- `kms/db/` re-seeded (653 → 1255 nodes) to apply the new chunking to existing knowledge sources
+
+### Removed
+- `issues/` — deleted after closing out issue #1 (KMS subtopic/chunking redesign)
+
 ## [12.14.0] — 2026-06-13
 
 ### Added
