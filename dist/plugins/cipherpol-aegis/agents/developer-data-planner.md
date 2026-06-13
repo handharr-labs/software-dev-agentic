@@ -29,11 +29,15 @@ See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Inpu
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
+Derive: `project` = `basename $(pwd)`.
+
 Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`):
 
 1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="data", platform="{platform}")` — scan the data TOC (dto, payload, mapper, data_source, local_data_source, repository_implementation, http_client, dependency_rule, creation_order).
 2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="data", pattern="<slug>", platform="{platform}")` — fetch the patterns needed for naming conventions, the dependency rule, and a documented code pattern. Reserve `kms_query(text="...", discipline="engineering", platform="{platform}")` for cold-start only — when the TOC vocabulary can't be mapped to what you need.
-3. Codebase explore — `Grep` for `class.*RepositoryImpl\|class.*DataSourceImpl\|implements.*Repository` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, no TODO stubs) as live code reference
+3. `kms_list(discipline="engineering", project="{project}", artifact="api-endpoints")` — scan API endpoints TOC; `kms_fetch` nodes for endpoint URLs, headers, and response shapes used by this feature's data sources. Skip if empty.
+   `kms_list(discipline="engineering", project="{project}", artifact="third-party-integrations")` — scan third-party integrations TOC; `kms_fetch` nodes for any non-standard HTTP clients or persistence libraries in use. Skip if empty.
+4. Codebase explore — `Grep` for `class.*RepositoryImpl\|class.*DataSourceImpl\|implements.*Repository` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, no TODO stubs) as live code reference
 
 Combine KMS knowledge (theory + definitions) with codebase evidence (live pattern) before proceeding.
 

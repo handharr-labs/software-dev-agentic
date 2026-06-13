@@ -51,10 +51,13 @@ Extract from the inlined content:
 
 Read the stateholder contract from disk using the `Read` tool on the path from `stateholder_contract`. If the path is `"none"` or null, skip — UI wiring will use only the plan description.
 
+Derive: `project` = `basename $(pwd)`.
+
 Load the UI-relevant presentation knowledge reference before writing any code (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
 
-1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform="{platform}")` — scan the presentation TOC (screen_structure, component, bloc_listener).
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<slug>", platform="{platform}")` — fetch the screen/component patterns.
+1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform="{platform}")` — scan the presentation TOC (bloc, cubit, bloc_listener, screen_structure, component, screen_entry_points).
+2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<slug>", platform="{platform}")` — fetch the StateHolder wiring patterns (BlocProvider, BlocBuilder, BlocListener wiring) and the screen/component patterns. Both are required — screens must be wired to their StateHolder correctly.
+3. `kms_list(discipline="engineering", project="{project}", area="core")` — scan project-tier TOC; `kms_fetch` `shared-components` for project-specific widget catalog and `deviations` for any UI convention overrides. Skip if empty.
 
 Fallback — if the list is empty or the tool is unavailable: proceed without pattern reference.
 

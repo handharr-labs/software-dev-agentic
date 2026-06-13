@@ -61,7 +61,8 @@ Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 1. `kms_list(discipline="engineering", artifact="conventions", platform="{platform}")` — scan the cross-cutting conventions TOC (e.g. `null_safety_extensions`, `helper_extensions`, `magic_constants`).
 2. `kms_fetch(discipline="engineering", artifact="conventions", topic="conventions", pattern="null_safety_extensions", platform="{platform}")` — deterministic load of the optional-handling convention (`.orEmpty()`, `.orZero()`, `.orFalse()`, etc.). Apply throughout every artifact that unwraps a nullable value.
 3. `kms_fetch` the remaining convention patterns surfaced in Step 1 (e.g. `helper_extensions`, `magic_constants`) — cross-cutting utilities and constants rules. Use `kms_query(discipline="engineering", platform="{platform}")` only as a cold-start fallback if the conventions artifact is absent.
-4. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
+4. `kms_list(discipline="engineering", project="{project}", area="core")` — scan project-tier TOC; `kms_fetch` any `deviations` nodes that override platform conventions for this project, and any `shared-components` nodes relevant to this feature. Skip if the list is empty.
+5. Codebase explore — `Grep` for a complete existing artifact per layer (e.g., a UseCase, a RepositoryImpl) excluding `test/` paths → read the most complete match as live code reference
 
 **Design system — optional, non-blocking:**
 `kms_query(text="design system component catalog", platform="{platform}", discipline="design", n_results=3)` — discipline=design discovery (cold-start; the design catalog vocabulary is not known ahead of time). If results found, keep available for StateHolder and App layer artifact steps. If no results: log `[design system] no catalog for {platform} — skipping` and continue.

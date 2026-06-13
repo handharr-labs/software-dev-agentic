@@ -30,11 +30,15 @@ See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Inpu
 
 **Step 0 — Load reference (always — run before any codebase search, regardless of mode)**
 
+Derive: `project` = `basename $(pwd)`.
+
 Fetch-by-topic (see `kms-conventions.md §Retrieval Protocol`). The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`):
 
-1. `kms_list(discipline="engineering", artifact="standard-architecture", platform="{platform}")` — scan the architecture TOC; locate the presentation patterns (screen_structure, component) and the state-holder patterns (`state_management`/bloc·cubit, or `presentation`/presenter·mvp_contract).
-2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="<presentation | state_management>", pattern="<slug>", platform="{platform}")` — fetch the presentation and state-holder patterns for naming conventions and code patterns. Reserve `kms_query(text="...", discipline="engineering", platform="{platform}")` for cold-start only.
-3. Codebase explore — `Grep` for `extends Bloc\|extends Cubit\|extends ChangeNotifier\|class.*ViewModel\|class.*StateHolder` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, non-trivial state handling) as live code reference
+1. `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform="{platform}")` — scan the presentation TOC (BLoC, Cubit, BLoC Listener, Screen Structure, Component, Screen Entry Points for flutter; presenter/screen/component for other platforms).
+2. `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<slug>", platform="{platform}")` — fetch the state-holder and screen/component patterns for naming conventions and code patterns. Reserve `kms_query(text="...", discipline="engineering", platform="{platform}")` for cold-start only.
+3. `kms_list(discipline="engineering", project="{project}", artifact="shared-components")` — scan shared components TOC; `kms_fetch` nodes for project-specific widget catalog entries relevant to this feature's screens. Skip if empty.
+   `kms_list(discipline="engineering", project="{project}", artifact="deviations")` — scan deviations TOC; `kms_fetch` any nodes that override presentation conventions for this project. Skip if empty.
+4. Codebase explore — `Grep` for `extends Bloc\|extends Cubit\|extends ChangeNotifier\|class.*ViewModel\|class.*StateHolder` excluding `test/`, `mock/`, `fake/` paths → read the most complete match (most method definitions, non-trivial state handling) as live code reference
 
 Combine KMS knowledge (theory + definitions) with codebase evidence (live pattern) before proceeding.
 
