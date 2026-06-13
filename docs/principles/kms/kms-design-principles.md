@@ -11,7 +11,7 @@ A ChromaDB-backed knowledge store shipped inside the Claude Code plugin. Agents 
 
 ## Design Goals
 
-1. **Drop-in knowledge** — drop any doc into `kms/knowledge-sources/` and the system derives scope, platform, discipline, artifact, topic, and pattern from the path — frontmatter is documentation-only, not required by the seeder
+1. **Drop-in knowledge** — drop any doc into `kms/knowledge-sources/` and the system derives scope, platform, discipline, artifact, topic, and pattern from the path — frontmatter is documentation-only, not required by the seeder. This path → metadata derivation is the **Knowledge Path Structure**, defined in [kms-conventions.md](kms-conventions.md#kmsknowledge-sources--path-conventions)
 2. **Cascade by specificity** — project overrides platform overrides universal; agents always get the most relevant knowledge
 3. **Section ownership** — each source owns specific sections of a node; no source can corrupt another's contribution
 4. **Resilient seeding** — unavailable sources are skipped silently; existing knowledge is never removed by a failed seed

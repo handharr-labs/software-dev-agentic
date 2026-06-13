@@ -3,6 +3,8 @@
 
 Path conventions, chunk strategy, metadata schema, discipline vocabulary, and retrieval protocol — the practical reference for authoring knowledge docs and writing agents that query the KMS.
 
+> **Knowledge Path Structure** — the directory + heading convention defined across this doc (Path Conventions, Chunk Strategy, and Metadata Schema below) that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`pattern` inside the file. See [kms-glossary-lite.md](kms-glossary-lite.md#glossary) for one-line definitions of each term.
+
 ---
 
 ## `kms/knowledge-sources/` — Path Conventions

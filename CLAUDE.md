@@ -45,6 +45,8 @@ Then work directly on the relevant files in `lib/core/` or `lib/platforms/<platf
 
 See `docs/principles/agentic/agentic-design-principles.md` and `docs/principles/agentic/agentic-conventions.md` — read them before adding any agent, worker, or skill.
 
+Unfamiliar term (`Persona`, `Strategist`, `Decision block`, `pattern`, etc.)? Check `docs/principles/glossary.md`.
+
 ## Conventions
 
 **Agents** — `name`, `description`, `model`, `tools` required in frontmatter. Orchestrators list sub-agents in `agents:` and never write files directly. Workers end with `## Extension Point` (check `.claude/agents.local/extensions/<name>.md`).
