@@ -18,6 +18,7 @@ class KnowledgeRepository(ABC):
         discipline: Optional[str] = None,
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
+        subtopic: Optional[str] = None,
     ) -> list[KnowledgeNode]:
         """Return metadata-only nodes matching all supplied filters (no content)."""
 
@@ -29,6 +30,7 @@ class KnowledgeRepository(ABC):
         discipline: str,
         artifact: Optional[str],
         topic: str,
+        subtopic: str,
         pattern: str,
     ) -> Optional[KnowledgeNode]:
         """Fetch one node with full content. No cascade — exact match only."""

@@ -9,6 +9,7 @@ class KnowledgeNode:
     discipline: str            # see schema.DISCIPLINE_VALUES
     topic: str
     pattern: str
+    subtopic: str = ""               # ## heading slug — equals pattern when no ### children exist
     artifact: Optional[str] = None           # conventions | standard-architecture | feature-inventory | ...
     platform: Optional[str] = None          # flutter | web | ios | android — required if scope != universal
     project: Optional[str] = None           # talenta | jurnal | ... — required if scope == project
@@ -25,7 +26,8 @@ class KnowledgeNode:
         p = self.platform or "null"
         pr = self.project or "null"
         a = self.artifact or "null"
-        return f"{p}:{pr}:{self.discipline}:{a}:{self.topic}:{self.pattern}"
+        st = self.subtopic or self.pattern
+        return f"{p}:{pr}:{self.discipline}:{a}:{self.topic}:{st}:{self.pattern}"
 
     @property
     def specificity(self) -> int:

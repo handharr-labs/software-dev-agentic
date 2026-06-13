@@ -84,6 +84,7 @@ class MarkdownSource(KnowledgeSource):
                 project=project,
                 discipline=meta["discipline"],
                 topic=meta["topic"],
+                subtopic=meta.get("subtopic") or meta["pattern"],
                 pattern=meta["pattern"],
                 summary=_extract_summary(content),
                 tags=meta.get("tags") or [],
