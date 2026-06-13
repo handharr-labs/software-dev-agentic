@@ -3,7 +3,7 @@
 
 Path conventions, chunk strategy, metadata schema, discipline vocabulary, and retrieval protocol — the practical reference for authoring knowledge docs and writing agents that query the KMS.
 
-> **Knowledge Path Structure** — the directory + heading convention defined across this doc (Path Conventions, Chunk Strategy, and Metadata Schema below) that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`pattern` inside the file. See [kms-glossary.md](kms-glossary.md#glossary) for one-line definitions of each term.
+> **Knowledge Path Structure** — the directory + heading convention defined across this doc (Path Conventions, Chunk Strategy, and Metadata Schema below) that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`subtopic`/`###`→`pattern` (depth-aware, see Chunk Strategy below) inside the file. See [kms-glossary.md](kms-glossary.md#glossary) for one-line definitions of each term.
 
 ---
 
@@ -66,32 +66,39 @@ last_scanned_local_path: null
 
 ## Chunk Strategy — Heading Hierarchy
 
-`DirectorySource` uses a three-level heading hierarchy. Each `##` heading produces one `KnowledgeNode`; its parent `#` heading sets the `topic` context carried on that node.
+`DirectorySource` uses a depth-aware, three-level heading hierarchy with a fallback. Each `#` heading sets a `topic` context. Each `##` heading sets a `subtopic` context: if it has `###` children, each `###` becomes its own `KnowledgeNode` (`pattern`); if it has none, the `##` heading itself becomes the node (`subtopic == pattern`).
 
 ```
-# Domain             → topic=domain  (context carrier, not a node itself)
-## Creation Order    → node: topic=domain, pattern=creation_order
-## Entity            → node: topic=domain, pattern=entity
+# Domain                  → topic=domain (context carrier, not a node itself)
 
-# Data               → topic=data
-## Creation Order    → node: topic=data, pattern=creation_order  ← no collision with the one above
-## Repository        → node: topic=data, pattern=repository
+## Entity                 → no ### children
+                            → node: topic=domain, subtopic=entity, pattern=entity
 
-## Standalone        → node: topic=<artifact-name>, pattern=standalone  (no # parent → artifact as topic)
-(no headings at all) → one node: topic=<artifact-name>, pattern=<artifact-name>
+## Use Case               → has ### children — each becomes its own node:
+### Theory                →   node: topic=domain, subtopic=use_case, pattern=theory
+### Code Pattern          →   node: topic=domain, subtopic=use_case, pattern=code_pattern
+### Example               →   node: topic=domain, subtopic=use_case, pattern=example
+
+## Standalone             → node: topic=<artifact-name>, subtopic=standalone, pattern=standalone
+                            (no # parent → artifact name used as topic)
+
+(no ## headings at all)   → one node: topic=<artifact-name>, subtopic=<artifact-name>, pattern=<artifact-name>
 ```
 
 | Heading level | Role | Maps to |
 |---|---|---|
 | `#` | Topic — groups related sub-topics | `topic` field on all child nodes |
-| `##` | Sub-topic — the actual chunk boundary and retrieval unit | `pattern` field; one node per `##` |
-| `###` | Section — internal structure within a sub-topic | Content body only; not chunked |
+| `##` | Sub-topic — groups related patterns, or is the node itself if it has no `###` children | `subtopic` field on all child nodes; also `pattern` when there are no `###` children |
+| `###` | Pattern — the retrieval unit, when present under a `##` | `pattern` field; one node per `###` |
+| `####`+ | Internal structure within a pattern | Content body only; not chunked |
 
-**Why `###` is not chunked:** `###` headings are internal structure (`### Theory`, `### Code Pattern`, `### Example`). A sub-topic node is only useful if it's self-contained — splitting at `###` produces fragments that are meaningless in isolation.
+**Depth-aware fallback, why:** some artifacts (catalog-style docs like a ~228-component design system) use `##` as the natural one-concept-per-heading unit with no `###` substructure — these keep the original chunking behavior (`subtopic == pattern == ## slug`). Other artifacts (heavy standard-architecture docs) use `## <Layer Concept>` → `### Theory` / `### Code Pattern` / `### Example`, sometimes 80–200+ `###` headings per file — promoting each `###` to its own node prevents a single `##` section (occasionally ~500 lines) from being returned as one content blob on `kms_fetch`/`kms_query`.
 
-**Consequence for authoring:** every distinct concept that must be retrievable by exact metadata match needs its own `##` heading. Content under `###` is indexed but only reachable via vector search. The `#` heading is mandatory whenever a file contains multiple thematic groups — it prevents `topic` collision across `##` headings with the same name.
+**Why `subtopic` is part of the node `id`:** two different `##` subtopics under the same `#` topic can each contain a `### Code Pattern` — without `subtopic` in the `id`, both would collide on `(topic, pattern)` and the second upsert would silently overwrite the first.
 
-**Content hash** is computed per `##` section after chunking, not per-file. Only sections that changed are re-upserted on the next seed run.
+**Consequence for authoring:** if a `##` section contains `###` headings, each `###` heading must be individually self-contained and retrievable — the same self-containment rule as before, now applied at the `###` level (see R5 in [kms-knowledge-source-rules.md](../../../kms/docs/kms-knowledge-source-rules.md)). `####`+ headings remain unchunked content within whichever `###` (or `##`, if it has no `###` children) node they fall under. Content between a `##` heading and its first `###` child is discarded — if that intro material needs to be retrievable, give it its own `###` section.
+
+**Content hash** is computed per node after chunking, not per-file. Only nodes that changed are re-upserted on the next seed run.
 
 ---
 
@@ -103,25 +110,26 @@ last_scanned_local_path: null
 | `discipline` | ✅ | path (dir) | `engineering`, `design`, `qa`, `devops`, `security`, `code_review`, `product`, `architecture`, `agile` |
 | `artifact` | ✅ | path (dir) | named knowledge body within a discipline — `conventions`, `standard-architecture`, `feature-inventory`, etc. |
 | `topic` | ✅ | `#` heading | slug of the parent `#` heading; artifact name if no `#` present |
-| `pattern` | ✅ | `##` heading | slug of the `##` heading — the sub-topic and retrieval key |
+| `subtopic` | ✅ | `##` heading | slug of the `##` heading — equals `pattern` when the `##` has no `###` children |
+| `pattern` | ✅ | `##` or `###` heading | slug of the `###` heading if the parent `##` has `###` children, else the `##` heading itself — the retrieval key |
 | `schema_version` | ✅ | constant | `"1"` — increment on breaking field changes |
 | `platform` | ⬜ | path / repo.yaml | `flutter`, `ios`, `android`, `web` — omit if `scope=universal` |
 | `project` | ⬜ | repo.yaml | project name — omit if `scope != project` |
 | `tags` | ⬜ | manual | JSON array string |
 | `source_file` | ⬜ | derived | absolute path to source file |
 | `updated_at` | ⬜ | derived | ISO date string |
-| `content_hash` | ⬜ | derived | SHA hash of `##` section body — used for incremental seed detection |
+| `content_hash` | ⬜ | derived | SHA hash of the node's content after chunking — used for incremental seed detection |
 | `content_type` | ⬜ | derived | `"real"` (default) — reserved, stub seeding removed |
 
-**`pattern` is discipline-neutral** — it means sub-topic in engineering, checklist item in QA, ceremony step in agile. The field name is stable; its meaning is domain-relative.
+**`pattern` is discipline-neutral** — it means a layer concept's facet in engineering, a checklist item in QA, a ceremony step in agile. The field name is stable; its meaning is domain-relative.
 
-**"Subtopic" and `pattern` are the same thing** — not an eighth term. The `##` heading is the chunk boundary, the unit `kms_fetch`/`kms_query` return, and the retrieval key. "Sub-topic" describes its *role* (a sub-division of the parent `#` topic); `pattern` is its *field name* in ChromaDB metadata.
+**`subtopic` and `pattern` are usually the same, but not always.** When a `##` heading has no `###` children, `subtopic == pattern == ## slug` — the `##` heading is the chunk boundary, the unit `kms_fetch`/`kms_query` return, and the retrieval key, exactly as before. When a `##` heading has `###` children, each `###` becomes its own node: `subtopic` stays the `##` slug (the grouping concept), `pattern` becomes the `###` slug (the retrievable unit). `kms_list` exposes both fields so an agent can narrow by `subtopic` before picking a `pattern`.
 
 ---
 
 ## Worked Examples
 
-### Platform-tier doc
+### Platform-tier doc — no `###` children
 
 File: `kms/knowledge-sources/platform/flutter/engineering/standard-architecture/standard-architecture.md`
 
@@ -137,7 +145,31 @@ File: `kms/knowledge-sources/platform/flutter/engineering/standard-architecture/
 | discipline | `engineering` | path segment |
 | artifact | `standard-architecture` | path segment |
 | topic | `domain` | `#` heading slug |
-| pattern (subtopic) | `entity` | `##` heading slug |
+| subtopic | `entity` | `##` heading slug |
+| pattern | `entity` | == subtopic — no `###` children |
+
+### Platform-tier doc — with `###` children
+
+File: `kms/knowledge-sources/platform/flutter/engineering/standard-architecture/standard-architecture.md`
+
+```markdown
+# Domain
+## Use Case
+### Theory
+### Code Pattern
+```
+
+Two separate nodes are produced from this `##` section:
+
+| Term | Value (node 1) | Value (node 2) | From |
+|---|---|---|---|
+| scope | `platform` | `platform` | top-level bucket |
+| platform | `flutter` | `flutter` | path segment |
+| discipline | `engineering` | `engineering` | path segment |
+| artifact | `standard-architecture` | `standard-architecture` | path segment |
+| topic | `domain` | `domain` | `#` heading slug |
+| subtopic | `use_case` | `use_case` | `##` heading slug |
+| pattern | `theory` | `code_pattern` | `###` heading slug |
 
 ### Project-tier doc
 
@@ -156,7 +188,8 @@ File: `kms/knowledge-sources/projects/mobile-talenta/feature-inventory/feature-i
 | discipline | `engineering` | default for project docs |
 | artifact | `feature-inventory` | path segment |
 | topic | `time_management` | `#` heading slug |
-| pattern (subtopic) | `clock_in_out` | `##` heading slug |
+| subtopic | `clock_in_out` | `##` heading slug |
+| pattern | `clock_in_out` | == subtopic — no `###` children |
 
 ### Universal-tier doc
 
@@ -174,7 +207,8 @@ File: `kms/knowledge-sources/universal/agile/sprint-ceremonies/sprint-ceremonies
 | discipline | `agile` | path segment |
 | artifact | `sprint-ceremonies` | path segment |
 | topic | `planning` | `#` heading slug |
-| pattern (subtopic) | `sprint_planning_meeting` | `##` heading slug |
+| subtopic | `sprint_planning_meeting` | `##` heading slug |
+| pattern | `sprint_planning_meeting` | == subtopic — no `###` children |
 
 ---
 
@@ -206,53 +240,62 @@ Three MCP tools serve different retrieval needs. Agents should combine them, not
 
 **Combination pattern — `kms_list` narrows, `kms_fetch` retrieves:**
 1. `kms_list(discipline, platform)` — scan the TOC, reason over which artifacts/topics exist
-2. If the TOC is still large, narrow further with the same call — `kms_list(discipline, platform, artifact)` or `kms_list(discipline, platform, artifact, topic)` — each added param shrinks the TOC by one level. `pattern` is never a `kms_list` filter; it's what step 1-2 are narrowing down *to*.
-3. Once `artifact`, `topic`, and `pattern` are known (e.g. `## Null Safety Extensions` under `platform/flutter/engineering/conventions/` → `artifact=conventions, topic=conventions, pattern=null_safety_extensions`): `kms_fetch(discipline, artifact, topic, pattern, platform)` — guaranteed, cascade-resolved retrieval
+2. If the TOC is still large, narrow further with the same call — `kms_list(discipline, platform, artifact)`, then `..., topic)`, then `..., subtopic)` — each added param shrinks the TOC by one level. `pattern` is never a `kms_list` filter; it's what the funnel is narrowing down *to*.
+3. Once `artifact`, `topic`, `subtopic`, and `pattern` are known (e.g. `### Code Pattern` under `## Use Case` under `# Domain` in `platform/flutter/engineering/standard-architecture/` → `artifact=standard_architecture, topic=domain, subtopic=use_case, pattern=code_pattern`): `kms_fetch(discipline, artifact, topic, subtopic, pattern, platform)` — guaranteed, cascade-resolved retrieval
 4. For exploratory or intent-based needs (e.g. "what conventions apply when writing this artifact type"): `kms_query(text, discipline, platform, n_results)` — semantic ranking, bypasses the narrowing steps entirely
 
 **Why this matters:** `kms_query` ranks top-k across *all* matching nodes — a cross-cutting convention that applies to nearly every artifact (e.g. null-safety unwrapping) can be crowded out of the top-k by more numerous architecture-pattern nodes. When a topic's heading is uniform across platforms, prefer `kms_fetch` for guaranteed retrieval over hoping `kms_query` surfaces it.
 
 ### Terms as a Scoping Funnel
 
-The Rosetta Stone terms above aren't just path/metadata mappings — they're the `kms_list` filter parameters, in narrowing order: `platform`/`project` (cascade tier) → `discipline` → `artifact` → `topic` → `pattern`. Each term you supply shrinks the TOC by one level. **`pattern` is never a `kms_list` filter** — it's the funnel's output, the value the agent is narrowing down *to*.
+The Rosetta Stone terms above aren't just path/metadata mappings — they're the `kms_list` filter parameters, in narrowing order: `platform`/`project` (cascade tier) → `discipline` → `artifact` → `topic` → `subtopic` → `pattern`. Each term you supply shrinks the TOC by one level. **`pattern` is never a `kms_list` filter** — it's the funnel's output, the value the agent is narrowing down *to*.
 
 ```
 kms_list(platform="flutter", discipline="engineering")
   → TOC across every artifact in flutter engineering (conventions, standard-architecture, ...)
-       artifact=standard-architecture  topic=domain  pattern=entity
-       artifact=standard-architecture  topic=domain  pattern=use_case
-       artifact=standard-architecture  topic=data    pattern=repository_impl
-       artifact=conventions            topic=conventions  pattern=null_safety_extensions
+       artifact=standard-architecture  topic=domain  subtopic=entity     pattern=entity
+       artifact=standard-architecture  topic=domain  subtopic=use_case   pattern=theory
+       artifact=standard-architecture  topic=domain  subtopic=use_case   pattern=code_pattern
+       artifact=standard-architecture  topic=data    subtopic=repository_impl  pattern=repository_impl
+       artifact=conventions            topic=conventions  subtopic=null_safety_extensions  pattern=null_safety_extensions
        ...
 
 kms_list(platform="flutter", discipline="engineering", artifact="standard-architecture")
   → narrowed to one artifact's TOC
-       topic=domain  pattern=entity
-       topic=domain  pattern=use_case
-       topic=data    pattern=repository_impl
+       topic=domain  subtopic=entity    pattern=entity
+       topic=domain  subtopic=use_case  pattern=theory
+       topic=domain  subtopic=use_case  pattern=code_pattern
+       topic=data    subtopic=repository_impl  pattern=repository_impl
+
+kms_list(platform="flutter", discipline="engineering", artifact="standard-architecture",
+         topic="domain", subtopic="use_case")
+  → narrowed to one subtopic's patterns
+       pattern=theory
+       pattern=code_pattern
 
 kms_fetch(discipline="engineering", artifact="standard-architecture",
-          topic="domain", pattern="entity", platform="flutter")
+          topic="domain", subtopic="use_case", pattern="code_pattern", platform="flutter")
   → exact node, cascade-resolved project → platform → universal
 ```
 
-Once `kms_list` returns a TOC small enough to read every `(topic, pattern)` pair, the agent has everything `kms_fetch` needs — the four required params are exactly the path-derived terms (`discipline`, `artifact`, `topic`, `pattern`), with `platform`/`project` carried forward from the funnel to drive cascade resolution.
+Once `kms_list` returns a TOC small enough to read every `(topic, subtopic, pattern)` triple, the agent has everything `kms_fetch` needs — the five required params are exactly the path-derived terms (`discipline`, `artifact`, `topic`, `subtopic`, `pattern`), with `platform`/`project` carried forward from the funnel to drive cascade resolution.
 
 | Tool | Funnel role | Params (Rosetta terms only) |
 |---|---|---|
-| `kms_list` | Narrow the TOC, one term at a time | `platform, project, discipline, artifact, topic` (no `pattern`) |
-| `kms_fetch` | Exact retrieval once the funnel bottoms out | `discipline, artifact, topic, pattern` required; `platform, project` for cascade |
+| `kms_list` | Narrow the TOC, one term at a time | `platform, project, discipline, artifact, topic, subtopic` (no `pattern`) |
+| `kms_fetch` | Exact retrieval once the funnel bottoms out | `discipline, artifact, topic, subtopic, pattern` required; `platform, project` for cascade |
 | `kms_query` | Bypass — semantic search when the funnel can't be walked | `platform, discipline` only |
 
 ---
 
 ## `kms_upsert` — Manual Mapping
 
-`kms_upsert` bypasses path-derivation entirely — the caller supplies `discipline`, `artifact`, `topic`, `pattern` directly. Same Rosetta Stone applies:
+`kms_upsert` bypasses path-derivation entirely — the caller supplies `discipline`, `artifact`, `topic`, `pattern`, and optionally `subtopic` directly. Same Rosetta Stone applies:
 
 - `artifact` = the artifact folder this knowledge belongs to
 - `topic` = slug of the parent `#` group (or artifact name if no grouping)
-- `pattern` = snake_case slug of the canonical concept name — equivalent to a `##` heading
+- `subtopic` = slug of the parent `##` group (or `pattern` if there is no `##`/`###` split — this is the default when `subtopic` is omitted)
+- `pattern` = snake_case slug of the canonical concept name — equivalent to a `###` heading if the content has a `##` parent, else a `##` heading
 
 See [kms-knowledge-source-rules.md](../../../kms/docs/kms-knowledge-source-rules.md) for full authoring rules.
 

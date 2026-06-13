@@ -58,7 +58,7 @@ kms/knowledge-sources/
         └── {artifact}/{file}.md   (+ repo.yaml)
 ```
 
-Each `{file}.md` is then chunked by heading: `#` → `topic`, `##` → `pattern`. See [kms-conventions.md — Path Conventions](kms-conventions.md#kmsknowledge-sources--path-conventions) and [Chunk Strategy](kms-conventions.md#chunk-strategy--heading-hierarchy) for the full rules, and [kms-glossary.md](kms-glossary.md) for term definitions (`scope`, `discipline`, `artifact`, `topic`, `pattern`, Knowledge Path, Knowledge Path Structure).
+Each `{file}.md` is then chunked by heading: `#` → `topic`, `##` → `subtopic`, `###` → `pattern` (depth-aware — `##` is also `pattern` when it has no `###` children). See [kms-conventions.md — Path Conventions](kms-conventions.md#kmsknowledge-sources--path-conventions) and [Chunk Strategy](kms-conventions.md#chunk-strategy--heading-hierarchy) for the full rules, and [kms-glossary.md](kms-glossary.md) for term definitions (`scope`, `discipline`, `artifact`, `topic`, `subtopic`, `pattern`, Knowledge Path, Knowledge Path Structure).
 
 ---
 

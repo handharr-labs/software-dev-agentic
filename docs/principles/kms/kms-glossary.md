@@ -18,17 +18,18 @@ A quick-reference list of KMS vocabulary terms with one-line definitions — for
 | **Discipline** | The role / work-area a knowledge artifact serves — `engineering`, `design`, `qa`, `devops`, `security`, `code_review`, `product`, `architecture`, `agile`. |
 | **Artifact** | The named body of knowledge within a discipline — an open-ended kebab-case folder name, e.g. `conventions`, `standard-architecture`, `feature-inventory`. |
 | **Topic** | A `#` heading inside an artifact file — a thematic grouping of related concepts. |
-| **Pattern** (aka **Subtopic**) | A `##` heading inside an artifact file — one self-contained, retrievable concept, and the canonical name used for that concept across all platforms. |
-| **Knowledge Path** | The ordered tuple of Rosetta Stone terms (`scope` → `platform`/`project` → `discipline` → `artifact` → optionally `topic` → optionally `pattern`) that addresses a knowledge node — same shape as a `kms_list`/`kms_fetch` filter set. E.g. `# Domain` in `platform/ios/engineering/standard-architecture/standard-architecture.md` → `scope=platform, platform=ios, discipline=engineering, artifact=standard-architecture, topic=domain`. |
-| **Knowledge Path Structure** | The overall directory + heading convention that every Knowledge Path is an instance of: `{scope}/[{platform}\|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`pattern` inside the file. Defined in [kms-conventions.md](kms-conventions.md#kmsknowledge-sources--path-conventions). |
+| **Subtopic** | A `##` heading inside an artifact file — a sub-division of the parent `#` topic. Equals `pattern` when the `##` has no `###` children; otherwise groups one or more `###` patterns. |
+| **Pattern** | The retrieval unit — a `###` heading when its parent `##` has `###` children, otherwise the `##` heading itself. One self-contained, retrievable concept, and the canonical name used for that concept across all platforms. |
+| **Knowledge Path** | The ordered tuple of Rosetta Stone terms (`scope` → `platform`/`project` → `discipline` → `artifact` → optionally `topic` → optionally `subtopic` → optionally `pattern`) that addresses a knowledge node — same shape as a `kms_list`/`kms_fetch` filter set. E.g. `# Domain` in `platform/ios/engineering/standard-architecture/standard-architecture.md` → `scope=platform, platform=ios, discipline=engineering, artifact=standard-architecture, topic=domain`. |
+| **Knowledge Path Structure** | The overall directory + heading convention that every Knowledge Path is an instance of: `{scope}/[{platform}\|{project}]/{discipline}/{artifact}/{file}.md`, then `#`→`topic`/`##`→`subtopic`/`###`→`pattern` (depth-aware — `##` is also `pattern` when it has no `###` children) inside the file. Defined in [kms-conventions.md](kms-conventions.md#kmsknowledge-sources--path-conventions). |
 | **Rosetta Stone** | The term-to-storage-path-to-metadata-field mapping table in [kms-conventions.md](kms-conventions.md) — the canonical reference when a term's meaning is unclear. |
 | **Cascade resolution** | The fallback order KMS uses when fetching a node: `project → platform → universal` — most specific match wins. |
-| **Scoping funnel** | The narrowing order for `kms_list` calls: `platform`/`project` → `discipline` → `artifact` → `topic` → `pattern` (output, never a filter). |
+| **Scoping funnel** | The narrowing order for `kms_list` calls: `platform`/`project` → `discipline` → `artifact` → `topic` → `subtopic` → `pattern` (output, never a filter). |
 | **Retrieval Protocol** | The decision table for which KMS MCP tool (`kms_list`/`kms_fetch`/`kms_query`) to use for a given retrieval need. Defined in [kms-conventions.md](kms-conventions.md#retrieval-protocol). |
 | **kms_list** | MCP tool — returns a TOC (metadata only) for a given filter combination; narrows one term at a time. |
-| **kms_fetch** | MCP tool — exact, cascade-resolved retrieval once `discipline`/`artifact`/`topic`/`pattern` are known. |
+| **kms_fetch** | MCP tool — exact, cascade-resolved retrieval once `discipline`/`artifact`/`topic`/`subtopic`/`pattern` are known. |
 | **kms_query** | MCP tool — semantic search bypass when the exact `pattern` isn't known yet; ranks by similarity. |
-| **kms_upsert** | MCP tool — manually seed a knowledge node by supplying `discipline`/`artifact`/`topic`/`pattern` directly. |
+| **kms_upsert** | MCP tool — manually seed a knowledge node by supplying `discipline`/`artifact`/`topic`/`pattern` directly (`subtopic` optional, defaults to `pattern`). |
 
 ---
 
