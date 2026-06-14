@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.22.3] — 2026-06-14
+
+### Fixed
+- `developer-app/data/domain/pres-planner.md` — removed duplicate `cat findings-format.md` from `## Search Protocol`; schema is only needed at write time, so the single `cat` in `## Output` is sufficient
+
 ## [12.22.2] — 2026-06-14
 
 ### Added
