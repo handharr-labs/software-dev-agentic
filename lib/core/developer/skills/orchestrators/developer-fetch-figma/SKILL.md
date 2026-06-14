@@ -23,7 +23,15 @@ Parse formal arguments on the invocation line.
 | Local path where `ls <path>/frame_*/` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 2 (go straight to Step 3) |
 | `--platform=<value>` | Platform slug | Set `platform` (`flutter`, `ios`, `web`) |
 
-If no arguments are provided, `pending_figma_urls` is empty and `figma_fetch_dir` is unset — proceed to Step 1 and collect everything there.
+**After parsing args**, if `platform` is still unset, check env vars via `Bash`:
+
+```bash
+echo "${CIPHERPOL_PLATFORM:-}"
+```
+
+If the output is a non-empty valid slug (`flutter`, `ios`, `web`), set `platform` from it. Otherwise leave `platform` unset and Step 1 will ask.
+
+If no arguments are provided and no env vars resolve, `pending_figma_urls` is empty and `figma_fetch_dir` is unset — proceed to Step 1 and collect everything there.
 
 ## Step 1 — Gather Info
 
