@@ -1,8 +1,8 @@
 """
-KMS Dashboard HTTP server — local web UI for browsing and editing knowledge nodes.
+KMS Dashboard HTTP server — local web UI mirroring kms_list / kms_fetch / kms_query MCP tools.
 
 Run via: bash scripts/kms-dashboard.sh [port]
-Or directly: KMS_DB_PATH=... KMS_REPO_ROOT=... python -m kms.dashboard.server [port]
+Or directly: KMS_DB_PATH=... python -m kms.dashboard.server [port]
 """
 from __future__ import annotations
 import json
@@ -38,6 +38,35 @@ _query_uc = QueryKnowledge(_repo)
 _upsert_uc = UpsertKnowledge(_repo)
 
 
+def _fetch_by_id(node_id: str):
+    """
+    Direct ID lookup — fallback for old-schema nodes where area/artifact/subtopic are absent
+    and fetch_exact's where-clause returns empty.
+
+    Old stored format (5 parts): platform:project:discipline:topic:pattern
+    New computed format (8 parts): platform:project:discipline:area:artifact:topic:subtopic:pattern
+    """
+    from kms.data.chroma_repository import _from_meta
+
+    def _try(id_: str):
+        r = _repo._col.get(ids=[id_], include=["metadatas", "documents"])
+        metas = r.get("metadatas") or []
+        docs  = r.get("documents") or []
+        return _from_meta(metas[0], content=docs[0] if docs else None) if metas else None
+
+    node = _try(node_id)
+    if node is not None:
+        return node
+
+    # Reconstruct old 5-part ID from new 8-part: keep parts [0,1,2,5,7] (plt:prj:dis:topic:pattern)
+    parts = node_id.split(":")
+    if len(parts) == 8:
+        old_id = ":".join([parts[0], parts[1], parts[2], parts[5], parts[7]])
+        return _try(old_id)
+
+    return None
+
+
 def _bump_version() -> None:
     version_file = os.path.join(_REPO_ROOT, "dist", ".kms_seeds", ".version")
     os.makedirs(os.path.dirname(version_file), exist_ok=True)
@@ -46,9 +75,62 @@ def _bump_version() -> None:
         f.write(f"dashboard:{ts}")
 
 
+# Exactly mirrors kms_list MCP response shape.
+def _node_list_dict(n: KnowledgeNode) -> dict:
+    return {
+        "id":         n.id,
+        "platform":   n.platform,
+        "project":    n.project,
+        "scope":      n.scope,
+        "discipline": n.discipline,
+        "area":       n.area,
+        "artifact":   n.artifact,
+        "topic":      n.topic,
+        "subtopic":   n.subtopic,
+        "pattern":    n.pattern,
+        "summary":    n.summary,
+        "tags":       n.tags,
+    }
+
+
+# Exactly mirrors kms_fetch MCP response shape.
+def _node_fetch_dict(n: KnowledgeNode) -> dict:
+    return {
+        "id":          n.id,
+        "platform":    n.platform,
+        "project":     n.project,
+        "scope":       n.scope,
+        "discipline":  n.discipline,
+        "area":        n.area,
+        "artifact":    n.artifact,
+        "topic":       n.topic,
+        "subtopic":    n.subtopic,
+        "pattern":     n.pattern,
+        "summary":     n.summary,
+        "tags":        n.tags,
+        "source_file": n.source_file,
+        "updated_at":  n.updated_at,
+        "content":     n.content,
+    }
+
+
+# Exactly mirrors kms_query MCP response shape.
+def _node_query_dict(n: KnowledgeNode) -> dict:
+    return {
+        "id":         n.id,
+        "discipline": n.discipline,
+        "area":       n.area,
+        "topic":      n.topic,
+        "subtopic":   n.subtopic,
+        "pattern":    n.pattern,
+        "summary":    n.summary,
+        "content":    n.content,
+    }
+
+
 class _Handler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):  # noqa: A002
-        pass  # suppress per-request noise; errors still surfaced via sys.stderr
+        pass
 
     def _send(self, status: int, body: bytes, content_type: str = "application/json") -> None:
         self.send_response(status)
@@ -86,37 +168,39 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, data, "text/html; charset=utf-8")
             return
 
+        # Mirrors kms_list MCP tool.
         if parsed.path == "/api/list":
             nodes = _list_uc.execute(
-                platform=q("platform"), project=q("project"),
-                discipline=q("discipline"), area=q("area"), topic=q("topic"),
+                platform=q("platform"),
+                project=q("project"),
+                discipline=q("discipline"),
+                area=q("area"),
+                artifact=q("artifact"),
+                topic=q("topic"),
+                subtopic=q("subtopic"),
             )
-            self._json([{
-                "id": n.id, "platform": n.platform, "project": n.project,
-                "discipline": n.discipline, "area": n.area, "topic": n.topic, "pattern": n.pattern,
-                "summary": n.summary, "tags": n.tags,
-            } for n in nodes])
+            self._json([_node_list_dict(n) for n in nodes])
             return
 
+        # Mirrors kms_fetch MCP tool.
+        # Falls back to direct ID lookup for old-schema nodes missing area/artifact/subtopic.
         if parsed.path == "/api/fetch":
             node = _fetch_uc.execute(
                 discipline=q("discipline") or "",
                 area=q("area") or "",
+                artifact=q("artifact"),
                 topic=q("topic") or "",
+                subtopic=q("subtopic") or q("pattern") or "",
                 pattern=q("pattern") or "",
                 platform=q("platform"),
                 project=q("project"),
             )
+            if node is None and q("id"):
+                node = _fetch_by_id(q("id"))
             if node is None:
                 self._json({"error": "not found"}, 404)
             else:
-                self._json({
-                    "id": node.id, "platform": node.platform, "project": node.project,
-                    "discipline": node.discipline, "area": node.area, "topic": node.topic, "pattern": node.pattern,
-                    "summary": node.summary, "tags": node.tags,
-                    "source_file": node.source_file, "updated_at": node.updated_at,
-                    "content": node.content,
-                })
+                self._json(_node_fetch_dict(node))
             return
 
         self._send(404, b"Not found", "text/plain")
@@ -125,6 +209,7 @@ class _Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         body = self._read_body()
 
+        # Mirrors kms_query MCP tool.
         if parsed.path == "/api/query":
             text = body.get("text", "")
             where: dict = {}
@@ -134,29 +219,34 @@ class _Handler(BaseHTTPRequestHandler):
                 where["discipline"] = body["discipline"]
             if body.get("area"):
                 where["area"] = body["area"]
-            n_results = int(body.get("n_results", 8))
+            n_results = int(body.get("n_results", 5))
             nodes = _query_uc.execute(text=text, where=where or None, n_results=n_results)
-            self._json([{
-                "id": n.id, "platform": n.platform, "project": n.project,
-                "discipline": n.discipline, "area": n.area, "topic": n.topic, "pattern": n.pattern,
-                "summary": n.summary, "content": n.content,
-            } for n in nodes])
+            self._json([_node_query_dict(n) for n in nodes])
             return
 
+        # Mirrors kms_upsert MCP tool.
         if parsed.path == "/api/upsert":
             try:
+                from datetime import date
+                platform = body.get("platform") or None
+                project  = body.get("project") or None
+                scope    = "project" if project else "platform" if platform else "universal"
+                pattern  = body["pattern"]
                 node = KnowledgeNode(
-                    platform=body.get("platform") or None,
-                    project=body.get("project") or None,
+                    scope=scope,
+                    platform=platform,
+                    project=project,
                     discipline=body["discipline"],
-                    area=body["area"],
+                    area=body.get("area") or "",
+                    artifact=body.get("artifact") or None,
                     topic=body["topic"],
-                    pattern=body["pattern"],
+                    subtopic=body.get("subtopic") or pattern,
+                    pattern=pattern,
                     content=body.get("content", ""),
                     summary=body.get("summary", ""),
                     tags=list(body.get("tags") or []),
                     source_file=body.get("source_file"),
-                    updated_at=body.get("updated_at") or datetime.now(timezone.utc).date().isoformat(),
+                    updated_at=body.get("updated_at") or date.today().isoformat(),
                 )
                 _upsert_uc.execute(node)
                 _bump_version()

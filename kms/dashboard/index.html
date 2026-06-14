@@ -17,6 +17,8 @@
   --accent-dim: #1e3a5f;
   --ok: #4caf50;
   --err: #e57373;
+  --tag: #2a3a2a;
+  --tag-text: #7ecf7e;
 }
 body {
   background: var(--bg); color: var(--text);
@@ -30,7 +32,7 @@ body {
   display: flex; align-items: center; gap: 12px; padding: 0 16px; flex-shrink: 0;
 }
 #header h1 { font-size: 14px; font-weight: 600; color: var(--accent); white-space: nowrap; }
-#search-wrap { flex: 1; display: flex; gap: 8px; max-width: 500px; }
+#search-wrap { flex: 1; display: flex; gap: 8px; max-width: 560px; }
 #search-input {
   flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 5px;
   color: var(--text); padding: 5px 10px; font-size: 13px; outline: none;
@@ -43,13 +45,15 @@ button {
 button:hover { border-color: var(--accent); color: var(--accent); }
 button.primary { background: var(--accent-dim); border-color: var(--accent); color: #9ecfff; }
 button.primary:hover { background: #254f7a; color: #fff; }
+button.ghost { background: none; border-color: transparent; color: var(--muted); font-size: 11px; }
+button.ghost:hover { border-color: var(--border); color: var(--text); }
 
 /* ── Main layout ── */
 #main { display: flex; flex: 1; overflow: hidden; }
 
 /* ── Sidebar ── */
 #sidebar {
-  width: 230px; flex-shrink: 0; background: var(--surface);
+  width: 240px; flex-shrink: 0; background: var(--surface);
   border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
 }
 #sidebar-head {
@@ -62,23 +66,22 @@ button.primary:hover { background: #254f7a; color: #fff; }
 /* Tree rows */
 .t-row { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 3px 0; user-select: none; }
 .t-row:hover { background: var(--surface2); }
-.t-caret { font-size: 9px; color: var(--muted); transition: transform 0.12s; display: inline-block; }
+.t-caret { font-size: 9px; color: var(--muted); transition: transform 0.12s; display: inline-block; width: 10px; text-align: center; }
 .t-caret.open { transform: rotate(90deg); }
 .t-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .t-cnt { font-size: 10px; color: var(--muted); padding-right: 8px; }
 .t-children.collapsed { display: none; }
 
-.t-platform { padding-left: 10px; font-weight: 600; font-size: 12px; color: #7db8f7; }
-.t-discipline { padding-left: 22px; font-size: 11px; color: #9da8b4; }
-.t-topic { padding-left: 34px; font-size: 11px; color: var(--muted); }
-.t-pattern { padding-left: 46px; font-size: 12px; color: var(--text); border-radius: 3px; }
-.t-pattern:hover { background: var(--surface2); }
+.t-discipline { padding-left: 10px; font-weight: 600; font-size: 12px; color: #7db8f7; }
+.t-area       { padding-left: 22px; font-size: 11px; color: #9da8b4; }
+.t-topic      { padding-left: 34px; font-size: 11px; color: var(--muted); }
+.t-pattern    { padding-left: 46px; font-size: 12px; color: var(--text); border-radius: 3px; }
+.t-pattern:hover  { background: var(--surface2); }
 .t-pattern.active { background: var(--accent-dim); color: #9ecfff; }
 
 /* ── Content panel ── */
 #content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-/* Common bar style */
 .bar {
   padding: 8px 18px; font-size: 11px; color: var(--muted); background: var(--surface);
   border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; gap: 8px;
@@ -94,15 +97,25 @@ button.primary:hover { background: #254f7a; color: #fff; }
 
 /* Node view */
 #v-node { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#node-top {
+  background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+#breadcrumb {
+  padding: 8px 18px; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px;
+}
 #node-meta {
-  padding: 8px 18px; background: var(--surface); border-bottom: 1px solid var(--border);
-  display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;
+  padding: 6px 18px 10px; display: flex; gap: 6px; flex-wrap: wrap;
 }
 .chip {
   background: var(--surface2); border: 1px solid var(--border); border-radius: 3px;
-  padding: 1px 7px; font-size: 11px; color: var(--muted);
+  padding: 2px 7px; font-size: 11px; color: var(--muted);
 }
 .chip span { color: var(--text); }
+.chip.tag { background: var(--tag); border-color: #3a4a3a; color: var(--tag-text); }
+
+/* Node body: editor left, raw JSON right */
+#node-body { flex: 1; display: flex; overflow: hidden; }
+#editor-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #editor { flex: 1; overflow-y: auto; padding: 18px; }
 .sec-block { margin-bottom: 18px; }
 .sec-label {
@@ -123,6 +136,23 @@ textarea:focus { border-color: var(--accent); }
 #save-status.ok { color: var(--ok); }
 #save-status.err { color: var(--err); }
 
+/* Raw JSON panel */
+#raw-panel {
+  width: 340px; flex-shrink: 0; border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#raw-panel-head {
+  padding: 8px 12px; font-size: 10px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+#raw-panel-head span { color: var(--accent); }
+#raw-json {
+  flex: 1; overflow-y: auto; padding: 12px;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; font-size: 11px;
+  line-height: 1.6; color: #9da8b4; white-space: pre-wrap; word-break: break-all;
+}
+
 /* Search view */
 #v-search { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 #search-results { flex: 1; overflow-y: auto; padding: 16px; }
@@ -132,8 +162,14 @@ textarea:focus { border-color: var(--accent); }
 }
 .r-card:hover { border-color: var(--accent); }
 .r-id { font-size: 10px; color: var(--accent); font-family: monospace; margin-bottom: 4px; }
-.r-name { font-size: 13px; color: var(--text); margin-bottom: 3px; }
-.r-summary { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.r-path { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.r-summary { font-size: 11px; color: #9da8b4; line-height: 1.5; }
+.r-snippet {
+  margin-top: 6px; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 11px; color: var(--muted); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px;
+  white-space: pre-wrap; word-break: break-all; max-height: 80px; overflow: hidden;
+}
 
 /* New node view */
 #v-new { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -160,17 +196,17 @@ textarea:focus { border-color: var(--accent); }
 <div id="header">
   <h1>KMS Dashboard</h1>
   <div id="search-wrap">
-    <input id="search-input" placeholder="Search patterns by intent…" />
-    <button onclick="doSearch()">Search</button>
+    <input id="search-input" placeholder="kms_query: search by intent…" />
+    <button onclick="doSearch()">Query</button>
   </div>
   <button class="primary" onclick="showView('v-new'); initNewForm()">+ New Node</button>
 </div>
 
 <div id="main">
-  <!-- Sidebar tree -->
+  <!-- Sidebar: kms_list tree -->
   <div id="sidebar">
     <div id="sidebar-head">
-      <span>Knowledge Store</span>
+      <span>kms_list</span>
       <span id="node-count" style="color:var(--text)">—</span>
     </div>
     <div id="tree"></div>
@@ -182,24 +218,34 @@ textarea:focus { border-color: var(--accent); }
     <!-- Placeholder -->
     <div id="v-placeholder">
       <strong>KMS Dashboard</strong>
-      <span>Select a node from the tree, or search by intent</span>
+      <span>Select a node (kms_fetch) or search by intent (kms_query)</span>
     </div>
 
-    <!-- Node editor -->
+    <!-- Node view: kms_fetch -->
     <div id="v-node" style="display:none">
-      <div id="breadcrumb" class="bar"></div>
-      <div id="node-meta"></div>
-      <div id="editor"></div>
-      <div id="editor-actions">
-        <button class="primary" onclick="saveNode()">Save</button>
-        <button onclick="showView('v-placeholder')">Cancel</button>
-        <span id="save-status"></span>
+      <div id="node-top">
+        <div id="breadcrumb"></div>
+        <div id="node-meta"></div>
+      </div>
+      <div id="node-body">
+        <div id="editor-wrap">
+          <div id="editor"></div>
+          <div id="editor-actions">
+            <button class="primary" onclick="saveNode()">Save</button>
+            <button onclick="showView('v-placeholder')">Cancel</button>
+            <span id="save-status"></span>
+          </div>
+        </div>
+        <div id="raw-panel">
+          <div id="raw-panel-head"><span>kms_fetch</span> response</div>
+          <div id="raw-json"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Search results -->
+    <!-- Search results: kms_query -->
     <div id="v-search" style="display:none">
-      <div id="search-bar" class="bar">Search results</div>
+      <div id="search-bar" class="bar">kms_query results</div>
       <div id="search-results"></div>
     </div>
 
@@ -213,8 +259,13 @@ textarea:focus { border-color: var(--accent); }
           <div class="f-row"><label>Discipline *</label><input id="nf-discipline" placeholder="engineering" /></div>
         </div>
         <div class="f-grid">
+          <div class="f-row"><label>Area</label><input id="nf-area" placeholder="architecture / testing / ui / …" /></div>
+          <div class="f-row"><label>Artifact</label><input id="nf-artifact" placeholder="conventions / patterns / (blank)" /></div>
           <div class="f-row"><label>Topic *</label><input id="nf-topic" placeholder="domain" /></div>
+        </div>
+        <div class="f-grid">
           <div class="f-row"><label>Pattern *</label><input id="nf-pattern" placeholder="use_case" /></div>
+          <div class="f-row"><label>Subtopic</label><input id="nf-subtopic" placeholder="(defaults to pattern)" /></div>
           <div class="f-row"><label>Tags (comma-separated)</label><input id="nf-tags" placeholder="clean-arch, flutter" /></div>
         </div>
         <div class="f-row">
@@ -254,7 +305,7 @@ function showView(id) {
   }
 }
 
-// ── TOC ────────────────────────────────────────────────────────────────
+// ── kms_list TOC ───────────────────────────────────────────────────────
 
 async function loadTOC() {
   const res = await fetch('/api/list');
@@ -263,24 +314,23 @@ async function loadTOC() {
   buildTree(allNodes);
 }
 
-// ── Tree ───────────────────────────────────────────────────────────────
-
+// Tree: discipline → area → topic → [patterns]
 function buildTree(nodes) {
-  // Group: platform → discipline → topic → [nodes]
   const tree = {};
   for (const n of nodes) {
-    const plt = n.platform || 'universal';
-    if (!tree[plt]) tree[plt] = {};
-    if (!tree[plt][n.discipline]) tree[plt][n.discipline] = {};
-    if (!tree[plt][n.discipline][n.topic]) tree[plt][n.discipline][n.topic] = [];
-    tree[plt][n.discipline][n.topic].push(n);
+    const dis = n.discipline || '(none)';
+    const area = n.area || '—';
+    const top = n.topic || '(none)';
+    if (!tree[dis]) tree[dis] = {};
+    if (!tree[dis][area]) tree[dis][area] = {};
+    if (!tree[dis][area][top]) tree[dis][area][top] = [];
+    tree[dis][area][top].push(n);
   }
 
   const root = document.getElementById('tree');
   root.innerHTML = '';
-
-  for (const plt of Object.keys(tree).sort()) {
-    root.appendChild(makePlatformNode(plt, tree[plt]));
+  for (const dis of Object.keys(tree).sort()) {
+    root.appendChild(makeDisciplineNode(dis, tree[dis]));
   }
 }
 
@@ -289,7 +339,7 @@ function makeRow(cls, label, caret, count) {
   row.className = `t-row ${cls}`;
   if (caret) {
     const c = document.createElement('span');
-    c.className = 'tree-caret t-caret open';
+    c.className = 't-caret open';
     c.textContent = '▶';
     row.appendChild(c);
   }
@@ -315,27 +365,13 @@ function bindCollapse(row, children) {
   });
 }
 
-function makePlatformNode(plt, disciplines) {
-  const wrap = document.createElement('div');
-  const row = makeRow('t-platform', plt, true);
-  const kids = document.createElement('div');
-  kids.className = 't-children';
-  for (const dis of Object.keys(disciplines).sort()) {
-    kids.appendChild(makeDisciplineNode(plt, dis, disciplines[dis]));
-  }
-  bindCollapse(row, kids);
-  wrap.appendChild(row);
-  wrap.appendChild(kids);
-  return wrap;
-}
-
-function makeDisciplineNode(plt, dis, topics) {
+function makeDisciplineNode(dis, areas) {
   const wrap = document.createElement('div');
   const row = makeRow('t-discipline', dis, true);
   const kids = document.createElement('div');
   kids.className = 't-children';
-  for (const top of Object.keys(topics).sort()) {
-    kids.appendChild(makeTopicNode(plt, dis, top, topics[top]));
+  for (const area of Object.keys(areas).sort()) {
+    kids.appendChild(makeAreaNode(area, areas[area]));
   }
   bindCollapse(row, kids);
   wrap.appendChild(row);
@@ -343,7 +379,21 @@ function makeDisciplineNode(plt, dis, topics) {
   return wrap;
 }
 
-function makeTopicNode(plt, dis, top, patNodes) {
+function makeAreaNode(area, topics) {
+  const wrap = document.createElement('div');
+  const row = makeRow('t-area', area, true);
+  const kids = document.createElement('div');
+  kids.className = 't-children';
+  for (const top of Object.keys(topics).sort()) {
+    kids.appendChild(makeTopicNode(top, topics[top]));
+  }
+  bindCollapse(row, kids);
+  wrap.appendChild(row);
+  wrap.appendChild(kids);
+  return wrap;
+}
+
+function makeTopicNode(top, patNodes) {
   const wrap = document.createElement('div');
   const row = makeRow('t-topic', top, true, patNodes.length);
   const kids = document.createElement('div');
@@ -362,14 +412,22 @@ function makeTopicNode(plt, dis, top, patNodes) {
   return wrap;
 }
 
-// ── Node loading ───────────────────────────────────────────────────────
+// ── kms_fetch ─────────────────────────────────────────────────────────
 
 async function loadNode(meta) {
   document.querySelectorAll('.t-pattern.active').forEach(e => e.classList.remove('active'));
-  const el = document.querySelector(`.t-pattern[data-id="${meta.id}"]`);
+  const el = document.querySelector(`.t-pattern[data-id="${CSS.escape(meta.id)}"]`);
   if (el) el.classList.add('active');
 
-  const p = new URLSearchParams({ discipline: meta.discipline, topic: meta.topic, pattern: meta.pattern });
+  const p = new URLSearchParams({
+    id:         meta.id,
+    discipline: meta.discipline,
+    area:       meta.area       || '',
+    artifact:   meta.artifact   || '',
+    topic:      meta.topic,
+    subtopic:   meta.subtopic   || meta.pattern,
+    pattern:    meta.pattern,
+  });
   if (meta.platform) p.set('platform', meta.platform);
   if (meta.project)  p.set('project',  meta.project);
 
@@ -381,23 +439,30 @@ async function loadNode(meta) {
 }
 
 function renderNodeView(node) {
-  // Breadcrumb
-  const parts = [node.platform || 'universal', node.discipline, node.topic, node.pattern];
+  // Breadcrumb: discipline > area > topic > pattern
+  const parts = [node.discipline, node.area, node.topic, node.pattern].filter(Boolean);
   document.getElementById('breadcrumb').innerHTML =
     parts.map(p => `<span>${esc(p)}</span>`).join(' <span style="color:var(--border)"> › </span>');
 
-  // Meta chips
-  const chips = [
-    ['platform', node.platform || '—'],
-    ['project',  node.project  || '—'],
-    ['updated',  node.updated_at || '—'],
-  ];
-  if (node.tags && node.tags.length) chips.push(['tags', node.tags.join(', ')]);
-  if (node.source_file) chips.push(['source', node.source_file]);
-  document.getElementById('node-meta').innerHTML =
-    chips.map(([k,v]) => `<div class="chip">${k}: <span>${esc(v)}</span></div>`).join('');
+  // Meta chips — mirrors kms_fetch response fields
+  const chips = [];
+  if (node.scope)      chips.push(['scope',      node.scope,      '']);
+  if (node.platform)   chips.push(['platform',   node.platform,   '']);
+  if (node.project)    chips.push(['project',    node.project,    '']);
+  if (node.area)       chips.push(['area',       node.area,       '']);
+  if (node.artifact)   chips.push(['artifact',   node.artifact,   '']);
+  if (node.subtopic && node.subtopic !== node.pattern)
+                       chips.push(['subtopic',   node.subtopic,   '']);
+  if (node.updated_at) chips.push(['updated',    node.updated_at, '']);
+  if (node.source_file) chips.push(['source',   node.source_file, '']);
 
-  // Editor — split on ## headers
+  let metaHTML = chips.map(([k, v]) => `<div class="chip">${k}: <span>${esc(v)}</span></div>`).join('');
+  if (node.tags && node.tags.length) {
+    metaHTML += node.tags.map(t => `<div class="chip tag">${esc(t)}</div>`).join('');
+  }
+  document.getElementById('node-meta').innerHTML = metaHTML;
+
+  // Editor
   const sections = parseSections(node.content || '');
   const editor = document.getElementById('editor');
   if (!sections.length) {
@@ -410,13 +475,20 @@ function renderNodeView(node) {
       <div class="sec-block">
         <div class="sec-label">${esc(s.header.replace(/^##\s*/, ''))}</div>
         <textarea id="sec-${i}" data-header="${esc(s.header)}"
-          style="min-height:${Math.max(100, s.body.split('\n').length * 22 + 40)}px;"
+          style="min-height:${Math.max(80, s.body.split('\n').length * 22 + 40)}px;"
         >${esc(s.body)}</textarea>
       </div>`).join('');
   }
 
   document.getElementById('save-status').textContent = '';
   document.getElementById('save-status').className = '';
+
+  // Raw JSON panel — exactly what kms_fetch returns
+  const raw = Object.assign({}, node);
+  if (raw.content && raw.content.length > 500) {
+    raw.content = raw.content.slice(0, 500) + '\n… (truncated for display)';
+  }
+  document.getElementById('raw-json').textContent = JSON.stringify(raw, null, 2);
 }
 
 // ── Section parsing ────────────────────────────────────────────────────
@@ -440,7 +512,7 @@ function joinSections(sections) {
   return sections.map(s => s.header + '\n' + s.body).join('\n\n');
 }
 
-// ── Save ───────────────────────────────────────────────────────────────
+// ── Save (kms_upsert) ──────────────────────────────────────────────────
 
 async function saveNode() {
   if (!currentNode) return;
@@ -462,11 +534,14 @@ async function saveNode() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        platform:    currentNode.platform,
-        project:     currentNode.project,
-        discipline:  currentNode.discipline,
-        topic:       currentNode.topic,
-        pattern:     currentNode.pattern,
+        platform:   currentNode.platform,
+        project:    currentNode.project,
+        discipline: currentNode.discipline,
+        area:       currentNode.area,
+        artifact:   currentNode.artifact,
+        topic:      currentNode.topic,
+        subtopic:   currentNode.subtopic,
+        pattern:    currentNode.pattern,
         content,
         summary:     currentNode.summary || '',
         tags:        currentNode.tags || [],
@@ -477,6 +552,9 @@ async function saveNode() {
       currentNode.content = content;
       statusEl.textContent = `Saved · ${new Date().toLocaleTimeString()}`;
       statusEl.className = 'ok';
+      // Refresh raw panel
+      document.getElementById('raw-json').textContent =
+        JSON.stringify(Object.assign({}, currentNode, { content: content.slice(0, 500) + (content.length > 500 ? '\n… (truncated)' : '') }), null, 2);
       loadTOC();
     } else {
       const d = await res.json();
@@ -489,21 +567,21 @@ async function saveNode() {
   }
 }
 
-// ── Search ─────────────────────────────────────────────────────────────
+// ── kms_query ─────────────────────────────────────────────────────────
 
 async function doSearch() {
   const text = document.getElementById('search-input').value.trim();
   if (!text) return;
 
   showView('v-search');
-  document.getElementById('search-bar').innerHTML = `Search: <span>${esc(text)}</span>`;
-  document.getElementById('search-results').innerHTML = '<p style="color:var(--muted);padding:4px 0">Searching…</p>';
+  document.getElementById('search-bar').innerHTML = `kms_query: <span>${esc(text)}</span>`;
+  document.getElementById('search-results').innerHTML = '<p style="color:var(--muted);padding:4px 0">Querying…</p>';
 
   try {
     const res = await fetch('/api/query', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, n_results: 10 }),
+      body: JSON.stringify({ text, n_results: 5 }),
     });
     const nodes = await res.json();
     const el = document.getElementById('search-results');
@@ -514,8 +592,9 @@ async function doSearch() {
     el.innerHTML = nodes.map(n => `
       <div class="r-card" onclick='loadNode(${JSON.stringify(n)})'>
         <div class="r-id">${esc(n.id)}</div>
-        <div class="r-name">${esc(n.pattern.replace(/_/g,' '))}</div>
+        <div class="r-path">${esc([n.discipline, n.area, n.topic].filter(Boolean).join(' › '))}</div>
         <div class="r-summary">${esc(n.summary || '—')}</div>
+        ${n.content ? `<div class="r-snippet">${esc((n.content || '').slice(0, 200))}</div>` : ''}
       </div>`).join('');
   } catch (e) {
     document.getElementById('search-results').innerHTML = `<p style="color:var(--err)">Error: ${esc(e.message)}</p>`;
@@ -529,13 +608,11 @@ document.getElementById('search-input').addEventListener('keydown', e => {
 // ── New node ───────────────────────────────────────────────────────────
 
 function initNewForm() {
-  document.getElementById('nf-platform').value   = '';
-  document.getElementById('nf-project').value    = '';
+  ['nf-platform','nf-project','nf-area','nf-artifact','nf-topic','nf-pattern','nf-subtopic','nf-tags'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   document.getElementById('nf-discipline').value = 'engineering';
-  document.getElementById('nf-topic').value      = '';
-  document.getElementById('nf-pattern').value    = '';
-  document.getElementById('nf-tags').value       = '';
-  document.getElementById('nf-content').value    = '## Theory\n\n\n## Definition\n\n\n## Code Pattern\n';
+  document.getElementById('nf-content').value = '## Theory\n\n\n## Definition\n\n\n## Code Pattern\n';
   document.getElementById('new-status').textContent = '';
   document.getElementById('new-status').style.color = '';
 }
@@ -554,11 +631,15 @@ async function saveNewNode() {
 
   const tagsRaw = document.getElementById('nf-tags').value.trim();
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+  const subtopic = document.getElementById('nf-subtopic').value.trim() || pattern;
 
   const body = {
     platform:   document.getElementById('nf-platform').value.trim() || null,
     project:    document.getElementById('nf-project').value.trim()  || null,
-    discipline: disc, topic, pattern,
+    discipline: disc,
+    area:       document.getElementById('nf-area').value.trim()     || '',
+    artifact:   document.getElementById('nf-artifact').value.trim() || null,
+    topic, pattern, subtopic,
     content:    document.getElementById('nf-content').value,
     summary:    '',
     tags,
