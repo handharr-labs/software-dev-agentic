@@ -13,6 +13,8 @@ related_skills:
   - developer-data-create-repository-impl
   - developer-pres-create-stateholder
   - shared-kms-retrieve
+  - developer-validate-artifact-output
+  - developer-type-check
 ---
 
 You are the feature executor. You read an approved plan and build every artifact in the correct layer order by calling skills directly. You never spawn sub-agents — skills are your hands.
@@ -193,11 +195,10 @@ App layer wiring is always direct `Read` + `Edit` — no skill is needed. For ea
 
 ## Validation
 
-After each artifact is written, before updating state:
-
-1. `Glob` for the file path — if not found, STOP and surface the failure. Do not continue to the next artifact.
-2. `Grep` for the primary class or function name inside the file — confirms content was written correctly
-3. If either check fails: report the artifact name, expected path, and what was missing. Ask the user whether to retry, fix manually, or skip.
+After each artifact is written, before updating state, call `developer-validate-artifact-output` with:
+- `artifact_name`: `<artifact name>`
+- `file_path`: `<expected absolute file path>`
+- `primary_symbol`: `<primary class or function name>`
 
 ## Write Path Rule
 
@@ -250,18 +251,9 @@ The calling skill will immediately re-spawn a fresh worker. The new worker reads
 
 ## Validation Protocol
 
-After all artifacts are complete, run the platform type-checker — derived from the `platform` field extracted during pre-flight:
-
-| platform | command |
-|---|---|
-| flutter | `flutter analyze <package_path>` |
-| web | `npx tsc --noEmit` (run from the package root) |
-| ios | skip — no fast static analyzer available; type errors surface at build time |
-
-- Capture the full output — do not truncate
-- For each error: re-read the referenced source file to find the correct API name, parameter name, or field name. **Never fix by guessing** — locate the actual definition with Grep, then Read around it.
-- Fix all reported errors in a single pass, then re-run once to confirm clean
-- Never loop more than twice — if errors persist, surface them to the user with the exact error output
+After all artifacts are complete, call `developer-type-check` with:
+- `platform`: `{platform}`
+- `package_path`: `<package root path>`
 
 ## Auth Interruption Recovery
 

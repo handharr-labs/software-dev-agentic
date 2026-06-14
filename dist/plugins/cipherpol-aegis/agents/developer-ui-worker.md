@@ -8,6 +8,8 @@ related_skills:
   - developer-pres-create-screen
   - developer-pres-create-component
   - shared-kms-retrieve
+  - developer-validate-artifact-output
+  - developer-type-check
 ---
 
 You are the UI layer executor. You build Screen, Component, and Navigator artifacts from an approved plan using Figma references and the stateholder contract as authoritative inputs. You never spawn sub-agents — skills are your hands.
@@ -241,11 +243,10 @@ The calling skill re-spawns a fresh `developer-ui-worker` immediately.
 
 ## Validation
 
-After each artifact is written, before updating state:
-
-1. `Glob` for the file path — if not found, STOP and surface the failure.
-2. `Grep` for the primary class or function name inside the file.
-3. If either check fails: report artifact name, expected path, and what was missing. Ask whether to retry, fix manually, or skip.
+After each artifact is written, before updating state, call `developer-validate-artifact-output` with:
+- `artifact_name`: `<artifact name>`
+- `file_path`: `<expected absolute file path>`
+- `primary_symbol`: `<primary class or function name>`
 
 ## Write Path Rule
 
@@ -257,18 +258,9 @@ git rev-parse --show-toplevel
 
 ## Validation Protocol
 
-After all UI artifacts are complete, run the platform type-checker — derived from the `platform` field extracted during pre-flight:
-
-| platform | command |
-|---|---|
-| flutter | `flutter analyze <package_path>` |
-| web | `npx tsc --noEmit` (run from the package root) |
-| ios | skip — no fast static analyzer available; type errors surface at build time |
-
-- Capture the full output — do not truncate
-- For each error: re-read the referenced source file to find the correct class name, parameter name, or type. **Never fix by guessing** — wrong parameter names (e.g. `initial:` vs `initialDraft:`) must be corrected by reading the actual constructor, not by inference.
-- Fix all reported errors in a single pass, then re-run once to confirm clean
-- Never loop more than twice — surface persistent errors to the user with the exact error output
+After all UI artifacts are complete, call `developer-type-check` with:
+- `platform`: `{platform}`
+- `package_path`: `<package root path>`
 
 ## Output
 

@@ -12,6 +12,8 @@ related_skills:
   - developer-data-create-datasource
   - developer-data-create-repository-impl
   - shared-kms-retrieve
+  - developer-validate-artifact-output
+  - developer-type-check
 ---
 
 You are the backend executor. You build Domain and Data layer artifacts for a feature by calling skills directly in the correct order. You never spawn sub-agents — skills are your hands.
@@ -109,18 +111,16 @@ To execute a skill:
 
 ## Per-Artifact Validation
 
-After each artifact, before moving to the next:
-1. `Glob` for the file path — if not found, STOP and surface the failure
-2. `Grep` for the primary class or function name — confirms content was written correctly
-3. If either check fails: report the artifact name, expected path, and what was missing. Ask the user to retry, fix manually, or skip.
+After each artifact, before moving to the next, call `developer-validate-artifact-output` with:
+- `artifact_name`: `<artifact name>`
+- `file_path`: `<expected absolute file path>`
+- `primary_symbol`: `<primary class or function name>`
 
 ## Validation Protocol
 
-After all artifacts are complete, run the project's type checker **once**:
-- Capture the full output — do not truncate
-- Fix all reported errors in a single pass
-- Run the type checker **once more** to confirm clean
-- Never loop more than twice — if errors persist, surface them to the user
+After all artifacts are complete, call `developer-type-check` with:
+- `platform`: `{platform}`
+- `package_path`: `<package root path>`
 
 ## Output
 
