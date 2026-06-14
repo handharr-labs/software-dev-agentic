@@ -18,7 +18,7 @@ You are the Figma design extractor. Fetch a Figma node, write three reference ar
 | `mode` | — | `group-frames` to run grouping. Omit for single-node fetch. |
 | `figma_url` | single-node | Figma file or node URL |
 | `feature` | single-node | Feature name |
-| `run_dir` | both | Absolute path to the run directory |
+| `figma_fetch_dir` | both | Absolute path to the figma fetch directory (e.g. `.claude/agentic-state/developer/figma/<timestamp>`) |
 | `platform` | group-frames (optional) | Platform slug — `flutter`, `ios`, `web`. Required for design-system check in Step 4d; omit to skip that check. |
 
 Return `MISSING INPUT: <param>` immediately if a required parameter is absent.
@@ -54,11 +54,14 @@ Note the returned screenshot URL as `<screenshot_url>`.
 
 **Step 2b — Download screenshot to disk**
 
+Derive `sanitized_node_id` from the `nodeId` used in Step 1 — replace every `:` with `-` (e.g. `123:456` → `123-456`). The frame directory is `<figma_fetch_dir>/frame_<sanitized_node_id>/`.
+
 ```bash
-curl -sL "<screenshot_url>" -o "<run_dir>/inputs/figma-<slug>-screenshot.png"
+mkdir -p "<figma_fetch_dir>/frame_<sanitized_node_id>"
+curl -sL "<screenshot_url>" -o "<figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>-screenshot.png"
 ```
 
-Use `<run_dir>/inputs/figma-<slug>-screenshot.png` as `<screenshot_local>` everywhere screenshots are referenced. This allows the feature worker to `Read` the file as an image — a remote URL cannot be passed to the `Read` tool.
+Use `<figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>-screenshot.png` as `<screenshot_local>` everywhere screenshots are referenced. This allows the feature worker to `Read` the file as an image — a remote URL cannot be passed to the `Read` tool.
 
 From the design context response extract:
 - The fetched node's **name** — use as slug base
@@ -79,11 +82,11 @@ Before writing any figma artifact files, read the format schema:
 cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md"
 ```
 
-Write three files to `<run_dir>/inputs/`, per the schema in `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`figma-<slug>.md` semantic reference, frontmatter + body fields):
+Write three files to `<figma_fetch_dir>/frame_<sanitized_node_id>/`, per the schema in `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`figma-<slug>.md` semantic reference, frontmatter + body fields):
 
 - `figma-<slug>.md` — compact semantic reference (planner and StateHolder use this)
 - `figma-<slug>-layout.jsx` — full JSX code string exactly as returned by `get_design_context`. Do not truncate or modify
-- `figma-<slug>-screenshot.png` — downloaded screenshot
+- `figma-<slug>-screenshot.png` — already downloaded in Step 2b
 
 Rules:
 - One `##` section in the `.md` per fetched node — use the exact Figma node name
@@ -92,7 +95,7 @@ Rules:
 
 **Step 4 — Verify**
 
-`Glob` for all three output files to confirm they were written:
+`Glob` for all three output files under `<figma_fetch_dir>/frame_<sanitized_node_id>/` to confirm they were written:
 - `figma-<slug>.md`
 - `figma-<slug>-layout.jsx`
 - `figma-<slug>-screenshot.png`
@@ -116,7 +119,7 @@ Called after all frame workers complete. Receives `run_dir` only — reads all a
 **Step 1 — Collect all frames**
 
 ```bash
-find "<run_dir>/inputs" -name "figma-*.md" 2>/dev/null | sort
+find "<figma_fetch_dir>/frame_"* -name "figma-*.md" 2>/dev/null | sort
 ```
 
 Read the frontmatter of every file — extract `parent_frame`, `state`, `screenshot` (local path), `file` (abs path to .md), `layout_file`.
@@ -153,7 +156,11 @@ For each `overlay` cluster, set `parent_screen` to the `screen` cluster it visua
 
 For each cluster (screen and overlay), `Read` the full `.md` of every member frame (frontmatter + body — `Components`, `State`, `Interactions`, `Tokens`, `Annotations`).
 
-Write `<run_dir>/inputs/figma-uistack-<screen-slug>.md` per `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`figma-uistack-<screen-slug>.md` schema):
+```bash
+mkdir -p "<figma_fetch_dir>/ui-stacks"
+```
+
+Write `<figma_fetch_dir>/ui-stacks/figma-uistack-<screen-slug>.md` per `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`figma-uistack-<screen-slug>.md` schema):
 
 - `States` frontmatter — one entry per member frame, with `state`, `file`, `layout_file`, `screenshot`
 - `### State Model` — one row per state, describing what visually differs from the other states in this cluster

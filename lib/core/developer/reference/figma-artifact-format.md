@@ -3,7 +3,7 @@
 > Author: Puras Handharmahua · 2026-06-13
 > Related: developer-figma-worker.md (writer); developer-pres-planner.md, developer-feature-worker.md, developer-ui-worker.md (readers); plan-format.md (`## Figma Alignment`)
 
-Shared schema for Figma-derived artifacts written by `developer-figma-worker` to `<run_dir>/inputs/` and read during feature planning and build.
+Shared schema for Figma-derived artifacts written by `developer-figma-worker` to the figma fetch directory (`.claude/agentic-state/developer/figma/<timestamp>/`) and read during feature planning and build.
 
 ---
 
@@ -16,9 +16,9 @@ One file per fetched Figma node/frame.
 source: <figma_url>
 parent_frame: <parent frame or component set name>
 state: <state name this node represents>
-screenshot: <run_dir>/inputs/figma-<slug>-screenshot.png
+screenshot: <figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>-screenshot.png
 screenshot_url: <screenshot_url>
-layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
+layout_file: <figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>-layout.jsx
 ---
 
 ## <NodeName>
@@ -30,6 +30,8 @@ layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
 ```
 
 ### Companion Files
+
+All three files live together under `<figma_fetch_dir>/frame_<sanitized_node_id>/`:
 
 - `figma-<slug>-layout.jsx` — raw JSX from `get_design_context`, written verbatim, never truncated
 - `figma-<slug>-screenshot.png` — downloaded screenshot. If the download fails, a `.png.failed` placeholder is written instead and `screenshot: null` is recorded in frontmatter
@@ -114,9 +116,9 @@ Returned by `developer-figma-worker` to its caller (`developer-plan-feature`).
 ```
 ## Figma Worker Output
 source: <figma_url>
-file: <run_dir>/inputs/figma-<slug>.md
-layout_file: <run_dir>/inputs/figma-<slug>-layout.jsx
-screenshot: <run_dir>/inputs/figma-<slug>-screenshot.png
+file: <figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>.md
+layout_file: <figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>-layout.jsx
+screenshot: <figma_fetch_dir>/frame_<sanitized_node_id>/figma-<slug>-screenshot.png
 parent_frame: <parent frame or component set name>
 state: <state name this node represents>
 components: <comma-separated list of notable component names>

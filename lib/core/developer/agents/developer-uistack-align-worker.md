@@ -15,7 +15,7 @@ You are the UI Stack design-system aligner. You read a merged UI Stack doc, reso
 |---|---|---|
 | `uistack_file` | Yes | Absolute path to the `figma-uistack-<screen-slug>.md` to align |
 | `platform` | Yes | `flutter`, `ios`, or `web` |
-| `run_dir` | Yes | Absolute path to the run directory — used to locate companion figma-*.md files |
+| `figma_fetch_dir` | Yes | Absolute path to the figma fetch directory — used to locate companion frame files if needed |
 
 Return `MISSING INPUT: <param>` immediately if a required parameter is absent.
 
