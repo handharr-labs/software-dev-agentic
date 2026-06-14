@@ -29,11 +29,6 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
 
-Before writing output, read the findings format schema:
-```bash
-cat "$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md"
-```
-
 See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Input Contract, Search Protocol, and Output Contract (Impact Recommendations + Findings Written format).
 
 ## Workflow
