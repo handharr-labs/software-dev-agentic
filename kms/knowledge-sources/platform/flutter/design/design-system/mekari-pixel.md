@@ -1,1293 +1,1865 @@
 # Metadata
 
-## Package Info
-
 - **Platform:** Flutter only. Non-Flutter platforms: N/A.
 - **Import:** `package:mekari_pixel/mekari_pixel.dart`
 - **Prefix:** `Mp` (e.g. `MpButton`, `MpAvatar`, `MpListTileX`)
-- **Sync:** re-run `temp-dir/extract_catalog.py` on MekariPixel version bump.
-- **Total widgets:** 228
+- **Last extracted:** 2026-06-14
+
+---
 
 # Atoms
 
+Atoms are basic building blocks that cannot be broken down further without losing functionality. Atoms do not accept Widget parameters.
+
+## Atoms — Overview
+
+Atoms are the foundational layer of the Mekari Pixel design system. Each atom is a single-responsibility Flutter widget that cannot be decomposed further without losing its purpose — buttons, badges, avatars, checkboxes, icons, and similar primitives.
+
+**Constraints:** Atoms do not accept `Widget` parameters. They compose only primitive values: strings, numbers, colors, callbacks, and enums. This keeps them predictable, independently testable, and safe to reuse anywhere.
+
+**Usage rule:** Always prefer atoms over raw Flutter widgets when a Pixel equivalent exists. Compose atoms inside components — never nest components inside atoms.
+
+---
+
 ## MpActionText
-- **Category:** `atoms/action_text`
-- **Description:** A Text which triggered an action when tapped.
-- **Key params:** `onTap`, `style`, `semantics`
-- **Variants:** `MpActionText.value()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17806-4384
 
-## MpAvatarError
-- **Category:** `atoms/avatar`
-- **Description:** Mekari Pixel - Avatar Error widget of [MpAvatar]
-- **Key params:** `icon`, `size`, `color`, `semantics`
+A tappable text label used to trigger an action. Disabled automatically when `onTap` is null.
 
-## MpBackButton
-- **Category:** `atoms/icon_button`
-- **Description:** An [MpIconButton] widget with a "back" icon. When pressed, the close button calls [Navigator.maybePop] to return to the previous route.
-- **Key params:** `color`, `onPressed`, `tooltip`, `semantics`
+**When to use:** Use inside `MpTextAppBar`, `MpBottomSheetHeader`, `MpListTileX`, or `MpBottomSheetAction` for inline text actions — not for standalone buttons.
+
+**Variants:**
+- `MpActionText.value()` — styled as a value/secondary display (lighter color) rather than a call-to-action
+
+**Key params:**
+- `onTap` — null disables the widget automatically; no separate `enabled` flag needed
+- `style` — override color and text style
+
+**Usage:**
+```dart
+MpActionText(
+  label: 'Action',
+  onTap: () { /* action */ },
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17806-4384
+
+---
+
+## MpAvatar
+
+Displays a user or entity representation as a circular or rounded-rectangle container. Supports images, icons, text initials, and loading/error states.
+
+**When to use:** Use for profile pictures, user identifiers, entity icons in list tiles, and anywhere a compact visual identity is needed. Prefer `MpAvatar.adaptive()` when the content type (URL vs icon vs text) is unknown at build time.
+
+**Variants:**
+- `MpAvatar.image(path:)` — network or asset image; use for actual profile photos
+- `MpAvatar.text(text:)` — shows initials; fallback when no image is available
+- `MpAvatar.icon(icon:)` — `IconData` icon inside avatar container
+- `MpAvatar.iconImage(path:)` — asset path to icon image (e.g. `/icons/` path); for branded icons
+- `MpAvatar.loading()` — shimmer placeholder while avatar data loads
+- `MpAvatar.error()` — fallback when image fails to load; defaults to profile icon
+- `MpAvatar.adaptive(value:)` — auto-selects variant based on value type (URL → image, IconData → icon, String → text)
+
+**Key params:**
+- `size` — `MpAvatarSize.s20()` through `MpAvatarSize.s64()`; defaults to `s24`
+- `shape` — `MpAvatarShape.circular` (default) or `MpAvatarShape.roundedRectangle`
+- `onTap` — makes avatar tappable
+- `errorBuilder` — custom error widget; prefer `MpAvatar.error()` return value
+- `placeholder` — custom loading widget for network images
+
+**Usage:**
+```dart
+MpAvatar.image(
+  path: MpAvatars.photo.s20,
+  size: MpAvatarSize.s20,
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=513-3509
+
+---
 
 ## MpBadge
-- **Category:** `atoms/badge`
-- **Description:** Mekari Mobile Kit - Badge
-- **Key params:** `text`, `icon`, `style`, `size`, `semantics`
-- **Variants:** `MpBadge.informative()`, `MpBadge.neutral()`, `MpBadge.notice()`, `MpBadge.positive()`, `MpBadge.negative()`, `MpBadge.informativeStatus()`, `MpBadge.neutralStatus()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17337-1048
+
+A compact label used to convey status, counts, or categorical information with color-coded semantic meaning.
+
+**When to use:** Use `MpBadge.negative` for error counts or alerts (e.g. notification counts). Use semantic color variants to communicate meaning — `positive` for success states, `notice` for warnings, `informative` for neutral info. Use `*Status` variants (outlined style) for in-line status labels inside list tiles.
+
+**Variants:**
+- `MpBadge.informative()` — neutral/default info (blue); use for general counts or states
+- `MpBadge.neutral()` — no semantic color; use when color meaning is irrelevant
+- `MpBadge.notice()` — warning/caution context (yellow/orange)
+- `MpBadge.positive()` — success/completion context (green)
+- `MpBadge.negative()` — error/danger/overdue context (red); also used for notification counts
+- `MpBadge.informativeStatus()` — outlined informative; for inline status labels
+- `MpBadge.neutralStatus()` — outlined neutral
+- `MpBadge.noticeStatus()` — outlined notice/warning
+- `MpBadge.positiveStatus()` — outlined positive/success
+- `MpBadge.negativeStatus()` — outlined negative/error
+
+**Key params:**
+- `text` — required label text
+- `icon` — optional leading icon asset path
+- `size` — `MpBadgeSize.normal` (default) or `MpBadgeSize.small`
+
+**Usage:**
+```dart
+MpBadge.negative(
+  text: '+99',
+  size: MpBadgeSize.small,
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17337-1048
+
+---
 
 ## MpButton
-- **Category:** `atoms/button`
-- **Description:** Mekari Mobile Kit Button.
-- **Key params:** `label`, `icon`, `onPressed`, `onLongPress`, `style`, `size`, `semantics`
-- **Variants:** `MpButton.primary()`, `MpButton.secondary()`, `MpButton.tertiary()`, `MpButton.ghost()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17323-74724
+
+The standard button for all user-triggered actions. Disabled when both `onPressed` and `onLongPress` are null.
+
+**When to use:** Use `MpButton.primary()` for the single main CTA on a screen (max one per view). Use `secondary` for supporting actions alongside primary. Use `tertiary` or `ghost` for low-emphasis or repeated inline actions. Use `danger` only for destructive/irreversible actions (delete, revoke, sign out).
+
+**Variants:**
+- `MpButton.primary()` — filled brand color (`brandBold` bg); highest emphasis; main CTA
+- `MpButton.secondary()` — outlined brand border, transparent bg; supporting action
+- `MpButton.tertiary()` — subtle fill; low-emphasis actions
+- `MpButton.ghost()` — no background; minimal-ink contexts (toolbars, dense lists)
+- `MpButton.danger()` — critical/destructive intent (`bgCritical` token); irreversible actions only
+
+**Key params:**
+- `onPressed` / `onLongPress` — both null → button is disabled automatically
+- `isLoading` — shows spinner and disables interaction; use during async operations
+- `size` — `MpButtonSize.normal()` (48px, default) or `MpButtonSize.small()` (<40px)
+- `icon` — optional leading or trailing icon widget
+- `style.iconPosition` — `MpButtonIconPosition.left` (default) or `right`
+
+**Usage:**
+```dart
+MpButton.primary(
+  label: 'Label',
+  onPressed: () { },
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17323-74724
+
+---
 
 ## MpButtonIcon
-- **Category:** `atoms/button_icon`
-- **Description:** Mekari Mobile Kit - Button Icon.
-- **Key params:** `icon`, `style`, `padding`, `onPressed`, `onLongPress`, `tooltip`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=6940-60334
+
+An icon-only button with a rectangular ink splash. Disabled when both `onPressed` and `onLongPress` are null.
+
+**When to use:** Use for icon actions that appear in content areas (cards, list tiles, toolbars). Do NOT use inside `AppBar.actions` — use `MpIconButton` there instead.
+
+**Key params:**
+- `icon` — asset path string (use `MpIcons.*`)
+- `active` — visual active/selected state; defaults to `false`
+- `hasDropdown` — shows a chevron indicator for dropdown affordance
+- `onPressed` / `onLongPress` — both null → disabled
+
+**Usage:**
+```dart
+MpButtonIcon(
+  icon: MpIcons.interfaceEssential.arrowLeft,
+  onPressed: () { },
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=6940-60334
+
+---
 
 ## MpCheckbox
-- **Category:** `atoms/checkbox`
-- **Description:** Mekari Mobile Kit - Checkbox.
-- **Key params:** `value`, `onTap`, `style`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=445%3A5308&t=c8IIoGc1ZdE8vXIF-0
+
+A tri-state capable checkbox for boolean or indeterminate selection. Disabled when `onTap` is null.
+
+**When to use:** Use standalone for a single boolean option. For lists of checkboxes, prefer `MpCheckboxList` (component) or `MpCheckboxListTileX` (template).
+
+**Key params:**
+- `value` — `true` (checked), `false` (unchecked), `null` (indeterminate, requires `tristate: true`)
+- `onTap` — callback with new value; null disables the widget
+- `tristate` — enables null/indeterminate state; shows dash when `value` is null
+
+**Usage:**
+```dart
+MpCheckbox(
+  value: _value,
+  onTap: (value) => setState(() => _value = value),
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17320-73079
+
+---
 
 ## MpChip
-- **Category:** `atoms/chips`
-- **Description:** Mekari Mobile Kit - Chip
-- **Key params:** `text`, `style`, `leading`, `trailing`, `onTap`, `semantics`
-- **Variants:** `MpChip.outline()`, `MpChip.duoTone()`, `MpChip.fill()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17403-50814&t=2id5EKrhfnUsvyg3-4
 
-## MpCloseButton
-- **Category:** `atoms/icon_button`
-- **Description:** An [MpIconButton] widget with a "close" icon. When pressed, the close button calls [Navigator.maybePop] to return to the previous route.
-- **Key params:** `color`, `onPressed`, `tooltip`, `semantics`
+A compact interactive label for selections, filters, and action triggers. Supports leading/trailing widgets.
+
+**When to use:** Use for filter selections, multi-select tags, and categorical choices. Prefer `MpChip.outline` for unselected state and `MpChip.fill` or `MpChip.duoTone` for selected/active state.
+
+**Variants:**
+- `MpChip` — base/default chip; customizable colors
+- `MpChip.outline()` — border-only style; use for unselected filter chips
+- `MpChip.duoTone()` — dual-color style; use for selected/active chips with icon
+- `MpChip.fill()` — filled background; use for active/selected chips
+
+**Key params:**
+- `text` — required label
+- `leading` — widget before text (icon, avatar, image)
+- `trailing` — widget after text (close icon, count badge)
+- `onTap` — makes chip interactive
+
+**Usage:**
+```dart
+MpChip.outline(
+  text: 'Category',
+  onTap: () {},
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17403-50814
+
+---
 
 ## MpDatePickerCell
-- **Category:** `atoms/date_picker/cell`
-- **Description:** Core widget for Date Picker View Components <br/> This widget will display [DateTime] in an interactive cell / box <br/> Can be styled by using [MpDatePickerCellStyle]
-- **Key params:** `date`, `height`, `width`, `style`, `onDateSelected`, `locale`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=2526%3A11105&t=dPUEec95KUZK0BTx-4
+
+A single interactive date cell for use inside calendar/date picker views. Handles today, selected, in-range, disabled, and preview visual states.
+
+**When to use:** Use as a building block when building a custom calendar layout. For standard date pickers, use `MpDatePicker.showDayPicker()` (component) or `MpCalendar` (page) instead.
+
+**Key params:**
+- `date` — the `DateTime` this cell represents
+- `isToday` / `isSelected` / `isInRange` / `isDisabled` — visual state flags
+- `style` — `MpDatePickerCellStyle` for visual customization
+- `onDateSelected` — tap callback
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=2526%3A11105
+
+---
 
 ## MpFloatingActionButton
-- **Category:** `atoms/floating_action_button`
-- **Description:** A widget that displays Floating Action Button.
-- **Key params:** `key`, `icon`, `label`, `style`, `transitionController`, `transition`, `onPressed`, `semantics`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=17587-13389&t=AvL1D1iHweZxKwW9-0
 
-## MpHeartBeatIcon
-- **Category:** `atoms/icon`
-- **Description:** A [MpIcon] with `Heart Beat` (Pulses) animation.
-- **Key params:** `icon`, `color`, `size`, `onTap`, `blendMode`, `customColor`
+A floating action button supporting icon, label, and animated show/hide.
+
+**When to use:** Use as the primary screen-level action when it should float over content (e.g. compose, add, scan). Place via `Scaffold.floatingActionButton` or wrap content in `MpFloatingActionButtonStack` to animate on scroll.
+
+**Key params:**
+- `icon` — widget to display (either `icon` or `label` required)
+- `label` — text label for extended FAB
+- `collapse` — hides label when both icon and label are provided (collapsed extended FAB)
+- `style` — visual appearance override
+
+**Usage:**
+```dart
+Scaffold(
+  floatingActionButton: MpFloatingActionButton(
+    icon: MpIcons.interfaceEssential.add.toIcon(color: MpColors.white),
+    onPressed: () {},
+  ),
+)
+```
+
+**Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=17587-13389
+
+---
 
 ## MpHomeIndicator
-- **Category:** `atoms/home_indicator`
-- **Description:** A widget that displays home indicator.
-- **Key params:** `isAndroid`, `indicatorColor`, `backgroundColor`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=45%3A1144&t=NuKpAmbmPNewhYsQ-0
+
+Renders the OS home indicator bar (iOS pill or Android gesture bar) for use in custom layouts.
+
+**When to use:** Use at the bottom of bottom sheets, pages, or overlays that replace the system chrome. Automatically adapts to iOS vs Android style.
+
+**Key params:**
+- `isAndroid` — override OS detection; null follows device platform
+- `indicatorColor` — defaults to inverse background color from theme
+- `backgroundColor` — container background
+
+**Usage:**
+```dart
+MpHomeIndicator()
+```
+
+---
 
 ## MpIcon
-- **Category:** `atoms/icon`
-- **Description:** A widget that displays an icon from assets folder or network images. Support SVG, PNG, JPG, GIF and other formats supported by flutter.
-- **Key params:** `filepath`, `size`, `color`, `blendMode`, `onTap`, `tooltip`, `customColor`, `semantics`
+
+Renders an icon from an asset path or URL. Supports SVG, PNG, JPG, GIF, and duotone multi-color icons.
+
+**When to use:** Use for all icons in the app — prefer `MpIcons.*` asset paths. For clickable icons, prefer `MpIconButton` (AppBar) or `MpButtonIcon` (inline). Use `customColor` only for duotone icons that need per-layer color control.
+
+**Key params:**
+- `filepath` — asset path or URL; SVG paths with `/icons/` prefix are treated as icon images
+- `size` — overrides `MpIconTheme` size; defaults to `24.0`
+- `color` — single-color tint via `BlendMode.srcIn`; for multi-color use `customColor`
+- `onTap` — makes icon tappable
+- `tooltip` — shows on long press when `onTap` is set; on tap otherwise
+
+**Usage:**
+```dart
+MpIcon(filepath: 'assets/done.svg')
+```
+
+---
 
 ## MpIconButton
-- **Category:** `atoms/icon_button`
-- **Description:** [MpIconButton] are commonly used in the [AppBar.actions] field, but they can be used in many other places as well.
-- **Key params:** `icon`, `iconSize`, `onPressed`, `onLongPress`, `color`, `disabledColor`, `highlightColor`, `splashColor`
+
+An icon button with circular splash, intended for use in `AppBar.actions` and similar nav chrome.
+
+**When to use:** Use in `AppBar.actions`, navigation bars, and header icon controls. For icon buttons in content areas, use `MpButtonIcon` instead — it has rectangular splash and active state.
+
+**Key params:**
+- `icon` — asset path (use `MpIcons.*` or `MpLogos.*`)
+- `onPressed` — null disables the button
+- `color` / `disabledColor` — icon color overrides
+- `splashRadius` — tap target size; must be > 0 if set
+
+**Usage:**
+```dart
+MpIconButton(
+  icon: MpIcons.interfaceEssential.arrowLeft,
+  onPressed: () { },
+)
+```
+
+---
 
 ## MpImage
-- **Category:** `atoms/image`
-- **Description:** A widget that displays an image from assets folder or network images. Support SVG, PNG, JPG, GIF and other formats supported by flutter.
-- **Key params:** `filepath`, `theme`, `onTap`, `semantics`
 
-## MpImageError
-- **Category:** `atoms/image`
-- **Description:** Default error widget of [MpImage]
-- **Key params:** `error`, `height`, `width`
+Renders an image from an asset path or URL with theming support. Supports SVG, PNG, JPG, GIF.
 
-## MpImageLoading
-- **Category:** `atoms/image`
-- **Description:** Default placeholder of [MpImage]
-- **Key params:** `color`, `lineColor`, `height`, `width`
+**When to use:** Use for content images (illustrations, banners, product images). For icons, use `MpIcon`. For avatars, use `MpAvatar`. Wrap in `DefaultMpImageTheme` to apply consistent color or fit to a group of images.
 
-## MpMultiColorIcon
-- **Category:** `atoms/icon/multi_color`
-- **Description:** A widget that displays a customable multi color svg icon from assets. Mainly used for multicolored like [duotone] variant svg asset icons.
-- **Key params:** `filepath`, `size`, `onTap`, `tooltip`, `customColor`, `semantics`
+**Key params:**
+- `filepath` — asset path or URL
+- `theme` — `MpImageTheme` for color, size, fit, placeholder, and error builder
+- `useThemeColor` — when `true`, inherits color from `DefaultMpImageTheme` wrapper
 
-## MpRotationIcon
-- **Category:** `atoms/icon`
-- **Key params:** `icon`, `size`, `rotationSpeed`, `color`, `semantics`, `size`, `rotationSpeed`, `color`
+**Usage:**
+```dart
+MpImage(filepath: 'assets/done.svg')
+```
+
+---
+
+## MpKeypad
+
+A single key for use inside a custom numeric keyboard. Part of `MpCustomKeyboard`.
+
+**When to use:** Use only as a building block inside `MpCustomKeyboard`. For a full keyboard, use `MpCustomKeyboard` directly.
+
+**Variants:**
+- `MpKeypad.text(text:)` — displays a text label (number or symbol)
+- `MpKeypad.icon(icon:)` — displays an icon (e.g. backspace)
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=2570-12372
+
+---
+
+## MpRadioButton
+
+A single radio button indicator for mutually exclusive selection. Generic over value type `T`.
+
+**When to use:** Use standalone for a single option or when building a custom radio layout. For a list of radio options, prefer `MpRadioButtonListX` (component) or `MpRadioButtonListTileX` (template).
+
+**Key params:**
+- `value` — the value this radio represents
+- `selected` — whether this radio is the currently selected one
+- `onRadioClick` — callback with the selected value; null disables the widget
+
+**Usage:**
+```dart
+MpRadioButton(
+  value: '1',
+  selected: false,
+  onRadioClick: (value) => setState(() => _selected = value),
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=439%3A4675
+
+---
+
+## MpShimmer
+
+Animated skeleton loading placeholder with shape variants.
+
+**When to use:** Use while async content is loading to prevent layout shift. Match the shimmer shape to the content it replaces (circle for avatars, rectangle for text lines, rounded rectangle for cards).
+
+**Variants:**
+- `MpShimmer.square(size:)` — fixed-size square
+- `MpShimmer.circle(size:)` — circle; use for avatar placeholders
+- `MpShimmer.rectangle(width:, height:)` — rectangle; use for text line placeholders
+- `MpShimmer.roundedRectangle(width:, height:)` — rounded corners; use for card placeholders
+
+**Key params:**
+- `enabled` — stops animation when false (shows static placeholder)
+- `duration` — animation cycle duration; defaults to 1500ms
+
+**Usage:**
+```dart
+MpShimmer.square(size: 30)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=9312-18626
+
+---
 
 ## MpSlideToAction
-- **Category:** `atoms/slide_to_action`
-- **Description:** Mekari Mobile Kit - Slide To Action
-- **Key params:** `sliderCaption`, `onSubmitCallback`, `isFinished`, `slideCaptionStyle`, `initialSliderColor`, `activeSliderColor`, `activeSliderBackgroundColor`, `inactiveSliderBackgroundColor`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18084-55692&node-type=frame&t=Zh1Srnn2w9ALX8gY-0
+
+A slide-to-confirm control for high-stakes irreversible actions. Uses brand color (`brandBold`) for slider track.
+
+**When to use:** Use instead of a button when an action is irreversible and requires deliberate user intent (e.g. "Slide to clock out", "Slide to submit"). Do NOT use for routine actions.
+
+**Key params:**
+- `sliderCaption` — instructional text shown on the slider track
+- `onSubmitCallback` — triggered when slider reaches max position
+- `isLoading` — shows loading state after submission
+- `isFinished` — `ValueNotifier<bool>` that locks the slider in completed state
+
+**Usage:**
+```dart
+MpSlideToAction(
+  sliderCaption: 'Slide to action',
+  onSubmitCallback: () async => _onSlideAction(),
+  isLoading: _isLoading,
+  isFinished: _isFinished,
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18084-55692
+
+---
+
+## MpHorizontalSpace / MpVerticalSpace
+
+Layout spacing widgets based on `MpSpacing` tokens. Use inside `Row`/`Column` to add semantic gaps between widgets.
+
+**When to use:** Use instead of `SizedBox` for spacing. Named constructors map to design tokens — do not use arbitrary pixel values.
+
+**Key constructors (both classes):**
+- `.s4()` — 4px (xxxs)
+- `.s8()` — 8px (xxs)
+- `.s12()` — 12px (xs / small)
+- `.s16()` — 16px (s / medium)
+- `.s20()` — 20px (m / large)
+- `.s24()` — 24px (l / xLarge)
+
+**Usage:**
+```dart
+MpHorizontalSpace.s12()
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=10-6811
+
+---
 
 ## MpStatusBar
-- **Category:** `atoms/status_bar`
-- **Description:** Mekari Mobile Kit Status Bar
-- **Key params:** `time`, `icons`, `isAndroid`, `backgroundColor`, `foregroundColor`, `semantics`, `time`, `iconThemeData`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=31%3A291&t=FyL16Qn3He2YbGoq-0
+
+A mock status bar widget showing time and icons, used in design mockups and custom full-screen overlays.
+
+**When to use:** Use inside launch screens, walkthrough screens, or any full-screen overlay that needs to render its own status bar. Not needed for regular app screens where the system status bar is visible.
+
+**Key params:**
+- `time` — time string to display
+- `icons` — list of icon widgets (battery, signal, etc.)
+- `isAndroid` — override platform detection
+
+---
 
 ## MpTag
-- **Category:** `atoms/tag`
-- **Description:** Mekari Mobile Kit - Tag
-- **Key params:** `label`, `onPressed`, `style`, `semantics`
-- **Variants:** `MpTag.error()`, `MpTag.disable()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5225-38439&mode=design&t=ryYH3ILcjc9Zvo0a-4
+
+A selectable label for filter/selection contexts with a selected/unselected state.
+
+**When to use:** Use in filter bars where users can toggle individual categories. For chips in multi-select or compact chip layouts, use `MpChip` instead.
+
+**Variants:**
+- `MpTag` — default selectable tag
+- `MpTag.error()` — visual error state (red styling)
+- `MpTag.disable()` — permanently disabled appearance
+
+**Key params:**
+- `label` — required text
+- `selected` — selected state (affects background/border color)
+- `onPressed` — tap callback; null renders as non-interactive
+
+**Usage:**
+```dart
+MpTag(
+  label: "Filter label",
+  selected: false,
+  onPressed: () {},
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5225-38439
+
+---
 
 ## MpTextField
-- **Category:** `atoms/text_field`
-- **Description:** Mekari Mobile Kit - Textfield.
-- **Key params:** `mainKey`, `controller`, `focusNode`, `label`, `hint`, `error`, `helper`, `textInputAction`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=86%3A2099&t=NuKpAmbmPNewhYsQ-0
+
+The standard form text input field with label, hint, helper, error, prefix/suffix, and validation support.
+
+**When to use:** Use for all text input in forms. For phone numbers with country code, use `MpPhoneTextField`. For rich text editing, use `MpTextEditor`. For read-only select inputs, use `MpSelect`.
+
+**Key params:**
+- `label` — floating label text above the field
+- `hint` — placeholder text when field is empty
+- `error` — error message shown below field (also triggers error visual state)
+- `helper` — helper text shown below field (hidden when error is shown)
+- `required` — shows required indicator
+- `obscure` — password/obscured mode
+- `readOnly` — tappable but not editable; use with `onPressed` to open a picker
+- `disable` — fully disabled state
+- `enableClearButton` — shows X button to clear field; defaults to `true`
+- `validator` — form validation function
+- `autoValidate` — validate on every change rather than on submit
+
+**Usage:**
+```dart
+MpTextField(
+  label: "Full name",
+  hint: "e.g Jonathan Cody Fisher",
+  helper: "Include your middle name if you have one.",
+  textInputAction: TextInputAction.next,
+  validator: _validateName,
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17440-11210
+
+---
 
 ## MpToggle
-- **Category:** `atoms/toggle`
-- **Description:** Mekari Mobile Kit - Toogle
-- **Key params:** `value`, `style`, `onChanged`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=448%3A6576&t=nPrga1tGl9WiRGaY-0
+
+A boolean on/off switch. Disabled when `onChanged` is null.
+
+**When to use:** Use for settings and preferences that take effect immediately without requiring a save action. For form-based boolean fields that require explicit save, consider `MpCheckbox` instead.
+
+**Key params:**
+- `value` — required current state
+- `onChanged` — callback with new bool value; null disables the widget
+- `duration` — animation duration; defaults to 200ms
+
+**Usage:**
+```dart
+MpToggle(
+  value: _value,
+  onChanged: (value) => setState(() => _value = value),
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=1112-17581
 
 ---
 
 # Components
 
-## MpAccordionTimeline
-- **Category:** `components/timeline`
-- **Description:** Mekari Pixel - Timeline (Variant: Accordion)
-- **Key params:** `label`, `icon`, `iconCollapse`, `labelStyle`, `caption`, `captionStyle`, `badge`, `accordionContent`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5343-46805&mode=design&t=COdbyxlFRHGuavvx-4
+Components are composite widgets built from atoms. They handle more complex interaction patterns.
 
-## MpAlignmentToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Toggle text alignment (Left, Center, Right) in the text editor.
-- **Key params:** `controller`, `tooltip`, `style`, `semantics`
-- **Variants:** `MpAlignmentToolbarButton.basic()`
+## Components — Overview
 
-## MpAttachmentToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Insert files to text editor's document from device storage.
-- **Key params:** `icon`, `tooltip`, `style`, `onFilePickCallback`, `semantics`
-- **Variants:** `MpAttachmentToolbarButton.basic()`
+Components are the mid-layer of the Mekari Pixel design system. Each component composes one or more atoms (and sometimes other components) to encapsulate a distinct, reusable interaction pattern or multi-part UI structure.
 
-## MpAvatarBottomSheetContent
-- **Category:** `components/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Bottomsheet - Variant: Avatar
-- **Key params:** `title`, `labelButton`, `content`, `onTapClose`, `onTapButton`, `actions`, `actionSpacing`, `semantics`
+**Examples:** app bars, list tiles, bottom sheets, form fields, banners, search bars, carousels, tooltips — anything that combines multiple visual or interactive elements into a coherent unit.
 
-## MpAvatarCheckboxList
-- **Category:** `components/checkbox`
-- **Description:** Mekari Checkbox Button List - Variant: Avatar
-- **Key params:** `values`, `onChanged`, `style`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=445%3A5309&t=PLJMony4dHpmREqs-0
+**Constraints:** Components may accept `Widget` parameters to allow slot-based composition (e.g. a custom leading or trailing widget in a list tile). They should not embed business logic or call repositories directly.
+
+**Usage rule:** Reach for a component before building a custom composite from scratch. If no component fits, check whether atoms can be composed directly; only add a new component when the pattern recurs across features.
+
+---
+
+## MpTextAppBar
+
+The standard app bar with a text title and optional description, actions, and leading widget.
+
+**When to use:** Use as the `appBar` for all standard screens. Use `MpLogoAppBar` for brand/home screens, `MpProfileAppBar` for profile screens, `MpEmptyAppBar` for screens that need no visible title.
+
+**Key params:**
+- `title` — required screen title
+- `description` — secondary text below title; changes title style to semibold when present
+- `actions` — list of `MpIconButton` widgets for the right side
+- `centerTitle` — defaults to `true`
+- `automaticallyImplyLeading` — auto-adds back button; defaults to `true`
+
+**Usage:**
+```dart
+MpTextAppBar(
+  title: 'Main page',
+  actions: [
+    MpIconButton(icon: MpIcons.alert.info, onPressed: () {}),
+  ],
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=44%3A558
+
+---
 
 ## MpAvatarGroup
-- **Category:** `components/avatar_group`
-- **Description:** Mekari Mobile Kit Avatar Group.
-- **Key params:** `size`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=13950-51798&t=iwZtQ6DFoWNJrx1M-4
+
+Displays a horizontal stack of overlapping avatars with an overflow counter badge.
+
+**When to use:** Use when showing a list of users/participants in a compact space (e.g. "assigned to", "attendees"). When the avatar count exceeds `show`, a `+N` counter badge appears.
+
+**Key params:**
+- `avatars` — list of `MpAvatar` widgets
+- `show` — max avatars before overflow badge; defaults to `2`
+- `size` — applied to all avatars uniformly via `MpAvatarTheme`
+
+**Usage:**
+```dart
+MpAvatarGroup(
+  show: 3,
+  size: const MpAvatarSize.s40(),
+  avatars: [
+    MpAvatar.image(path: MpAvatars.photo.s40),
+    MpAvatar.text(text: 'John Doe'),
+  ],
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=13950-51798
+
+---
 
 ## MpBanner
-- **Category:** `components/banner`
-- **Description:** Mekari Mobile Kit - Banner
-- **Key params:** `icon`, `title`, `titleRich`, `message`, `messageRich`, `style`, `suffix`, `actions`
-- **Variants:** `MpBanner.info()`, `MpBanner.warning()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=1959%3A24743&t=zrV67Ozpejx6d8zk-0
 
-## MpBannerAction
-- **Category:** `components/banner`
-- **Description:** Display action at the bottom side of [MpBanner]
-- **Key params:** `text`, `textStyle`, `onTap`, `semantics`, `text`, `textStyle`, `onTap`, `semantics`
+A full-width inline informational or warning message with optional title, message, dismiss, close, and action buttons.
+
+**When to use:** Use to communicate page-level messages that require attention but don't block the user (not modal). Prefer semantic variants — `info` for neutral information, `warning` for caution states. Dismiss (`dismissable`) allows swipe-to-hide; `closeable` shows an X button.
+
+**Variants:**
+- `MpBanner` — base; use when info/warning variants don't fit
+- `MpBanner.info()` — informative (blue); general notifications or tips
+- `MpBanner.warning()` — caution (yellow/orange); degraded state or important caveats
+
+**Key params:**
+- `title` / `message` — text content; use `titleRich` / `messageRich` for styled spans
+- `dismissable` — enables swipe to dismiss
+- `closeable` — shows X close button
+- `actions` — list of `MpBannerAction` buttons
+
+**Usage:**
+```dart
+MpBanner.info(
+  title: "Title banner",
+  message: "A message should be a short and complete sentence.",
+  closeable: true,
+  actions: [MpBannerAction(text: 'Preferred', onTap: () {})],
+)
+```
+
+---
 
 ## MpBlankSlate
-- **Category:** `components/blank_slate`
-- **Description:** Mekari Mobile Kit - Blank Slate
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=44%3A827&t=cebsrVLXNB3dX47O-0
+
+An empty or error state display with illustration/icon, label, message, and optional actions.
+
+**When to use:** Use when a list, page, or section has no content to display. Choose the variant that matches your available asset: `illustration` for full empty-state graphics, `icon` for feature icons, `empty` for text-only states.
+
+**Variants:**
+- `MpBlankSlate.illustration(illustration:)` — uses `MpIllustrations.*` asset
+- `MpBlankSlate.icon(icon:)` — uses `MpIcons.*` path at 56px
+- `MpBlankSlate.empty()` — text only, no visual
+
+**Key params:**
+- `label` — primary heading
+- `message` — supporting explanation
+- `actions` — optional `MpButton` widgets
+
+**Usage:**
+```dart
+MpBlankSlate.illustration(
+  illustration: MpIllustrations.blankSlate.noData,
+  label: 'No data yet',
+  message: 'Your data will display here',
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=44%3A827
+
+---
 
 ## MpBottomNavBar
-- **Category:** `components/bottom_nav_bar`
-- **Description:** Mekari Bottom Navigation Bar
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=44%3A827&t=cebsrVLXNB3dX47O-0
+
+The app-level bottom navigation bar with icon tabs and optional badge support.
+
+**When to use:** Use as the `bottomNavigationBar` in the root `Scaffold` for main navigation between top-level sections. Supports up to 5 items.
+
+**Key params:**
+- `items` — list of `MpBottomNavBarItemData` (icon as String path) or `MpBottomNavBarItemWidgetData` (icon as Widget)
+- `currentIndex` — active tab index
+- `onTap` — called with index when a tab is tapped
+- `elevation` — shadow; defaults to `0`
+
+**Usage:**
+```dart
+MpBottomNavBar(
+  items: [
+    MpBottomNavBarItemData(
+      label: 'Home',
+      icon: MpIcons.feature.home,
+      badge: MpBadge.negativeMenu(text: '9+'),
+    ),
+  ],
+  currentIndex: 0,
+  onTap: (index) => setState(() => _index = index),
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=44%3A827
+
+---
 
 ## MpBroadcast
-- **Category:** `components/broadcast`
-- **Description:** Mekari Mobile Kit Broadcast.
-- **Key params:** `label`, `description`, `leading`, `trailing`, `style`, `semantics`
-- **Variants:** `MpBroadcast.important()`, `MpBroadcast.critical()`, `MpBroadcast.news()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=915%3A24757&t=1tCrAZMm1YM9oh2Y-0
 
-## MpBroadcastArea
-- **Category:** `components/broadcast`
-- **Key params:** `broadcast`, `topPadding`, `defaultStatusBarColor`, `defaultStatusBarBrightness`, `child`
+A top-of-screen announcement bar for system-level messages like promos, alerts, or maintenance notices.
 
-## MpBubbleChatAttachment
-- **Category:** `components/bubble_chat`
-- **Description:** Mekari Mobile Kit - Bubble Chat Attachment A Bubble Chat Attachment
-- **Key params:** `backgroundColor`, `margin`, `padding`, `borderRadius`, `chatText`, `chatTextStyle`, `timestamp`, `timestampStyle`
-- **Variants:** `MpBubbleChatAttachment.imageDirect()`, `MpBubbleChatAttachment.imageSelf()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**When to use:** Use for persistent, screen-spanning messages that need to surface above content (different from `MpBanner` which is inline). Use semantic variants to convey urgency.
 
-## MpBubbleChatAttachmentItemAudio
-- **Category:** `components/bubble_chat/part/attachment`
-- **Description:** Mekari Mobile Kit - Attachment Audio A  Attachment Audio.
-- **Key params:** `audioUrl`, `audioSize`, `backgroundColor`, `borderRadius`, `thumbnail`, `thumbnailBackgroundColor`, `onDownloadTap`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Variants:**
+- `MpBroadcast` — default; no semantic color
+- `MpBroadcast.announcement()` — promotional/celebratory context
+- `MpBroadcast.information()` — informational (blue)
+- `MpBroadcast.important()` — high-urgency alert (red/critical)
 
-## MpBubbleChatAttachmentItemFile
-- **Category:** `components/bubble_chat/part/attachment`
-- **Description:** Mekari Mobile Kit - Attachment File A  Attachment File.
-- **Key params:** `fileName`, `fileNameTextStyle`, `fileNameColor`, `fileInfo`, `fileInfoStyle`, `fileInfoColor`, `backgroundColor`, `borderRadius`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Key params:**
+- `label` — required primary text
+- `description` — secondary text below label
+- `leading` — left icon widget
+- `trailing` — list of right action widgets
 
-## MpBubbleChatAttachmentItemImage
-- **Category:** `components/bubble_chat/part/attachment`
-- **Description:** Mekari Mobile Kit - Attachment Image A  Attachment Image.
-- **Key params:** `images`, `theme`, `width`, `padding`, `height`, `onTap`, `onMoreImageTap`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Usage:**
+```dart
+MpBroadcast.information(
+  label: 'System maintenance tonight',
+  trailing: [Icon(Icons.close)],
+)
+```
 
-## MpBubbleChatAttachmentItemVideo
-- **Category:** `components/bubble_chat/part/attachment`
-- **Description:** Mekari Mobile Kit - Attachment Video A  Attachment Video.
-- **Key params:** `videoUrl`, `onTap`, `semantics`, `borderRadius`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=915%3A24757
+
+---
 
 ## MpBubbleChatBasic
-- **Category:** `components/bubble_chat`
-- **Description:** Mekari Mobile Kit - Bubble Chat Basic A Bubble Chat Basic
-- **Key params:** `chatText`, `chatTextStyle`, `timestamp`, `timestampStyle`, `foregroundColor`, `read`, `readIndicator`, `backgroundColor`
-- **Variants:** `MpBubbleChatBasic.self()`, `MpBubbleChatBasic.direct()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
 
-## MpBubbleChatBubble
-- **Category:** `components/bubble_chat/part`
-- **Description:** Mekari Mobile Kit - Bubble A Bubble.
-- **Key params:** `width`, `height`, `color`, `margin`, `padding`, `child`, `borderRadius`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+A chat message bubble for messaging UIs, supporting self and direct (received) alignment.
 
-## MpBubbleChatGroup
-- **Category:** `components/bubble_chat`
-- **Description:** Mekari Mobile Kit - Bubble Chat Group A Bubble Chat Group
-- **Key params:** `name`, `children`, `nameStyle`, `nameColor`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**When to use:** Use for chat message rendering. `MpBubbleChatBasic.self` for outgoing messages (right-aligned), `MpBubbleChatBasic.direct` for incoming (left-aligned). For group chats with profiles, use `MpBubbleChatGroup`.
 
-## MpBubbleChatProfile
-- **Category:** `components/bubble_chat/part`
-- **Description:** Mekari Mobile Kit - Profile A Profile.
-- **Key params:** `name`, `nameStyle`, `nameColor`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Variants:**
+- `MpBubbleChatBasic.self()` — outgoing message (right-aligned, brand color bg)
+- `MpBubbleChatBasic.direct()` — incoming message (left-aligned, surface bg)
 
-## MpBubbleChatReply
-- **Category:** `components/bubble_chat`
-- **Description:** Mekari Mobile Kit - Bubble Chat Reply A Bubble Chat Reply
-- **Variants:** `MpBubbleChatReply.textSelf()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Key params:**
+- `chatText` — required message text
+- `timestamp` — time string
+- `read` — read receipt state
+- `readIndicator` — custom read receipt widget
 
-## MpBubbleChatReplyItem
-- **Category:** `components/bubble_chat/part`
-- **Description:** Mekari Mobile Kit - ReplyItem A ReplyItem.
-- **Key params:** `replyText`, `replyTextStyle`, `replyTextColor`, `replyCaption`, `replyCaptionStyle`, `replyCaptionColor`, `backgroundColor`, `borderRadius`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Usage:**
+```dart
+MpBubbleChatBasic.self(
+  chatText: "Lorem ipsum dolor sit amet consectetur.",
+  timestamp: "2:46 AM",
+)
+```
 
-## MpBubbleChatTimestamp
-- **Category:** `components/bubble_chat/part`
-- **Description:** Mekari Mobile Kit - Timestamp A Timestamp
-- **Key params:** `timestamp`, `timestampStyle`, `timestampColor`, `read`, `readIndicator`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5454%3A53419&mode=dev
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17635-2770
 
-## MpChatDivider
-- **Category:** `components/bubble_chat/part`
-- **Key params:** `lineColor`, `margin`, `semantics`
-
-## MpCheckboxBottomSheetContent
-- **Category:** `components/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Bottomsheet - Variant: Checkbox
-- **Key params:** `title`, `labelButton`, `content`, `style`, `onTapClose`, `onTapButton`, `actions`, `actionSpacing`
-
-## MpCheckboxList
-- **Category:** `components/checkbox`
-- **Description:** Mekari Checkbox List - Variant: Basic
-- **Key params:** `values`, `onChanged`, `style`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=445%3A5309&t=PLJMony4dHpmREqs-0
+---
 
 ## MpContextualMenu
-- **Category:** `components/contextual_menu`
-- **Description:** Mekari Mobile Kit - Contextual Menu A Contextual Menu.
-- **Key params:** `child`, `previewChild`, `verticalMenuItems`, `horizontalMenuItems`
-- **Variants:** `MpContextualMenu.vertical()`, `MpContextualMenu.horizontal()`, `MpContextualMenu.verticalHorizontal()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5824-58261&mode=design&t=TbOMGAZc5bUVGJkt-0
 
-## MpContextualMenuItem
-- **Category:** `components/contextual_menu`
-- **Description:** Mekari Mobile Kit - Contextual Menu (Part: item) An item for contextual menu button icon.
-- **Key params:** `title`, `titleTextStyle`, `subtitle`, `subtitleTextStyle`, `icon`, `iconColor`, `onTap`, `customBorder`
-- **Variants:** `MpContextualMenuItem.verticalSectionTitle()`, `MpContextualMenuItem.verticalActionItem()`, `MpContextualMenuItem.horizontal()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5824-58360&mode=design&t=0BNffzg67u2AcnLS-0
+A long-press context menu that wraps any widget, showing vertical and/or horizontal action items.
 
-## MpCountryPicker
-- **Category:** `components/country_picker`
-- **Key params:** `country`, `onSelectionChanged`, `languageCode`, `bottomsheetTitle`, `semantics`
+**When to use:** Use to expose secondary actions on a tappable element via long press (similar to iOS/Android context menus). Choose `vertical` for list-style menu, `horizontal` for icon action strip, or `verticalHorizontal` for both.
 
-## MpCountryPickerBottomSheet
-- **Category:** `components/country_picker`
-- **Key params:** `title`, `languageCode`, `semantics`
+**Variants:**
+- `MpContextualMenu.vertical(child:, verticalMenuItems:)` — vertical list menu
+- `MpContextualMenu.horizontal(child:, horizontalMenuItems:)` — horizontal icon strip
+- `MpContextualMenu.verticalHorizontal(child:, ...)` — combined
+
+**Key params:**
+- `child` — the widget that triggers the context menu on long press
+- `previewChild` — custom preview widget shown above the menu
+- `verticalMenuItems` / `horizontalMenuItems` — list of `MpContextualMenuItem`
+
+**Usage:**
+```dart
+MpContextualMenu.vertical(
+  child: Container(child: Text('Long press me')),
+  verticalMenuItems: [
+    MpContextualMenuItem.verticalSectionTitle(title: "Action", onTap: () {}),
+  ],
+)
+```
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5824-58261
+
+---
 
 ## MpCustomKeyboard
-- **Category:** `components/custom_keyboard`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Custom Keyboard.
-- **Key params:** `actionBuilder`, `onTapNumber`, `onTapBackspace`, `textStyle`, `iconColor`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=2570-12372
 
-## MpDatePickerField
-- **Category:** `components/date_picker`
-- **Description:** Mekari Mobile Kit - Date Picker Field
-- **Key params:** `selectedDate`, `firstDate`, `lastDate`, `events`, `sheetTitleLabel`, `stringLibrary`, `focusNode`, `label`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17475-22286&t=OxbAmb5Gcttt4wKm-4
+A full numeric keyboard component for custom PIN, amount, or code entry flows.
 
-## MpDatePickerHeader
-- **Category:** `components/date_picker`
-- **Key params:** `semantics`, `title`, `clearButton`, `saveButton`
+**When to use:** Use when the system keyboard is unsuitable (OTP, PIN entry, currency input). Provides a 12-key numeric layout with configurable action key and backspace.
 
-## MpDatePickerMenu
-- **Category:** `components/date_picker/body`
-- **Description:** Mekari Mobile Kit: Date Picker Menu Selection <br/> This component will show a menu to display and manipulate [DateTime] <br/>
-- **Key params:** `label`, `labelStyle`, `isMenuOpened`, `onMenuPressed`, `onPrevPressed`, `onNextPressed`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=2542-12549&t=crHQWqZtF43eji1F-4
+**Key params:**
+- `onTapNumber` — callback when number key tapped
+- `onTapBackspace` — callback for backspace
+- `actionBuilder` — custom widget for the bottom-left action key
+- `thousandZero` — when `true`, replaces action key with `000` key
+- `height` — keyboard height; defaults to `304`
 
-## MpDatePickerRangeField
-- **Category:** `components/date_picker`
-- **Description:** Mekari Mobile Kit - Date Picker Field
-- **Key params:** `dateRange`, `firstDate`, `lastDate`, `events`, `sheetTitleLabel`, `stringLibrary`, `focusNode`, `label`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17475-22286&t=OxbAmb5Gcttt4wKm-4
+**Usage:**
+```dart
+MpCustomKeyboard(
+  onTapBackspace: () {},
+  onTapNumber: (value) { /* do logic */ },
+)
+```
 
-## MpDatePickerRangeInfo
-- **Category:** `components/date_picker/body`
-- **Description:** Mekari Mobile Kit: Range Info Component <br/> This component will information about [DateTimeRange] <br/>
-- **Key params:** `dateRange`, `stringLibrary`, `locale`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4125-28163&t=crHQWqZtF43eji1F-4
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17305-693
 
-## MpDayDatePickerBody
-- **Category:** `components/date_picker/body/day`
-- **Description:** Mekari Mobile Kit: Date Picker Day Picker <br/> This component will show all visible days in the following month <br/> User able to select date inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `labelStyle`, `cellStyle`, `events`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-27401&t=crHQWqZtF43eji1F-4
+---
 
-## MpDayDatePickerBodyHeader
-- **Category:** `components/date_picker/body/day`
-- **Description:** Mekari Mobile Kit: Date Picker Day Header <br/> This component will show table of weekdays start from sunday <br/>
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=2542-11477&t=crHQWqZtF43eji1F-4
+## MpDatePicker
 
-## MpDayDatePickerBodyView
-- **Category:** `components/date_picker/body/day`
-- **Description:** Mekari Mobile Kit: Date Picker Day View <br/> This component will show all visible days in the following month <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `cellStyle`, `events`, `onDateSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-27401&t=crHQWqZtF43eji1F-4
+Shows a date or date-range picker inside a bottom sheet. Returns the selected `DateTime` via Future.
 
-## MpDayDatePickerRangeBody
-- **Category:** `components/date_picker/body/day`
-- **Description:** Mekari Mobile Kit: Date Picker Day Range Picker <br/> This component will show all visible days in the following month <br/> User able to select date range inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `dateRange`, `labelStyle`, `cellStyle`, `events`, `onDateRangeSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-27401&t=crHQWqZtF43eji1F-4
+**When to use:** Use `MpDatePicker.showDayPicker()` for single date selection. Use `MpDatePicker.showRangePicker()` for date range. For embedded calendar display, use `MpCalendar` (page) instead.
 
-## MpDayDatePickerRangeSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Picker Date Range Picker - Day - Sheet <br/> This template will show all visible days in the following month in a sheet <br/> User able to select date range inside this sheet <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `dateRange`, `menuStyle`, `cellStyle`, `events`, `titleLabel`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=837-21606&t=crHQWqZtF43eji1F-4
+**Key methods:**
+- `MpDatePicker.showDayPicker(context, ...)` — single date
+- `MpDatePicker.showRangePicker(context, ...)` — date range
 
-## MpDayDatePickerSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Picker - Day - Sheet <br/> This template will show all visible days in the following month in a sheet <br/> User able to select date inside this sheet <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `menuStyle`, `cellStyle`, `events`, `titleLabel`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=2526-11359&t=crHQWqZtF43eji1F-4
+**Key params:**
+- `firstDate` / `lastDate` — constrains the selectable range
+- `date` / `selectedDate` — initial selection
+- `selectionMode` — `scrollView` or `gridView` layout
+- `showTodayButton` / `showClearButton` — optional action buttons
 
-## MpDoubleListTileXContent
-- **Category:** `components/list_tile_x`
-- **Key params:** `label`, `caption`, `labelStyle`, `captionStyle`, `overflow`, `textAlign`
+**Usage:**
+```dart
+MpDatePicker.showDayPicker(
+  context,
+  onSaveButtonPressed: (date) { /* handle */ },
+)
+```
+
+---
 
 ## MpFilter
-- **Category:** `components/filter`
-- **Description:** Mekari Mobile Kit - Filter
-- **Key params:** `tags`, `selectedStyle`, `unselectedStyle`, `buttonLabel`, `buttonForegroundColor`, `buttonIcon`, `onTapFilter`, `onTapTag`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=9273-26004&t=coQA4b63Bj2T22kR-0
 
-## MpFilterButton
-- **Category:** `components/filter`
-- **Description:** Mekari Mobile Kit - Filter Button
-- **Key params:** `label`, `icon`, `onTap`, `foregroundColor`, `borderColor`, `semantics`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=9273-26004&t=coQA4b63Bj2T22kR-0
+A horizontal scrollable filter bar combining a filter button with tag chips.
 
-## MpFullDatePickerBody
-- **Category:** `components/date_picker/body/full`
-- **Description:** Mekari Mobile Kit: Date Picker Full Picker <br/> This component will show expanded view of date picker that can be scrollable <br/> User able to select date inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `cellStyle`, `events`, `onDateSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-29919&t=crHQWqZtF43eji1F-4
+**When to use:** Use at the top of list screens to let users narrow content by category. The filter button opens a detailed filter panel; tags provide quick single-filter toggles.
 
-## MpFullDatePickerBodyView
-- **Category:** `components/date_picker/body/full`
-- **Description:** Mekari Mobile Kit: Date Picker Full View <br/> This component will show expanded view of date picker that can be scrollable <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `cellStyle`, `events`, `onDateSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-29642&t=crHQWqZtF43eji1F-4
+**Key params:**
+- `tags` — list of `MpFilterTagData` with label and selection state
+- `buttonLabel` — text for the filter button (defaults to none)
+- `onTapFilter` — called when filter button is tapped; receives selected count
+- `onTapTag` — called when a tag is tapped; receives index and tag data
+- `onTapTagSuffix` — called when a tag's remove icon is tapped
 
-## MpFullDatePickerRangeBody
-- **Category:** `components/date_picker/body/full`
-- **Description:** Mekari Mobile Kit: Date Picker Full Range Picker <br/> This component will show expanded view of date picker that can be scrollable <br/> User able to select date range inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `dateRange`, `cellStyle`, `events`, `onDateRangeSelected`, `locale`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-30102&t=crHQWqZtF43eji1F-4
+**Usage:**
+```dart
+MpFilter(
+  buttonLabel: 'Filter',
+  tags: items,
+  onTapFilter: onTapFilter,
+  onTapTag: onTapTag,
+)
+```
 
-## MpFullDatePickerRangeSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Range Picker - Full - Sheet <br/> This template will show expanded view of date picker that can be scrollable in a sheet <br/> User able to select date range inside this sheet <br/>
-- **Key params:** `firstDate`, `lastDate`, `dateRange`, `cellStyle`, `events`, `titleLabel`, `onClearButtonPressed`, `onSaveButtonPressed`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=837-21606&t=crHQWqZtF43eji1F-4
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17391-18567
 
-## MpFullDatePickerSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Picker - Full - Sheet <br/> This template will show expanded view of date picker that can be scrollable in a sheet <br/> User able to select date inside this sheet <br/>
-- **Key params:** `firstDate`, `lastDate`, `selectedDate`, `cellStyle`, `events`, `titleLabel`, `onClearButtonPressed`, `onSaveButtonPressed`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4101-29919&t=crHQWqZtF43eji1F-4
+---
 
-## MpHeadingToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Toggle heading styles (Normal, H1, H2) in the text editor.
-- **Key params:** `controller`, `tooltip`, `style`, `semantics`
-- **Variants:** `MpHeadingToolbarButton.basic()`
+## MpCheckboxList
 
-## MpIconLeftCheckboxList
-- **Category:** `components/checkbox`
-- **Description:** Mekari Checkbox List - Variant: Icon Left
-- **Key params:** `values`, `onChanged`, `style`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=445%3A5309&t=PLJMony4dHpmREqs-0
+A group of checkboxes rendered as a list, backed by `List<MpCheckboxListItem>`.
 
-## MpImageToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Insert images to text editor's document either from camera or gallery.
-- **Key params:** `icon`, `tooltip`, `style`, `onImagePickCallback`, `semantics`
-- **Variants:** `MpImageToolbarButton.basic()`
+**When to use:** Use when users need to select multiple items from a list. For a single checkbox, use `MpCheckbox` atom. For richer list tiles with avatars/icons, use `MpCheckboxListTileX` (template).
 
-## MpIndentToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Toggle text indentation levels in the text editor.
-- **Key params:** `controller`, `tooltip`, `style`, `semantics`
-- **Variants:** `MpIndentToolbarButton.basic()`
+**Key params:**
+- `values` — list of `MpCheckboxListItem` (each has `value` bool and `label`)
+- `onChanged` — callback with updated values
+- `style` — visual overrides
 
-## MpInputTag
-- **Category:** `components/input_tag`
-- **Description:** Mekari Mobile Kit - Input Tags
-- **Key params:** `label`, `onTap`, `style`, `suffixIcon`, `errorText`, `padding`, `semantics`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17513-15338
+**Usage:**
+```dart
+MpCheckboxList(
+  values: [
+    MpCheckboxListItem(value: true, label: 'Label One'),
+    MpCheckboxListItem(value: false, label: 'Label Two'),
+  ],
+  onChanged: (values) {},
+)
+```
 
-## MpInputTagCreate
-- **Category:** `components/input_tag`
-- **Description:** Mekari Mobile Kit - Input Tags - Create
-- **Key params:** `label`, `onSelectionChanged`, `validator`, `selectedItems`, `padding`, `separator`, `style`, `suffixIcon`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5225-40879
-
-## MpLinkToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Insert link into text editor. The link will be clickable to open a webview. It is also possible to customize the action using [MpTextEditor.onTapLink].
-- **Key params:** `controller`, `icon`, `tooltip`, `style`, `onPressed`, `semantics`
-- **Variants:** `MpLinkToolbarButton.basic()`
+---
 
 ## MpLoadingAnimation
-- **Category:** `components/loading_animation`
-- **Description:** Mekari Mobile Kit - Loading Animation
-- **Key params:** `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=6416-55659&mode=design&t=DPQylcbClrKUqjVO-0
 
-## MpMentionToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Insert names into text editor. The mentioned names will be clickable to open a webview. It is also possible to customize the action using [MpTextEditor.onTapLink].
-- **Key params:** `controller`, `icon`, `tooltip`, `style`, `onPressed`, `users`, `semantics`
-- **Variants:** `MpMentionToolbarButton.basic()`
+An animated three-dot loading indicator using brand colors.
 
-## MpMonthDatePickerBody
-- **Category:** `components/date_picker/body/month`
-- **Description:** Mekari Mobile Kit: Date Picker Month Picker <br/> This component will show all visible months in the following year <br/> User able to select month inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `labelStyle`, `cellStyle`, `events`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4095-30987&t=ARnxQ2jFK0WP3Ih7-4
+**When to use:** Use for full-page loading states or section-level async loading. For inline/skeleton loading, use `MpShimmer` instead.
 
-## MpMonthDatePickerBodyView
-- **Category:** `components/date_picker/body/month`
-- **Description:** Mekari Mobile Kit: Date Picker Month View <br/> This component will show all visible months in the following year <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `cellStyle`, `events`, `onDateSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4095-30987&t=ARnxQ2jFK0WP3Ih7-4
+**Key params:**
+- `size` — dot size; defaults to `24.0`
+- `spacing` — gap between dots; defaults to `12.0`
+- `duration` — animation cycle; defaults to `1250ms`
 
-## MpMonthDatePickerRangeBody
-- **Category:** `components/date_picker/body/month`
-- **Description:** Mekari Mobile Kit: Month Date Range Picker <br/> This component will show all visible months in the following year <br/> User able to select month range inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `dateRange`, `labelStyle`, `cellStyle`, `events`, `onDateRangeSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4103-37846&t=m1pSRzXYXfjLCH2X-4
+**Usage:**
+```dart
+const MpLoadingAnimation(size: 8.0, spacing: 4.0)
+```
 
-## MpMonthDatePickerRangeSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Range Picker - Month - Sheet <br/> This template will show all visible months in the following year in a sheet <br/> User able to select month range inside this sheet <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `dateRange`, `menuStyle`, `cellStyle`, `events`, `titleLabel`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4103-37846&t=m1pSRzXYXfjLCH2X-4
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=6416-55659
 
-## MpMonthDatePickerSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Picker - Month - Sheet <br/> This template will show all visible months in the following year in a sheet <br/> User able to select month inside this sheet <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `menuStyle`, `cellStyle`, `events`, `titleLabel`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4095-30987&t=ARnxQ2jFK0WP3Ih7-4
-
-## MpMultiUpload
-- **Category:** `components/upload`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Upload (Variant: Multi Upload)
-- **Key params:** `data`, `label`, `caption`, `error`, `dropzoneIcon`, `dropzoneLabel`, `deleteIcon`, `deleteIconPadding`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=7014-59155
-
-## MpMultipleLineBottomSheetContent
-- **Category:** `components/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Bottomsheet - Variant: Multiple Line
-- **Key params:** `title`, `labelButton`, `content`, `onTapClose`, `onTapButton`, `actions`, `actionSpacing`, `semantics`
-
-## MpOutdentToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Decrease text indentation level in the text editor.
-- **Key params:** `controller`, `tooltip`, `style`, `semantics`
-- **Variants:** `MpOutdentToolbarButton.basic()`
-
-## MpOverlineBottomSheetContent
-- **Category:** `components/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Bottomsheet - Variant: Overline
-- **Key params:** `title`, `labelButton`, `content`, `onTapClose`, `onTapButton`, `actions`, `actionSpacing`, `semantics`
-
-## MpOverlineListTileXContent
-- **Category:** `components/list_tile_x`
-- **Key params:** `label`, `caption`, `labelStyle`, `captionStyle`, `overflow`, `textAlign`
+---
 
 ## MpPageControl
-- **Category:** `components/page_control`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Page Control.
-- **Key params:** `length`, `onTap`, `activeColor`, `inactiveColor`, `height`, `content`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=1080-21107&mode=design&t=tvaCXuWAZslTRP27-0
 
-## MpPageControlIndicator
-- **Category:** `components/page_control`
-- **Description:** A circular indicator widget that mainly used inside the [MpPageController]
-- **Key params:** `index`, `isActive`, `onTap`, `indicatorSize`, `activeColor`, `inactiveColor`, `semantics`
+A row of dot indicators for paged content (carousels, onboarding).
 
-## MpPageControlSlider
-- **Category:** `components/page_control`
-- **Description:** Mekari Mobile Kit - Page Control Slider.
-- **Key params:** `content`, `scrollController`, `activeColor`, `inactiveColor`, `contentBuilder`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=1080%3A21106&mode=design&t=mHIVS3Gd7Jx2lLB0-1
+**When to use:** Use with `PageView` to show the current page and total page count. Place below a `PageView` with synced `currentIndex`.
 
-## MpPageControlSliderIndicator
-- **Category:** `components/page_control`
-- **Key params:** `activeColor`, `inactiveColor`
+**Key params:**
+- `length` — total number of pages
+- `currentIndex` — active page (0-based); must be < `length`
+- `size` — dot size; defaults to `6.0`
+- `activeColor` / `inactiveColor` — color overrides
+
+**Usage:**
+```dart
+MpPageControl(
+  length: 5,
+  currentIndex: _currentPage,
+)
+```
+
+---
 
 ## MpPhoneTextField
-- **Category:** `components/phone_text_field`
-- **Description:** Mekari Mobile Kit - Phone Textfield.
-- **Key params:** `controller`, `focusNode`, `hint`, `error`, `helper`, `validator`, `onFocused`, `onChanged`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=86-2334&mode=design&t=7wbHsuCptahyue9P-0
 
-## MpResetFormatToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Reset/clear all formatting from the current selection or line.
-- **Key params:** `controller`, `tooltip`, `style`, `semantics`
-- **Variants:** `MpResetFormatToolbarButton.basic()`
+A phone number input field with integrated country code picker.
 
-## MpScrollableDatePickerBody
-- **Category:** `components/date_picker/body/scrollable`
-- **Description:** Mekari Mobile Kit: Date Picker Scrollable Picker <br/> This component will show scrollable date picker <br/> User able to scroll and select date inside this view <br/>
-- **Key params:** `firstDate`, `lastDate`, `selectedDate`, `itemExtent`, `onDateChanged`, `locale`, `semantics`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17503-8345&t=Pg2AMtKHlvhNuuIK-4
+**When to use:** Use instead of `MpTextField` whenever the input is a phone number. Handles country code formatting, flag display, and dial code prepending automatically.
 
-## MpScrollableDatePickerBodyView
-- **Category:** `components/date_picker/body/scrollable`
-- **Description:** Mekari Mobile Kit: Date Picker Scrollable View <br/> This component will show a vertical scrollable view <br/> User able to scroll values in this view <br/>
-- **Key params:** `itemExtent`, `itemCount`, `itemBuilder`, `onControllerCreated`, `onSelectedItemChanged`, `semantics`, `maxHeight`, `itemExtent`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17503-8345&t=Pg2AMtKHlvhNuuIK-4
+**Key params:**
+- Same as `MpTextField` for label/hint/error/helper/validator
+- `prefixIcon` — replace default country flag picker if needed
 
-## MpScrollableDatePickerRangeBody
-- **Category:** `components/date_picker/body/scrollable`
-- **Description:** Mekari Mobile Kit: Scrollable Date Range Picker <br/> This component will show scrollable range date picker <br/> User able to scroll and select date range inside this view <br/>
-- **Key params:** `firstDate`, `lastDate`, `dateRange`, `itemExtent`, `onDateRangeSelected`, `stringLibrary`, `locale`, `semantics`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17497-6849&t=Pg2AMtKHlvhNuuIK-4
+**Usage:**
+```dart
+MpPhoneTextField(
+  hint: "12345",
+  validator: _validatePhone,
+)
+```
 
-## MpScrollableDatePickerRangeSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Range Picker - Scrollable - Sheet <br/> This component will show scrollable range date picker <br/> User able to scroll and select date range inside this view <br/>
-- **Key params:** `firstDate`, `lastDate`, `dateRange`, `itemExtent`, `titleLabel`, `onClearButtonPressed`, `onSaveButtonPressed`, `stringLibrary`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17497-6849&t=Pg2AMtKHlvhNuuIK-4
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17440-11709
 
-## MpScrollableDatePickerSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Picker - Scrollable - Sheet <br/> This component will show scrollable date picker <br/> User able to scroll and select date inside this view <br/>
-- **Key params:** `firstDate`, `lastDate`, `selectedDate`, `itemExtent`, `titleLabel`, `onClearButtonPressed`, `onSaveButtonPressed`, `stringLibrary`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17503-8345&t=Pg2AMtKHlvhNuuIK-4
+---
+
+## MpRadioButtonListX
+
+A list of radio button options with optional avatar/icon leading widgets.
+
+**When to use:** Use when users must choose exactly one option from a list. For a single radio button, use `MpRadioButton`. For richer layout customization, use `MpRadioButtonListTileX` (template).
+
+**Key params:**
+- `values` — list of `MpRadioButtonListXItem` with `value`, `label`, optional `caption` and `leading`
+- `currentValue` — the currently selected value
+- `onRadioClick` — callback with selected value
+
+**Usage:**
+```dart
+MpRadioButtonListX(
+  values: [
+    MpRadioButtonListXItem(value: 1, label: 'Option One'),
+    MpRadioButtonListXItem(value: 2, label: 'Option Two'),
+  ],
+  currentValue: 1,
+  onRadioClick: (value) => setState(() => _selected = value),
+)
+```
+
+---
 
 ## MpSearch
-- **Category:** `components/search`
-- **Description:** Mekari Mobile Kit - Search.
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=953%3A20829&t=pCVjH8TeC65kNarf-4
+
+A search input bar with hero animation support, debounce, and cancel action.
+
+**When to use:** Use for search screens opened as a route (push). Wrap in a `Hero` with the `heroTag` parameter for smooth search bar expansion animation from the triggering widget.
+
+**Key params:**
+- `heroTag` — required for Hero animation; must match the trigger widget's Hero tag
+- `autoFocus` — focuses the field after 500ms delay on init; defaults to false
+- `onTextChanged` — debounced search callback; use to load results
+- `onCancelPressed` — callback for cancel button (typically pops the route)
+
+**Usage:**
+```dart
+MpSearch(
+  heroTag: "search",
+  autoFocus: true,
+  onTextChanged: (value) => _loadData(query: value),
+  onCancelPressed: () => Navigator.of(context).pop(),
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17356-6423
+
+---
 
 ## MpSegmentedControl
-- **Category:** `components/segmented_control`
-- **Description:** ```
-- **Key params:** `items`, `initialSelectedItem`, `tabController`, `controller`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=3113%3A16047&mode=design&t=0ovRDMW7Xr35mcNB-1
 
-## MpSingleFilter
-- **Category:** `components/filter/single`
-- **Description:** Mekari Mobile Kit - Single Selection Filter A single selection filter widget that allows users to select one option from a list of available choices.
-- **Key params:** `tags`, `selectedIndex`, `selectedStyle`, `unselectedStyle`, `onTapTag`, `backgroundColor`, `padding`, `spacing`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17733-5629&t=Mh1LR4y5qxayQyyP-4
+A tab-style segmented selector where each segment is a mutually exclusive option.
 
-## MpSingleListTileXContent
-- **Category:** `components/list_tile_x`
-- **Key params:** `label`, `style`, `overflow`, `textAlign`
+**When to use:** Use to switch between views or filter contexts on a single screen (e.g. "Day / Week / Month", "Active / Archived"). For main navigation between screens, use `MpBottomNavBar` or `MpTabs`.
+
+**Key params:**
+- `items` — list of `MpSegmentedControlItem`; each item has a unique `name` key
+- `initialSelectedItem` — `name` of the initially selected item
+- `isScrollable` — enables horizontal scroll when items overflow; defaults to `false`
+- `tabController` — external `TabController` for coordination with `TabBarView`
+
+**Usage:**
+```dart
+MpSegmentedControl(
+  initialSelectedItem: "test_3",
+  items: [
+    MpSegmentedControlItem.label(context, "Test 1", "test_1"),
+    MpSegmentedControlItem.label(context, "Test 2", "test_2"),
+    MpSegmentedControlItem.label(context, "Test 3", "test_3"),
+  ],
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17382-15289
+
+---
+
+## MpSelect
+
+A form field that opens a searchable selection bottom sheet. Generic over item type `T`.
+
+**When to use:** Use for single or multi-select dropdowns in forms where options come from an async data source. For static small option lists, consider `MpSegmentedControl` or radio buttons instead.
+
+**Key params:**
+- `label` — field label
+- `hint` — placeholder when nothing is selected
+- `getItems` — async function returning `List<T>` based on query
+- `getItemLabel` — function returning display string for each item
+- `listItemBuilder` — function building the row widget for each item
+
+**Usage:**
+```dart
+MpSelect<UserData>(
+  label: "Select User",
+  hint: "Tap to select",
+  getItems: _loadData,
+  getItemLabel: (item) => item.name,
+  listItemBuilder: (item) => Text(item.name),
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17448-10982
+
+---
 
 ## MpSlider
-- **Category:** `components/slider`
-- **Description:** Mekari Mobile Kit - Slider
-- **Key params:** `title`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18084-55630&t=fgXbXl4CZVH4dcbK-0
 
-## MpSliderRange
-- **Category:** `components/slider`
-- **Description:** Mekari Mobile Kit - Slider
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18084-55630&t=fgXbXl4CZVH4dcbK-0
+A range slider with title, caption, and value display.
+
+**When to use:** Use for continuous numeric range inputs (e.g. salary range, distance filter, age range). For discrete step selection, consider `MpSegmentedControl`.
+
+**Key params:**
+- `title` — required label above slider
+- `value` — current slider value
+- `minValue` / `maxValue` — range bounds
+- `onChangedCallback` — called continuously as user drags
+- `caption` — optional secondary label
+
+**Usage:**
+```dart
+MpSlider(
+  title: 'Slider title',
+  value: 0.0,
+  minValue: 0.0,
+  maxValue: 1.0,
+  onChangedCallback: (value) {},
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18084-55630
+
+---
 
 ## MpStories
-- **Category:** `components/stories`
-- **Description:** Mekari Mobile Kit - Stories
-- **Key params:** `controller`, `onStart`, `onStop`, `onResume`, `onPause`, `onIndexChange`, `valueColor`, `backgroundColor`
-- **Variants:** `MpStories.white()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=13919-13208&mode=design&t=2po2iJqfpiBg7bfg-0
+
+An auto-advancing story view (Instagram-style) with progress bar and lifecycle callbacks.
+
+**When to use:** Use for onboarding tours, product announcements, or media stories. Requires an `MpStoriesController` for programmatic control (start, pause, next, previous).
+
+**Key params:**
+- `controller` — required `MpStoriesController(count:)`
+- `autoStart` — starts automatically; defaults to `true`
+- `hideOnStop` — hides widget when stopped; defaults to `false`
+- `onStart` / `onStop` / `onPause` / `onResume` / `onIndexChange` — lifecycle callbacks
+
+**Usage:**
+```dart
+MpStories(
+  controller: MpStoriesController(count: 4),
+  onIndexChange: (index) => debugPrint('Page $index'),
+)
+```
+
+---
 
 ## MpTabs
-- **Category:** `components/tabs`
-- **Description:** Mekari Mobile Kit Tabs.
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=95%3A3262&t=3PKxxhRsp4nKFlSh-0
 
-## MpTabsChips
-- **Category:** `components/tabs`
-- **Description:** Mekari Mobile Kit Tabs.
-- **Key params:** `onTap`, `backgroundColor`, `activeColor`, `inActiveColor`, `activeBackgroundColor`, `activeIconCustomColor`, `inActiveIconCustomColor`, `height`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17359-9407&t=ERjFywuCf1J3DBGZ-0
+Horizontal scrollable tabs with optional icons, typically used for sub-navigation within a screen.
 
-## MpTabsMenu
-- **Category:** `components/tabs`
-- **Description:** Mekari Mobile Kit Tabs.
-- **Key params:** `onTap`, `backgroundColor`, `itemBackgroundColor`, `itemForegroundColor`, `activeIconCustomColor`, `inActiveIconCustomColor`, `height`, `itemSpacing`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17359-9407&t=ERjFywuCf1J3DBGZ-0
+**When to use:** Use for switching between views within the same screen (e.g. "All / Pending / Approved"). Requires a `TabController` or wrapping in `DefaultTabController`.
+
+**Key params:**
+- `items` — list of `MpTabsItemData` (icon as String) or `MpTabsItemWidgetData` (icon as Widget)
+- `currentIndex` — active tab
+
+**Usage:**
+```dart
+MpTabs(
+  items: [
+    MpTabsItemData(label: 'Tab 1'),
+    MpTabsItemData(label: 'Tab 2', icon: MpIcons.alert.done),
+  ],
+  currentIndex: 0,
+)
+```
+
+---
 
 ## MpTextEditor
-- **Category:** `components/text_editor`
-- **Description:** Mekari Mobile Kit - Text Editor
-- **Key params:** `controller`, `style`, `mentions`, `onTapLink`, `onAttachmentDelete`, `onAttachmentDownload`, `toolbarBuilder`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5225-43924
 
-## MpTextEditorAttachment
-- **Category:** `components/text_editor`
-- **Description:** This widget is a part of [MpTextEditor]. This widget show a list of images and files included to the text editor's document. This widget requires conteroller to show and remove images and files
-- **Key params:** `controller`, `style`, `onTapDelete`, `onTapDownload`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5225-43924
+A rich text editor (built on `flutter_quill`) with toolbar, mentions, and attachment support.
 
-## MpTextEditorContent
-- **Category:** `components/text_editor`
-- **Description:** This widget is a part of [MpTextEditor]. This widget placed at the center of text editor and used to update [MpTextEditorData.content].
-- **Key params:** `controller`, `scrollController`, `focusNode`, `style`, `onLaunchUrl`, `semantics`
-- **Variants:** `MpTextEditorContent.reader()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5225-43924
+**When to use:** Use for comment boxes, note inputs, or any field requiring formatted text (bold, italic, links). For plain text, use `MpTextField`.
 
-## MpTextEditorHeader
-- **Category:** `components/text_editor`
-- **Description:** This widget is a part of [MpTextEditor]. This widget placed at the top of the text editor.
-- **Key params:** `controller`, `focusNode`, `style`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5225-43924
+**Key params:**
+- `controller` — required `QuillController`
+- `showToolbar` — shows formatting toolbar; defaults to `true`
+- `toolbarPosition` — `bottom` (default) or `top`
+- `mentions` — list of mentionable users/entities
+- `showAttachment` — enables file attachment button; defaults to `true`
 
-## MpTextEditorImagePreview
-- **Category:** `components/text_editor`
-- **Key params:** `attachment`, `onTapDelete`, `onTapDownload`, `backgroundColor`
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18042-70193
+
+---
 
 ## MpThumbnail
-- **Category:** `components/thumbnail`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Thumbnail
-- **Key params:** `path`, `size`, `radius`, `deleteIcon`, `deleteIconPadding`, `borderColor`, `onTapDelete`, `onTapThumbnail`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=7048-60414&mode=design&t=ERvQvSYg3uboxKst-4
 
-## MpTimePickerBottomSheetContent
-- **Category:** `components/time_picker`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - TimePicker To call the time picker inside bottomsheet, preferably use [MpTimePicker] instead.
-- **Key params:** `onTapButton`, `onTapButtonRange`, `is12HourFormat`, `hoursLimit`, `minutesLimit`, `secondsLimit`, `initialHour`, `initialMinute`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5257-47630&mode=design&t=47dkyq9n3kUAnBSK-4
+A file/image preview widget supporting images, PDFs, and other file types.
 
-## MpTimePickerDuration
-- **Category:** `components/time_picker`
-- **Description:** Mekari Mobile Kit - TimePicker (Variant: Duration)
-- **Key params:** `hoursLimit`, `minutesLimit`, `secondsLimit`, `backgroundColor`, `onTimeChanged`, `semantics`, `strings`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5257-47630&mode=design&t=47dkyq9n3kUAnBSK-4
+**When to use:** Use in upload flows and attachment displays to preview files before or after upload. Built into `MpUpload` and `MpTextEditor` attachment flows — use directly only for custom layouts.
+
+**Key params:**
+- `path` — file path or URL (auto-detects image vs PDF)
+- `size` — defaults to full-width at 92px height
+- `deleteIcon` / `deleteIconPadding` — for deletable attachments
+
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=7048-60414
+
+---
+
+## MpTimePicker
+
+Shows a time, time range, or duration picker inside a bottom sheet. Returns the selected value via Future.
+
+**When to use:** Use `MpTimePicker.show()` when collecting time input. For a combined field+picker interaction, use `MpTimePickerField` instead.
+
+**Key params:**
+- `type` — `MpTimePickerType.time` | `timeRange` | `duration`
+- `onTapButton` — callback with selected `DateTime` (for time/duration types)
+- `onTapButtonRange` — callback for time range type
+- `is12HourFormat` — 12-hour AM/PM mode
+- `hoursInterval` / `minutesInterval` / `secondsInterval` — scroll increments
+
+**Usage:**
+```dart
+MpTimePicker.show(
+  context,
+  type: MpTimePickerType.time,
+  onTapButton: (value) => print(value.toIso8601String()),
+)
+```
+
+---
 
 ## MpTimePickerField
-- **Category:** `components/time_picker_field`
-- **Description:** Mekari Mobile Kit - Time Picker Field.
-- **Key params:** `controller`, `focusNode`, `label`, `hint`, `helper`, `validator`, `onChanged`, `padding`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17562-11823&t=HH7hDyVXTVWlgKEz-4
 
-## MpTimePickerSpinner
-- **Category:** `components/time_picker`
-- **Description:** Spinner for hours, minutes, and seconds
-- **Key params:** `controller`, `list`, `itemHeight`, `selectedIndex`, `onUpdateSelectedIndex`, `semantics`, `controller`, `itemHeight`
+A read-only text field that opens an `MpTimePicker` bottom sheet on tap.
 
-## MpTimePickerTime
-- **Category:** `components/time_picker`
-- **Description:** Mekari Mobile Kit - TimePicker (Variant: Time)
-- **Key params:** `hoursLimit`, `minutesLimit`, `backgroundColor`, `onTimeChanged`, `semantics`, `strings`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17562-11783
+**When to use:** Use in forms where users select a time value. Handles field display, formatting, and clear action automatically. Prefer over manually wiring `MpTextField(readOnly: true)` + `MpTimePicker`.
 
-## MpTimePickerTimeRange
-- **Category:** `components/time_picker`
-- **Description:** Mekari Mobile Kit - TimePicker (Variant: Time Range)
-- **Key params:** `hoursLimit`, `minutesLimit`, `backgroundColor`, `onTimeRangeChanged`, `semantics`, `strings`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17562-11819&t=OJADDrCyLjcjLm9g-4
+**Key params:**
+- `type` — time picker type (time, timeRange, duration)
+- `label` / `hint` / `helper` / `validator` — standard field props
+- `withClearAction` — shows clear button; defaults to `true`
+- `onChanged` — callback when selection changes
 
-## MpTimePickerTypeSpinner
-- **Category:** `components/time_picker`
-- **Description:** Spinner for AM/PM
-- **Key params:** `controller`, `itemHeight`, `selectedIndex`, `onUpdateSelectedIndex`, `semantics`, `strings`, `itemHeight`
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17562-11823
 
-## MpTimeline
-- **Category:** `components/timeline`
-- **Description:** Mekari Pixel - Timeline
-- **Key params:** `indicator`, `label`, `preposition`, `username`, `date`, `desc`, `attachmentData`, `customContent`
-- **Variants:** `MpTimeline.informative()`, `MpTimeline.success()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5343-46805&mode=design&t=COdbyxlFRHGuavvx-4
+---
 
-## MpTimelineAttachment
-- **Category:** `components/timeline/attachment`
-- **Description:** A attachment widget for Timeline widget
-- **Key params:** `attachmentData`, `semantics`
+## MpAccordionTimeline
 
-## MpTimelineIndicator
-- **Category:** `components/timeline/indicator`
-- **Key params:** `icon`, `iconCollapse`, `onTapIcon`, `semantics`
-- **Variants:** `MpTimelineIndicator.informative()`, `MpTimelineIndicator.success()`, `MpTimelineIndicator.negative()`, `MpTimelineIndicator.neutral()`, `MpTimelineIndicator.notice()`, `MpTimelineIndicator.accordion()`, `MpTimelineIndicator.cancelled()`
+A timeline entry with an expandable content section, used for approval flows and history lists.
 
-## MpTimelineIndicatorAccordionIcon
-- **Category:** `components/timeline/indicator`
+**When to use:** Use in approval timelines, process history, or activity logs where each step has expandable detail. Chain multiple `MpAccordionTimeline` widgets vertically; set `isFirstItem`/`isLastItem` to control connector lines.
 
-## MpTimelineIndicatorCancelledIcon
-- **Category:** `components/timeline/indicator`
+**Key params:**
+- `label` — step label
+- `caption` — step status
+- `timelines` — list of `MpTimeline.*` items shown when expanded
+- `isFirstItem` / `isLastItem` — controls leading/trailing connector lines
 
-## MpTimelineIndicatorInformativeIcon
-- **Category:** `components/timeline/indicator`
+**Usage:**
+```dart
+MpAccordionTimeline(
+  label: 'Approval stage 1',
+  timelines: [
+    MpTimeline.success(label: "Approved", username: "Christin", date: DateTime.now()),
+  ],
+)
+```
 
-## MpTimelineIndicatorNegativeIcon
-- **Category:** `components/timeline/indicator`
+**Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5343-46805
 
-## MpTimelineIndicatorNeutralIcon
-- **Category:** `components/timeline/indicator`
-
-## MpTimelineIndicatorNoticeIcon
-- **Category:** `components/timeline/indicator`
-
-## MpTimelineIndicatorSuccessIcon
-- **Category:** `components/timeline/indicator`
-
-## MpTimelineLog
-- **Category:** `components/timeline/log`
-- **Description:** A timeline log widget for Timeline widget
-- **Key params:** `title`, `description`, `titleStyle`, `descriptionStyle`
+---
 
 ## MpToast
-- **Category:** `components/toast`
-- **Description:** Mekari Pixel - Toast
-- **Key params:** `message`, `icon`, `emoji`, `iconAnimation`, `direction`, `style`, `semantics`
-- **Variants:** `MpToast.done()`, `MpToast.info()`, `MpToast.error()`, `MpToast.warning()`, `MpToast.greetings()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=279%3A3928&t=hajI1xdm3KpgcanQ-0
 
-## MpToastIcon
-- **Category:** `components/toast`
-- **Description:** Display icon on top of the toast
-- **Key params:** `icon`, `color`, `size`, `animation`
+A temporary overlay notification shown at the top or bottom of the screen.
 
-## MpToggleBottomSheetContent
-- **Category:** `components/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Bottomsheet - Variant: Toggle
-- **Key params:** `title`, `labelButton`, `content`, `style`, `onTapItem`, `onTapClose`, `onTapButton`, `actions`
+**When to use:** Use to give users brief feedback after an action (save success, copy, error) without interrupting flow. Use semantic variants — `done` for success, `error` for failures, `warning` for caution, `info` for neutral feedback. Do NOT use for errors that require user action (use `MpBanner` or `MpDialog`).
 
-## MpToggleToolbarButton
-- **Category:** `components/text_editor/toolbar_button`
-- **Description:** Trigger an action from tapping a button.
-- **Key params:** `controller`, `attribute`, `icon`, `tooltip`, `style`, `onPressed`, `semantics`
-- **Variants:** `MpToggleToolbarButton.bold()`, `MpToggleToolbarButton.italic()`, `MpToggleToolbarButton.underline()`, `MpToggleToolbarButton.strikethrough()`, `MpToggleToolbarButton.listBullet()`, `MpToggleToolbarButton.listNumber()`, `MpToggleToolbarButton.blockQuote()`
+**Variants:**
+- `MpToast.done(message)` — success (green border)
+- `MpToast.error(message)` — error/failure (red border)
+- `MpToast.info(message)` — neutral information (blue border)
+- `MpToast.warning(message)` — caution (yellow border)
+- `MpToast.greetings(message)` — celebratory with emoji support
 
-## MpTripleListTileXContent
-- **Category:** `components/list_tile_x`
-- **Key params:** `label`, `caption`, `description`, `labelStyle`, `captionStyle`, `descriptionStyle`, `overflow`, `textAlign`
+**Key params:**
+- `message` — required text
+- `icon` — optional icon path
+- `direction` — `MpToastDirection` controls anchor position
+- `.show(context)` — call on the instance to display it
 
-## MpUpload
-- **Category:** `components/upload`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Upload
-- **Key params:** `data`, `label`, `caption`, `error`, `dropzoneIcon`, `dropzoneLabel`, `deleteIcon`, `deleteIconPadding`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=7014-59155
+**Usage:**
+```dart
+MpToast.info('Lorem ipsum dolor').show(context)
+```
 
-## MpUploadAttachment
-- **Category:** `components/upload/attachment`
-- **Key params:** `data`, `size`, `radius`, `icon`, `label`, `deleteIcon`, `deleteIconPadding`, `dropzoneStyle`
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17611-13670
 
-## MpUploadDropzone
-- **Category:** `components/upload/dropzone`
-- **Key params:** `icon`, `label`, `progress`, `onTap`, `onTapCancel`, `cancelIcon`, `style`, `semantics`
+---
 
-## MpUploadLabel
-- **Category:** `components/upload`
-- **Description:** Mekari Mobile Kit - Upload (Part: Label)
-- **Key params:** `text`, `textStyle`, `text`, `text`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=7014-59155
+## MpTooltip
 
-## MpUploadListTile
-- **Category:** `components/upload`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Upload (Variant: List Tile)
-- **Key params:** `label`, `caption`, `data`, `padding`, `onTap`, `onTapUpload`, `onTapRefresh`, `onTapDelete`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=7014-59155
+A tooltip that wraps any widget and shows explanatory text on tap or long press.
+
+**When to use:** Use to explain icons, truncated labels, or non-obvious UI elements. Defaults to tap trigger mode (unlike Flutter's default long-press).
+
+**Key params:**
+- `message` — tooltip text (or use `richMessage` for styled content)
+- `triggerMode` — defaults to `TooltipTriggerMode.tap` (not long press)
+- `child` — the widget to wrap
+
+**Usage:**
+```dart
+MpTooltip(
+  message: "This is a tooltip",
+  child: Text("A Text"),
+)
+```
+
+---
+
+## MpMultiUpload
+
+A file/image multi-upload component with drag zone, thumbnail previews, and delete support.
+
+**When to use:** Use in forms that require file attachments (documents, images). For single-file upload, use `MpUpload`. For rich text with inline attachments, use `MpTextEditor`.
+
+**Key params:**
+- `data` — current list of uploaded file paths
+- `label` — section label
+- `caption` — helper text
+- `error` — error message
+- `size` — thumbnail size; defaults to `160x160`
+- `dropzoneLabel` — text shown in the upload zone
+- `deleteIcon` — icon for delete action
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17752-25855
+
+---
 
 ## MpVideoPlayer
-- **Category:** `components/video_player`
-- **Key params:** `file`, `videoUrl`, `height`, `width`, `semantics`
 
-## MpYearDatePickerBody
-- **Category:** `components/date_picker/body/year`
-- **Description:** Mekari Mobile Kit: Date Picker - Year <br/> This component will show all visible years <br/> User able to select year inside this view <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `labelStyle`, `cellStyle`, `events`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4095-30993&t=crHQWqZtF43eji1F-4
+An inline video player supporting file and network stream sources.
 
-## MpYearDatePickerBodyView
-- **Category:** `components/date_picker/body/year`
-- **Description:** Mekari Mobile Kit: Date Picker - Year <br/> This component will show all visible years <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `dateRange`, `cellStyle`, `events`, `onDateSelected`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4095-30993&t=crHQWqZtF43eji1F-4
+**When to use:** Use to play video files or streams inline in a screen. Handles play/pause controls and state management.
 
-## MpYearDatePickerSheet
-- **Category:** `components/date_picker/sheet`
-- **Description:** Mekari Mobile Kit: Date Picker - Year - Sheet <br/> This template will show all available years in a sheet <br/> User able to select year inside this sheet <br/>
-- **Key params:** `date`, `firstDate`, `lastDate`, `selectedDate`, `menuStyle`, `cellStyle`, `events`, `titleLabel`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=4095-30993&t=crHQWqZtF43eji1F-4
+**Key params:**
+- `file` — local `File` to play
+- `videoUrl` — `Uri` for network stream
+- `height` / `width` — player dimensions
 
 ---
 
 # Pages
 
+Pages are full-screen widgets that are pushed as routes. They include their own `Scaffold`.
+
+## Pages — Overview
+
+Pages are full-screen Pixel widgets pushed as named routes or via `Navigator`. Each page owns its `Scaffold`, app bar, and top-level layout — they are not embedded inside other pages.
+
+**Examples:** calendar pickers, image viewers, permission request screens, scan screens — self-contained screens with their own navigation lifecycle.
+
+**Constraints:** Pages handle their own scaffold and may own state, but should delegate data fetching and business logic to BLoC/domain layers. Do not nest a page inside another widget's build tree — they are route destinations, not layout components.
+
+**Usage rule:** Use a page when the feature requires a full-screen takeover pushed via the router. For partial-screen overlays, use a component (e.g. `MpBottomSheet`) instead.
+
+---
+
 ## MpCalendar
-- **Category:** `pages/calendar`
-- **Description:** Mekari Pixel - Calendar
-- **Key params:** `initialDate`, `locale`, `backgroundColor`, `onFocusDateChanged`, `onDateSelected`, `itemBuilder`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18167-65383
 
-## MpCalendarBody
-- **Category:** `pages/calendar/bodies`
-- **Key params:** `selectedDate`, `focusedDate`, `locale`, `onDaySelected`, `onFormatChanged`, `onPageChanged`, `strings`, `itemBuilder`
+A full interactive calendar view with event markers, day selection, and week navigation.
 
-## MpCalendarBodyItem
-- **Category:** `pages/calendar/bodies`
-- **Key params:** `label`, `items`, `onTapItem`
+**When to use:** Use when users need to browse and select dates on a calendar view within the app. For bottom-sheet date pickers, use `MpDatePicker` instead.
 
-## MpCalendarBodyList
-- **Category:** `pages/calendar/bodies`
-- **Key params:** `date`, `strings`, `locale`, `itemBuilder`
+**Key params:**
+- `data` — list of `MpCalendarData` with date, event type, and label
+- `onDateSelected` — called when user taps a day
+- `onFocusDateChanged` — called when month navigation changes focus
+- `itemBuilder` — custom event item builder
 
-## MpCalendarEvent
-- **Category:** `pages/calendar`
-- **Key params:** `data`, `onTap`, `backgroundColor`, `iconColor`, `labelColor`, `captionColor`
+**Usage:**
+```dart
+MpCalendar(
+  onDateSelected: onDateSelected,
+  data: [
+    MpCalendarData(
+      date: DateTime.now(),
+      type: MpCalendarEventType.company,
+      label: 'Mid-year celebration',
+      onTap: onTapItem,
+    ),
+  ],
+)
+```
 
-## MpCalendarListBody
-- **Category:** `pages/calendar/bodies`
-- **Key params:** `locale`, `strings`, `itemBuilder`
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18167-65383
 
-## MpCalendarListBodySection
-- **Category:** `pages/calendar/bodies`
-- **Key params:** `date`, `data`, `locale`, `strings`, `itemBuilder`
+---
 
-## MpCalendarTable
-- **Category:** `pages/calendar/bodies`
-- **Key params:** `selectedDate`, `focusedDate`, `locale`, `onDaySelected`, `onFormatChanged`, `onPageChanged`
+## MpCamera
 
-## MpCameraScreen
-- **Category:** `pages/camera`
-- **Key params:** `captureWith`, `availableCaptureMode`, `onCameraError`, `guideView`, `onTapClose`, `imageAspectRatio`, `semantics`
+A full-screen camera capture page for photo and video.
 
-## MpFeedbackDetailOptionGroup
-- **Category:** `pages/feedback/widgets`
-- **Description:** Mekari Mobile Kit - Feedback Detail Option Group
-- **Key params:** `activeOptionsColor`, `inactiveOptionsColor`, `activeOptionsBorderColor`, `inactiveOptionsBorderColor`, `onSelectedOptionsChanged`, `stringLibrary`, `locale`, `parentSemantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=11154-19124&mode=design&t=fxwY8WkW2dsIEABB-4
+**When to use:** Use when the app needs to capture photos or videos. Push as a route and handle the returned capture result in the calling screen.
 
-## MpFeedbackDetailSheet
-- **Category:** `pages/feedback/sheets`
-- **Description:** Mekari Mobile Kit - Feedback Detail Sheet
-- **Key params:** `activeOptionsColor`, `inactiveOptionsColor`, `activeOptionsBorderColor`, `inactiveOptionsBorderColor`, `feedbackTextStyle`, `onDetailSubmitted`, `stringLibrary`, `locale`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=11175-1273&mode=design&t=fxwY8WkW2dsIEABB-4
+**Key params:**
+- `onCameraError` — handles `CameraException`
+- Supports `CaptureMode.photo` and `CaptureMode.video`
+- Supports `CaptureType.frontCamera` and `CaptureType.backCamera`
 
-## MpFeedbackRatingSheet
-- **Category:** `pages/feedback/sheets`
-- **Description:** Mekari Mobile Kit - Feedback Rating Sheet <br/> Has 2 variations: [MpFeedbackRatingSheet.csat] and [MpFeedbackRatingSheet.nps]
-- **Variants:** `MpFeedbackRatingSheet.csat()`, `MpFeedbackRatingSheet.nps()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=11154-19178&mode=design&t=fxwY8WkW2dsIEABB-4
+---
 
-## MpFeedbackRatingSheetSelection
-- **Category:** `pages/feedback/widgets`
-- **Description:** Mekari Mobile Kit - Feedback Rating Selection
-- **Key params:** `activeOptionsColor`, `inactiveOptionsColor`, `onOptionSelected`, `parentSemantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=11154-19026&mode=design&t=fxwY8WkW2dsIEABB-4
+## MpCsatFeedback
 
-## MpFeedbackRatingSheetSlider
-- **Category:** `pages/feedback/widgets`
-- **Description:** Mekari Mobile Kit - Feedback Rating Slider
-- **Key params:** `activeTrackColor`, `inactiveTrackColor`, `activeTextColor`, `inactiveTextColor`, `borderRadius`, `onValueChanged`, `onValueStart`, `onValueEnd`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=11175-1696&mode=design&t=fxwY8WkW2dsIEABB-4
+A CSAT (Customer Satisfaction) feedback page with rating emoji options and assessment tags.
 
-## MpFeedbackStoreSheet
-- **Category:** `pages/feedback/sheets`
-- **Description:** Mekari Mobile Kit - Feedback Store Sheet
-- **Key params:** `appName`, `playStoreUrl`, `appStoreUrl`, `fallbackUrl`, `stringLibrary`, `locale`, `onTapLater`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=11175-1425&mode=design&t=fxwY8WkW2dsIEABB-4
+**When to use:** Use at the end of feature flows to collect user satisfaction feedback. Typically shown as a full-screen route or bottom sheet after a key action completes.
+
+**Key params:**
+- `appName` / `featureName` — identifies what is being rated
+- `ratingOptions` — list of `MpFeedbackData` with rating icons (emoji)
+- `assessmentOptions` — list of `MpFeedbackData` for qualitative tags
+- `playStoreUrl` — link to app store for review deeplink
+
+---
+
+## MpForceUpdate
+
+A full-screen update gate that blocks app usage until the user updates.
+
+**When to use:** Show as a pushed route when the server returns a "force update" signal. Use `onLater` parameter to switch between forced (no dismiss) and recommended (dismissable) update modes.
+
+**Key params:**
+- `product` — `MpForceUpdateProduct.*` selects the product illustration
+- `onUpdate` — "Update now" button callback; launch store URL here
+- `onLater` — when provided, shows "Later" button (recommended update mode); when null, shows forced update only
+
+**Usage:**
+```dart
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => MpForceUpdate(
+      product: MpForceUpdateProduct.talenta,
+      onUpdate: () => launchUrl(storeUrl),
+    ),
+  ),
+)
+```
+
+---
 
 ## MpLaunchScreen
-- **Category:** `pages/launch_screen`
-- **Description:** Mekari Mobile Kit - Launch Screen.
-- **Key params:** `nextRoute`, `developer`, `color`, `progress`, `onAnimationFinished`, `semantics`, `nextRoute`, `progress`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5973%3A56054&mode=design&t=HA35ty2rlKN988PI-1
 
-## MpLaunchScreenProgress
-- **Category:** `pages/launch_screen`
-- **Key params:** `progress`, `onFinished`, `semantics`
+An animated splash/launch screen with logo animation and progress indicator support.
 
-## MpLogoAnimation
-- **Category:** `pages/launch_screen`
-- **Key params:** `logoAssets`, `textAssets`, `animationType`, `onAnimationFinished`, `key`, `duration`
+**When to use:** Use as the initial route to show the app logo animation and transition to the home screen. The `nextRoute` builder is called after animation completes or `progress.value` reaches 1.0.
 
-## MpOtpField
-- **Category:** `pages/otp_pin/otp`
-- **Description:** Used to show otp field
-- **Key params:** `onOtpFilled`, `controller`, `semantics`
+**Key params:**
+- `nextRoute` — builder for the post-launch screen
+- `builder` — custom logo animation builder (use with `MpLogoAnimation`)
+- `onAnimationFinished` — called when animation completes
 
-## MpOtpFieldCursor
-- **Category:** `pages/otp_pin/otp`
-- **Description:** Used by [MpOtpField] to show an animated cursor
-- **Key params:** `width`, `color`
+---
 
-## MpOtpScreen
-- **Category:** `pages/otp_pin/otp`
-- **Description:** Mekari Mobile Kit - Otp Screen.
-- **Key params:** `phoneNumber`, `otpTarget`, `onValidateOTP`, `onResendOTP`, `resendDuration`, `onOtpValidated`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=10070-17862&mode=design&t=qAYF5ixClkRNMQbQ-4
+## MpServerFeedback
 
-## MpPinKeyboard
-- **Category:** `pages/otp_pin/pin`
-- **Description:** Used to handling user interaction on filling the pin / validate biometrics
-- **Key params:** `onKeyTap`, `biometricsIcon`, `semantics`
+A standardized server error display for common failure states. Can be shown as a page or bottom sheet.
 
-## MpPinScreen
-- **Category:** `pages/otp_pin/pin`
-- **Description:** Mekari Mobile Kit - Otp Screen.
-- **Key params:** `onValidatePin`, `showBiometrics`, `onValidateBiometrics`, `onForgotPinTap`, `onValidated`, `onPinExhausted`, `actionType`, `limit`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=10070-23772&mode=design&t=qAYF5ixClkRNMQbQ-4
+**When to use:** Use to replace blank/broken screens when API calls fail. Match the variant to the HTTP/network error type. Avoids hand-rolling error state screens.
 
-## MpProfileInfoSection
-- **Category:** `pages/profile`
-- **Description:** Mekari Mobile Kit: Profile - Info Section <br/> This template will display profile for user information <br/> Contains: fullname, avatar, additional info, etc <br/>
-- **Key params:** `fullname`, `fullnameTextStyle`, `badge`, `additionalInfo`, `avatarUrl`, `avatarVariant`, `onAvatarVariantChanged`, `isLoading`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56881&mode=design&t=luIN3jn3XzVPseKD-0
+**Variants:**
+- `MpServerFeedback.timeout()` — request timeout
+- `MpServerFeedback.sessionExpired()` — auth expired
+- `MpServerFeedback.noAccess()` — 403 forbidden
+- `MpServerFeedback.notFound()` — 404 not found
+- `MpServerFeedback.serverError()` — 5xx errors
+- `MpServerFeedback.maintenance()` — planned maintenance
+- `MpServerFeedback.offline()` — no network connection
+- `MpServerFeedback.custom()` — custom message and illustration
 
-## MpProfileMenuItem
-- **Category:** `pages/profile`
-- **Description:** Mekari Mobile Kit: Profile - Menu Item <br/> Derived from [MpListTileX], <br/> Add a new default config for loading <br/>
-- **Key params:** `content`, `leading`, `actions`, `spacing`, `actionSpacing`, `actionMaxWidth`, `padding`, `onTap`
-- **Variants:** `MpProfileMenuItem.loading()`, `MpProfileMenuItem.navigation()`, `MpProfileMenuItem.toggle()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56881&mode=design&t=luIN3jn3XzVPseKD-0
+**Key params:**
+- `onTapTryLater` — retry/dismiss callback (typically pop or reload)
 
-## MpProfileMenuSection
-- **Category:** `pages/profile`
-- **Description:** Mekari Mobile Kit: Profile - Menu Section <br/> This template will help to organize profile menu <br/>
-- **Key params:** `label`, `items`, `backgroundColor`, `isLoading`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56881&mode=design&t=luIN3jn3XzVPseKD-0
+**Usage:**
+```dart
+MpServerFeedback.maintenance(
+  onTapTryLater: () => Navigator.of(context).pop(),
+).showAsBottomSheet(context)
+```
 
-## MpProfilePage
-- **Category:** `pages/profile`
-- **Description:** Mekari Mobile Kit: Profile - Page <br/> This template will display and organize Profile <br/> Contains: info section, menu section, and an app version <br/>
-- **Key params:** `profileInfo`, `menus`, `banner`, `appVersion`, `appVersionStyle`, `scrollController`, `backgroundColor`, `statusBarColor`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56881&mode=design&t=luIN3jn3XzVPseKD-0
-
-## MpReportProblemPage
-- **Category:** `pages/report_problem`
-- **Description:** Mekari Mobile Kit: Report Problem - Page <br/> This template will be used to report problems <br/>
-- **Key params:** `title`, `url`, `onSubmit`, `backgroundColor`, `semantics`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18191-87736
-
-## MpReportProblemSubmissionPage
-- **Category:** `pages/report_problem`
-- **Description:** Mekari Mobile Kit: Report Problem - Page <br/> This template will be used to report problems <br/>
-- **Key params:** `onClickGallery`, `onClickCamera`, `onSubmit`, `subHeader`, `scrollController`, `backgroundColor`, `statusBarColor`, `systemUiOverlayStyle`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18191-87736
-
-## MpServerFeedbackBottomSheet
-- **Category:** `pages/server_feedback`
-- **Description:** @Author: Agung Nursatria (agung.nursatria@mekari.com)
-- **Key params:** `data`, `style`, `semantics`
-
-## MpServerFeedbackPage
-- **Category:** `pages/server_feedback`
-- **Description:** @Author: Agung Nursatria (agung.nursatria@mekari.com)
-- **Key params:** `data`, `style`, `semantics`
+---
 
 ## MpSignOut
-- **Category:** `pages/sign_out`
-- **Description:** Mekari Mobile Kit - Sign Out
-- **Key params:** `title`, `body`, `onSignIn`, `onSignOut`, `signInButtonText`, `signOutButtonText`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56887&mode=design&t=nWDcLiL9cMPsLNhj-0
+
+A sign-out confirmation dialog with "Stay signed in" and "Sign out" actions.
+
+**When to use:** Use whenever the user taps a sign-out action to confirm intent before executing. Show as a dialog via `.showDialog()`.
+
+**Key params:**
+- `title` — dialog title
+- `body` — confirmation message
+- `onSignIn` — "Stay signed in" callback (typically pop)
+- `onSignOut` — "Sign out" callback (clear session, navigate to login)
+
+**Usage:**
+```dart
+await MpSignOut(
+  title: 'Sign Out',
+  body: 'Are you sure you want to sign out?',
+  onSignIn: () => Navigator.pop(context),
+  onSignOut: () => _performSignOut(),
+).showDialog(context)
+```
 
 ---
 
 # Templates
 
+Templates are high-level layout patterns and complex composite components.
+
+## Templates — Overview
+
+Templates are the highest-level reusable structures in Mekari Pixel. They define layout skeletons, interaction scaffolds, or complex composites that span multiple components and establish a repeating screen pattern.
+
+**Examples:** accordions, steppers, multi-step flows, data table layouts, wizard scaffolds — structures that dictate the arrangement and sequencing of content rather than the content itself.
+
+**Constraints:** Templates compose components and atoms but carry no domain-specific content. Parameters are slots (`Widget`, callbacks, config objects) — not raw data. Business logic belongs in the BLoC layer above the template, not inside it.
+
+**Usage rule:** Reach for a template when the same structural pattern recurs across multiple features with different content. If only one feature uses the structure, build it inline with components; extract to a template only when the pattern proves reusable.
+
+---
+
 ## MpAccordion
-- **Category:** `templates/accordion`
-- **Description:** Mekari Mobile Kit - Accordion
-- **Key params:** `title`, `content`, `leading`, `actions`, `actionSpacing`, `titleStyle`, `caption`, `captionStyle`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=525-6782&mode=design&t=cEYidMURVunqpGZf-0
+
+A collapsible section with a header (title, caption, optional leading) and expandable content.
+
+**When to use:** Use to progressively disclose content and reduce visual complexity (FAQ, settings groups, optional details). For timeline-specific accordions, use `MpAccordionTimeline` (component).
+
+**Key params:**
+- `title` — required header label
+- `caption` — secondary header text
+- `leading` — optional leading widget (avatar, icon)
+- `content` — the collapsible widget
+- `initialExpand` — expanded on first render; defaults to `false`
+
+**Usage:**
+```dart
+MpAccordion(
+  title: "Label",
+  caption: "This is caption",
+  content: Text('Your content will be here'),
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17792-2289
+
+---
 
 ## MpActionGroup
-- **Category:** `templates/action_group`
-- **Description:** Mekari Pixel - Action Group A group of action (mostly buttons) that are related to each other.
-- **Key params:** `actions`, `style`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=1162%3A21700&t=ycZkZqNp4OSmeRHD-0
+
+A container that groups related action buttons (typically `MpButton` widgets) with consistent spacing and layout.
+
+**When to use:** Use at the bottom of forms, dialogs, and detail screens where two or more related actions need consistent spacing. Handles button layout automatically.
+
+**Key params:**
+- `actions` — list of action widgets; prefer `MpButton`
+- `style` — layout and spacing overrides
+
+**Usage:**
+```dart
+MpActionGroup(
+  actions: [
+    MpButton.primary(label: 'Submit'),
+    MpButton.secondary(label: 'Cancel'),
+  ],
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17503-19579
+
+---
 
 ## MpAppLock
-- **Category:** `templates/app_lock`
-- **Description:** Mekari Pixel - App Lock
-- **Key params:** `hideBuilder`, `lockBuilder`, `semantics`, `child`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18059-53848&t=Za1XapCYV25k2MEl-0
 
-## MpAppLockBlur
-- **Category:** `templates/app_lock`
+A security overlay that hides and locks the app when it goes to the background.
 
-## MpAvatarVariation
-- **Category:** `templates/avatar_variation`
-- **Description:** Mekari Mobile Kit - Avatar - Part: Variation Mainly used on [MpAvatar] to show badge at the corner of the widget.
-- **Key params:** `variation`, `child`, `position`, `onTapVariation`, `semantics`
+**When to use:** Wrap the root `MaterialApp` in `MpAppLock` for apps requiring session security (banking, HR data). Automatically hides app content in the system task switcher.
 
-## MpAvatarVariationIcon
-- **Category:** `templates/avatar_variation`
-- **Description:** Mekari Mobile Kit - Avatar - Part: Variation
-- **Key params:** `id`, `icon`, `iconColor`, `backgroundColor`, `borderColor`, `label`
-- **Variants:** `MpAvatarVariationIcon.available()`, `MpAvatarVariationIcon.away()`, `MpAvatarVariationIcon.busy()`, `MpAvatarVariationIcon.offline()`, `MpAvatarVariationIcon.open()`
+**Key params:**
+- `lockBuilder` — builds the lock screen widget (PIN gate, biometric prompt)
+- `autoLockOnPause` — locks when app goes to background
+- `child` — the `MaterialApp` or root widget
 
-## MpAvatarVariationPositioned
-- **Category:** `templates/avatar_variation`
-- **Key params:** `position`, `child`
+**Usage:**
+```dart
+MpAppLock(
+  autoLockOnPause: true,
+  lockBuilder: (context) => ExampleAppLockGate(),
+  child: MaterialApp(home: HomeScreen()),
+)
+```
 
-## MpBasicLayout
-- **Category:** `templates/basic_layout`
-- **Key params:** `appBar`, `stage`, `bottomNavigationBar`, `stagePosition`, `backgroundColor`, `contentStyle`, `scrollController`, `scrollPhysics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=44-965&mode=design&t=xGQkQxtKsKverfZm-0
+---
 
-## MpBottomSheetContent
-- **Category:** `templates/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Dialog - Content
-- **Key params:** `body`, `header`, `footer`, `handler`, `backgroundColor`, `headerBackgroundColor`, `bodyPadding`, `scrollPhysics`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17806-4384
+## MpBottomSheet
 
-## MpBottomSheetHandler
-- **Category:** `templates/bottom_sheet`
-- **Description:** Mekari Mobile Kit - Dialog - Handler
-- **Key params:** `color`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17806-4384
+Programmatic bottom sheet trigger with Pixel-styled container, handle, and radius.
 
-## MpBottomSheetHeader
-- **Category:** `templates/bottom_sheet`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Dialog - Header
-- **Key params:** `title`, `titleTextStyle`, `titleColor`, `leading`, `iconColor`, `actions`, `onTapClose`, `padding`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17806-4384
+**When to use:** Use `MpBottomSheet.show()` as the standard way to show bottom sheets app-wide — it applies consistent radius, handle, and animation. Pass `floating: true` for floating sheet style.
 
-## MpCheckboxHeaderListTileX
-- **Category:** `templates/checkbox_list_tile_x`
-- **Description:** Mekari Mobile Kit - Checkbox - Variant: Basic, Icon Left, Avatar An updated version of the [MpRadioButtonListTile]
-- **Key params:** `content`, `leading`, `checkboxStyle`, `onChanged`, `backgroundColor`, `iconColor`, `padding`, `spacing`
-- **Variants:** `MpCheckboxHeaderListTileX.single()`, `MpCheckboxHeaderListTileX.overline()`, `MpCheckboxHeaderListTileX.double()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=445%3A5308&t=c8IIoGc1ZdE8vXIF-0
+**Key params:**
+- `builder` — returns the bottom sheet content widget; use `MpBottomSheetContent` for structure
+- `isScrollControlled` — allows full-height sheet; defaults based on content
 
-## MpCheckboxListTileX
-- **Category:** `templates/checkbox_list_tile_x`
-- **Description:** Mekari Mobile Kit - Checkbox - Variant: Basic, Icon Left, Avatar An updated version of the [MpRadioButtonListTile]
-- **Key params:** `content`, `leading`, `checkboxStyle`, `onChanged`, `backgroundColor`, `iconColor`, `padding`, `spacing`
-- **Variants:** `MpCheckboxListTileX.single()`, `MpCheckboxListTileX.overline()`, `MpCheckboxListTileX.double()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=445%3A5308&t=c8IIoGc1ZdE8vXIF-0
+**Usage:**
+```dart
+MpBottomSheet.show(
+  context,
+  builder: (_) => MpBottomSheetContent(
+    header: const MpBottomSheetHeader(title: Text('Sheet title')),
+    body: const Text('Content here'),
+  ),
+)
+```
 
-## MpCoachmark
-- **Category:** `templates/coachmark`
-- **Description:** Mekari Mobile Kit - Coachmark
-- **Key params:** `child`, `coachmark`, `onSaveShownState`, `onReadShownState`, `onReadyStart`, `onCandidateStart`, `onFinished`, `showCounter`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=8672%3A12033&mode=design&t=SZd6ttwmNp8l0OU1-1
+---
 
-## MpCoachmarkAnimation
-- **Category:** `templates/coachmark/utils`
-- **Description:** Widget to animate [MpCoachmark] stuff
-- **Key params:** `child`
+## MpDialog
 
-## MpCoachmarkContainer
-- **Category:** `templates/coachmark/widgets`
-- **Key params:** `title`, `description`, `icon`, `semantics`
+Programmatic modal dialog trigger with Pixel-styled container.
 
-## MpCoachmarkTooltip
-- **Category:** `templates/coachmark/widgets`
-- **Key params:** `title`, `description`, `parentPosition`, `position`, `length`, `doneLabel`, `showCounter`, `semantics`
+**When to use:** Use `MpDialog.show()` for confirmation dialogs, destructive action prompts, and important decision gates. For non-blocking messages, use `MpToast`. For page-level messages, use `MpBanner`.
 
-## MpCoachmarkWrapper
-- **Category:** `templates/coachmark/widgets`
-- **Description:** Used to wrap widget to be a part of [MpCoachmark]
-- **Key params:** `name`, `child`, `title`, `description`, `coachmarkChild`, `icon`
+**Key params:**
+- `builder` — returns content widget; use `MpDialogContent` for structure
+- `barrierDismissible` — defaults to `false` (user must take explicit action)
 
-## MpContent
-- **Category:** `templates/content`
-- **Key params:** `child`, `style`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=44-965&mode=design&t=xGQkQxtKsKverfZm-0
+**Usage:**
+```dart
+MpDialog.show(
+  context,
+  builder: (_) => MpDialogContent(
+    header: const MpDialogHeader(title: Text('Confirm delete?')),
+    body: const Text('This cannot be undone.'),
+  ),
+)
+```
 
-## MpDialogContent
-- **Category:** `templates/dialog`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Dialog - Content
-- **Key params:** `header`, `body`, `bodyTextStyle`, `bodyPadding`, `bodyScrollController`, `footer`, `backgroundColor`, `borderRadius`
-- **Variants:** `MpDialogContent.basic()`, `MpDialogContent.basicSide()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17406-4608
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17406-4608
 
-## MpDialogHeader
-- **Category:** `templates/dialog`
-- **Description:** Mekari Mobile Kit - Dialog - Header
-- **Key params:** `title`, `textStyle`, `iconColor`, `backgroundColor`, `padding`, `semantics`
-- **Variants:** `MpDialogHeader.basic()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17406-4608
+---
 
-## MpDialogSideFooter
-- **Category:** `templates/dialog`
-- **Description:** Mekari Mobile Kit - Dialog - Footer
-- **Key params:** `actions`, `borderColor`, `semantics`
-- **Variants:** `MpDialogSideFooter.basic()`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17406-4608
+## MpGuideTour
 
-## MpFloatingActionButtonStack
-- **Category:** `templates/floating_action_button`
-- **Description:** This widget is a helper to stack [MpFloatingActionButton] on top of another widget. Used when we can't use [Scaffold.floatingActionButton].
-- **Key params:** `floatingActionButton`, `child`, `scrollController`, `onScroll`, `child`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=17587-13389&t=AvL1D1iHweZxKwW9-0
+A full-screen modal tour introducing a new feature, with illustration, content, and actions.
 
-## MpGuideTourContent
-- **Category:** `templates/guide_tour`
-- **Key params:** `backgroundColor`, `header`, `content`, `illustration`, `actions`, `semantics`
+**When to use:** Use for first-time feature discovery after a major release. Show once per user (persist seen state). Prefer `MpWalkthrough` for multi-page onboarding.
 
-## MpGuideTourHeader
-- **Category:** `templates/guide_tour`
-- **Description:** The header properties of [MpGuideTour].
-- **Key params:** `icon`, `label`, `labelStyle`, `indicator`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56880&mode=design&t=Ab1THGR4B1QXjmf5-0
+**Key params:**
+- `header` — `MpGuideTourHeader` with icon and label
+- `content` — body widget (text, images)
+- `illustration` — visual asset
+- `actions` — list of `MpButton` widgets
 
-## MpHeaderListTileX
-- **Category:** `templates/list_tile_x/header`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - List Tile (Variant: Basic, Icon Left, Avatar) An updated design version of [MpHeaderListTile]
-- **Key params:** `content`, `leading`, `trailing`, `actions`, `spacing`, `actionSpacing`, `actionMaxWidth`, `padding`
-- **Variants:** `MpHeaderListTileX.single()`, `MpHeaderListTileX.double()`, `MpHeaderListTileX.sub()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=90%3A2543&t=B6BEQozI82pK7WdO-0
+**Usage:**
+```dart
+MpGuideTour.show(
+  context,
+  header: MpGuideTourHeader(icon: MpIcons.logo.mekariQontak.toIcon(), label: 'New Feature'),
+  content: Text('Introducing Sales Target'),
+  actions: [MpButton.primary(label: 'Explore now', onPressed: () => Navigator.pop(context))],
+)
+```
+
+---
 
 ## MpHorizontalBanner
-- **Category:** `templates/horizontal_banner`
-- **Description:** Mekari Pixel Horizontal Banner Widget to create banner that can be clicked with pop out illustration
-- **Key params:** `onPressed`, `image`, `gradient`, `titleWidget`, `titleLabel`, `titleBoldLabel`, `ctaLabel`, `textColor`
-- **Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=18179-76385&t=f7hmR4XI7DC3azVP-0
+
+A tappable promotional banner with gradient background and a pop-out illustration.
+
+**When to use:** Use on home screens and dashboard cards for feature promotions or announcements. The illustration overflows the banner container for visual depth.
+
+**Key params:**
+- `titleLabel` / `titleBoldLabel` — two-part title with mixed weight
+- `titleWidget` — override with custom widget
+- `imagePath` — illustration asset
+- `gradient` — background gradient
+- `onPressed` — tap callback
+
+**Usage:**
+```dart
+MpHorizontalBanner(
+  titleLabel: "How to run",
+  titleBoldLabel: "360º Review",
+  imagePath: "assets/illustrations/banner_1.png",
+  gradient: LinearGradient(colors: [Color(0xFFEA7A72), Color(0xFFE2483D)]),
+  onPressed: () => _showDialog(context),
+)
+```
+
+---
 
 ## MpListTileX
-- **Category:** `templates/list_tile_x`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - List Tile (Variant: Basic, Icon Left, Avatar) An updated design version of [MpListTile] and [MpContentListTile]
-- **Key params:** `content`, `leading`, `trailing`, `actions`, `spacing`, `actionSpacing`, `actionMaxWidth`, `padding`
-- **Variants:** `MpListTileX.single()`, `MpListTileX.double()`, `MpListTileX.triple()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=90%3A2543&t=B6BEQozI82pK7WdO-0
 
-## MpListTileXActionWrapper
-- **Category:** `templates/list_tile_x/widgets`
-- **Key params:** `actions`, `spacing`, `maxWidth`, `actions`, `spacing`, `maxWidth`
+A flexible list row supporting leading (avatar/icon), content area, trailing widget, and action icons.
+
+**When to use:** Use as the standard list row for settings, menu items, entity lists, and any row-based content. Use content variants for consistent label/caption layout: `MpListTileX.single` (one line), `MpListTileX.double` (label + caption), `MpListTileX.triple` (label + two captions), `MpListTileX.overline` (overline + label).
+
+**Key params:**
+- `content` — the main content widget; prefer `MpListTileXContent` variants
+- `leading` — left widget (avatar, icon, image)
+- `trailing` — right widget (text, badge, action text)
+- `actions` — list of right-side icon widgets
+- `onTap` — makes the row tappable
+- `expandedContent` — content fills available width; defaults to `true`
+
+**Usage:**
+```dart
+MpListTileX(
+  content: Text('Flex Benefit'),
+  leading: MpAvatar.icon(icon: Icons.person),
+  trailing: MpActionText(label: 'Edit'),
+  onTap: () {},
+)
+```
+
+**Figma:** https://www.figma.com/design/djepS92jOSLv9ayVBIcH4M/Mobile-Pixel-2.4?node-id=17360-10958
+
+---
 
 ## MpMenuBadge
-- **Category:** `templates/menu_badge`
-- **Description:** Positioned badge on top of menu (child)
-- **Key params:** `badge`, `child`, `position`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=95%3A2769&t=txtn7MyTRAzcR9ZC-0
 
-## MpMenuBadgePositioned
-- **Category:** `templates/menu_badge`
-- **Description:** A widget to wrap a badge and any widget, And set the badge to a desired position
-- **Key params:** `position`, `child`, `semantics`
+Positions a badge overlay on top of a menu icon or any child widget.
+
+**When to use:** Use inside `MpBottomNavBar` items or tab icons to show notification counts. The badge is positioned absolutely over the top-end corner by default.
+
+**Key params:**
+- `badge` — badge widget; prefer `MpBadge.negativeMenu(text:)`
+- `child` — the icon/widget to overlay
+- `position` — defaults to `MpMenuBadgePosition.topEnd()`
+- `showBadge` — toggle visibility without removing widget
+
+**Usage:**
+```dart
+MpMenuBadge(
+  badge: MpBadge.negativeMenu(text: '9+'),
+  child: icon,
+)
+```
+
+---
 
 ## MpProgressIndicator
-- **Category:** `templates/progress_indicator`
-- **Description:** ```
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=10000-1177&mode=design&t=CyqYd8XeCXbecmFL-0
+
+A progress display with step count or percentage, used for multi-step flows.
+
+**When to use:** Use in multi-step forms, onboarding flows, or task completion tracking to show progress. Use `step` variant when there are discrete named steps; `percentage` when showing a continuous 0-100% value.
+
+**Variants:**
+- `MpProgressIndicator.step(title:, value:, maxValue:)` — shows "Step N of M"
+- `MpProgressIndicator.percentage(title:, value:)` — shows percentage bar
+
+**Usage:**
+```dart
+MpProgressIndicator.step(
+  title: "Employee Data",
+  value: 2,
+  maxValue: 4,
+)
+```
+
+---
 
 ## MpPullToRefresh
-- **Category:** `templates/pull_to_refresh`
-- **Description:** Mekari Mobile Kit - Pull to Refresh
-- **Key params:** `controller`, `child`, `onRefresh`, `scrollController`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=5989-56884&mode=design&t=hzP489xr80YeZvqH-0
+
+A pull-to-refresh wrapper that adds swipe-down-to-reload behavior to any scrollable.
+
+**When to use:** Use on any list or scroll view that displays remotely-fetched data that users may need to refresh manually.
+
+**Key params:**
+- `controller` — required `MpRefreshController`
+- `onRefresh` — async callback; call `controller.refreshCompleted()` when done
+- `child` — the scrollable widget
+
+**Usage:**
+```dart
+MpPullToRefresh(
+  controller: _refreshController,
+  onRefresh: _onRefresh,
+  child: ListView(children: items),
+)
+```
+
+---
 
 ## MpStepper
-- **Category:** `templates/stepper`
-- **Description:** ```
-- **Key params:** `controller`, `style`, `semantics`
-- **Variants:** `MpStepper.number()`, `MpStepper.singleBar()`, `MpStepper.multipleBar()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=12643-5962&mode=design&t=9QoPUblW1lusDxih-0
 
-## MpStepperBar
-- **Category:** `templates/stepper`
-- **Description:** Mekari Mobile Kit - MpStepper - Part: Bar.
-- **Key params:** `steps`, `position`, `labels`, `type`, `style`, `semantics`
-- **Variants:** `MpStepperBar.single()`, `MpStepperBar.multiple()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=12643-5962&mode=design&t=9QoPUblW1lusDxih-0
+A step indicator bar for multi-step forms and wizards.
 
-## MpStepperNumber
-- **Category:** `templates/stepper`
-- **Description:** Mekari Mobile Kit - MpStepper - Part: Number.
-- **Key params:** `steps`, `position`, `padding`, `labels`, `style`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=12643-5962&mode=design&t=9QoPUblW1lusDxih-0
+**When to use:** Use at the top of multi-step flows to show which step the user is on and how many remain. Use `number` type for numbered steps, `dot` type for unnamed progress.
 
-## MpStepperNumberIndicator
-- **Category:** `templates/stepper`
-- **Description:** Mekari Mobile Kit - MpStepper - Part: Number Indicator.
-- **Key params:** `number`, `type`, `position`, `label`, `style`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?type=design&node-id=12643-5962&mode=design&t=9QoPUblW1lusDxih-0
+**Variants:**
+- `MpStepper.number(controller:, children:)` — numbered steps
+- `MpStepper.dot(controller:, children:)` — dot indicator
+
+**Key params:**
+- `controller` — `MpStepperController` for programmatic navigation
+- `children` — list of `MpStepperItem`
+- `showLabel` — shows step labels; defaults to `true`
+
+---
 
 ## MpStickyButton
-- **Category:** `templates/sticky_button`
-- **Description:** A convenience widget that wrap Button widget inside elevatedcontainer.
-- **Key params:** `button`, `backgroundColor`, `isAndroid`, `semantics`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(WIP)?node-id=31%3A633&t=hWde3rzGFr4eUnLJ-0
+
+A button container that sticks to the bottom of the screen, above the system nav bar.
+
+**When to use:** Use for the primary CTA on forms and detail screens where the button should remain accessible while scrolling. Wrap `MpButton.primary()` as the `button` param.
+
+**Key params:**
+- `button` — the button widget to pin
+
+**Usage:**
+```dart
+MpStickyButton(
+  button: MpButton.primary(
+    label: 'Submit',
+    onPressed: () {},
+  ),
+)
+```
+
+---
 
 ## MpToggleHeaderListTileX
-- **Category:** `templates/toggle_list_tile_x`
-- **Description:** Mekari Mobile Kit - Toogle - Header List Tile An updated version of the [MpToggleListTile] and [MpIconLeftToggleListTile]
-- **Key params:** `content`, `leading`, `toggleStyle`, `size`, `onChanged`, `backgroundColor`, `iconColor`, `padding`
-- **Variants:** `MpToggleHeaderListTileX.single()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=448%3A6576&t=nPrga1tGl9WiRGaY-0
 
-## MpToggleListTileX
-- **Category:** `templates/toggle_list_tile_x`
-- **Description:** ---------------------------------------------------------------- Mekari Mobile Kit - Toogle - List Tile An updated version of the [MpToggleListTile] and [MpIconLeftToggleListTile]
-- **Key params:** `content`, `leading`, `toggleStyle`, `size`, `onChanged`, `backgroundColor`, `iconColor`, `padding`
-- **Variants:** `MpToggleListTileX.single()`, `MpToggleListTileX.double()`, `MpToggleListTileX.triple()`
-- **Figma:** https://www.figma.com/file/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1-(In-test)?node-id=448%3A6576&t=nPrga1tGl9WiRGaY-0
+A list tile with an integrated toggle switch; supports single-label and custom content layouts.
+
+**When to use:** Use for settings rows where users can enable/disable a feature. Replaces pairing `MpListTileX` + `MpToggle` manually.
+
+**Variants:**
+- `MpToggleHeaderListTileX(content:, ...)` — custom content widget in tile body
+- `MpToggleHeaderListTileX.single(label:, ...)` — simple single-label row
+
+**Key params:**
+- `value` — toggle current state
+- `onChanged` — callback with new value; null disables toggle
+- `leading` — optional leading widget (icon, avatar)
+
+**Usage:**
+```dart
+MpToggleHeaderListTileX.single(
+  value: _value,
+  onChanged: (value) => setState(() => _value = value),
+  label: 'Flex Benefit',
+)
+```
+
+---
 
 ## MpWalkthrough
-- **Category:** `templates/walkthrough`
-- **Description:** Mekari Mobile Kit - Walkthrough
-- **Key params:** `productLogo`, `productName`, `pages`, `greeting`, `pageBuilder`, `onPageChanged`, `progressBarProperties`, `systemUiOverlayStyle`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5991-57434&t=lv01padf2kzSkYy4-4
 
-## MpWalkthroughWebview
-- **Category:** `templates/walkthrough`
-- **Description:** Mekari Mobile Kit - Walkthrough Screen (Webview)
-- **Key params:** `productName`, `walkthroughUrl`, `locale`
-- **Figma:** https://www.figma.com/design/Lp6VSWJnP5wI4SdztB5H2f/Mobile-Kit-2.1?node-id=5998-56719&t=lv01padf2kzSkYy4-0
+A multi-page onboarding carousel with progress bar, product logo, and swipeable pages.
+
+**When to use:** Use for app onboarding shown at first launch or feature introduction that spans multiple screens. For single-page feature announcements, use `MpGuideTour`.
+
+**Key params:**
+- `productLogo` — asset path for product logo
+- `productName` — app/product name
+- `pages` — list of `WalkthroughPage` records with `id`, `title`, `illustration`
+- `pageBuilder` — custom builder for each page content
+- `onPageChanged` — called on page navigation
+
+---
+
+## MpCheckboxListTileX
+
+A list tile with an integrated checkbox, for multi-select list rows.
+
+**When to use:** Use in selection lists where each row can be independently selected. For a flat list of checkboxes without tile structure, use `MpCheckboxList` (component).
+
+---
+
+## MpRadioButtonListTileX
+
+A list tile with an integrated radio button, for mutually exclusive list row selection.
+
+**When to use:** Use in selection lists where exactly one row can be selected. Builds on `MpListTileX` with a radio button in the trailing position.
