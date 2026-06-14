@@ -22,11 +22,11 @@ Never read source files, search the codebase, or write code. All exploration, pl
 ## Preflight — Detect Existing Runs
 
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/developer" -maxdepth 2 -name "plan.md" 2>/dev/null
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/developer" -maxdepth 2 -name "figma-groups.json" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs" -maxdepth 2 -name "plan.md" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs" -maxdepth 2 -name "figma-fetch-dir.txt" 2>/dev/null
 ```
 
-Collect results as `found_plans` and `found_figma`. **Do not route yet.** Pass them to Step 1 so the strategist sees the user's intent alongside any existing runs before making a routing decision.
+Collect results as `found_plans` and `found_figma` (`figma-fetch-dir.txt` paths). **Do not route yet.** Pass them to Step 1 so the strategist sees the user's intent alongside any existing runs before making a routing decision.
 
 ## Preflight — Resolve Thinker Model
 
@@ -44,6 +44,7 @@ Parse only the formal arguments passed on the invocation line. The skill only fe
 |---|---|---|
 | URL containing `jira` or `atlassian`, or bare ticket ID (e.g. `PROJ-123`) | Jira ticket | Fetch inline via Atlassian MCP → `resolved_inputs` |
 | Any other URL (including `figma.com`) | PRD / doc / design | Fetch inline via `WebFetch` → `resolved_inputs` (Figma page URLs) or add to `raw_paths` |
+| Local path where `ls <path>/frame_*/` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 1.5 fetch. Write path to `<run_dir>/figma-fetch-dir.txt` after run_dir is known. |
 | Local file path or directory path | Local content | Add to `raw_paths` — do not read |
 
 If no arguments are provided, skip this step — proceed to Step 1 with `resolved_inputs = []` and `raw_paths = []`.
@@ -113,11 +114,26 @@ Wait for the strategist to return. Route based on the Decision block:
   **Start from beginning** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or start fresh.
 - **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1`. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
 
-## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty)
+## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
 
-`run_dir` is already known from the `Decision: spawn-planners` block — use it directly.
+**If `figma_fetch_dir` is not already set** (no existing fetch dir was passed in Step 0), create one now:
 
-Spawn one `developer-figma-worker` per URL in `pending_figma_urls` — pass `figma_url`, `feature`, and `run_dir`. **Spawn all workers in parallel** (single Agent tool call).
+```bash
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+figma_fetch_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/figma/$TIMESTAMP"
+mkdir -p "$figma_fetch_dir"
+echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
+```
+
+**If `figma_fetch_dir` was set in Step 0** (user passed an existing fetch dir), write the pointer and skip spawning workers:
+
+```bash
+echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
+```
+
+Then jump to Step 1.5b.
+
+Spawn one `developer-figma-worker` per URL in `pending_figma_urls` — pass `figma_url`, `feature`, and `figma_fetch_dir`. **Spawn all workers in parallel** (single Agent tool call).
 
 Collect results from all workers:
 - `figma_resolved` — workers that returned `## Figma Worker Output` blocks
@@ -142,7 +158,7 @@ options     :
 Spawn `developer-figma-worker` with mode `group-frames`:
 
 > mode: group-frames
-> run_dir: \<run_dir\>
+> figma_fetch_dir: \<figma_fetch_dir\>
 > platform: \<platform\>
 
 Wait for the `## Figma Groups` output block. Extract `groups` as `figma_groups`, `review` (may be absent), and `ds_available` (may be absent — treat missing as `false`).
@@ -202,14 +218,14 @@ Collect the `uistack_file` path from every entry in `figma_groups`. Spawn one `d
 
 > uistack_file: \<abs path to figma-uistack-*.md\>
 > platform: \<platform\>
-> run_dir: \<run_dir\>
+> figma_fetch_dir: \<figma_fetch_dir\>
 
 Collect all `## UIStack Align Output` blocks. Aggregate `flagged` items across all workers. If any items are flagged, carry the summary forward — it will be appended to the Step 4 approval prompt so the engineer sees design-system gaps before approving the plan.
 
 **Persist figma_groups to disk** — write immediately after grouping is confirmed:
 
 ```bash
-cat > "<run_dir>/figma-groups.json" << 'EOF'
+cat > "<figma_fetch_dir>/figma-groups.json" << 'EOF'
 <figma_groups as JSON>
 EOF
 ```
@@ -336,7 +352,7 @@ options     :
 **Discard** → delete the most recent run directory:
 
 ```bash
-rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/developer/<feature>"
+rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>"
 ```
 
 Stop.

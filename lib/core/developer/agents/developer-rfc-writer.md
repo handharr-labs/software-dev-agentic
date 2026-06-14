@@ -1,6 +1,6 @@
 ---
 name: developer-rfc-writer
-description: Pure writer. Receives Epic + PRD + Design + converged plan.md + context.md inline, then writes <epic-slug>-rfc.md and <epic-slug>-breakdown.md to .claude/agentic-state/rfc/. No codebase reads, no user interaction.
+description: Pure writer. Receives Epic + PRD + Design + converged plan.md + context.md inline, then writes <epic-slug>-rfc.md and <epic-slug>-breakdown.md to .claude/agentic-state/developer/rfc/. No codebase reads, no user interaction.
 model: sonnet
 tools: Bash, Write
 ---
@@ -35,7 +35,7 @@ Output directory is created by the calling skill — do not mkdir.
 
 ### Step 2 — Write RFC
 
-Write to `<root>/.claude/agentic-state/rfc/<epic-slug>-rfc.md`:
+Write to `<root>/.claude/agentic-state/developer/rfc/<epic-slug>-rfc.md`:
 
 ```markdown
 ---
@@ -99,7 +99,7 @@ date: <YYYY-MM-DD>
 
 ### Step 3 — Write Ticket Breakdown
 
-Write to `<root>/.claude/agentic-state/rfc/<epic-slug>-breakdown.md`:
+Write to `<root>/.claude/agentic-state/developer/rfc/<epic-slug>-breakdown.md`:
 
 ```markdown
 ---

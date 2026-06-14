@@ -145,7 +145,7 @@ Stop.
 Create the output directory:
 
 ```bash
-mkdir -p "$(git rev-parse --show-toplevel)/.claude/agentic-state/rfc"
+mkdir -p "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/rfc"
 ```
 
 Read `plan.md` and `context.md` from `run_dir` (extracted in Step 6b). Then spawn `developer-rfc-writer`:

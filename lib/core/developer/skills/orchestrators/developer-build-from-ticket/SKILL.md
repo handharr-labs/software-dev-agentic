@@ -19,7 +19,7 @@ If `$ARGUMENTS` is empty, write the error file and stop:
 
 ```bash
 git rev-parse --show-toplevel
-# write to <root>/.claude/agentic-state/runs/error.md
+# write to <root>/.claude/agentic-state/developer/runs/error.md
 ```
 
 ```
@@ -32,7 +32,7 @@ Usage: /developer-build-from-ticket PROJ-123
 Otherwise clear any stale error from a previous run:
 
 ```bash
-rm -f "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/error.md"
+rm -f "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/error.md"
 ```
 
 ## Step 2 — Fetch Ticket
@@ -167,6 +167,6 @@ Read `plan.md` and `context.md` from `run_dir` (extracted in Step 6b). Then spaw
 After `developer-feature-worker` completes (success or unrecoverable error):
 
 ```bash
-rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>"
-rm -f "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/error.md"
+rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>"
+rm -f "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/error.md"
 ```

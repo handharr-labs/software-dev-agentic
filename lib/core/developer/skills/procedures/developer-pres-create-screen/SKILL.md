@@ -9,7 +9,7 @@ Create a Screen following the {platform} standard architecture, loaded from the 
 
 ## Steps
 
-1. **Read** `.claude/agentic-state/runs/<feature>/stateholder-contract.md` completely — must match state fields and events exactly
+1. **Read** `.claude/agentic-state/developer/runs/<feature>/stateholder-contract.md` completely — must match state fields and events exactly
 2. **Load pattern** (fetch-by-topic — see `kms-conventions.md §Retrieval Protocol`):
    - `kms_list(discipline="engineering", artifact="standard-architecture", topic="presentation", platform={platform})` — scan the presentation TOC for the screen pattern slug (e.g. `screen_structure`).
    - `kms_fetch(discipline="engineering", artifact="standard-architecture", topic="presentation", pattern="<screen slug from list>", platform={platform})` — full content: naming, file path convention, code pattern.

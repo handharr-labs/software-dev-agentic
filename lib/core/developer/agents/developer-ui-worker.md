@@ -76,7 +76,7 @@ Fallback — if the tool is unavailable: proceed without pattern reference.
 
 Check state.json to resume from a previous run:
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>" -name "state.json" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>" -name "state.json" 2>/dev/null
 ```
 If found, read it and skip all artifacts already in `completed_artifacts`.
 

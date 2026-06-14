@@ -91,7 +91,7 @@ Layer-specific knowledge references are loaded **per-artifact** immediately befo
 
 Check for a state file to resume from a previous run:
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/<feature>" -name "state.json" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>" -name "state.json" 2>/dev/null
 ```
 If found, read it and skip all artifacts listed in `completed_artifacts`.
 
@@ -175,7 +175,7 @@ Any mismatch found here must be corrected before moving to Validation. Never lea
 
 **StateHolder contract handoff:**
 After `pres-create-stateholder` completes, confirm the contract file was written:
-`.claude/agentic-state/runs/<feature>/stateholder-contract.md`
+`.claude/agentic-state/developer/runs/<feature>/stateholder-contract.md`
 The path is recorded in `state.json` under `stateholder_contract`. The calling skill passes this to `developer-ui-worker` — no action needed here.
 
 **App Layer — direct edits only (no skill):**
@@ -221,7 +221,7 @@ Then concatenate the result with the relative path before passing to Write or Ed
 
 ## State Tracking
 
-Write `.claude/agentic-state/runs/<feature>/state.json` after each artifact completes:
+Write `.claude/agentic-state/developer/runs/<feature>/state.json` after each artifact completes:
 
 ```json
 {

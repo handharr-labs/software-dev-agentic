@@ -198,8 +198,9 @@ options     :
 Inspect disk state of `run_dir`:
 
 ```bash
-ls "<run_dir>/inputs/figma-"*.md 2>/dev/null | head -1
-ls "<run_dir>/figma-groups.json" 2>/dev/null
+cat "<run_dir>/figma-fetch-dir.txt" 2>/dev/null        # → figma_fetch_dir (empty if not set)
+ls "<figma_fetch_dir>/frame_"* 2>/dev/null | head -1   # → has_figma_frames (run only if figma_fetch_dir non-empty)
+ls "<figma_fetch_dir>/figma-groups.json" 2>/dev/null   # → has_figma_groups (run only if figma_fetch_dir non-empty)
 ls "<run_dir>/plan.md" 2>/dev/null
 grep "^status:" "<run_dir>/plan.md" 2>/dev/null | head -1
 ls -v "<run_dir>/findings-round-"*.json 2>/dev/null
@@ -209,13 +210,13 @@ Route based on what exists:
 
 | Disk state | Entry | Decision |
 |---|---|---|
-| No figma inputs + `figma_urls` available (from Step G0) | Step 1.5 | `spawn-planners` + `pending_figma_urls` + `restore_findings: false` |
-| No figma inputs + no `figma_urls` + no `plan.md` | Step 2 | `spawn-planners` + `restore_findings: false` |
-| Figma inputs exist + no `plan.md` | Step 2 | `spawn-planners` + `restore_findings: true` (restore from `findings-round-*.json`) |
+| No figma frames + `figma_urls` available (from Step G0) | Step 1.5 | `spawn-planners` + `pending_figma_urls` + `restore_findings: false` |
+| No figma frames + no `figma_urls` + no `plan.md` | Step 2 | `spawn-planners` + `restore_findings: false` |
+| Figma frames exist + no `plan.md` | Step 2 | `spawn-planners` + `restore_findings: true` (restore from `findings-round-*.json`) |
 | `plan.md` exists + `status: pending` | Step 4 | `resume-as-is` + `plan_status: pending` |
 | `plan.md` exists + `status: approved` | Step 5 | `resume-as-is` + `plan_status: approved` |
 
-For `spawn-planners` with `restore_findings: true` — also read `figma-groups.json` (if present) and `state.json` to populate `figma_groups` and `completed_artifacts`.
+For `spawn-planners` with `restore_findings: true` — also read `<figma_fetch_dir>/figma-groups.json` (if present) and `state.json` to populate `figma_groups` and `completed_artifacts`.
 
 ### Step G2 — Gather intent
 
@@ -232,7 +233,7 @@ For `spawn-planners` with `restore_findings: true` — also read `figma-groups.j
 
 Resolve `run_dir`:
 - Resume path → already set from Step G1
-- Fresh path → `<project_root>/.claude/agentic-state/runs/developer/<feature>`
+- Fresh path → `<project_root>/.claude/agentic-state/developer/runs/<feature>`
 
 Return a `Decision: spawn-planners` block. Always include `run_dir`, `pending_figma_urls` (from `figma_urls` collected in Step G0, or empty list), and `restore_findings`. Include `update_mode: true`, `completed_artifacts`, `open_questions`, and `figma_groups` only on the resume path.
 
@@ -378,7 +379,7 @@ git rev-parse --show-toplevel
 **Step 3 — Create run directory:**
 
 ```bash
-mkdir -p <root>/.claude/agentic-state/runs/developer/<feature>
+mkdir -p <root>/.claude/agentic-state/developer/runs/<feature>
 ```
 
 **Step 4 — Write plan.md:**
@@ -390,7 +391,7 @@ cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
 ```
 
 ```
-<root>/.claude/agentic-state/runs/developer/<feature>/plan.md
+<root>/.claude/agentic-state/developer/runs/<feature>/plan.md
 ```
 
 Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §plan.md Schema.
@@ -400,7 +401,7 @@ Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §plan.md S
 Before writing, check all planner findings blocks for a `### Figma Alignment` section. If found, extract the full table — it will be embedded in `## Figma Alignment` below. This must happen before writing, not after.
 
 ```
-<root>/.claude/agentic-state/runs/developer/<feature>/context.md
+<root>/.claude/agentic-state/developer/runs/<feature>/context.md
 ```
 
 Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §context.md Schema.
