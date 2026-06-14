@@ -146,6 +146,8 @@ Returned after all frame workers for a run have completed, when `developer-figma
 
 ```
 ## Figma Groups
+ds_available: true | false
+ds_artifacts: [<design-system artifact names found — e.g. mekari-pixel>]   # omit when ds_available: false
 groups:
   - screen: <cluster name derived from visual structure>
     type: screen | overlay
@@ -161,7 +163,7 @@ review:
     reason: <one line — e.g. "Visually ambiguous between X and Y — placed by parent_frame hint">
 ```
 
-Omit the `review` key entirely if no frames needed tiebreaking.
+Omit the `review` key entirely if no frames needed tiebreaking. Omit `ds_available`/`ds_artifacts` entirely if `platform` was not passed to group-frames mode (signals: skip Step 1.5c in the orchestrator).
 
 ---
 

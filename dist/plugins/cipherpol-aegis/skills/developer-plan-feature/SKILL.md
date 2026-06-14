@@ -143,8 +143,9 @@ Spawn `developer-figma-worker` with mode `group-frames`:
 
 > mode: group-frames
 > run_dir: \<run_dir\>
+> platform: \<platform\>
 
-Wait for the `## Figma Groups` output block. Extract `groups` as `figma_groups` and `review` (may be absent).
+Wait for the `## Figma Groups` output block. Extract `groups` as `figma_groups`, `review` (may be absent), and `ds_available` (may be absent — treat missing as `false`).
 
 Build the grouping summary:
 ```
@@ -192,6 +193,18 @@ options     :
   ...
 ]
 ```
+
+### Step 1.5c — Align UI Stacks to Design System (skip if `ds_available` is false or absent)
+
+If `ds_available` is false or not present in the `## Figma Groups` block, skip this step entirely.
+
+Collect the `uistack_file` path from every entry in `figma_groups`. Spawn one `developer-uistack-align-worker` per uistack file **in parallel** (single Agent tool call):
+
+> uistack_file: \<abs path to figma-uistack-*.md\>
+> platform: \<platform\>
+> run_dir: \<run_dir\>
+
+Collect all `## UIStack Align Output` blocks. Aggregate `flagged` items across all workers. If any items are flagged, carry the summary forward — it will be appended to the Step 4 approval prompt so the engineer sees design-system gaps before approving the plan.
 
 **Persist figma_groups to disk** — write immediately after grouping is confirmed:
 
@@ -304,7 +317,10 @@ Wait for the strategist to return the plan summary and write plan.md + context.m
 Call `AskUserQuestion` immediately after synthesis — do NOT describe choices in prose:
 
 ```
-question    : "What would you like to do with this plan?"
+question    : "What would you like to do with this plan?<if flagged items from Step 1.5c exist:>
+
+               ⚠ Design System Gaps (<N> items): some UI Stack components could not be matched to the design system or codebase. See `### Design System Alignment` in each uistack file for details.
+               <end if>"
 header      : "Plan"
 multiSelect : false
 options     :
