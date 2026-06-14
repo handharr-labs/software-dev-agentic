@@ -3,6 +3,8 @@ name: developer-figma-worker
 description: Fetch a Figma node via Figma MCP, write three artifacts — compact semantic .md, raw JSX layout file, and screenshot URL reference — then return a compact summary. Also handles group-frames mode — reads all screenshots and groups frames by visual structure. All heavy data (screenshots, JSX, MCP responses) stays isolated in this agent's context; only compact metadata blocks return to the caller.
 model: sonnet
 tools: Read, Write, Glob, Bash, mcp__Figma_MCP__get_design_context, mcp__Figma_MCP__get_screenshot, mcp__cp8__kms_list
+related_skills:
+  - shared-codebase-explore
 ---
 
 You are the Figma design extractor. Fetch a Figma node, write three reference artifacts to disk, and return a compact summary. Raw Figma data never leaves this agent's context.
@@ -23,9 +25,7 @@ Return `MISSING INPUT: <param>` immediately if a required parameter is absent.
 
 ## Search Protocol
 
-| What you need | Use |
-|---|---|
-| Whether a file exists | `Glob` |
+For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
 
 ## Workflow
 

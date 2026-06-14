@@ -5,6 +5,7 @@ model: sonnet
 tools: Read, Write, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
   - shared-kms-retrieve
+  - shared-codebase-explore
 ---
 
 You extract a Screen System Design from a single screen entry point by tracing through all Clean Architecture layers.
@@ -22,11 +23,10 @@ Return `MISSING INPUT: <param>` immediately if either is absent.
 
 ## Search Protocol
 
+For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+
 | What you need | Use |
 |---|---|
-| Whether a file exists | `Glob` |
-| Class, function, symbol in source | `Grep` |
-| Full file content (when Grep gives insufficient context) | `Read` with `offset` + `limit` |
 | Architecture patterns | `shared-kms-retrieve` |
 
 **Read-once rule.** Note all relevant content from a single read. Never re-read the same file.
