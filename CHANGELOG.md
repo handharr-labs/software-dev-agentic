@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.22.0] — 2026-06-14
+
+### Added
+- `lib/core/developer/agents/developer-uistack-align-worker.md` — new worker that resolves UI Stack components and design tokens against the project's design system (KMS `discipline=design`), falls back to codebase scan for unmatched entries, revises `figma-uistack-*.md` in place, and returns a compact `## UIStack Align Output` block
+
+### Changed
+- `lib/core/developer/agents/developer-figma-worker.md` — added `mcp__cp8__kms_list` tool; new Step 4d performs a lightweight design-system presence check (`kms_list discipline=design`) and sets `ds_available`/`ds_artifacts` in the `## Figma Groups` output block; `platform` added as optional group-frames input; `### Component Hierarchy` nodes in UI Stacks now annotated with `[ui-role: variant]` (e.g. `[Button: primary]`) to enable precise design-system catalog matching
+- `lib/core/developer/reference/figma-artifact-format.md` — `## Figma Groups` block schema extended with `ds_available` and `ds_artifacts` fields
+- `lib/core/developer/skills/orchestrators/developer-plan-feature/SKILL.md` — Step 1.5b passes `platform` to group-frames spawn and extracts `ds_available`; new Step 1.5c spawns `developer-uistack-align-worker` per uistack file in parallel when `ds_available: true`; Step 4 approval prompt surfaces a `⚠ Design System Gaps` notice when components are flagged
+
 ## [12.21.0] — 2026-06-14
 
 ### Added
