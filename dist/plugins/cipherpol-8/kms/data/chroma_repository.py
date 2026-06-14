@@ -48,7 +48,7 @@ def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
         platform=None if meta.get("platform") == _NULL else meta.get("platform"),
         project=None if meta.get("project") == _NULL else meta.get("project"),
         discipline=meta["discipline"],
-        area=meta["area"],
+        area=meta.get("area", ""),
         artifact=None if meta.get("artifact") == _NULL else meta.get("artifact"),
         topic=meta["topic"],
         subtopic=meta.get("subtopic") or meta.get("pattern", ""),

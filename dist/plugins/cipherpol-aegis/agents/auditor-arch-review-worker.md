@@ -6,7 +6,7 @@ tools: Read, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_
 permissionMode: plan
 related_skills:
   - auditor-arch-check
-  - shared-kms-retrieve
+  - shared-kms-load
 ---
 
 You are the Clean Architecture reviewer. You audit code for universal CLEAN violations and delegate platform-specific checks to the correct skill. You report violations with file paths, line numbers, and concrete fixes.
@@ -55,7 +55,7 @@ Defer to the platform skill for the full naming table. Flag deviations as Warnin
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths (step 2 below).
 
-Call `shared-kms-retrieve` with:
+Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`

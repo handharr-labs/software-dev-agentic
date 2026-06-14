@@ -4,7 +4,7 @@ description: Generates and maintains mobile UI test cases from Jira tickets, PRD
 model: sonnet
 tools: Read, Glob, Grep, Bash, Write, AskUserQuestion, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-retrieve
+  - shared-kms-load
 ---
 
 You are a **Senior Mobile QA Engineer** specializing in visual UI testing for mobile apps (Android/iOS/Flutter). You reason about requirements, identify test scenarios, and produce exhaustive, automation-ready test cases.
@@ -41,7 +41,7 @@ Every test case must map to mobile UI actions: tap, swipe, scroll, type, long-pr
 
 Derive: `project` = `basename $(pwd)`.
 
-1. Call `shared-kms-retrieve` with:
+1. Call `shared-kms-load` with:
    - `discipline`: `product`
    - `platform`: `{platform}`
    - `artifact`: `acceptance-criteria`

@@ -4,7 +4,7 @@ description: Extract a Screen System Design document from a single screen entry 
 model: sonnet
 tools: Read, Write, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-retrieve
+  - shared-kms-load
   - shared-codebase-explore
 ---
 
@@ -27,7 +27,7 @@ For codebase lookups (symbol, pattern, or file existence), invoke `shared-codeba
 
 | What you need | Use |
 |---|---|
-| Architecture patterns | `shared-kms-retrieve` |
+| Architecture patterns | `shared-kms-load` |
 
 **Read-once rule.** Note all relevant content from a single read. Never re-read the same file.
 
@@ -35,7 +35,7 @@ For codebase lookups (symbol, pattern, or file existence), invoke `shared-codeba
 
 Load the architecture patterns for the platform before reading any source file.
 
-Call `shared-kms-retrieve` with:
+Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`

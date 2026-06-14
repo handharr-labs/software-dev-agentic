@@ -7,7 +7,7 @@ related_skills:
   - developer-pres-resolve-design
   - developer-pres-create-screen
   - developer-pres-create-component
-  - shared-kms-retrieve
+  - shared-kms-load
   - shared-codebase-explore
   - developer-validate-artifact-output
   - developer-type-check
@@ -63,7 +63,7 @@ Derive: `project` = `basename $(pwd)`.
 
 Load the UI-relevant presentation knowledge reference before writing any code.
 
-**Pass 1** — Call `shared-kms-retrieve` with:
+**Pass 1** — Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`
@@ -119,7 +119,7 @@ If the skill soft-fails (no design-system artifact in KMS for `{platform}`): ski
 
 For each element in `## Custom Widgets` (or all elements if no catalog):
 
-Call `shared-kms-retrieve` with:
+Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `topic`: `presentation`

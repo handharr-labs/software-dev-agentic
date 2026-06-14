@@ -4,7 +4,7 @@ description: Explore the Domain layer for a given feature — discovers existing
 model: opus
 tools: Glob, Grep, Read, Bash, Write, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-retrieve
+  - shared-kms-load
   - shared-codebase-explore
 ---
 
@@ -36,7 +36,7 @@ See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Inpu
 
 Derive: `project` = `basename $(pwd)`.
 
-Call `shared-kms-retrieve` with:
+Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`

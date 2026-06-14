@@ -11,7 +11,7 @@ related_skills:
   - developer-data-create-mapper
   - developer-data-create-datasource
   - developer-data-create-repository-impl
-  - shared-kms-retrieve
+  - shared-kms-load
   - developer-validate-artifact-output
   - developer-type-check
 ---
@@ -33,7 +33,7 @@ Required — return `MISSING INPUT: <param>` immediately if any are absent:
 
 Derive: `project` = `basename $(pwd)`, `platform` from spawn prompt.
 
-Call `shared-kms-retrieve` with:
+Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`

@@ -5,7 +5,7 @@ model: sonnet
 user-invocable: true
 tools: Read, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-retrieve
+  - shared-kms-load
 agents:
   - debugger-log-worker
 ---
@@ -42,7 +42,7 @@ Never use `find`/`ls` to navigate a vendor directory speculatively. If the patte
 
 Derive: `project` = `basename $(pwd)`, `platform` from file paths in the error/stack trace.
 
-Call `shared-kms-retrieve` with:
+Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`

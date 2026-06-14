@@ -12,7 +12,7 @@ related_skills:
   - developer-data-create-datasource
   - developer-data-create-repository-impl
   - developer-pres-create-stateholder
-  - shared-kms-retrieve
+  - shared-kms-load
   - shared-codebase-explore
   - developer-validate-artifact-output
   - developer-type-check
@@ -66,7 +66,7 @@ Load cross-cutting convention references before writing any code — knowledge f
 
 Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 
-**Pass 1** — Call `shared-kms-retrieve` with:
+**Pass 1** — Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `conventions`
@@ -74,7 +74,7 @@ Derive: `project` = `basename $(pwd)`, `platform` from plan.md frontmatter.
 - `project_artifacts`: `["deviations"]`
 - `codebase_grep`: `class.*UseCase\|implements.*Repository`
 
-**Pass 2 — optional, non-blocking** — Call `shared-kms-retrieve` with:
+**Pass 2 — optional, non-blocking** — Call `shared-kms-load` with:
 - `discipline`: `design`
 - `platform`: `{platform}`
 - `topic`: `design system component catalog`
@@ -132,7 +132,7 @@ Derive the skill from each artifact's type in plan.md:
 **If `status: create` — call skill:**
 1. Write checkpoint: update `next_artifact` in state.json to this artifact's name before doing any other work. Update this artifact's `Progress` cell in plan.md to `in-progress`.
 2. ## Knowledge
-   Call `shared-kms-retrieve` with:
+   Call `shared-kms-load` with:
    - `discipline`: `engineering`
    - `platform`: `{platform}`
    - `artifact`: `standard-architecture`
@@ -184,7 +184,7 @@ App layer wiring is always direct `Read` + `Edit` — no skill is needed. For ea
 
 1. Write checkpoint: update `next_artifact` in state.json to this entry's name before doing any other work. Update this entry's `Progress` cell in plan.md to `in-progress`.
 2. ## Knowledge
-   Call `shared-kms-retrieve` with:
+   Call `shared-kms-load` with:
    - `discipline`: `engineering`
    - `platform`: `{platform}`
    - `artifact`: `standard-architecture`

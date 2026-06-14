@@ -4,7 +4,7 @@ description: Explore the Presentation and UI layers for a given feature — disc
 model: opus
 tools: Glob, Grep, Read, Bash, Write, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-retrieve
+  - shared-kms-load
   - shared-codebase-explore
 ---
 
@@ -39,14 +39,14 @@ Derive: `project` = `basename $(pwd)`.
 
 The StateHolder topic is platform-specific (flutter → `state_management`; MVP platforms → `presentation`).
 
-**Pass 1** — Call `shared-kms-retrieve` with:
+**Pass 1** — Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`
 - `topic`: `presentation`
 - `codebase_grep`: `extends Bloc\|extends Cubit\|extends ChangeNotifier\|class.*ViewModel\|class.*StateHolder`
 
-**Pass 2** — Call `shared-kms-retrieve` with:
+**Pass 2** — Call `shared-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `project`: `{project}`

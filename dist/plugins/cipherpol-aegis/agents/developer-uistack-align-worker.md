@@ -4,7 +4,8 @@ description: Analyze a figma-uistack-<screen-slug>.md against the project's desi
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-retrieve
+  - shared-kms-load
+  - shared-kms-lookup
 ---
 
 You are the UI Stack design-system aligner. You read a merged UI Stack doc, resolve every component name and design token against the project's design system, revise the file in place, and return a compact report. You never spawn sub-agents — skills are your hands.
@@ -45,33 +46,28 @@ MISSING INPUT: uistack_file does not exist at <path>
 Collect every component name from `### Component Hierarchy` into a working list `<components>`.
 Collect every token from `### Design Tokens` into a working list `<tokens>`.
 
-**Step 2 — Retrieve design system knowledge**
+**Step 2 — Resolve components against design system**
 
-Call `shared-kms-retrieve` with:
-- `discipline`: `design`
+Call `shared-kms-lookup` with:
+- `names`: all entries from `<components>` as a comma-separated list
 - `platform`: `{platform}`
-- `codebase_grep`: `class.*Widget\|class.*Component\|extends.*Widget\|class.*View` (adjust suffix for platform)
-- `codebase_exclude`: `test/, mock/, fake/`
+- `discipline`: `design`
+- `area`: `design-system`
 
-Do not pass `artifact` — let the TOC scan return all available design entries. Reason over the returned rows to identify design system patterns (rows whose `area` is `design-system`).
+**Step 2a — Evaluate lookup result**
 
-**Step 2a — Evaluate KMS result**
+Read the returned `## KMS Lookup Result` block:
 
-After the skill returns:
+- If `resolved: 0` (nothing matched): set `ds_available = false`. All components proceed to Step 3 codebase fallback.
+- Otherwise: set `ds_available = true`. For each entry under `### Resolved`, record `resolved: <canonical_pattern>`, `source: design-system`, and hold the returned content as the component's design system reference. Entries under `### Unresolved` proceed to Step 3.
 
-- If the `## Knowledge Loaded` block contains no design system entries (empty TOC or no patterns fetched): set `ds_available = false`. Skip to Step 3-fallback.
-- Otherwise: set `ds_available = true`. Build a `<design_system>` map: `{ component_name → canonical_name, token → canonical_token }` from the returned patterns and code references.
+**Step 3 — Codebase fallback for unresolved components**
 
-**Step 3 — Resolve components**
+For each component not resolved in Step 2a:
 
-For each component in `<components>`:
-
-1. Check against `<design_system>` (exact match, then case-insensitive/suffix-stripped match).
-2. **Match found** → record `resolved: <canonical_name>`.
-3. **No match** OR `ds_available = false`:
-   - Grep the codebase for the component name (or a close variant — e.g. strip `Widget`/`View`/`Component` suffix and re-search): `Grep "<ComponentName>" --include="*.dart|*.swift|*.tsx"`.
-   - If found in codebase → record `resolved: <codebase_name>`, `source: codebase`.
-   - If not found → record `resolved: null`, `flagged: true`, `reason: not in design system or codebase`.
+- `Grep "<ComponentName>" --include="*.dart|*.swift|*.tsx"` (strip `Widget`/`View`/`Component` suffix and retry if no hit).
+- Found in codebase → record `resolved: <codebase_name>`, `source: codebase`.
+- Not found → record `resolved: null`, `flagged: true`, `reason: not in design system or codebase`.
 
 **Step 4 — Resolve design tokens**
 
