@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.22.2] — 2026-06-14
+
+### Added
+- `lib/core/shared/skills/procedures/shared-codebase-explore/SKILL.md` — new shared procedure skill encapsulating the Grep-before-Read codebase search discipline (`symbol`, `pattern`, `exists` types); produces a `## Codebase Explore Result` block
+
+### Changed
+- All developer agents (`developer-sysdesign-extract-worker`, `developer-app/data/domain/pres-planner`, `developer-feature-strategist`, `developer-feature-worker`, `developer-figma-worker`, `developer-ui-worker`) and shared agents (`kaku-worker`, `lucci-planner`) — replaced inline codebase search tables with calls to `shared-codebase-explore`; added skill to `related_skills` frontmatter
+- `lib/core/developer/reference/findings-format.md` — inline codebase-lookup table replaced with `shared-codebase-explore` reference
+- `docs/principles/agentic/agentic-conventions.md` — model selection changed from strict rules to open guidance; all three models (`haiku`, `sonnet`, `opus`) listed with typical fit descriptions, no enforcement
+
 ## [12.22.1] — 2026-06-14
 
 ### Fixed
