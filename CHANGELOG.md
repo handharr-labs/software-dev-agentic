@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.21.0] — 2026-06-14
+
+### Added
+- `lib/core/developer/skills/procedures/developer-type-check/SKILL.md` — P-skill encapsulating the platform-aware type-checker protocol (flutter analyze / tsc --noEmit / ios skip), fix-in-one-pass, and max-two-loop rule
+
+### Changed
+- `lib/core/developer/agents/developer-feature-worker.md`, `developer-backend-worker.md`, `developer-ui-worker.md` — replaced inline `## Validation` / `## Validation Protocol` blocks with calls to `developer-validate-artifact-output` and `developer-type-check`; added both to `related_skills` frontmatter
+
 ## [12.20.0] — 2026-06-14
 
 ### Added
