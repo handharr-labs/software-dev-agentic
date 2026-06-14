@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.24.2] — 2026-06-15
+
+### Added
+- `uistack-align-format.md` — new reference doc canonicalizing annotation rules (`← ⚠ not found in design system`, `← ⚠ unknown`), `### Design System Alignment` table schema, and `## UIStack Align Output` block spec
+
+### Changed
+- `developer-uistack-align-worker` — Step 5 now reads `uistack-align-format.md` at runtime before applying edits; Output section defers to the format file instead of inlining the block schema
+
 ## [12.24.1] — 2026-06-15
 
 ### Fixed
