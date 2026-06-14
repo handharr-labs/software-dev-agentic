@@ -80,24 +80,17 @@ For each token in `<tokens>`:
 
 **Step 5 — Revise UI Stack**
 
-Apply all resolutions to `uistack_file` using `Edit`:
+Before applying any edits, read the format schema:
 
-1. In `### Component Hierarchy`: replace each component name with its resolved canonical name. For flagged (unresolved) components, append `  ← ⚠ not found in design system` comment on the same line.
-2. In `### Design Tokens`: replace corrected token names. Append `← ⚠ unknown` for unresolved tokens.
-3. Append a new section at the end of the file:
-
-```markdown
-### Design System Alignment
-> Revised by developer-uistack-align-worker
-
-| Component | Original | Resolved | Source | Status |
-|---|---|---|---|---|
-| <name> | <original> | <resolved or —> | design-system / codebase / — | ok / renamed / flagged |
-
-| Token | Original | Resolved | Status |
-|---|---|---|---|
-| <name> | <original> | <resolved or —> | ok / corrected / unknown |
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/uistack-align-format.md"
 ```
+
+Apply all resolutions to `uistack_file` using `Edit`, per `$CLAUDE_PLUGIN_ROOT/reference/developer/uistack-align-format.md` (Annotation Rules and `### Design System Alignment` Section):
+
+1. In `### Component Hierarchy`: replace each component name with its resolved canonical name. Apply inline annotations exactly as the format specifies — flagged components only; no annotation on codebase-resolved components.
+2. In `### Design Tokens`: replace corrected token names. Apply inline annotations exactly as the format specifies — unknown tokens only.
+3. Append `### Design System Alignment` section at the end of the file per the format schema.
 
 Do not modify `### State Model`, `### User Interactions`, frontmatter, or any section not listed above.
 
@@ -107,25 +100,6 @@ Do not modify `### State Model`, `### User Interactions`, frontmatter, or any se
 
 ## Output
 
-Return exactly one `## UIStack Align Output` block — no prose outside it:
+Block format is defined in `$CLAUDE_PLUGIN_ROOT/reference/developer/uistack-align-format.md` (`## UIStack Align Output` Block).
 
-```
-## UIStack Align Output
-file: <abs path to revised uistack file>
-ds_available: true | false
-fallback_used: true | false   # true if any component resolved via codebase scan
-components_total: <N>
-components_ok: <N>
-components_renamed: <N>
-components_flagged: <N>
-tokens_total: <N>
-tokens_ok: <N>
-tokens_corrected: <N>
-tokens_flagged: <N>
-flagged:
-  - name: <ComponentOrTokenName>
-    type: component | token
-    reason: <not in design system or codebase>
-```
-
-Omit `flagged:` key entirely if no items were flagged.
+Return exactly one `## UIStack Align Output` block — no prose outside it.
