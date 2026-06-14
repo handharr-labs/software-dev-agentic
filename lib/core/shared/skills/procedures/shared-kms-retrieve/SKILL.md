@@ -43,4 +43,9 @@ For each entry in `project_artifacts`:
 
 ## Output
 
+Before writing, read the format schema:
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/shared/kms-retrieval-output.md"
+```
+
 Produce a `## Knowledge Loaded` block as defined in `$CLAUDE_PLUGIN_ROOT/reference/shared/kms-retrieval-output.md`. Always both Theory and Code Pattern — never one without the other.

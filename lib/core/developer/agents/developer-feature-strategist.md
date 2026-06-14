@@ -381,6 +381,12 @@ mkdir -p <root>/.claude/agentic-state/runs/developer/<feature>
 
 **Step 4 — Write plan.md:**
 
+Before writing, read the plan format schema:
+
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
+```
+
 ```
 <root>/.claude/agentic-state/runs/developer/<feature>/plan.md
 ```

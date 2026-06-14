@@ -36,6 +36,10 @@ Provided inline by the calling skill — not passed as parameters:
 | `## Figma Alignment` table | context.md | if present |
 | `stateholder_contract` path | injected by skill | yes (may be `"none"`) |
 
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
+```
+
 Full plan.md/context.md schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md`.
 
 Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-plan-feature` or `/developer-build-feature`.
@@ -139,7 +143,11 @@ Elements remaining in `## Custom Widgets` after Level 2 are created fresh using 
 
 2. Run UI Resolution Priority (Level 1 → 2 → 3) for this artifact.
 
-3. Read Figma files — execute in order, do not proceed to step 4 until all reads are complete. Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
+3. Read Figma files — execute in order, do not proceed to step 4 until all reads are complete.
+   ```bash
+   cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md"
+   ```
+   Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
    - Look up this artifact's name in the `## Figma Alignment` table in context.md → get the `UI Stack` and `Figma Files`
    - `Read` the `UI Stack` file (`figma-uistack-*.md`) first → use `### Component Hierarchy` as the structural blueprint (including any `← see figma-uistack-*.md` overlay branches), `### State Model` and `### User Interactions` for behavior, `### Design Tokens` for styling. Note the `states` frontmatter list — this is the `Figma Files` list for step below
    - For each `.md` file in the list:

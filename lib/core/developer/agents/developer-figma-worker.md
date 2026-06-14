@@ -73,6 +73,12 @@ Derive `<slug>` from the node name. Sanitize to lowercase-kebab (e.g. `expense-i
 
 **Step 3 — Write artifacts**
 
+Before writing any figma artifact files, read the format schema:
+
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md"
+```
+
 Write three files to `<run_dir>/inputs/`, per the schema in `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md` (`figma-<slug>.md` semantic reference, frontmatter + body fields):
 
 - `figma-<slug>.md` — compact semantic reference (planner and StateHolder use this)

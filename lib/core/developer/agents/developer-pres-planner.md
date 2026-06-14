@@ -26,6 +26,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Search Protocol
 
+Before writing output, read the findings format schema:
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md"
+```
+
 See `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md` — shared Input Contract, Search Protocol, and Output Contract (Impact Recommendations + Findings Written format).
 
 ## Workflow
@@ -154,5 +159,10 @@ This layer typically impacts `domain` (new screen needs a use case) and `app` (r
 ```
 
 Write `none detected` for any naming convention that cannot be inferred. Omit `mark_sections` if the platform doesn't use MARK comments.
+
+Before writing output, read the findings format schema:
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md"
+```
 
 Then follow the shared `## Findings Written` return format from `$CLAUDE_PLUGIN_ROOT/reference/developer/findings-format.md`, with `<layer>` = `pres`.

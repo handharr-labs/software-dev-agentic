@@ -118,9 +118,28 @@ mkdir -p "$root/.claude/agentic-state/developer/sysdesign/screens/"
 
 ## Step 5 — Write System Design
 
-Write the system design document using only what was found. Never invent API endpoints, fields, or flows that are not evidenced in the source files. Use `(not found)` for sections with no evidence.
+Before writing, read the format schema:
 
-Template: see `$CLAUDE_PLUGIN_ROOT/reference/developer/screen-system-design-format.md` §Schema.
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/screen-system-design-format.md"
+```
+
+Write the system design document using **exactly** the 6-section schema from that file. All 6 sections are required — use `(not found)` for any section with no evidence. Never invent API endpoints, fields, or flows not evidenced in source files.
+
+Required sections (in order):
+1. `## 1. Feature Context`
+2. `## 2. API Design`
+3. `## 3. Data Model`
+4. `## 4. High-Level Design`
+5. `## 5. Data Flow`
+6. `## 6. UI Stack`
+
+**Header metadata** (immediately after the `# {ScreenName} — Screen System Design` title):
+```
+> Extracted from: {screen_path}
+> Platform: {platform}
+> Date: {today}
+```
 
 ---
 

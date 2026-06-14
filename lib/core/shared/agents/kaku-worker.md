@@ -20,6 +20,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 `plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` (`## Section Contracts`) — `## Steps` and `## Files Affected` are always present.
 
+Before writing, read the format schema:
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md"
+```
+
 - `Read` `<plan_path>` in full before doing anything else.
 - For each file in `## Files Affected` marked `create`: confirm it does NOT already exist (`Glob`) before creating.
 - For each file marked `modify`: confirm it exists before `Read` + `Edit`.

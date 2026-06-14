@@ -21,6 +21,12 @@ Return `MISSING INPUT: screen_design_paths — at least 2 required` if fewer tha
 
 ## Step 1 — Read All Screen Designs
 
+Before parsing, read the format reference so section headings and contracts are known:
+
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/screen-system-design-format.md"
+```
+
 Section headings follow `$CLAUDE_PLUGIN_ROOT/reference/developer/screen-system-design-format.md` — read each section per its Section Contracts row.
 
 Read each file in `screen_design_paths`. For each, extract:
@@ -62,6 +68,12 @@ Before writing, perform these merges mentally:
 **Data flows:** Identify cross-screen flows — where one screen's output (navigation event, shared state, passed parameter) becomes another screen's input.
 
 ## Step 4 — Write Flow System Design
+
+Before writing, read the format schema:
+
+```bash
+cat "$CLAUDE_PLUGIN_ROOT/reference/developer/flow-system-design-format.md"
+```
 
 Write the document using only what was found in the screen designs. Never invent new endpoints, fields, or flows. Use `(not found)` for sections with no evidence across any screen.
 
