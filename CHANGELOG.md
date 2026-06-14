@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.22.1] — 2026-06-14
+
+### Fixed
+- All agents that passively referenced `$CLAUDE_PLUGIN_ROOT/reference/...` via "see …" text now execute `cat "$CLAUDE_PLUGIN_ROOT/reference/<file>.md"` before their write step — ensures the format schema is loaded into context rather than silently ignored (affected: `developer-sysdesign-extract-worker`, `developer-sysdesign-consolidate-worker`, `developer-feature-strategist`, `developer-app/data/domain/pres-planner`, `developer-feature-worker`, `developer-figma-worker`, `developer-ui-worker`, `kaku-worker`, `lucci-planner`, `shared-kms-retrieve`)
+
 ## [12.22.0] — 2026-06-14
 
 ### Added
