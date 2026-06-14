@@ -7,6 +7,23 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.23.0] — 2026-06-14
+
+### Added
+- `developer-fetch-figma` orchestrator skill — standalone Figma fetch pipeline (fetch frames, group by visual structure, align to design system); outputs a reusable `figma_fetch_dir` that can be passed directly to `/developer-plan-feature`
+- `agentic-runtime-structure.md` — new doc covering downstream runtime layout (`runs/`, `figma/`, `sysdesign/`, `rfc/`) with full directory trees and inter-run conventions
+- `agentic-runtime-structure`, `Run Directory`, `agentic-state` glossary entries in `agentic-glossary.md` and `glossary.md`
+
+### Changed
+- **`agentic-state` directory restructure** — all developer runtime state now namespaced under `agentic-state/developer/`: `runs/developer/<feature>/` → `developer/runs/<feature>/`, `rfc/` → `developer/rfc/`
+- **Figma fetch artifacts decoupled from run session** — frame files, layout JSX, screenshots, and UI stacks now live in a feature-agnostic `developer/figma/<timestamp>/` directory; `figma-groups.json` moved there from `run_dir`; `run_dir` retains only a `figma-fetch-dir.txt` pointer
+- `developer-figma-worker` — `run_dir` replaced by `figma_fetch_dir`; frame files written to `frame_<sanitized-node-id>/` subdirs; UI stacks written to `ui-stacks/`
+- `developer-uistack-align-worker` — `run_dir` replaced by `figma_fetch_dir`
+- `developer-plan-feature` — creates `figma_fetch_dir` before spawning figma workers; accepts existing `figma_fetch_dir` as input to skip re-fetch; preflight searches for `figma-fetch-dir.txt` instead of `figma-groups.json`
+- `figma-artifact-format.md` — all path examples updated to reflect new `frame_<node-id>/` and `ui-stacks/` structure
+
+---
+
 ## [12.22.3] — 2026-06-14
 
 ### Fixed
