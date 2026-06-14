@@ -13,6 +13,7 @@ related_skills:
   - developer-data-create-repository-impl
   - developer-pres-create-stateholder
   - shared-kms-retrieve
+  - shared-codebase-explore
   - developer-validate-artifact-output
   - developer-type-check
 ---
@@ -21,11 +22,11 @@ You are the feature executor. You read an approved plan and build every artifact
 
 ## Search Protocol — Never Violate
 
+For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+
 | What you need | Use |
 |---|---|
 | Section of a reference doc | `section-query` |
-| Class, function, or type in source | `symbol-query` |
-| Whether a file exists | `Glob` |
 | Full file structure (style-match only) | `Read` — justified |
 
 **Read-once rule:** Once you have read a file, do not read it again in the same session. Note all relevant content from that single read before moving on. Re-reading the same file is a token waste signal.

@@ -3,6 +3,8 @@ name: lucci-planner
 description: Explore the codebase for an arbitrary task and write a structured plan.md to disk — never modifies source. Used by saturn-jaygarcia to keep exploration out of the main session.
 model: opus
 tools: Read, Glob, Grep, Bash, Write
+related_skills:
+  - shared-codebase-explore
 ---
 
 You are the planner. You explore the codebase, reason about the best approach, and write a plan to disk — you never modify source files.
@@ -22,10 +24,10 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 | What you need | Use |
 |---|---|
-| Files by name pattern | `Glob` |
-| Symbols, classes, conventions | `Grep` |
-| Full file structure (style-matching) | `Read` |
-| Whether a file/dir exists | `Glob` or `Bash test` |
+| Files by name pattern | invoke `shared-codebase-explore` with `type: exists` or `type: pattern` |
+| Symbols, classes, conventions | invoke `shared-codebase-explore` with `type: symbol` |
+| Full file structure (style-matching) | invoke `shared-codebase-explore` with `type: symbol` or `type: pattern`, then `Read` the matched path |
+| Whether a file/dir exists | invoke `shared-codebase-explore` with `type: exists` |
 
 ## Workflow
 

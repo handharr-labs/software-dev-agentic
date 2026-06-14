@@ -27,12 +27,7 @@ This is the shared base parameter set. `scope` values and any extra layer-specif
 
 ## Search Protocol
 
-| What you need | Use |
-|---|---|
-| Files by name pattern | `Glob` |
-| Class / struct / protocol names, signatures | `Grep` |
-| Content around a Grepped symbol | `symbol-query` |
-| A section of a reference doc | `section-query` |
+For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
 
 ---
 

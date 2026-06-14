@@ -309,11 +309,13 @@ Decision tree — apply in order when deciding what to add:
 
 ## Model Selection <!-- 10 -->
 
-| Role | Model | When |
-|---|---|---|
-| Strategist | `sonnet` | Always |
-| Worker | `sonnet` | Default — any reasoning, decision-making, or architectural judgment |
-| Worker | `haiku` | Only for truly mechanical leaf tasks with no architectural judgment |
+Choose the model that fits the task. There are no enforced rules — pick based on what you know about the agent's reasoning demands and cost tolerance.
+
+| Model | Typical fit |
+|---|---|
+| `haiku` | Mechanical, low-judgment tasks where speed and cost matter |
+| `sonnet` | General reasoning, architectural judgment, most workers |
+| `opus` | Deep multi-step reasoning, complex orchestration, high-stakes decisions |
 
 ---
 

@@ -8,6 +8,7 @@ related_skills:
   - developer-pres-create-screen
   - developer-pres-create-component
   - shared-kms-retrieve
+  - shared-codebase-explore
   - developer-validate-artifact-output
   - developer-type-check
 ---
@@ -16,11 +17,11 @@ You are the UI layer executor. You build Screen, Component, and Navigator artifa
 
 ## Search Protocol — Never Violate
 
+For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+
 | What you need | Use |
 |---|---|
 | Section of a reference doc | `section-query` |
-| Class, function, or type in source | `symbol-query` |
-| Whether a file exists | `Glob` |
 | Full file structure (style-match only) | `Read` — justified |
 
 **Read-once rule:** Once you have read a file, do not read it again in the same session.
