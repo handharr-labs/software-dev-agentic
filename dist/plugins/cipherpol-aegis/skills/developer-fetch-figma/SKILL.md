@@ -15,29 +15,29 @@ Never read source files, fetch URLs, or write code. All work is delegated to `de
 
 ## Step 0 — Classify Inputs
 
-Parse formal arguments on the invocation line.
-
-| Pattern | Type | Action |
-|---|---|---|
-| `figma.com` URL | Figma frame or section URL | Add to `pending_figma_urls` |
-| Local path where `ls <path>/frame_*/` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 2 (go straight to Step 3) |
-| `--platform=<value>` | Platform slug | Set `platform` (`flutter`, `ios`, `web`) |
-
-**After parsing args**, if `platform` is still unset, check env vars via `Bash`:
+**First action — always run this Bash before anything else:**
 
 ```bash
 echo "${CIPHERPOL_PLATFORM:-}"
 ```
 
-If the output is a non-empty valid slug (`flutter`, `ios`, `web`), set `platform` from it. Otherwise leave `platform` unset and Step 1 will ask.
+If the output is `flutter`, `ios`, or `web` → set `platform` from it immediately. Do not ask the user about platform in Step 1.
 
-If no arguments are provided and no env vars resolve, `pending_figma_urls` is empty and `figma_fetch_dir` is unset — proceed to Step 1 and collect everything there.
+Then parse formal arguments on the invocation line:
+
+| Pattern | Type | Action |
+|---|---|---|
+| `figma.com` URL | Figma frame or section URL | Add to `pending_figma_urls` |
+| Local path where `ls <path>/frame_*/` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 2 (go straight to Step 3) |
+| `--platform=<value>` | Platform slug | Override `platform` with this value |
+
+If no arguments are provided and `platform` was resolved from env, `pending_figma_urls` is empty and `figma_fetch_dir` is unset — proceed to Step 1 to collect URLs.
 
 ## Step 1 — Gather Info
 
-Ask only for what is not already set from Step 0 args.
+Ask only for what is not already set from Step 0.
 
-**If `platform` is not set:**
+**If `platform` is still unset after Step 0** (no env var, no `--platform` arg):
 
 ```
 question    : "Which platform are these frames targeting?"
