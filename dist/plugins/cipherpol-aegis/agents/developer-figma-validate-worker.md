@@ -27,19 +27,21 @@ mkdir -p "$figma_fetch_dir"
 
 **Step 2 — Classify each URL**
 
+`get_metadata` returns **XML**. The XML tree lists every node with its `id`, `name`, `type`, position, and size. Direct children of the queried node appear as immediate child XML elements.
+
 For each URL in `figma_urls`:
 
 1. Extract `fileKey` and `nodeId` from the URL.
 2. Call `mcp__Figma_MCP__get_metadata` with `fileKey` and `nodeId`.
-3. If the call errors or returns empty → add to `invalid`: `{ url, reason: "not found" }`. Stop processing this URL.
-4. Read the node `type` from the response.
-5. Apply the decision below **in order** — stop at the first match:
+3. If the call errors or returns empty → add to `invalid`: `{ url, reason: "not found" }`. Stop.
+4. Find the queried node in the XML. Read its `type` attribute.
+5. Apply the decision below **in order**:
 
 **If type is `FRAME`:**
 
-- Scan the response for a `children` array. Look for any entry where `type == "FRAME"`.
-- **If one or more `FRAME` children exist** → this is a wrapper frame (flow container, artboard group, presentation frame). Do **not** add the parent. Add each child with `type == "FRAME"` as an individual `pending` entry using the child's `id` and `name`.
-- **If no `FRAME` children exist** → this is a leaf frame. Add it as a single `pending` entry.
+- In the XML, find the immediate child elements of the queried node. Count how many have `type="FRAME"`.
+- **If any child has `type="FRAME"`** → wrapper frame (flow container / presentation artboard). Do **not** add the parent. Add each `type="FRAME"` child as an individual `pending` entry using its `id` and `name` from the XML.
+- **If no child has `type="FRAME"`** → leaf frame. Add the node itself as a single `pending` entry.
 
 **If type is `COMPONENT`:**
 
@@ -47,11 +49,11 @@ For each URL in `figma_urls`:
 
 **If type is `SECTION`, `GROUP`, `CANVAS`, or `PAGE`:**
 
-- Extract all direct children with `type == "FRAME"` → add each as an individual `pending` entry.
+- Add each immediate child with `type="FRAME"` as an individual `pending` entry.
 
 **If the URL has no `node-id`:**
 
-- Call `get_metadata` without `nodeId` to get the file's page list → expand all `FRAME` children of the first page.
+- Call `get_metadata` without `nodeId` → returns top-level pages. Expand all `type="FRAME"` children of the first page.
 
 For each pending frame record:
 - `url` — `https://www.figma.com/design/<fileKey>/file?node-id=<nodeId-with-dashes>`
