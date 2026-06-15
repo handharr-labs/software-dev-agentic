@@ -7,6 +7,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.25.0] — 2026-06-15
+
+### Added
+- `/developer-breakdown-prd` — new orchestrator skill: takes Epic, PRD (Confluence/text), and optional Figma URL; spawns `developer-prd-breakdown-worker` to analyze and propose ticket breakdown; interactive discuss-and-confirm step; writes approved tickets as local `TICKET-NNN.md` files (1 worker for ≤8 tickets, parallel workers for >8); optionally pushes to Jira
+- `/developer-push-tickets` — new orchestrator skill: two modes — push local `TICKET-NNN.md` files as new Jira issues under a parent (epic, story, or task), or sync a local file to an existing Jira ticket; detects parent issue type and validates hierarchy before creating; ≤8/> 8 parallel threshold for bulk push
+- `developer-prd-breakdown-worker` — analyzes PRD + Figma, proposes structured ticket list with type, SP, description, and acceptance criteria; supports re-proposal with user feedback
+- `developer-ticket-write-worker` — Haiku model; writes approved ticket data as `TICKET-NNN.md` files to run directory
+- `developer-push-new-tickets-worker` — reads local ticket files, detects parent issue type via `getJiraIssue`, validates type compatibility, creates Jira issues via `createJiraIssue`
+- `developer-sync-ticket-worker` — fetches existing Jira ticket, diffs against local file, shows hierarchy context, blocks invalid type changes, updates via `editJiraIssue`
+- `ticket-format.md` — new reference doc: single source of truth for `## Breakdown Proposal` schema and `TICKET-NNN.md` file schema with section contracts
+
+### Changed
+- All new Jira workers use `mcp__claude_ai_Atlassian__*` (official Atlassian MCP) — no dependency on mmpa
+
 ## [12.24.2] — 2026-06-15
 
 ### Added
