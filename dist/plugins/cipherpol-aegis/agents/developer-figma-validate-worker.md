@@ -23,7 +23,6 @@ Return `MISSING INPUT: figma_urls` immediately if absent.
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 figma_fetch_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/figma/$TIMESTAMP"
 mkdir -p "$figma_fetch_dir"
-echo "$figma_fetch_dir" > "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/figma/last-fetch-dir.txt"
 ```
 
 **Step 2 — Classify each URL**
