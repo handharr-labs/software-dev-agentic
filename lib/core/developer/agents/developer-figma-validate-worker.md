@@ -27,33 +27,41 @@ mkdir -p "$figma_fetch_dir"
 
 **Step 2 — Classify each URL**
 
-`get_metadata` returns **XML**. The XML tree lists every node with its `id`, `name`, `type`, position, and size. Direct children of the queried node appear as immediate child XML elements.
+`get_metadata` returns **XML**. The **element tag name** is the node type — there is no `type` attribute. Example tags: `section`, `frame`, `instance`, `component`, `group`, `connector`, `vector`, `text`.
+
+A typical Figma flow section looks like:
+```xml
+<section id="4114:19244" name="Screen / Flow name" width="1560" height="960">
+  <instance id="4114:19245" name="Screen name" width="360" height="800" />
+  <instance id="4114:19246" name="Screen name" width="360" height="800" />
+  <connector id="4114:19247" name="Detail" .../>
+</section>
+```
 
 For each URL in `figma_urls`:
 
 1. Extract `fileKey` and `nodeId` from the URL.
 2. Call `mcp__Figma_MCP__get_metadata` with `fileKey` and `nodeId`.
 3. If the call errors or returns empty → add to `invalid`: `{ url, reason: "not found" }`. Stop.
-4. Find the queried node in the XML. Read its `type` attribute.
-5. Apply the decision below **in order**:
+4. Look at the **root XML element tag** of the response.
+5. Apply the decision:
 
-**If type is `FRAME`:**
+**Root tag is `section` or `group`:**
+- Collect every direct child whose tag is `instance` or `frame`. Skip `connector`, `vector`, `text`, and any other tag.
+- Add each collected child as an individual `pending` entry using its `id` and `name`.
+- Do **not** add the section/group itself.
 
-- In the XML, find the immediate child elements of the queried node. Count how many have `type="FRAME"`.
-- **If any child has `type="FRAME"`** → wrapper frame (flow container / presentation artboard). Do **not** add the parent. Add each `type="FRAME"` child as an individual `pending` entry using its `id` and `name` from the XML.
-- **If no child has `type="FRAME"`** → leaf frame. Add the node itself as a single `pending` entry.
+**Root tag is `frame` with direct `instance` or `frame` children:**
+- Same as above — expand children, skip connectors and decorative nodes.
 
-**If type is `COMPONENT`:**
+**Root tag is `frame` with NO direct `instance` or `frame` children:**
+- Leaf frame. Add the node itself as a single `pending` entry.
 
-- Add as a single `pending` entry.
+**Root tag is `instance` or `component`:**
+- Leaf. Add as a single `pending` entry.
 
-**If type is `SECTION`, `GROUP`, `CANVAS`, or `PAGE`:**
-
-- Add each immediate child with `type="FRAME"` as an individual `pending` entry.
-
-**If the URL has no `node-id`:**
-
-- Call `get_metadata` without `nodeId` → returns top-level pages. Expand all `type="FRAME"` children of the first page.
+**URL has no `node-id`:**
+- Call `get_metadata` without `nodeId` → returns top-level pages. Expand all `frame` and `instance` children of the first page.
 
 For each pending frame record:
 - `url` — `https://www.figma.com/design/<fileKey>/file?node-id=<nodeId-with-dashes>`
