@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.26.6] — 2026-06-15
+
+### Fixed
+- `developer-fetch-figma` — `CIPHERPOL_PLATFORM` env check is now the **first action** in Step 0, marked mandatory with "always run this Bash before anything else"; previously it was buried after arg parsing and the model would skip it and go straight to `AskUserQuestion`
+
 ## [12.26.5] — 2026-06-15
 
 ### Fixed
