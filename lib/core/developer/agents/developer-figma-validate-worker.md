@@ -35,9 +35,13 @@ Classify by response:
 | Response | Action |
 |---|---|
 | Error / not found / empty | Add to `invalid`: `{ url, reason }` |
-| Node type `FRAME` or `COMPONENT` | Add to `pending` as single entry |
+| Node type `FRAME` with direct `FRAME` children | Treat as wrapper/presentation frame — expand direct `FRAME` children as individual entries (do **not** add the parent) |
+| Node type `FRAME` with no direct `FRAME` children | Add to `pending` as single entry (leaf frame) |
+| Node type `COMPONENT` | Add to `pending` as single entry |
 | Node type `SECTION`, `GROUP`, `CANVAS`, or `PAGE` | Extract all direct child `FRAME` nodes → add each as individual entry |
 | URL has no `node-id` | Call `get_metadata` without `nodeId` to get page list → expand all `FRAME` children of the first page |
+
+> **Wrapper detection:** A `FRAME` node is a wrapper when its direct children include one or more `FRAME` nodes. This covers Figma "presentation" frames, flow containers, and screen-group artboards that hold individual screens. Check `children[*].type` from the metadata response — if any child has `type: FRAME`, expand children instead of adding the parent.
 
 For each pending frame record:
 - `url` — `https://www.figma.com/design/<fileKey>/file?node-id=<nodeId-with-dashes>`
