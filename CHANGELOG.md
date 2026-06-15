@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.26.5] — 2026-06-15
+
+### Fixed
+- `developer-figma-fetch-worker` — removed `feature` from required params; it was declared required but never used in the workflow, causing every worker spawn to fail immediately with `MISSING INPUT: feature` (orchestrator never passes it)
+- `developer-figma-fetch-worker` — reverted model from `haiku` back to `sonnet`; haiku was completing with 0–1 tool uses, skipping extraction steps entirely
+
 ## [12.26.4] — 2026-06-15
 
 ### Removed
