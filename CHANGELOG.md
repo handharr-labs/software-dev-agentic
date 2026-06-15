@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.26.8] — 2026-06-15
+
+### Fixed
+- `developer-figma-validate-worker` — complete rewrite of Step 2 based on observed `get_metadata` XML format: the node type is the **XML element tag name** (`section`, `frame`, `instance`, `connector`, etc.), not a `type` attribute; all previous fixes were checking a non-existent attribute; `section` nodes expand direct `instance`/`frame` children and skip `connector`/`vector`/`text` — matches actual Figma flow section structure
+
 ## [12.26.7] — 2026-06-15
 
 ### Fixed
