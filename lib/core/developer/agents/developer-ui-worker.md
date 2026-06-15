@@ -2,7 +2,7 @@
 name: developer-ui-worker
 description: Execute the UI layer of an approved feature plan — Screen, Component, and Navigator artifacts only. Spawned by /developer-plan-feature after developer-feature-worker emits Layers Complete. Starts with a clean context: loads plan.md, context.md, stateholder-contract, and Figma references fresh.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query, mcp__Figma_MCP__get_design_context
 related_skills:
   - developer-pres-resolve-design
   - developer-pres-create-screen
@@ -146,14 +146,15 @@ Elements remaining in `## Custom Widgets` after Level 2 are created fresh using 
 
 3. Read Figma files — execute in order, do not proceed to step 4 until all reads are complete.
    ```bash
-   cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md"
+   cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-fetch-format.md"
+   cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-group-format.md"
    ```
-   Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
+   Field schemas: `figma-fetch-format.md` (per-frame `.md`) and `figma-group-format.md` (UIStack).
    - Look up this artifact's name in the `## Figma Alignment` table in context.md → get the `UI Stack` and `Figma Files`
    - `Read` the `UI Stack` file (`figma-uistack-*.md`) first → use `### Component Hierarchy` as the structural blueprint (including any `← see figma-uistack-*.md` overlay branches), `### State Model` and `### User Interactions` for behavior, `### Design Tokens` for styling. Note the `states` frontmatter list — this is the `Figma Files` list for step below
    - For each `.md` file in the list:
-     a. `Read` the `.md` file → record `layout_file` and `screenshot` paths from frontmatter, extract `Components`, `State`, `Interactions`, `Annotations` from body
-     b. `Read` the `layout_file` JSX at the path from step (a) — read in full, never truncate
+     a. `Read` the `.md` file → record `layout_source` (Figma URL) and `screenshot` from frontmatter, extract `Components`, `State`, `Interactions`, `Annotations` from body
+     b. Call `mcp__Figma_MCP__get_design_context` with `fileKey` and `nodeId` extracted from `layout_source` — read JSX in full, never truncate
      c. `Read` the `screenshot` PNG at the path from step (a) — visual inspection is mandatory; spacing, color, and hierarchy are not in the text
    - If a Component artifact is itself an overlay referenced by a screen's UI Stack, repeat this step using that overlay's own `figma-uistack-*.md`
 
@@ -210,7 +211,7 @@ Elements remaining in `## Custom Widgets` after Level 2 are created fresh using 
    - `## Design System Bindings` — hard constraint from UI Resolution
    - `## Layout Transcript` — the transcript from step 4
    - `## Widget Plan` — the widget plan from step 5; skill must implement every row
-   - `## Figma Layout Reference` — full JSX content from `layout_file`
+   - `## Figma Layout Reference` — full JSX content from `get_design_context` (fetched via `layout_source`)
    - `## StateHolder Contract` — from the contract file read in pre-flight
 
 8. Validate (see Validation below).

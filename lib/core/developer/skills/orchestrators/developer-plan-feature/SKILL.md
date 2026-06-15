@@ -34,7 +34,7 @@ Collect results as `found_plans` and `found_figma` (`figma-fetch-dir.txt` paths)
 echo "$CIPHERPOL_THINKER_MODEL"
 ```
 
-If the value is `cost-saving`, every `Agent` spawn of `developer-feature-strategist` or a layer planner (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) anywhere in this skill must pass `model: sonnet` as an override. Otherwise (unset, `optimized`, or any other value), omit the `model` parameter — each agent uses its frontmatter default (`opus`). This does not apply to `developer-figma-worker`, `developer-feature-worker`, or `developer-ui-worker`.
+If the value is `cost-saving`, every `Agent` spawn of `developer-feature-strategist` or a layer planner (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) anywhere in this skill must pass `model: sonnet` as an override. Otherwise (unset, `optimized`, or any other value), omit the `model` parameter — each agent uses its frontmatter default (`opus`). This does not apply to `developer-figma-fetch-worker`, `developer-feature-worker`, or `developer-ui-worker`.
 
 ## Step 0 — Classify Inputs
 
@@ -116,48 +116,60 @@ Wait for the strategist to return. Route based on the Decision block:
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
 
-**If `figma_fetch_dir` is not already set** (no existing fetch dir was passed in Step 0), create one now:
-
-```bash
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-figma_fetch_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/figma/$TIMESTAMP"
-mkdir -p "$figma_fetch_dir"
-echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
-```
-
-**If `figma_fetch_dir` was set in Step 0** (user passed an existing fetch dir), write the pointer and skip spawning workers:
+**If `figma_fetch_dir` was set in Step 0** (user passed an existing fetch dir), write the pointer and jump to Step 1.5b:
 
 ```bash
 echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
 ```
 
-Then jump to Step 1.5b.
+Spawn `developer-figma-validate-worker` with all `pending_figma_urls`:
 
-Spawn one `developer-figma-worker` per URL in `pending_figma_urls` — pass `figma_url`, `feature`, and `figma_fetch_dir`. **Spawn all workers in parallel** (single Agent tool call).
+> figma_urls: \<newline-separated URLs\>
 
-Collect results from all workers:
-- `figma_resolved` — workers that returned `## Figma Worker Output` blocks
-- `figma_sections` — workers that returned `## Figma Section Detected` blocks
-- `figma_failed` — failed fetches: `{ source, reason }`
+Read `## Figma Validate Output`. Set `figma_fetch_dir` from the block. Write the pointer:
 
-**If `figma_sections` is non-empty** — expand each section into individual frame workers. For each section, spawn one `developer-figma-worker` per child frame **in parallel** (single Agent call across all children of all sections) — pass `figma_url` constructed as `https://www.figma.com/design/<fileKey>?node-id=<child_id>`, same `feature` and `run_dir`. Collect results and merge into `figma_resolved` and `figma_failed`.
+```bash
+echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
+```
 
-If `figma_failed` is non-empty, call `AskUserQuestion`:
+If `invalid` is non-empty, call `AskUserQuestion`:
 
 ```
-question    : "Some Figma frames couldn't be fetched: <list each with reason>. What would you like to do?"
+question    : "Some Figma URLs are invalid: <list each with reason>. What would you like to do?"
+header      : "Figma URLs"
+multiSelect : false
+options     :
+  - label: "Continue",  description: "Proceed with the valid frames only"
+  - label: "Cancel",    description: "Stop and fix the URLs first"
+```
+
+**Cancel** → stop.
+
+Read the validated frame list:
+
+```bash
+cat "<figma_fetch_dir>/pending-frames.json"
+```
+
+Spawn one `developer-figma-fetch-worker` per entry — pass `figma_url`, `feature`, and `figma_fetch_dir`. **Spawn all workers in parallel** (single Agent tool call).
+
+Collect results into `figma_resolved` (workers that returned `## Figma Worker Output` blocks) and `figma_failed` (errors). If `figma_failed` is non-empty, call `AskUserQuestion`:
+
+```
+question    : "Some frames couldn't be fetched: <list each with reason>. What would you like to do?"
 header      : "Figma Fetch"
 multiSelect : false
 options     :
   - label: "Continue",  description: "Proceed with the frames that were successfully fetched"
-  - label: "Cancel",    description: "Stop and retry after fixing the Figma inputs"
+  - label: "Cancel",    description: "Stop and retry after fixing the inputs"
 ```
+
+**Cancel** → stop.
 
 ### Step 1.5b — Verify Figma Grouping (skip if `figma_resolved` is empty)
 
-Spawn `developer-figma-worker` with mode `group-frames`:
+Spawn `developer-figma-group-worker`:
 
-> mode: group-frames
 > figma_fetch_dir: \<figma_fetch_dir\>
 > platform: \<platform\>
 

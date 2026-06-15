@@ -55,7 +55,7 @@ The StateHolder topic is platform-specific (flutter → `state_management`; MVP 
 
 **Step 0a — Consume Figma groups (skip if `figma_groups` not provided)**
 
-`figma_groups` is pre-verified by the user — do not re-question the grouping. Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
+`figma_groups` is pre-verified by the user — do not re-question the grouping. Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-group-format.md`.
 
 For each group `{ screen, type, parent_screen, uistack_file, states }`:
 1. `Read` `uistack_file` in full — this is the merged, per-screen (or per-overlay) reference. Extract:

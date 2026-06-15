@@ -142,9 +142,9 @@ Derive the skill from each artifact's type in plan.md:
    Codebase explore — `Grep` for an existing artifact of the same type excluding `test/` paths → read the most complete match as live code reference
 3. **If artifact type is StateHolder:** resolve Figma reference (if `## Figma Alignment` is present in context.md).
    ```bash
-   cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md"
+   cat "$CLAUDE_PLUGIN_ROOT/reference/developer/figma-group-format.md"
    ```
-   Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-artifact-format.md`.
+   Field schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/figma-group-format.md`.
    - Look up this artifact's name in the `Figma Alignment` table — read the `UI Stack` column to get the `figma-uistack-*.md` path. No Glob needed.
    - `Read` the `UI Stack` file → extract `### State Model` and `### User Interactions`. Pass as implementation constraints: state fields must cover all named states; event cases must cover all interactions. Do not read `layout_file` or `screenshot` — those are for the UI worker.
 4. Resolve skill path: `.claude/skills/<skill-name>/SKILL.md`

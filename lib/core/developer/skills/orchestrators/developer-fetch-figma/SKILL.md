@@ -8,10 +8,10 @@ allowed-tools: Agent, AskUserQuestion, Bash
 ## Routing Contract
 
 Pure router. Permitted direct operations:
-- `Bash` — figma_fetch_dir creation and pointer writes only
+- `Bash` — resume detection reads, reading pending-frames.json, frame completion globs, pointer writes
 - `AskUserQuestion` — prompts defined in each step
 
-Never read source files, fetch URLs, or write code. All work is delegated to `developer-figma-worker` and `developer-uistack-align-worker`.
+Never read source files, fetch URLs, or write code. All work is delegated to `developer-figma-validate-worker`, `developer-figma-fetch-worker`, `developer-figma-group-worker`, and `developer-uistack-align-worker`.
 
 ## Step 0 — Classify Inputs
 
@@ -32,6 +32,61 @@ echo "${CIPHERPOL_PLATFORM:-}"
 If the output is a non-empty valid slug (`flutter`, `ios`, `web`), set `platform` from it. Otherwise leave `platform` unset and Step 1 will ask.
 
 If no arguments are provided and no env vars resolve, `pending_figma_urls` is empty and `figma_fetch_dir` is unset — proceed to Step 1 and collect everything there.
+
+## Step 0b — Resume Detection
+
+**Skip if `figma_fetch_dir` is already set from Step 0 args.**
+
+Check for a previous incomplete fetch:
+
+```bash
+cat "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/figma/last-fetch-dir.txt" 2>/dev/null
+```
+
+If the output is a non-empty path (`last_dir`):
+
+1. Check whether `<last_dir>/pending-frames.json` exists. If it does not, skip resume detection entirely.
+2. Count total frames: `cat "<last_dir>/pending-frames.json"` and count the array entries.
+3. Count completed frames: `find "<last_dir>/frame_"* -name "figma-*.md" 2>/dev/null | sed 's|.*/frame_||' | sed 's|/.*||' | sort -u | wc -l`
+
+**If completed < total** (incomplete fetch), call `AskUserQuestion`:
+
+```
+question    : "Found an incomplete fetch (<completed> of <total> frames done) at <last_dir>. What would you like to do?"
+header      : "Resume Fetch"
+multiSelect : false
+options     :
+  - label: "Resume",      description: "Continue fetching the remaining <N> frames"
+  - label: "Start fresh", description: "Ignore the previous fetch and start a new one"
+```
+
+- **Resume** → set `figma_fetch_dir = <last_dir>`, set `resume_mode = true`, skip Step 1 and Step 2 validate/spawn logic — go to Step 2 partial-fetch check.
+- **Start fresh** → continue normally (proceed to Step 1).
+
+**If completed == total:**
+
+Set `figma_fetch_dir = <last_dir>`. Skip Step 1 and Step 2 entirely. Then determine where to resume:
+
+```bash
+# Check if grouping was completed
+ls "<last_dir>/figma-groups.json" 2>/dev/null
+```
+
+- **File absent** → go to Step 3 (grouping was interrupted or never started).
+
+- **File present** → read it to restore `figma_groups`. Then check alignment status:
+
+```bash
+# Count total UIStack files
+find "<last_dir>/ui-stacks/" -name "figma-uistack-*.md" 2>/dev/null | wc -l
+
+# Count aligned UIStack files (have ### Design System Alignment section)
+grep -rl "### Design System Alignment" "<last_dir>/ui-stacks/" 2>/dev/null | wc -l
+```
+
+  - If `platform` is null OR total UIStack count == 0 → go to Step 5 (alignment was skipped or nothing to align).
+  - If aligned count == total UIStack count → go to Step 5 (everything done).
+  - If aligned count < total UIStack count → set `partial_align = true`, collect paths of unaligned UIStack files (those NOT in the grep -rl output), go to Step 4.
 
 ## Step 1 — Gather Info
 
@@ -65,36 +120,56 @@ options     :
 
 Collect the user's input and populate `pending_figma_urls` or `figma_fetch_dir` accordingly.
 
-## Step 2 — Create Fetch Directory and Fetch Frames
+## Step 2 — Validate, Expand, and Fetch Frames
 
 **Skip this step entirely if `figma_fetch_dir` is already set** — go to Step 3.
 
-Create the fetch directory:
+Spawn `developer-figma-validate-worker` with all `pending_figma_urls`:
+
+> figma_urls: \<newline-separated URLs\>
+
+Read `## Figma Validate Output`. Set `figma_fetch_dir` from the block. If `invalid` is non-empty, call `AskUserQuestion`:
+
+```
+question    : "Some Figma URLs are invalid: <list each with reason>. What would you like to do?"
+header      : "Figma URLs"
+multiSelect : false
+options     :
+  - label: "Continue",  description: "Proceed with the valid frames only"
+  - label: "Cancel",    description: "Stop and fix the URLs first"
+```
+
+**Cancel** → stop.
+
+Read the validated frame list:
 
 ```bash
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-figma_fetch_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/figma/$TIMESTAMP"
-mkdir -p "$figma_fetch_dir"
+cat "<figma_fetch_dir>/pending-frames.json"
 ```
 
-Spawn one `developer-figma-worker` per URL in `pending_figma_urls` — pass `figma_url` and `figma_fetch_dir`. **Spawn all workers in parallel** (single Agent tool call).
+**Partial-fetch check** — determine which frames still need fetching:
 
-Collect results from all workers:
-- `figma_resolved` — workers that returned `## Figma Worker Output` blocks
-- `figma_sections` — workers that returned `## Figma Section Detected` blocks
-- `figma_failed` — failed fetches: `{ source, reason }`
+```bash
+find "<figma_fetch_dir>/frame_"* -name "figma-*.md" 2>/dev/null | sed 's|.*/frame_||' | sed 's|/.*||' | sort -u
+```
 
-**If `figma_sections` is non-empty** — expand each section into individual frame workers. For each section, spawn one `developer-figma-worker` per child frame **in parallel** (single Agent call across all children of all sections) — pass `figma_url` constructed as `https://www.figma.com/design/<fileKey>?node-id=<child_id>`, same `feature` and `figma_fetch_dir`. Collect results and merge into `figma_resolved` and `figma_failed`.
+This returns the sanitized nodeIds (colon → dash) of already-completed frames. Cross-reference against `pending-frames.json` entries (converting each entry's `nodeId` colons to dashes) to build `remaining_frames` — entries whose sanitized nodeId is not in the completed set.
 
-If `figma_failed` is non-empty, call `AskUserQuestion`:
+If `resume_mode = true` and `remaining_frames` is empty → all frames already done, skip to Step 3.
+
+Otherwise spawn fetch workers only for entries in `remaining_frames`. Log: "Skipping <N> already-fetched frames, fetching remaining <M>."
+
+Spawn one `developer-figma-fetch-worker` per `remaining_frames` entry — pass `figma_url` and `figma_fetch_dir`. **Spawn all workers in parallel** (single Agent tool call).
+
+Collect results into `figma_resolved` (workers that returned `## Figma Worker Output` blocks) and `figma_failed` (errors). If `figma_failed` is non-empty, call `AskUserQuestion`:
 
 ```
-question    : "Some Figma frames couldn't be fetched: <list each with reason>. What would you like to do?"
+question    : "Some frames couldn't be fetched: <list each with reason>. What would you like to do?"
 header      : "Figma Fetch"
 multiSelect : false
 options     :
   - label: "Continue",  description: "Proceed with the frames that were successfully fetched"
-  - label: "Cancel",    description: "Stop and retry after fixing the Figma inputs"
+  - label: "Cancel",    description: "Stop and retry after fixing the inputs"
 ```
 
 **Cancel** → stop.
@@ -103,9 +178,8 @@ options     :
 
 **Skip if `figma_resolved` is empty** (only applies when reusing an existing `figma_fetch_dir` that already has groups confirmed — jump to Step 4 directly if `figma_groups` was carried in from Step 0 detection. Otherwise run grouping on the existing frames.)
 
-Spawn `developer-figma-worker` with mode `group-frames`:
+Spawn `developer-figma-group-worker`:
 
-> mode: group-frames
 > figma_fetch_dir: \<figma_fetch_dir\>
 > platform: \<platform — omit if null\>
 
@@ -153,7 +227,7 @@ EOF
 
 **Skip if `ds_available` is false, absent, or `platform` is null.**
 
-Collect the `uistack_file` path from every entry in `figma_groups`. Spawn one `developer-uistack-align-worker` per uistack file **in parallel** (single Agent tool call):
+If `partial_align = true`, use the unaligned UIStack file paths collected in Step 0b. Otherwise collect the `uistack_file` path from every entry in `figma_groups`. Spawn one `developer-uistack-align-worker` per uistack file **in parallel** (single Agent tool call):
 
 > uistack_file: \<abs path to figma-uistack-*.md\>
 > platform: \<platform\>
