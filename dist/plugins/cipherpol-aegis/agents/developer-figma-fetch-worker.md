@@ -1,7 +1,7 @@
 ---
 name: developer-figma-fetch-worker
 description: Fetch a single Figma node via Figma MCP — writes a compact semantic .md and downloads a screenshot. JSX is extracted for semantic fields but not written to disk. Returns a compact summary block to the caller.
-model: sonnet
+model: haiku
 tools: Read, Write, Glob, Bash, mcp__Figma_MCP__get_design_context, mcp__Figma_MCP__get_screenshot
 related_skills:
   - shared-codebase-explore
