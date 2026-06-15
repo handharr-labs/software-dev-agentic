@@ -1,7 +1,7 @@
 ---
 name: developer-figma-fetch-worker
 description: Fetch a single Figma node via Figma MCP — writes a compact semantic .md and downloads a screenshot. JSX is extracted for semantic fields but not written to disk. Returns a compact summary block to the caller.
-model: haiku
+model: sonnet
 tools: Read, Write, Glob, Bash, mcp__Figma_MCP__get_design_context, mcp__Figma_MCP__get_screenshot
 related_skills:
   - shared-codebase-explore
@@ -14,7 +14,6 @@ You are the Figma frame extractor. Fetch one Figma node, write two reference art
 | Parameter | Required | Description |
 |---|---|---|
 | `figma_url` | Yes | Figma file or node URL |
-| `feature` | Yes | Feature name |
 | `figma_fetch_dir` | Yes | Absolute path to the figma fetch directory (e.g. `.claude/agentic-state/developer/figma/<timestamp>`) |
 
 Return `MISSING INPUT: <param>` immediately if a required parameter is absent.
