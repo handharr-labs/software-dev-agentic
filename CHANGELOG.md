@@ -7,6 +7,27 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.26.0] — 2026-06-15
+
+### Added
+- `developer-figma-validate-worker` — lightweight haiku worker; validates and expands Figma URLs via `get_metadata` before fetching; classifies invalid, single-frame, and container (section/group/page) URLs; creates `figma_fetch_dir` and writes `pending-frames.json` manifest; writes `last-fetch-dir.txt` pointer for resume detection
+- `developer-figma-fetch-worker` — pure single-frame fetch worker split from `developer-figma-worker`; extracts full component hierarchy tree with `[ui-role: variant]` annotations directly from JSX into `.md`; no longer writes `layout.jsx` to disk — stores `layout_source` Figma URL instead
+- `developer-figma-group-worker` — UIStack synthesis split from `developer-figma-worker`; merges pre-built component hierarchy trees across states rather than inferring from flat component name lists
+- `figma-fetch-format.md` — new reference doc for `figma-<slug>.md` schema and `## Figma Worker Output` block; read only by fetch worker and ui-worker
+- `figma-group-format.md` — new reference doc for `figma-uistack-<screen-slug>.md` schema and `## Figma Groups` block; read only by group worker, feature worker, and pres-planner
+
+### Changed
+- `developer-fetch-figma` — Step 0b adds resume detection via `last-fetch-dir.txt`; detects incomplete fetch, interrupted grouping, and partial alignment; resumes at correct step (Step 2, 3, 4, or 5) without re-doing completed work
+- `developer-fetch-figma` — Step 2 uses validate worker to expand and validate all URLs before spawning fetch workers; partial-fetch check skips already-completed frames on resume
+- `developer-plan-feature` — Step 1.5 updated to use validate → fetch worker pipeline; section expansion removed from fetch worker (now handled by validate worker)
+- `figma-artifact-format.md` — demoted to index-only doc; no longer read at runtime by agents
+- `developer-ui-worker` — reads `figma-fetch-format.md` + `figma-group-format.md` instead of the combined format doc; added `mcp__Figma_MCP__get_design_context` to tools for on-demand JSX fetch via `layout_source`
+- `developer-feature-worker`, `developer-pres-planner` — updated to read `figma-group-format.md` only
+
+### Removed
+- `developer-figma-worker` — replaced by three focused workers: `developer-figma-validate-worker`, `developer-figma-fetch-worker`, `developer-figma-group-worker`
+- `figma-<slug>-layout.jsx` artifact — JSX no longer written to disk at fetch time; eliminates JSX output tokens per frame (×N frames); ui-worker re-fetches on demand via `layout_source`
+
 ## [12.25.0] — 2026-06-15
 
 ### Added
