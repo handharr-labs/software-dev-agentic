@@ -2,6 +2,7 @@
 name: developer-rfc
 description: Generate an RFC and ticket breakdown from a Jira Epic + PRD + optional Design. Fetches inputs, runs the Clean Architecture convergence planning loop, then writes <epic-slug>-rfc.md and <epic-slug>-breakdown.md.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash, Read, AskUserQuestion, Agent
 ---
 

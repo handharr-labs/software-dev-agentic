@@ -2,6 +2,8 @@
 name: debugger-debug
 description: Trigger the debugger-strategist agent. Accepts an optional bug description, collects any missing intake (error message, expected vs actual behavior, entry point, platform), then hands off to the agent.
 allowed-tools: Agent, AskUserQuestion
+user-invocable: true
+disable-model-invocation: true
 ---
 
 ## Arguments

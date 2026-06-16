@@ -2,6 +2,7 @@
 name: developer-groom-ticket
 description: Groom a locally fetched Jira ticket against the codebase — maps acceptance criteria to Clean Architecture layers, identifies work items and open questions, then updates the ticket via developer-adjust-ticket. Run before /developer-plan-feature.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Read, Bash
 ---
 

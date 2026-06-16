@@ -2,6 +2,7 @@
 name: qa-generate-automation
 description: Generate Maestro YAML automation scripts from existing test case CSVs. Writes scripts to /test-automation/maestro/ in the downstream project.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash, Read, Glob, AskUserQuestion, Agent
 ---
 

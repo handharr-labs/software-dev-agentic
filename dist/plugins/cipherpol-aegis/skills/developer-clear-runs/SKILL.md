@@ -2,6 +2,7 @@
 name: developer-clear-runs
 description: Remove all strategist run state from .claude/agentic-state/developer/runs/. Clears stale state.json and stateholder-contract.md artifacts left by feature-strategist and other strategists.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash
 ---
 

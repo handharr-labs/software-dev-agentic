@@ -2,6 +2,7 @@
 name: agentic-perf-review
 description: Analyze the agentic performance of a Claude session — scores orchestration, worker/skill routing, token efficiency, workflow compliance, and one-shot rate. Writes a numeric-scored report to docs/perf-report/ and commits it.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash, Agent
 ---
 

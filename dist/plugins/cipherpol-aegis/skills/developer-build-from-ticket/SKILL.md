@@ -3,6 +3,7 @@ name: developer-build-from-ticket
 description: One-shot feature build from a Jira ticket. Non-interactive — designed for remote AI tools (CI job, API caller). Pass a Jira ticket key or URL as the only argument. Fetches the ticket, derives planning inputs, runs the convergence planning loop automatically, builds, then cleans up run state.
 allowed-tools: Bash, Read, Agent
 user-invocable: true
+disable-model-invocation: true
 ---
 
 ## Prerequisites

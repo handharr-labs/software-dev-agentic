@@ -2,6 +2,7 @@
 name: qa-generate-testcase
 description: Generate or regenerate mobile UI test cases from a Jira ticket, PRD, Figma design, or feature description. Outputs .csv to /test-cases/ and posts a Jira comment.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash, Read, AskUserQuestion, Agent
 ---
 

@@ -2,6 +2,7 @@
 name: developer-breakdown-prd
 description: Break down a PRD into Jira tickets — fetches PRD and optional Figma context, proposes a ticket breakdown for discussion and confirmation, writes approved tickets as local markdown files, and optionally pushes to Jira.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, WebFetch
 ---
 

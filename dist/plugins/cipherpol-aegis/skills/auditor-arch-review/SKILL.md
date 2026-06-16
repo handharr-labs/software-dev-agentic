@@ -2,6 +2,8 @@
 name: auditor-arch-review
 description: Audit code for Clean Architecture violations — layer boundaries, entity immutability, service purity, mapper patterns, and naming conventions.
 allowed-tools: AskUserQuestion, Agent
+user-invocable: true
+disable-model-invocation: true
 ---
 
 ## Arguments

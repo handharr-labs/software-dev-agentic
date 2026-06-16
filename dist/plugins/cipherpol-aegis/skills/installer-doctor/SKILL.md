@@ -2,6 +2,7 @@
 name: installer-doctor
 description: Audit the CipherPol plugin setup in a downstream project — checks plugin installation, marketplace config, settings, CLAUDE.md markers, and GitHub CLI auth.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash, Read, Glob
 ---
 
