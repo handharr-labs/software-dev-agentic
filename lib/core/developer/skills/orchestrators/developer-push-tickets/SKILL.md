@@ -2,6 +2,7 @@
 name: developer-push-tickets
 description: Push local ticket files to Jira — either create fresh tickets under an epic from a run directory, or update an existing Jira ticket with the content of a local TICKET-NNN.md file.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read
 ---
 

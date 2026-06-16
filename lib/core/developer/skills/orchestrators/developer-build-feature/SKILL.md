@@ -2,6 +2,7 @@
 name: developer-build-feature
 description: Build or update a feature across Clean Architecture layers. Resumes an existing run or starts a new one via the developer-plan-feature flow.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Bash, Read, AskUserQuestion, Agent
 ---
 

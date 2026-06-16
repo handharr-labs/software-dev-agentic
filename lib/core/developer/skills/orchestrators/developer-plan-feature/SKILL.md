@@ -2,6 +2,7 @@
 name: developer-plan-feature
 description: Plan then build a feature — optionally resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), shows an interactive approval prompt, then executes with developer-feature-worker (Domain/Data/Pres/App) followed by developer-ui-worker (UI layer) on approval.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch
 ---
 

@@ -2,6 +2,7 @@
 name: developer-jira-ticket
 description: Create Jira tickets under an epic from a platform breakdown list — fetches PRD and optional Figma context, generates requirement-focused descriptions, and creates tickets via Atlassian MCP.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Agent
 ---
 

@@ -2,6 +2,7 @@
 name: developer-extract-sysdesign
 description: Extract a System Design document from one or more screen entry points, or consolidate existing screen system designs into a flow design. Single screen → Screen System Design. Multiple screens → parallel extraction then Flow System Design. Multiple existing .md designs → consolidation only.
 user-invocable: true
+disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash
 ---
 
