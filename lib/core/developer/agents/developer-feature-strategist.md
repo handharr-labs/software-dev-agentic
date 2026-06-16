@@ -16,6 +16,8 @@ You are the Clean Architecture feature planning brain. You reason, decide, and s
 - No `Edit` calls — ever
 - No `Bash` calls that write or modify files — ever
 
+**One exception:** `Bash` writes to `<run_dir>/state.json` are permitted when updating `planning.rounds` statuses (`spawned` → `done` / `failed`) during `process-findings`. No other file writes are allowed.
+
 If you find yourself about to spawn an agent or modify a file, stop. Return a structured decision block to the entry skill instead.
 
 ## Input
@@ -74,18 +76,18 @@ figma_groups: <json — omit if not present>
 
 Only list planners that are needed. Omit planners already explored in previous rounds unless new open questions require re-exploration. For each spawned planner, include only the scope types relevant to the stated intent — planners use this to decide their entry point and suppress unneeded glob steps.
 
-### Decision: resume-as-is
+### Decision: resume-execution
 
 Returned when checkpoint detection finds an existing plan and no re-planning is needed:
 
 ```
-## Decision: resume-as-is
+## Decision: resume-execution
 run_dir: <absolute path to run directory>
 plan_status: <pending | approved>
 ```
 
 `plan_status: pending` → entry skill resumes at Step 4 (Approve).  
-`plan_status: approved` → entry skill resumes at Step 5 (Execute).
+`plan_status: approved` → entry skill resumes at Step 5 (Execute — skips complete batches).
 
 ### Decision: discard-partial
 
@@ -184,14 +186,14 @@ question    : "How would you like to continue?"
 header      : "Resume Intent"
 multiSelect : false
 options     :
-  - label: "Start from beginning", description: "Re-gather intent and re-plan using old plan as context"
-  - label: "Continue as-is",       description: "Auto-detect latest checkpoint and resume from there"
-  - label: "New run directory",     description: "Create a fresh run directory — old run is kept but not used"
+  - label: "Re-evaluate",    description: "Extend the existing plan with new or changed requirements — completed work is preserved"
+  - label: "Resume",         description: "Auto-detect latest checkpoint and resume from there"
+  - label: "New run",        description: "Start a fresh run directory — existing run is kept but not used"
 ```
 
-- **Start from beginning** → set `update_mode = true`. Proceed to Step G2 (resume) with old plan history loaded as context.
-- **Continue as-is** → proceed to Step G1c (checkpoint detection).
-- **New run directory** → clear `run_dir` (do not reuse). Proceed to Step G2 (fresh) — treat as a new run for the same feature.
+- **Re-evaluate** → set `update_mode = true`. Proceed to Step G2 (resume) with current plan loaded as context.
+- **Resume** → proceed to Step G1c (checkpoint detection).
+- **New run** → clear `run_dir` (do not reuse). Proceed to Step G2 (fresh) — treat as a new run for the same feature.
 
 ### Step G1c — Checkpoint Detection (Continue as-is)
 
@@ -203,7 +205,16 @@ ls "<figma_fetch_dir>/frame_"* 2>/dev/null | head -1   # → has_figma_frames (r
 ls "<figma_fetch_dir>/figma-groups.json" 2>/dev/null   # → has_figma_groups (run only if figma_fetch_dir non-empty)
 ls "<run_dir>/plan.md" 2>/dev/null
 grep "^status:" "<run_dir>/plan.md" 2>/dev/null | head -1
-ls -v "<run_dir>/findings-round-"*.json 2>/dev/null
+python3 -c "
+import json, sys
+try:
+    d = json.load(open('<run_dir>/state.json'))
+    rounds = d.get('planning', {}).get('rounds', [])
+    done = {l for r in rounds for l, s in r['planners'].items() if s == 'done'}
+    last = rounds[-1]['round'] if rounds else 0
+    print('rounds:', len(rounds), '| last_round:', last, '| done_layers:', ','.join(sorted(done)))
+except: print('no_state')
+" 2>/dev/null
 ```
 
 Route based on what exists:
@@ -211,12 +222,13 @@ Route based on what exists:
 | Disk state | Entry | Decision |
 |---|---|---|
 | No figma frames + `figma_urls` available (from Step G0) | Step 1.5 | `spawn-planners` + `pending_figma_urls` + `restore_findings: false` |
-| No figma frames + no `figma_urls` + no `plan.md` | Step 2 | `spawn-planners` + `restore_findings: false` |
-| Figma frames exist + no `plan.md` | Step 2 | `spawn-planners` + `restore_findings: true` (restore from `findings-round-*.json`) |
-| `plan.md` exists + `status: pending` | Step 4 | `resume-as-is` + `plan_status: pending` |
-| `plan.md` exists + `status: approved` | Step 5 | `resume-as-is` + `plan_status: approved` |
+| No figma frames + no `figma_urls` + no `plan.md` + no done rounds | Step 2 | `spawn-planners` + `restore_findings: false` |
+| No `plan.md` + state.json has ≥ 1 done round | Step 2 | `spawn-planners` + `restore_findings: true` + `visited` restored from done layers + `round = last_round + 1` |
+| Figma frames exist + no `plan.md` + no done rounds | Step 2 | `spawn-planners` + `restore_findings: true` (re-read findings from `<run_dir>/findings/`) |
+| `plan.md` exists + `status: pending` | Step 4 | `resume-execution` + `plan_status: pending` |
+| `plan.md` exists + `status: approved` | Step 5 | `resume-execution` + `plan_status: approved` |
 
-For `spawn-planners` with `restore_findings: true` — also read `<figma_fetch_dir>/figma-groups.json` (if present) and `state.json` to populate `figma_groups` and `completed_artifacts`.
+For `spawn-planners` with `restore_findings: true` — also read `<figma_fetch_dir>/figma-groups.json` (if present) and state.json to populate `figma_groups` and `completed_artifacts`. When restoring from done rounds, include `visited: <done_layers>` and `round: <last_round + 1>` in the decision block so the entry skill skips already-explored layers.
 
 ### Step G2 — Gather intent
 
@@ -227,7 +239,7 @@ For `spawn-planners` with `restore_findings: true` — also read `<figma_fetch_d
 3. **Operations needed** — GET list / GET single / POST / PUT / DELETE
 4. **Separate UI layer?** — distinct UI layer from StateHolder? (yes for mobile, no for web)
 
-**Resume — start from beginning:** Show plan history summary, then ask what the user wants to build or change. Use the old plan as context to understand which layers were already explored. `update_mode = true`.
+**Re-evaluate:** Read current `plan.md` and `context.md`. Show a summary of completed vs pending artifacts, then ask what the user wants to add or change. `update_mode = true`. Completed artifacts are locked — do not propose recreating them. New or changed requirements become new rows appended to the existing layer tables.
 
 ### Step G3 — Return decision
 
@@ -306,6 +318,56 @@ Otherwise load the layer contracts reference (Grep for relevant sections) then r
 
 Called after each planner round. The entry skill passes `run_dir`, `update_mode`, and (when `update_mode: true`) `existing_plan`, `existing_context`, and `completed_artifacts`. Read all findings files from `<run_dir>/findings/` — findings are not passed inline.
 
+**Step 0 — Validate findings and update state.json**
+
+Read the current round's planner list from state.json:
+
+```bash
+python3 -c "
+import json
+d = json.load(open('<run_dir>/state.json'))
+rounds = d['planning']['rounds']
+print(json.dumps(rounds[-1]))
+"
+```
+
+For each planner listed as `spawned` in that round, check its findings file exists:
+
+```bash
+ls "<run_dir>/findings/<layer>-findings.md"
+```
+
+Update state.json — mark each planner `done` if the file exists, `failed` if not:
+
+```bash
+python3 - <<'EOF'
+import json, os
+path = "<run_dir>/state.json"
+d = json.load(open(path))
+findings_dir = "<run_dir>/findings"
+entry = d["planning"]["rounds"][-1]
+for layer in entry["planners"]:
+    exists = os.path.isfile(f"{findings_dir}/{layer}-findings.md")
+    entry["planners"][layer] = "done" if exists else "failed"
+json.dump(d, open(path, "w"), indent=2)
+EOF
+```
+
+If any planner is `failed`, return `Decision: blocked`:
+
+```
+## Decision: blocked
+question: Planner(s) did not produce findings: <list failed layers>. Re-spawn them or continue with partial findings?
+options:
+  - Retry — re-spawn the failed planner(s) and re-run process-findings
+  - Continue — proceed with only the successful findings
+  - Cancel — stop planning
+```
+
+Only proceed past Step 0 if all spawned planners are `done` (or user chose Continue).
+
+Now read all findings files:
+
 ```bash
 find "<run_dir>/findings" -name "*-findings.md" | sort
 ```
@@ -330,14 +392,7 @@ If all required recommendations are covered by the visited set (or there are no 
 
 **Step 4 — Inline synthesis (convergence path only)**
 
-Execute all steps from `Mode: synthesize` directly, reading findings from `<run_dir>/findings/` (glob `*-findings.md`) and using the `run_dir` / `update_mode` / `existing_plan` / `existing_context` / `completed_artifacts` passed by the entry skill. If `update_mode: true`, archive the existing plan before writing:
-
-```bash
-N=$(ls "<run_dir>/plan-v"*.md 2>/dev/null | wc -l | tr -d ' ')
-N=$((N + 1))
-mv "<run_dir>/plan.md"    "<run_dir>/plan-v${N}.md"
-mv "<run_dir>/context.md" "<run_dir>/context-v${N}.md"
-```
+Execute all steps from `Mode: synthesize` directly, reading findings from `<run_dir>/findings/` (glob `*-findings.md`) and using the `run_dir` / `update_mode` / `existing_plan` / `existing_context` / `completed_artifacts` passed by the entry skill. If `update_mode: true`, extend plan.md and context.md in-place — do not archive or replace them (see Living Document Rules in plan-format.md).
 
 Then write plan.md and context.md as specified in `Mode: synthesize` Steps 2–5.
 
@@ -366,7 +421,12 @@ Read each file in full before proceeding.
 Two variants — the entry skill signals which applies:
 
 - **New feature** (`update: false`) — write plan.md and context.md from scratch.
-- **Update** (`update: true`) — patch the existing plan.md and context.md. The entry skill also passes `existing_plan`, `existing_context`, and `completed_artifacts` inline. Preserve every artifact row already in `completed_artifacts` with its current status and progress — do not remove or reset them. Only add new rows, update Notes on existing rows, or change Status/Progress on pending rows.
+- **Re-evaluate** (`update: true`) — extend plan.md and context.md in-place. Never replace or archive them. The entry skill passes `existing_plan`, `existing_context`, and `completed_artifacts` inline. Rules:
+  - Rows with `status: done` are permanent — never removed, never reset
+  - Append new artifact rows to the relevant layer table
+  - Append new batches to the `batches` frontmatter list, continuing the existing id sequence
+  - Update `context.md` by appending new discovered artifacts and key symbols; update paths/signatures only if they changed
+  - Update `## Risks and Notes` with any new concerns
 
 **Step 1 — Load layer contracts** (already loaded in gather-intent; use cached knowledge — do not re-read).
 
@@ -389,6 +449,16 @@ Before writing, read the plan format schema:
 ```bash
 cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
 ```
+
+**Batch planning** — before writing, group all artifacts into execution batches:
+
+- Layer order (fixed): `domain → data → pres → app → ui`
+- Each layer that has artifacts gets at least one batch
+- If a layer has more than 5 artifacts, split into consecutive sub-batches of up to 5
+- Assign sequential `id` starting at 1 across all layers
+- All batches start with `status: pending`
+- Omit layers with no artifacts
+- Write as `batches:` list in plan.md frontmatter — this is the execution plan the skill iterates
 
 ```
 <root>/.claude/agentic-state/developer/runs/<feature>/plan.md

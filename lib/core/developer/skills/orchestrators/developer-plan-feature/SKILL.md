@@ -44,10 +44,37 @@ Parse only the formal arguments passed on the invocation line. The skill only fe
 |---|---|---|
 | URL containing `jira` or `atlassian`, or bare ticket ID (e.g. `PROJ-123`) | Jira ticket | Fetch inline via Atlassian MCP → `resolved_inputs` |
 | Any other URL (including `figma.com`) | PRD / doc / design | Fetch inline via `WebFetch` → `resolved_inputs` (Figma page URLs) or add to `raw_paths` |
+| Local path where `ls <path>/state.json` or `ls <path>/plan.md` returns results | Existing run dir | Set as `explicit_run_dir` — skip Step 1, route via inline checkpoint below |
 | Local path where `ls <path>/frame_*/` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 1.5 fetch. Write path to `<run_dir>/figma-fetch-dir.txt` after run_dir is known. |
 | Local file path or directory path | Local content | Add to `raw_paths` — do not read |
 
 If no arguments are provided, skip this step — proceed to Step 1 with `resolved_inputs = []` and `raw_paths = []`.
+
+### Explicit run_dir checkpoint routing
+
+If `explicit_run_dir` was set above, inspect disk state and route without calling the strategist for gather-intent:
+
+```bash
+ls "<explicit_run_dir>/plan.md" 2>/dev/null
+grep "^status:" "<explicit_run_dir>/plan.md" 2>/dev/null | head -1
+python3 -c "
+import json, sys
+d = json.load(open('<explicit_run_dir>/state.json'))
+rounds = d.get('planning', {}).get('rounds', [])
+done = {l for r in rounds for l, s in r['planners'].items() if s == 'done'}
+print('rounds:', len(rounds), '| done_layers:', ','.join(sorted(done)))
+" 2>/dev/null
+cat "<explicit_run_dir>/figma-fetch-dir.txt" 2>/dev/null
+```
+
+Route:
+
+| Disk state | Action |
+|---|---|
+| `plan.md` + `status: pending` | Set `run_dir = explicit_run_dir`. Proceed to Step 4 (Approve). |
+| `plan.md` + `status: approved` | Set `run_dir = explicit_run_dir`. Proceed to Step 5 (Execute — batch resume skips complete batches). |
+| No `plan.md` + state.json has ≥ 1 done round | Set `run_dir = explicit_run_dir`. Restore `visited` from all `done` layers across rounds. Set `round = last_round + 1`. Proceed directly to Step 2b (call strategist `process-findings`). |
+| No `plan.md` + no done rounds | Set `run_dir = explicit_run_dir`. Proceed to Step 1 — pass `run_dir` to the strategist so G1 skips the run-selection prompt and goes straight to G1b. |
 
 Collect:
 - `resolved_inputs` — successfully fetched remote items: `{ type, source, content }`
@@ -98,20 +125,20 @@ Spawn `developer-feature-strategist` with mode `gather-intent`:
 Wait for the strategist to return. Route based on the Decision block:
 
 - **`Decision: discard-partial`** → `rm -rf "<run_dir from decision>"`. Re-spawn strategist in `gather-intent` mode (same inputs, minus the discarded path from `found_plans`/`found_figma`).
-- **`Decision: resume-as-is`** with `plan_status: pending` → extract `run_dir`. Proceed to Step 4 (Approve).
-- **`Decision: resume-as-is`** with `plan_status: approved` → extract `run_dir`. Call `AskUserQuestion`:
+- **`Decision: resume-execution`** with `plan_status: pending` → extract `run_dir`. Proceed to Step 4 (Approve).
+- **`Decision: resume-execution`** with `plan_status: approved` → extract `run_dir`. Call `AskUserQuestion`:
 
   ```
   question    : "This plan was previously approved. How would you like to continue?"
   header      : "Resume Intent"
   multiSelect : false
   options     :
-    - label: "Continue as-is",       description: "Proceed to execution from where it left off"
-    - label: "Start from beginning", description: "Re-gather intent and re-plan from scratch"
+    - label: "Resume",      description: "Proceed to execution from where it left off"
+    - label: "Re-evaluate", description: "Extend the plan with new or changed requirements — completed work is preserved"
   ```
 
-  **Continue as-is** → proceed to Step 5 (Execute).  
-  **Start from beginning** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or start fresh.
+  **Resume** → proceed to Step 5 (Execute).  
+  **Re-evaluate** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or re-evaluate.
 - **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1`. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
@@ -253,6 +280,13 @@ Proceed to Step 2. Do not read widget files, grep the codebase, or write any cod
 
 Repeat until the strategist returns `Decision: converged` or `Decision: blocked`.
 
+**Initialize state.json planning section** at the start of the first round (round = 1). If `state.json` already exists (resume path), read it and preserve existing content — do not overwrite:
+
+```bash
+# Create with planning section if not present
+test -f "<run_dir>/state.json" || echo '{"planning":{"rounds":[]}}' > "<run_dir>/state.json"
+```
+
 ### 2a — Spawn planners for this round
 
 From the current `Decision: spawn-planners` block, read the `spawn:` list. Spawn each listed planner **in parallel** (single Agent tool call with all planners in that round):
@@ -271,9 +305,21 @@ Pass to each planner: feature name, platform, module-path, run_dir (from strateg
 For `developer-pres-planner` specifically — if `figma_groups` was established in Step 1.5b or Step R0, also pass:
 - The full `figma_groups` structure (screen → states + file paths) — do NOT inline file contents
 
+**Record spawn in state.json** before dispatching — write the round entry with each planner set to `spawned`:
+
+```bash
+python3 - <<'EOF'
+import json, sys
+path = "<run_dir>/state.json"
+d = json.load(open(path))
+d["planning"]["rounds"].append({"round": <N>, "planners": {<layer>: "spawned", ...}})
+json.dump(d, open(path, "w"), indent=2)
+EOF
+```
+
 Wait for all planners in this round to complete.
 
-Add each spawned layer to `visited`. Each planner writes its own findings file to `<run_dir>/findings/` — no further action needed from the SKILL.
+Proceed to 2b — the strategist validates findings and updates state.json.
 
 ### 2b — Send findings to strategist
 
@@ -311,15 +357,6 @@ Wait for the strategist's decision block.
 
 > **When reached:** This step is only reached if the strategist returned `Decision: synthesized` is NOT yet used — e.g., in a future `discuss-more` re-synthesis triggered from Step 4. The normal convergence path skips here because `Decision: synthesized` from Step 2b means plan.md and context.md are already on disk.
 
-**If `update_mode` is true** — archive the current plan before synthesizing:
-
-```bash
-N=$(ls "<run_dir>/plan-v"*.md 2>/dev/null | wc -l | tr -d ' ')
-N=$((N + 1))
-mv "<run_dir>/plan.md"    "<run_dir>/plan-v${N}.md"
-mv "<run_dir>/context.md" "<run_dir>/context-v${N}.md"
-```
-
 Spawn `developer-feature-strategist` with mode `synthesize`:
 
 > **Mode: synthesize**
@@ -328,10 +365,10 @@ Spawn `developer-feature-strategist` with mode `synthesize`:
 > **update: true**
 >
 > **existing_plan:**
-> \<content of archived plan-vN.md\>
+> \<content of current plan.md — read from disk\>
 >
 > **existing_context:**
-> \<content of archived context-vN.md\>
+> \<content of current context.md — read from disk\>
 >
 > **completed_artifacts:** \<comma-separated list\>
 > \<end if\>
@@ -371,13 +408,23 @@ Stop.
 
 ## Step 5 — Execute
 
-Update `status` in `plan.md` frontmatter from `pending` to `approved`.
+Update `status` in `plan.md` frontmatter from `pending` to `approved`. `plan.md` is the single source of truth for execution state — update batch statuses live as work progresses.
 
-### Phase 1 — Domain / Data / Presentation / App
+Read `batches` from `plan.md` frontmatter. Process each batch in `id` order where `status != complete`.
 
-Read `plan.md` and `context.md` from the run directory. Spawn `developer-feature-worker`:
+**For each batch:**
 
-> Approved plan ready. Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
+**5a — Mark in progress.** Set the batch's `status` to `in_progress` in `plan.md` frontmatter.
+
+**5b — Determine worker by `layer`:**
+- `layer: ui` → `developer-ui-worker`
+- all others (`domain`, `data`, `pres`, `app`) → `developer-feature-worker`
+
+**5c — Spawn the worker.** Re-read `plan.md` and `context.md` from disk before each spawn.
+
+For `developer-feature-worker`:
+
+> Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
 >
 > **plan.md**
 > \<content\>
@@ -385,32 +432,11 @@ Read `plan.md` and `context.md` from the run directory. Spawn `developer-feature
 > **context.md**
 > \<content\>
 >
-> Proceed directly to the first pending artifact.
-
-**Checkpoint loop:** if the worker returns `## Context Checkpoint` instead of `## Layers Complete`, immediately re-spawn a fresh `developer-feature-worker` without user interaction:
-
-> Resuming from context checkpoint. Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
+> **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
 >
-> **plan.md**
-> \<content — re-read from disk\>
->
-> **context.md**
-> \<content — re-read from disk\>
->
-> **Resume from:** \<next_artifact from checkpoint block\>
-> **State file:** \<state_file from checkpoint block\>
->
-> Read state.json, skip completed artifacts, proceed directly to next_artifact.
+> Proceed directly to the first pending artifact in this batch.
 
-Repeat until the worker returns `## Layers Complete`.
-
-### Phase 2 — UI Layer
-
-Read `state.json` from the run directory. Check `completed_artifacts` against the UI layer rows in plan.md. Count UI artifacts with `status: create` or `status: exists` that are not yet in `completed_artifacts`.
-
-**If zero pending UI artifacts → skip Phase 2 entirely and proceed to Step 6.**
-
-Extract `stateholder_contract` path from state.json. Re-read `plan.md` and `context.md` from disk. Spawn `developer-ui-worker`:
+For `developer-ui-worker` — also extract `stateholder_contract` from `state.json` first:
 
 > Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
 >
@@ -422,6 +448,8 @@ Extract `stateholder_contract` path from state.json. Re-read `plan.md` and `cont
 >
 > **Stateholder contract path:** \<stateholder_contract from state.json, or "none" if null\>
 >
+> **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
+>
 > \<if ## Figma Alignment section is present in context.md, include — otherwise omit\>
 > **Figma Instruction:** For every Screen and Component artifact, before writing any code:
 > 1. Look up the artifact in the `## Figma Alignment` table in context.md above to get its `UI Stack` and `Figma Files`
@@ -429,9 +457,9 @@ Extract `stateholder_contract` path from state.json. Re-read `plan.md` and `cont
 > 3. For each state referenced in the UI Stack's `states` frontmatter: `Read` its `.md`, `layout_file` JSX (full file, no truncation), and `screenshot` `.png` (mandatory — visual inspection required before implementing)
 > 4. For any overlay referenced (`← see figma-uistack-*.md`), repeat steps 2–3 for that overlay's UI Stack when implementing the overlay's Component artifact
 >
-> Proceed directly to the first pending UI artifact.
+> Proceed directly to the first pending UI artifact in this batch.
 
-**Checkpoint loop:** if the worker returns `## Context Checkpoint` instead of `## Feature Complete`, immediately re-spawn a fresh `developer-ui-worker` without user interaction:
+**5d — Checkpoint loop (fallback).** If the worker returns `## Context Checkpoint` instead of its completion signal, immediately re-spawn the same worker type without user interaction:
 
 > Resuming from context checkpoint. Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
 >
@@ -441,17 +469,20 @@ Extract `stateholder_contract` path from state.json. Re-read `plan.md` and `cont
 > **context.md**
 > \<content — re-read from disk\>
 >
-> **Stateholder contract path:** \<stateholder_contract from state.json\>
+> **Batch:** Process only these artifacts: \<batch.artifacts minus completed_artifacts from state.json\>. Skip any already complete in plan.md.
 >
 > **Resume from:** \<next_artifact from checkpoint block\>
 > **State file:** \<state_file from checkpoint block\>
 >
-> \<if ## Figma Alignment section is present in context.md, include — otherwise omit\>
-> **Figma Instruction:** (same as above)
+> \<for ui-worker: include Stateholder contract path and Figma Instruction as above\>
 >
 > Read state.json, skip completed artifacts, proceed directly to next_artifact.
 
-Repeat until the worker returns `## Feature Complete`.
+Repeat until the worker returns `## Layers Complete` (feature-worker) or `## Feature Complete` (ui-worker).
+
+**5e — Mark complete.** Set the batch's `status` to `complete` in `plan.md` frontmatter.
+
+Proceed to Step 6 after all batches are complete.
 
 ## Step 6 — Unit Tests
 
