@@ -186,12 +186,12 @@ question    : "How would you like to continue?"
 header      : "Resume Intent"
 multiSelect : false
 options     :
-  - label: "Re-evaluate",    description: "Extend the existing plan with new or changed requirements — completed work is preserved"
+  - label: "Extend",          description: "Extend the existing plan with new or changed requirements — completed work is preserved"
   - label: "Resume",         description: "Auto-detect latest checkpoint and resume from there"
   - label: "New run",        description: "Start a fresh run directory — existing run is kept but not used"
 ```
 
-- **Re-evaluate** → set `update_mode = true`. Proceed to Step G2 (resume) with current plan loaded as context.
+- **Extend** → set `update_mode = true`. Proceed to Step G2 (resume) with current plan loaded as context.
 - **Resume** → proceed to Step G1c (checkpoint detection).
 - **New run** → clear `run_dir` (do not reuse). Proceed to Step G2 (fresh) — treat as a new run for the same feature.
 
@@ -239,7 +239,7 @@ For `spawn-planners` with `restore_findings: true` — also read `<figma_fetch_d
 3. **Operations needed** — GET list / GET single / POST / PUT / DELETE
 4. **Separate UI layer?** — distinct UI layer from StateHolder? (yes for mobile, no for web)
 
-**Re-evaluate:** Read current `plan.md` and `context.md`. Show a summary of completed vs pending artifacts, then ask what the user wants to add or change. `update_mode = true`. Completed artifacts are locked — do not propose recreating them. New or changed requirements become new rows appended to the existing layer tables.
+**Extend:** Read current `plan.md` and `context.md`. Show a summary of completed vs pending artifacts, then ask what the user wants to add or change. `update_mode = true`. Completed artifacts are locked — do not propose recreating them. New or changed requirements become new rows appended to the existing layer tables.
 
 ### Step G3 — Return decision
 
@@ -382,13 +382,15 @@ For each planner finding block, extract its `### Impact Recommendations` section
 
 The entry skill passes which layers have already been explored (visited set). A recommendation for a layer already in the visited set is resolved — do not re-spawn it unless new open questions emerged from the current round's findings.
 
+In `update_mode`, layers explored in a *previous session* (visible in state.json) are NOT in the visited set unless the entry skill explicitly lists them in `Visited layers:`. A pres planner finding that reveals a gap in the domain layer means domain is unvisited — spawn it regardless of what prior sessions' state.json shows.
+
 **Step 3 — Decide: more rounds or synthesize?**
 
 If any `required` impact recommendation points to an unvisited layer → return `Decision: spawn-planners` for the next round listing only unvisited layers.
 
 If all required recommendations are covered by the visited set (or there are no recommendations) → **do not return `Decision: converged`**. Instead, proceed directly to inline synthesis (Step 4 below).
 
-**Max rounds:** If the entry skill reports round 3 is complete and open questions remain, return `Decision: blocked` with a targeted question for the user rather than requesting a round 4.
+**Max rounds:** Use the `Round: <N>` value passed by the entry skill — this is the session-local round counter, starting at 1 for every new invocation regardless of state.json history. If `Round: <N>` is 5 or higher and open questions remain unresolvable by spawning more planners, return `Decision: blocked`. Do NOT read round numbers from state.json for this guard — state.json reflects global history across all sessions and will be higher on resume paths.
 
 **Step 4 — Inline synthesis (convergence path only)**
 
@@ -421,7 +423,7 @@ Read each file in full before proceeding.
 Two variants — the entry skill signals which applies:
 
 - **New feature** (`update: false`) — write plan.md and context.md from scratch.
-- **Re-evaluate** (`update: true`) — extend plan.md and context.md in-place. Never replace or archive them. The entry skill passes `existing_plan`, `existing_context`, and `completed_artifacts` inline. Rules:
+- **Extend** (`update: true`) — extend plan.md and context.md in-place. Never replace or archive them. The entry skill passes `existing_plan`, `existing_context`, and `completed_artifacts` inline. Rules:
   - Rows with `status: done` are permanent — never removed, never reset
   - Append new artifact rows to the relevant layer table
   - Append new batches to the `batches` frontmatter list, continuing the existing id sequence
