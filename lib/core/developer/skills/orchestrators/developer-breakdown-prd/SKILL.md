@@ -30,7 +30,7 @@ For any generic (non-Figma, non-Confluence) URL in `prd_source`: fetch inline vi
 ```bash
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 SLUG=$(echo "<parent_key>" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
-run_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/breakdown-${SLUG}-${TIMESTAMP}"
+run_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/breakdown/${SLUG}-${TIMESTAMP}"
 mkdir -p "$run_dir/tickets"
 echo "$run_dir"
 ```
