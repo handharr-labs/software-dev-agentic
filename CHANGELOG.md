@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.28.1] — 2026-06-16
+
+### Changed
+- `developer-adjust-ticket` — gather-worker stripped to pure reader (`tools: Read`, model downgraded to `haiku`); returns only `TICKET_PATH`, `TICKET_ID`, `ACCEPTANCE_CRITERIA`
+- `developer-adjust-ticket` orchestrator — `AskUserQuestion` moved from gather-worker into the orchestrator (Step 2b); replaced fixed 6-question script with a dynamic loop: 3 anchor questions always fire, follow-ups are conditional on session context, hard cap of 10 questions total
+- `session-adjustment-format.md` — updated "Written by" for session fields (`PROGRESS`…`BUGS`) from `gather-worker` to `orchestrator`; intro paragraph updated to reflect split ownership
+
 ## [12.28.0] — 2026-06-16
 
 ### Added
