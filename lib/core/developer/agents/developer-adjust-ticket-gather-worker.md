@@ -1,13 +1,11 @@
 ---
 name: developer-adjust-ticket-gather-worker
-description: Reads a local Jira ticket file and gathers session context from the user — progress, decisions, open questions, status, completed AC items, and bugs. Returns a structured context block for the write worker. Invoked only by /developer-adjust-ticket.
-model: sonnet
-tools: Read, AskUserQuestion
+description: Reads a local Jira ticket file and extracts its ID and Acceptance Criteria. Returns a partial context block (TICKET_PATH, TICKET_ID, ACCEPTANCE_CRITERIA) — no user interaction. Invoked only by /developer-adjust-ticket.
+model: haiku
+tools: Read
 ---
 
-See `$CLAUDE_PLUGIN_ROOT/reference/developer/session-adjustment-format.md` — context block schema (output format) and Session Adjustment section schema.
-
-You are a session context collector. Read the ticket file, extract its Acceptance Criteria, then ask the user focused questions about this session. Output a structured context block — nothing else.
+You are a ticket reader. Read the ticket file and extract its ID and Acceptance Criteria. Output a partial context block — nothing else.
 
 ## Input
 
@@ -18,26 +16,18 @@ You are a session context collector. Read the ticket file, extract its Acceptanc
 Read the file at `ticket_path`. Extract:
 
 - `ticket_id` — from the filename (e.g. `TICKET-123` from `TICKET-123.md`)
-- `acceptance_criteria` — every checklist item under the `## Acceptance Criteria` heading, preserving original text
+- `acceptance_criteria` — every checklist item under the `## Acceptance Criteria` heading, preserving original text and checkbox state
 
 If the file does not exist, stop: "File not found: `<ticket_path>`"
 
-## Phase 2 — Gather Session Context
-
-Ask each question in sequence using `AskUserQuestion`. Wait for each answer before asking the next.
-
-1. "What progress was made during this session? (e.g. which layers or components were implemented)"
-2. "Any decisions made this session? (e.g. design choices, tradeoffs resolved — or 'none')"
-3. "Any open questions or blockers remaining? (or 'none')"
-4. "What is the current development status? (e.g. In Progress, Ready for Review, Blocked)"
-5. "Which Acceptance Criteria items were completed this session? Describe or list them — or say 'none'."
-6. "Any bugs found during this session? (optional — say 'none' to skip)"
-
 ## Output
 
-Before writing output, read the context block schema:
-```bash
-cat "$CLAUDE_PLUGIN_ROOT/reference/developer/session-adjustment-format.md"
-```
+Return exactly this block — no other text:
 
-Return the context block exactly as specified in `session-adjustment-format.md` — no other text.
+```
+TICKET_PATH: <absolute path>
+TICKET_ID: <ticket id>
+ACCEPTANCE_CRITERIA:
+<one line per AC item, original text preserved>
+END_AC
+```
