@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.28.0] — 2026-06-16
+
+### Added
+- `developer-adjust-ticket` — split into two workers: `developer-adjust-ticket-gather-worker` (interactive context collection via `AskUserQuestion`) and `developer-adjust-ticket-write-worker` (file mutation); orchestrator now handles multiple tickets sequentially
+- `developer-adjust-ticket` — `lib/core/developer/reference/session-adjustment-format.md` — shared single source of truth for context block schema (gather→write contract) and Session Adjustment section schema
+
+### Changed
+- All orchestrator skills — added `disable-model-invocation: true` to prevent model auto-routing; only user-invoked entry points now trigger orchestrators
+- `auditor-arch-review`, `debugger-debug`, `developer-issue` — added missing `user-invocable: true` alongside `disable-model-invocation: true`
+
 ## [12.27.0] — 2026-06-16
 
 ### Added
