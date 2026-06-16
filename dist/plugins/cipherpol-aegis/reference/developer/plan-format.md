@@ -5,6 +5,13 @@
 
 Single source of truth for the `plan.md` / `context.md` schema used by the developer-plan-feature flow — written by `developer-feature-strategist` (synthesize mode), consumed by `developer-feature-worker` and `developer-ui-worker`.
 
+## Living Document Rules
+
+- **Never replace** — `plan.md` and `context.md` are extended in-place, never rewritten from scratch. Git is the version history; no `plan-v*.md` archiving.
+- **Completed rows are permanent** — any artifact row with `status: done` is never removed or reset. It documents what was built.
+- **Re-evaluate appends** — when intent changes, the strategist adds new artifact rows and new batches (continuing the existing id sequence). Done rows are untouched.
+- **`context.md` grows** — new discovered artifacts and key symbols are appended to existing sections; existing rows are only updated if a path or signature changed.
+
 ---
 
 ## plan.md Schema
@@ -15,6 +22,12 @@ feature: <name>
 status: pending
 operations: [get-list, get-single, post, put, delete]
 separate-ui-layer: true | false
+batches:
+  - { id: 1, layer: domain, artifacts: [ArtifactName, ...], status: pending }
+  - { id: 2, layer: data,   artifacts: [ArtifactName, ...], status: pending }
+  - { id: 3, layer: pres,   artifacts: [ArtifactName, ...], status: pending }
+  - { id: 4, layer: app,    artifacts: [ConcernName, ...],  status: pending }
+  - { id: 5, layer: ui,     artifacts: [ArtifactName, ...], status: pending }
 ---
 
 # Feature Plan: <name>
@@ -53,11 +66,12 @@ separate-ui-layer: true | false
 | Section | Required | Written by | Read by | Purpose |
 |---|---|---|---|---|
 | frontmatter (`feature`/`status`/`operations`/`separate-ui-layer`) | always | feature-strategist | feature-worker, ui-worker | Run-level metadata — drives layer selection and resume checkpoints |
-| `## Domain Layer` table | always | feature-strategist | feature-worker | Per-artifact execution and progress tracking for the Domain layer |
-| `## Data Layer` table | always | feature-strategist | feature-worker | Per-artifact execution and progress tracking for the Data layer |
-| `## Presentation Layer` table | always | feature-strategist | feature-worker | Per-artifact execution and progress tracking for the Presentation layer |
-| `## UI Layer` table | always | feature-strategist | ui-worker | Per-artifact execution and progress tracking for the UI layer |
-| `## App Layer` table | always | feature-strategist | feature-worker | Per-concern execution and progress tracking for DI/route/module/analytics/feature-flag wiring |
+| frontmatter `batches` | always | feature-strategist | developer-plan-feature skill | Ordered execution plan — each batch is a unit of work for one worker call; `status` updated live; re-evaluate appends new batches continuing the id sequence |
+| `## Domain Layer` table | always | feature-strategist | feature-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |
+| `## Data Layer` table | always | feature-strategist | feature-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |
+| `## Presentation Layer` table | always | feature-strategist | feature-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |
+| `## UI Layer` table | always | feature-strategist | ui-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |
+| `## App Layer` table | always | feature-strategist | feature-worker | Per-concern tracking — rows appended on re-evaluate; `done` rows never removed |
 | `## Skipped Layers` | always | feature-strategist | user | Explains layers omitted from the plan, surfaced during approval |
 | `## Risks and Notes` | always | feature-strategist | user | Surfaces review items the engineer should consider before approving |
 
