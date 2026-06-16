@@ -4,14 +4,14 @@
 > Related: developer-adjust-ticket-gather-worker.md (producer), developer-adjust-ticket-write-worker.md (consumer), developer-adjust-ticket/SKILL.md (orchestrator)
 
 Single source of truth for two schemas used by the `/developer-adjust-ticket` flow:
-1. `## Context Block` — returned by `developer-adjust-ticket-gather-worker`, consumed by `developer-adjust-ticket-write-worker`
+1. `## Context Block` — assembled by the orchestrator (`SKILL.md`): gather-worker contributes `TICKET_PATH`, `TICKET_ID`, `ACCEPTANCE_CRITERIA`; orchestrator adds session fields via `AskUserQuestion`. Consumed by `developer-adjust-ticket-write-worker`.
 2. `## Session Adjustment Section` — written by `developer-adjust-ticket-write-worker` into the ticket `.md` file
 
 ---
 
 ## Context Block Schema
 
-Returned as the final output of `developer-adjust-ticket-gather-worker`. Passed verbatim as the `context` input to `developer-adjust-ticket-write-worker`.
+Assembled by the orchestrator and passed verbatim as the `context` input to `developer-adjust-ticket-write-worker`. The gather-worker produces the first three fields; the orchestrator fills in the session fields from user answers.
 
 ```
 TICKET_PATH: <absolute path to the .md file>
@@ -34,12 +34,12 @@ BUGS: <bugs found this session, or "none">
 | `TICKET_PATH` | always | gather-worker | write-worker | Identifies which file to edit |
 | `TICKET_ID` | always | gather-worker | write-worker | Used in the confirmation output line |
 | `ACCEPTANCE_CRITERIA` … `END_AC` | always | gather-worker | write-worker | AC items copied verbatim into the Session Adjustment checklist |
-| `PROGRESS` | always | gather-worker | write-worker | Source for `## Progress` narrative and `## Work Items` checklist |
-| `DECISIONS` | always | gather-worker | write-worker | Source for `## Decisions`; section omitted when value is "none" |
-| `OPEN_QUESTIONS` | always | gather-worker | write-worker | Source for `## Open Questions`; section omitted when value is "none" |
-| `STATUS` | always | gather-worker | write-worker | Written verbatim to `## Status` |
-| `COMPLETED_ITEMS` | always | gather-worker | write-worker | Used to mark AC checklist items `- [x]`; "none" leaves all unchecked |
-| `BUGS` | always | gather-worker | write-worker | Source for `## Bugs`; section omitted when value is "none" |
+| `PROGRESS` | always | orchestrator | write-worker | Source for `## Progress` narrative and `## Work Items` checklist |
+| `DECISIONS` | always | orchestrator | write-worker | Source for `## Decisions`; section omitted when value is "none" |
+| `OPEN_QUESTIONS` | always | orchestrator | write-worker | Source for `## Open Questions`; section omitted when value is "none" |
+| `STATUS` | always | orchestrator | write-worker | Written verbatim to `## Status` |
+| `COMPLETED_ITEMS` | always | orchestrator | write-worker | Used to mark AC checklist items `- [x]`; "none" leaves all unchecked |
+| `BUGS` | always | orchestrator | write-worker | Source for `## Bugs`; section omitted when value is "none" |
 
 ---
 
