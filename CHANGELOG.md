@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.28.2] — 2026-06-17
+
+### Fixed
+- `developer-feature-strategist` — max-rounds guard now uses session-local `Round: <N>` from entry skill instead of state.json history; prevents premature `Decision: blocked` on Extend (resume) paths where state.json round count is already > 1
+- `developer-feature-strategist` — `update_mode` no longer treats prior-session layers as visited; pres→domain gaps correctly trigger a new `spawn-planners` round instead of blocking the user
+- `developer-feature-strategist` — bumped max-rounds limit from 3 to 5 to support incremental layer discovery (e.g. pres → domain → data cascade)
+
+### Changed
+- `developer-feature-strategist` — renamed `Re-evaluate` → `Extend` in G1b resume intent prompt for clarity
+- `developer-plan-feature` — Step 2 convergence loop now explicitly resets `round = 1` and `visited = []` at the start of every session regardless of `update_mode` or state.json history
+- `developer-plan-feature` — max-rounds guard updated to 5 rounds (was 3)
+
 ## [12.28.1] — 2026-06-16
 
 ### Changed
