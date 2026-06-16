@@ -135,11 +135,11 @@ Wait for the strategist to return. Route based on the Decision block:
   multiSelect : false
   options     :
     - label: "Resume",      description: "Proceed to execution from where it left off"
-    - label: "Re-evaluate", description: "Extend the plan with new or changed requirements — completed work is preserved"
+    - label: "Extend",       description: "Extend the plan with new or changed requirements — completed work is preserved"
   ```
 
   **Resume** → proceed to Step 5 (Execute).  
-  **Re-evaluate** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or re-evaluate.
+  **Extend** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or extend.
 - **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1`. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
@@ -279,6 +279,8 @@ Proceed to Step 2. Do not read widget files, grep the codebase, or write any cod
 
 ## Step 2 — Planning Convergence Loop
 
+**Reset session counters.** Always set `round = 1` and `visited = []` here, regardless of `update_mode` or what state.json contains from prior sessions. The convergence loop is session-local — state.json history does not carry over.
+
 Repeat until the strategist returns `Decision: converged` or `Decision: blocked`.
 
 **Initialize state.json planning section** at the start of the first round (round = 1). If `state.json` already exists (resume path), read it and preserve existing content — do not overwrite:
@@ -351,8 +353,8 @@ Wait for the strategist's decision block.
 - **`Decision: synthesized`** → plan.md and context.md are already written; skip Step 3 and proceed directly to Step 4
 - **`Decision: blocked`** → present the strategist's question to the user via `AskUserQuestion`, send the answer back to strategist as a follow-up `process-findings` call, then re-evaluate
 
-**Max rounds guard:** If `round` reaches 4 without convergence, stop the loop and surface to the user:
-> "Planning could not converge after 3 rounds. Open questions: <list from last blocked decision>. Please clarify before retrying."
+**Max rounds guard:** If `round` reaches 6 without convergence, stop the loop and surface to the user:
+> "Planning could not converge after 5 rounds. Open questions: <list from last blocked decision>. Please clarify before retrying."
 
 ## Step 3 — Synthesize Plan (fallback only)
 
