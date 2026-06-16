@@ -74,7 +74,7 @@ Route:
 |---|---|
 | `plan.md` + `status: pending` | Set `run_dir = explicit_run_dir`. Proceed to Step 4 (Approve). |
 | `plan.md` + `status: approved` | Set `run_dir = explicit_run_dir`. Proceed to Step 5 (Execute — batch resume skips complete batches). |
-| No `plan.md` + state.json has ≥ 1 done round | Set `run_dir = explicit_run_dir`. Restore `visited` from all `done` layers across rounds. Set `round = last_round + 1`. Proceed directly to Step 2b (call strategist `process-findings`). |
+| No `plan.md` + state.json has ≥ 1 done round | Set `run_dir = explicit_run_dir`. Restore `visited` from all `done` layers across rounds. Set `round = 1` — the convergence loop's round counter is session-local and resets on every orchestrator invocation regardless of run history. Proceed directly to Step 2b (call strategist `process-findings`). |
 | No `plan.md` + no done rounds | Set `run_dir = explicit_run_dir`. Proceed to Step 1 — pass `run_dir` to the strategist so G1 skips the run-selection prompt and goes straight to G1b. |
 
 Collect:
@@ -140,7 +140,7 @@ Wait for the strategist to return. Route based on the Decision block:
 
   **Resume** → proceed to Step 5 (Execute).  
   **Extend** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or extend.
-- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1`. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
+- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** That field reflects cumulative state.json history across past sessions, not this convergence loop; the loop always starts counting at 1 on every orchestrator invocation, including resumes and extends. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
 
@@ -279,7 +279,7 @@ Proceed to Step 2. Do not read widget files, grep the codebase, or write any cod
 
 ## Step 2 — Planning Convergence Loop
 
-**Reset session counters.** Always set `round = 1` and `visited = []` here, regardless of `update_mode` or what state.json contains from prior sessions. The convergence loop is session-local — state.json history does not carry over.
+**Reset session counters.** Always set `round = 1` and `visited = []` here, regardless of `update_mode` or what state.json contains from prior sessions. The convergence loop is session-local and has no relation to run history — state.json's round count, and any `round:` value returned by the strategist's Decision block, must never be used to seed this counter.
 
 Repeat until the strategist returns `Decision: converged` or `Decision: blocked`.
 
