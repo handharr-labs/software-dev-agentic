@@ -10,21 +10,82 @@ allowed-tools: Agent, AskUserQuestion, Bash, WebFetch
 
 This skill is a pure router. Its only permitted direct operations:
 - `Bash` — run-dir creation only
-- `WebFetch` — only for non-Figma, non-Confluence URLs passed as formal arguments
 - `AskUserQuestion` — discussion and approval prompts defined in each step
 
-Never read source files, search the codebase, or write ticket files directly. All fetching, analysis, and file writing is delegated to workers.
+Never read source files, fetch URLs directly, search the codebase, or write ticket files. All fetching, analysis, and file writing is delegated to workers.
 
 ## Step 0 — Classify Inputs
 
 Parse `$ARGUMENTS`. Collect:
-- `parent_key` — Jira parent key: parent_key (e.g. `PROJ-1234`) for Stories/Tasks, or a Story/Task key (e.g. `PROJ-456`) for Sub-tasks
-- `prd_source` — Confluence URL/ID, local `.md` path, or pasted text
+- `parent_key` — Jira issue key or URL (e.g. `PROJ-1234` or `https://*.atlassian.net/browse/PROJ-1234`)
+- `prd_source` — Confluence URL/ID, Jira URL/key, generic URL, local `.md` path, or pasted text
 - `figma_url` — optional Figma URL
+- `figma_fetch_dir` — optional path to an existing figma fetch directory (from `/developer-fetch-figma`)
 
-If no arguments are provided, proceed with empty values — the breakdown worker will ask interactively.
+If no arguments are provided, ask interactively:
 
-For any generic (non-Figma, non-Confluence) URL in `prd_source`: fetch inline via `WebFetch` and store as `prd_content`. Otherwise pass `prd_source` raw to the worker.
+```
+question    : "What are the inputs for this breakdown?"
+header      : "Inputs"
+multiSelect : false
+options     :
+  - label: "Provide now",  description: "I'll give you the parent key and PRD source"
+  - label: "Skip",         description: "Proceed with no pre-loaded context"
+```
+
+## Step 0a — Resolve Sources
+
+Spawn **two** `developer-doc-resolve-worker` agents in parallel (single Agent tool call) — one for `parent_key`, one for `prd_source`. Skip a worker if the corresponding input is empty.
+
+**parent_key worker:**
+> source: \<parent_key\>
+> purpose: parent_key
+
+**prd_source worker:**
+> source: \<prd_source\>
+> purpose: prd_source
+
+Read each `## Doc Resolve Result` or `## Doc Resolve Error` block:
+
+- `parent_key` result: extract `resolved_key` (use as the canonical `parent_key` going forward) and note `title`. If it returned a Jira issue, store the `content` as `parent_context` — pass to the breakdown worker as supplementary context.
+- `prd_source` result: store `content` as `prd_content` — this is the resolved PRD text passed to the breakdown worker.
+
+**If either worker returns `## Doc Resolve Error`:**
+
+Call `AskUserQuestion` once per failed source:
+
+```
+question    : "Could not fetch <source> (<error>). How would you like to provide this?"
+header      : "Fetch Failed"
+multiSelect : false
+options     :
+  - label: "Paste content",     description: "I'll paste the text directly"
+  - label: "Provide new URL",   description: "Try a different URL or path"
+  - label: "Skip",              description: "Proceed without this source"
+```
+
+- **Paste content** → collect pasted text, use as `prd_content` / `parent_key`.
+- **Provide new URL** → collect new URL or path, re-spawn `developer-doc-resolve-worker` once. If it fails again, offer Paste or Skip only.
+- **Skip** → proceed without that source.
+
+## Step 0b — Confirm Breakdown Level
+
+Call `AskUserQuestion`:
+
+```
+question    : "What is <parent_key><if title is known: ' — <title>'>? This determines the ticket format produced."
+header      : "Breakdown Level"
+multiSelect : false
+options     :
+  - label: "Epic",          description: "Breaking an Epic into Stories / Tasks — each ticket gets a full System Design section"
+  - label: "Story / Task",  description: "Breaking a Story or Task into Sub-tasks — each ticket gets a System Context pointer to the parent"
+```
+
+Store the answer as `breakdown_level`:
+- **Epic** → `breakdown_level = epic_to_tickets`
+- **Story / Task** → `breakdown_level = ticket_to_subtasks`
+
+Pass `breakdown_level` to the breakdown worker in Step 3 and to all write workers in Step 5. The breakdown worker must not re-infer it — use the confirmed value.
 
 ## Step 1 — Create Run Directory
 
@@ -38,17 +99,30 @@ echo "$run_dir"
 
 ## Step 2 — Confirm Breakdown Strategy
 
-Present the default strategy and ask the user to confirm or override before the worker begins.
+Present the default strategy for the confirmed `breakdown_level` and ask the user to confirm or override.
 
-Show inline:
+**If `breakdown_level = epic_to_tickets`**, show:
 
 ```
-Default breakdown strategy:
+Default breakdown strategy (Epic → Stories / Tasks):
 
  1. State management — 1 ticket for all BLoC / ViewModel / Presenter + domain models, state classes, events
  2. Shared components — 1 ticket for all reusable widgets, design-system wrappers, cross-screen UI pieces
  3. Screens — 1 ticket per screen (UI, state-holder wiring, screen-specific components)
  4. Infrastructure — 1 ticket each for routing/DI setup, native iOS integration, native Android integration, etc.
+```
+
+**If `breakdown_level = ticket_to_subtasks`**, show:
+
+```
+Default breakdown strategy (Story / Task → Sub-tasks):
+
+ 1. Domain models — 1 sub-task for entities, DTOs, request/response types
+ 2. Repository + data source — 1 sub-task for interface, impl, remote/local data sources, mappers
+ 3. State management — 1 sub-task for BLoC / ViewModel / Presenter + state classes + events
+ 4. Shared components — 1 sub-task for reusable widgets and design-system wrappers scoped to this ticket
+ 5. Screens — 1 sub-task per screen (UI widget, state-holder wiring, screen-specific components)
+ 6. Routing / DI — 1 sub-task for route registration and dependency injection wiring
 ```
 
 Call `AskUserQuestion`:
@@ -70,15 +144,19 @@ options     :
 
 Spawn `developer-prd-breakdown-worker`:
 
-> parent_key: \<parent_key\>
-> prd_source: \<prd_content if already fetched, otherwise raw prd_source\>
+> parent_key: \<resolved parent_key\>
+> breakdown_level: \<breakdown_level confirmed in Step 0b\>
+> prd_source: \<prd_content — resolved plain text from Step 0a\>
+> parent_context: \<parent_context from Step 0a, or "(none)"\>
 > figma_url: \<figma_url or "(none)"\>
+> figma_fetch_dir: \<figma_fetch_dir or "(none)"\>
 > run_dir: \<run_dir\>
 > breakdown_strategy: \<confirmed or custom strategy from Step 2\>
 
 Wait for the worker to return a `## Breakdown Proposal` block. Extract:
-- `tickets` — ordered list: `{ index, type, title, story_points, description, acceptance_criteria }`
+- `tickets` — ordered list: `{ index, type, title, story_points, description, system_design, system_context, acceptance_criteria }`
 - `summary` — N tickets | X SP string
+- `breakdown_level` — carried through from the proposal header (must match Step 0b value)
 
 ## Step 4 — Discuss
 
