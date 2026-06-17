@@ -3,7 +3,7 @@ name: developer-breakdown-requirement
 description: Break down a requirement into Jira tickets — accepts PRD, Figma UI stack, or other requirement sources, proposes a ticket breakdown for discussion and confirmation, writes approved tickets as local markdown files, and optionally pushes to Jira.
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Agent, AskUserQuestion, Bash, WebFetch
+allowed-tools: Agent, AskUserQuestion, Bash, WebFetch, developer-fetch-figma
 ---
 
 ## Routing Contract
@@ -79,15 +79,16 @@ question    : "Do you want to include Figma designs in this breakdown?"
 header      : "Figma"
 multiSelect : false
 options     :
-  - label: "Yes — I have a fetch dir",  description: "I already ran /developer-fetch-figma and have a figma_fetch_dir path"
-  - label: "No",                        description: "Proceed with requirement docs only"
+  - label: "Yes — fetch now",          description: "Run /developer-fetch-figma inline to fetch frames"
+  - label: "Yes — I have a fetch dir", description: "I already have a figma_fetch_dir path"
+  - label: "No",                       description: "Proceed with requirement docs only"
 ```
 
 **No** → set `figma_fetch_dir = "(none)"` and continue.
 
-**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect the reply as `figma_fetch_dir` and continue.
+**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect as `figma_fetch_dir` and continue.
 
-> If you haven't fetched Figma frames yet, run `/developer-fetch-figma <url>` first — it outputs a `figma_fetch_dir` path you can pass back here.
+**Yes — fetch now** → execute `developer-fetch-figma` skill via the Skill tool. When it completes, extract `figma_fetch_dir` from the `Fetch directory:` line in its output. Use as `figma_fetch_dir` and continue.
 
 ## Step 0b — Confirm Breakdown Level
 

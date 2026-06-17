@@ -2,7 +2,7 @@
 name: developer-fetch-figma
 description: Standalone Figma fetch pipeline — fetches frames via Figma MCP, groups them by visual structure, and optionally aligns UI Stacks to the design system. Outputs a figma_fetch_dir that can be passed directly to /developer-plan-feature to skip re-fetching.
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 allowed-tools: Agent, AskUserQuestion, Bash
 ---
 

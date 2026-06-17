@@ -3,7 +3,7 @@ name: developer-plan-feature
 description: Plan then build a feature — optionally resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-intent-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), shows an interactive approval prompt, then executes with developer-feature-worker (Domain/Data/Pres/App) followed by developer-ui-worker (UI layer) on approval.
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch
+allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch, developer-fetch-figma
 ---
 
 ## Routing Contract
@@ -152,15 +152,16 @@ question    : "Do you want to include Figma designs in this feature plan?"
 header      : "Figma"
 multiSelect : false
 options     :
-  - label: "Yes — I have a fetch dir",  description: "I already ran /developer-fetch-figma and have a figma_fetch_dir path"
-  - label: "No",                        description: "Proceed with requirement docs only"
+  - label: "Yes — fetch now",          description: "Run /developer-fetch-figma inline to fetch frames"
+  - label: "Yes — I have a fetch dir", description: "I already have a figma_fetch_dir path"
+  - label: "No",                       description: "Proceed with requirement docs only"
 ```
 
 **No** → proceed to Step 2 (skip Step 1.5).
 
-**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect the reply as `figma_fetch_dir`. Proceed to Step 1.5.
+**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect as `figma_fetch_dir`. Proceed to Step 1.5.
 
-> If you haven't fetched Figma frames yet, run `/developer-fetch-figma <url>` first — it outputs a `figma_fetch_dir` path you can pass back here.
+**Yes — fetch now** → execute `developer-fetch-figma` skill via the Skill tool. When it completes, extract `figma_fetch_dir` from the `Fetch directory:` line in its output. Use as `figma_fetch_dir`. Proceed to Step 1.5.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
 
