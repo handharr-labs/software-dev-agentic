@@ -1,0 +1,100 @@
+# Strategist Decision Block Format
+
+> Related: developer-feature-intent-strategist.md, developer-feature-convergence-strategist.md
+
+Canonical schemas for all structured Decision blocks returned by feature strategist agents. Each agent emits only the subset relevant to its role — see per-agent notes below each block.
+
+---
+
+## Decision: spawn-planners
+
+Returned when planners need to run (initial or follow-up round):
+
+```
+## Decision: spawn-planners
+round: <N>
+run_dir: <absolute path to run directory>
+feature: <feature name>
+platform: <web | ios | flutter>
+module_path: <module path>
+update_mode: <true | false>
+restore_findings: <true | false>
+spawn:
+  - domain
+  - data
+  - pres
+  - app
+reason: <one line per planner explaining why it is needed>
+scope:
+  domain: [entity, usecase, repository, service]   # omit types not relevant to this intent
+  data:   [dto, mapper, datasource, repository_impl]
+  pres:   [stateholder, screen, component, navigator]
+  app:    [di, route, module, analytics, feature_flag]
+open_questions:
+  - <any unresolved requirement or ambiguity that a planner must answer>
+pending_figma_urls:
+  - <figma.com URL>   # intent-strategist only — empty list if no Figma found
+completed_artifacts: [<list — omit if update_mode is false>]
+figma_groups: <json — intent-strategist only, omit if not present>
+```
+
+Only list planners that are needed. Omit planners already explored in previous rounds unless new open questions require re-exploration. For each spawned planner, include only the scope types relevant to the stated intent.
+
+**intent-strategist:** include `pending_figma_urls` and `figma_groups`.  
+**convergence-strategist:** omit `pending_figma_urls` and `figma_groups`.
+
+---
+
+## Decision: resume-execution
+
+Returned by `developer-feature-intent-strategist` only when checkpoint detection finds an existing plan and no re-planning is needed:
+
+```
+## Decision: resume-execution
+run_dir: <absolute path to run directory>
+plan_status: <pending | approved>
+```
+
+`plan_status: pending` → entry skill resumes at Step 4 (Approve).  
+`plan_status: approved` → entry skill resumes at Step 5 (Execute — skips complete batches).
+
+---
+
+## Decision: discard-partial
+
+Returned by `developer-feature-intent-strategist` only when the user wants to discard an interrupted planning run:
+
+```
+## Decision: discard-partial
+run_dir: <absolute path to run directory>
+```
+
+---
+
+## Decision: synthesized
+
+Returned by `developer-feature-convergence-strategist` only when findings have converged and plan.md + context.md have been written:
+
+```
+## Decision: synthesized
+summary:
+  - <artifact 1> → <layer> / <status>
+  - <artifact 2> → <layer> / <status>
+  ...
+```
+
+The entry skill skips its synthesize step and proceeds directly to approval.
+
+---
+
+## Decision: blocked
+
+Returned by either strategist when an unresolvable ambiguity or missing input requires user clarification:
+
+```
+## Decision: blocked
+question: <specific question for the user>
+options:
+  - <option 1>
+  - <option 2>
+```

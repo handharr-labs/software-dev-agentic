@@ -1,9 +1,9 @@
 # Feature Plan Document Format
 
 > Author: Puras Handharmahua · 2026-06-13
-> Related: developer-feature-strategist.md (writer), developer-feature-worker.md, developer-ui-worker.md (readers)
+> Related: developer-feature-convergence-strategist.md (writer), developer-feature-worker.md, developer-ui-worker.md (readers)
 
-Single source of truth for the `plan.md` / `context.md` schema used by the developer-plan-feature flow — written by `developer-feature-strategist` (synthesize mode), consumed by `developer-feature-worker` and `developer-ui-worker`.
+Single source of truth for the `plan.md` / `context.md` schema used by the developer-plan-feature flow — written by `developer-feature-convergence-strategist` (synthesize mode), consumed by `developer-feature-worker` and `developer-ui-worker`.
 
 ## Living Document Rules
 

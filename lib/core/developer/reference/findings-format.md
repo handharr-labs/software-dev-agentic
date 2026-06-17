@@ -3,7 +3,7 @@
 > Author: Puras Handharmahua · 2026-06-13
 > Related: developer-domain-planner.md, developer-data-planner.md, developer-pres-planner.md, developer-app-planner.md
 
-Shared input/output contract for the four layer planner agents — `developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`. Each planner reads its inputs and writes its findings file per this contract; `developer-feature-strategist` (process-findings / synthesize modes) reads the `*-findings.md` files produced here.
+Shared input/output contract for the four layer planner agents — `developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`. Each planner reads its inputs and writes its findings file per this contract; `developer-feature-convergence-strategist` (process-findings / synthesize modes) reads the `*-findings.md` files produced here.
 
 ---
 
