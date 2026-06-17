@@ -7,6 +7,22 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.29.0] — 2026-06-17
+
+### Added
+- `developer-feature-intent-strategist` — new agent handling `gather-intent` and `gather-intent-prefilled` modes (split from `developer-feature-strategist`)
+- `developer-feature-convergence-strategist` — new agent handling `process-findings` and `synthesize` modes (split from `developer-feature-strategist`)
+- `reference/developer/layer-contracts.md` — extracted layer dependency rules, artifact types, creation order, inter-layer imports, and planner selection table shared by both strategists
+- `reference/developer/strategist-decision-format.md` — extracted canonical schemas for all 5 Decision block types (`spawn-planners`, `resume-execution`, `discard-partial`, `synthesized`, `blocked`)
+
+### Changed
+- `developer-plan-feature` — `planning.rounds` in state.json now resets to `[]` at the start of every session; resume routing derives `visited` from populated artifact layer keys instead of historical round records
+- `developer-plan-feature` — raw doc paths passed as arguments are now persisted to state.json as `raw_docs: [{ path, description }]` (description auto-extracted from first heading); passed to planners and workers so they can `Read` ground-truth endpoint/UI stack docs directly
+- `developer-plan-feature` — explicit_run_dir checkpoint now inspects artifact layer keys (not `planning.rounds`) to detect prior progress
+
+### Removed
+- `developer-feature-strategist` — replaced by `developer-feature-intent-strategist` and `developer-feature-convergence-strategist`
+
 ## [12.28.3] — 2026-06-17
 
 ### Fixed
