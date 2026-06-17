@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.32.0] — 2026-06-17
+
+### Added
+- `developer-doc-resolve-worker` — new haiku-class worker that resolves any document source (Jira issue URL/key, Confluence page URL/ID, generic URL, local file path, plain text) into validated plain text; returns `## Doc Resolve Result` or `## Doc Resolve Error`
+- `developer-breakdown-requirement` SKILL — Step 0a: spawns two `developer-doc-resolve-worker` agents in parallel (one for `parent_key`, one for `prd_source`); on `## Doc Resolve Error` offers AskUserQuestion fallback (paste / retry with new URL / skip)
+- `developer-breakdown-requirement` SKILL — Step 0b breakdown level question now includes the fetched Jira issue title when `parent_key` was a URL
+- `developer-breakdown-requirement` SKILL — Step 2 shows level-appropriate default strategy: `epic_to_tickets` (state mgmt → shared components → screens → infra) vs `ticket_to_subtasks` (domain models → repo+datasource → state mgmt → shared components → screens → routing/DI)
+
+### Changed
+- `developer-prd-breakdown-worker` — Phase 1 simplified: `prd_source` is pre-resolved plain text by the time this worker runs; no longer calls `mcp__claude_ai_Atlassian__getConfluencePage` directly
+- `developer-prd-breakdown-worker` — added `parent_context` input: fetched Jira issue content for the parent key, used as supplementary scope context
+- `developer-prd-breakdown-worker` — removed `mcp__claude_ai_Atlassian__getConfluencePage` from tools list
+
 ## [12.31.0] — 2026-06-17
 
 ### Added
