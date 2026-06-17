@@ -1,6 +1,6 @@
 ---
 name: developer-plan-feature
-description: Plan then build a feature — optionally resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), shows an interactive approval prompt, then executes with developer-feature-worker (Domain/Data/Pres/App) followed by developer-ui-worker (UI layer) on approval.
+description: Plan then build a feature — optionally resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-intent-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), shows an interactive approval prompt, then executes with developer-feature-worker (Domain/Data/Pres/App) followed by developer-ui-worker (UI layer) on approval.
 user-invocable: true
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch
@@ -35,7 +35,7 @@ Collect results as `found_plans` and `found_figma` (`figma-fetch-dir.txt` paths)
 echo "$CIPHERPOL_THINKER_MODEL"
 ```
 
-If the value is `cost-saving`, every `Agent` spawn of `developer-feature-strategist` or a layer planner (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) anywhere in this skill must pass `model: sonnet` as an override. Otherwise (unset, `optimized`, or any other value), omit the `model` parameter — each agent uses its frontmatter default (`opus`). This does not apply to `developer-figma-fetch-worker`, `developer-feature-worker`, or `developer-ui-worker`.
+If the value is `cost-saving`, every `Agent` spawn of `developer-feature-intent-strategist`, `developer-feature-convergence-strategist`, or a layer planner (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) anywhere in this skill must pass `model: sonnet` as an override. Otherwise (unset, `optimized`, or any other value), omit the `model` parameter — each agent uses its frontmatter default (`opus`). This does not apply to `developer-figma-fetch-worker`, `developer-feature-worker`, or `developer-ui-worker`.
 
 ## Step 0 — Classify Inputs
 
@@ -61,9 +61,8 @@ grep "^status:" "<explicit_run_dir>/plan.md" 2>/dev/null | head -1
 python3 -c "
 import json, sys
 d = json.load(open('<explicit_run_dir>/state.json'))
-rounds = d.get('planning', {}).get('rounds', [])
-done = {l for r in rounds for l, s in r['planners'].items() if s == 'done'}
-print('rounds:', len(rounds), '| done_layers:', ','.join(sorted(done)))
+layers = [k for k in ('domain','data','pres','app') if d.get(k)]
+print('artifact_layers:', ','.join(layers))
 " 2>/dev/null
 cat "<explicit_run_dir>/figma-fetch-dir.txt" 2>/dev/null
 ```
@@ -74,8 +73,8 @@ Route:
 |---|---|
 | `plan.md` + `status: pending` | Set `run_dir = explicit_run_dir`. Proceed to Step 4 (Approve). |
 | `plan.md` + `status: approved` | Set `run_dir = explicit_run_dir`. Proceed to Step 5 (Execute — batch resume skips complete batches). |
-| No `plan.md` + state.json has ≥ 1 done round | Set `run_dir = explicit_run_dir`. Restore `visited` from all `done` layers across rounds. Set `round = 1` — the convergence loop's round counter is session-local and resets on every orchestrator invocation regardless of run history. Proceed directly to Step 2b (call strategist `process-findings`). |
-| No `plan.md` + no done rounds | Set `run_dir = explicit_run_dir`. Proceed to Step 1 — pass `run_dir` to the strategist so G1 skips the run-selection prompt and goes straight to G1b. |
+| No `plan.md` + state.json has ≥ 1 populated artifact layer | Set `run_dir = explicit_run_dir`. Restore `visited` from all populated layer keys (`domain`, `data`, `pres`, `app`) in state.json. Proceed directly to Step 2b (call strategist `process-findings`). |
+| No `plan.md` + no populated artifact layers | Set `run_dir = explicit_run_dir`. Proceed to Step 1 — pass `run_dir` to the strategist so G1 skips the run-selection prompt and goes straight to G1b. |
 
 Collect:
 - `resolved_inputs` — successfully fetched remote items: `{ type, source, content }`
@@ -100,7 +99,7 @@ options     :
 
 ## Step 1 — Gather Intent
 
-Spawn `developer-feature-strategist` with mode `gather-intent`:
+Spawn `developer-feature-intent-strategist`:
 
 > **Mode: gather-intent**
 >
@@ -140,7 +139,7 @@ Wait for the strategist to return. Route based on the Decision block:
 
   **Resume** → proceed to Step 5 (Execute).  
   **Extend** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or extend.
-- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** That field reflects cumulative state.json history across past sessions, not this convergence loop; the loop always starts counting at 1 on every orchestrator invocation, including resumes and extends. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
+- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
 
@@ -279,15 +278,34 @@ Proceed to Step 2. Do not read widget files, grep the codebase, or write any cod
 
 ## Step 2 — Planning Convergence Loop
 
-**Reset session counters.** Always set `round = 1` and `visited = []` here, regardless of `update_mode` or what state.json contains from prior sessions. The convergence loop is session-local and has no relation to run history — state.json's round count, and any `round:` value returned by the strategist's Decision block, must never be used to seed this counter.
+**Reset session counters.** Always set `round = 1` and `visited = []` here, regardless of `update_mode` or what state.json contains from prior sessions. The convergence loop is session-local and has no relation to run history — any `round:` value returned by the strategist's Decision block must never be used to seed this counter.
 
 Repeat until the strategist returns `Decision: converged` or `Decision: blocked`.
 
-**Initialize state.json planning section** at the start of the first round (round = 1). If `state.json` already exists (resume path), read it and preserve existing content — do not overwrite:
+**Reset state.json planning section and persist raw_docs** at the start of the first round (round = 1). Always overwrite planning — history from prior sessions is not carried forward. Always write `raw_docs` with the current session's `raw_paths` (empty list if none):
 
 ```bash
-# Create with planning section if not present
-test -f "<run_dir>/state.json" || echo '{"planning":{"rounds":[]}}' > "<run_dir>/state.json"
+python3 - <<'EOF'
+import json, os, re
+path = "<run_dir>/state.json"
+d = json.load(open(path)) if os.path.exists(path) else {}
+d["planning"] = {"rounds": []}
+raw_docs = []
+for p in [<raw_paths as Python list, or []>]:
+    desc = os.path.basename(p)
+    try:
+        with open(p) as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    desc = re.sub(r'^#+\s*', '', line)[:120]
+                    break
+    except:
+        pass
+    raw_docs.append({"path": p, "description": desc})
+d["raw_docs"] = raw_docs
+json.dump(d, open(path, "w"), indent=2)
+EOF
 ```
 
 ### 2a — Spawn planners for this round
@@ -300,6 +318,9 @@ From the current `Decision: spawn-planners` block, read the `spawn:` list. Spawn
 - `developer-app-planner` — if `app` is in the spawn list
 
 Pass to each planner: feature name, platform, module-path, run_dir (from strategist's gather-intent or review-resume output).
+
+**If `raw_docs` in state.json is non-empty**, also pass:
+- `raw_docs` — list of `{ path, description }` entries. Planners must `Read` each path for ground-truth details (endpoint paths, UI stack specs, etc.) before producing findings. Format when passing: one entry per line as `<path> — <description>`.
 
 **If `update_mode` is true** (resume path with new intent), also pass:
 - `open_questions` — the user's stated issues from the Decision block, verbatim. Planners use these to focus on what needs fixing rather than doing a full greenfield sweep.
@@ -326,7 +347,7 @@ Proceed to 2b — the strategist validates findings and updates state.json.
 
 ### 2b — Send findings to strategist
 
-Spawn `developer-feature-strategist` with mode `process-findings`:
+Spawn `developer-feature-convergence-strategist`:
 
 > **Mode: process-findings**
 >
@@ -360,7 +381,7 @@ Wait for the strategist's decision block.
 
 > **When reached:** This step is only reached if the strategist returned `Decision: synthesized` is NOT yet used — e.g., in a future `discuss-more` re-synthesis triggered from Step 4. The normal convergence path skips here because `Decision: synthesized` from Step 2b means plan.md and context.md are already on disk.
 
-Spawn `developer-feature-strategist` with mode `synthesize`:
+Spawn `developer-feature-convergence-strategist` with mode `synthesize`:
 
 > **Mode: synthesize**
 >
@@ -425,6 +446,8 @@ Read `batches` from `plan.md` frontmatter. Process each batch in `id` order wher
 
 **5c — Spawn the worker.** Re-read `plan.md` and `context.md` from disk before each spawn.
 
+Also extract `raw_docs` from `state.json` before spawning any worker.
+
 For `developer-feature-worker`:
 
 > Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
@@ -434,6 +457,12 @@ For `developer-feature-worker`:
 >
 > **context.md**
 > \<content\>
+>
+> \<if raw_docs is non-empty:\>
+> **Reference docs:**
+> \<for each entry: "<path> — <description>"\>
+> `Read` the relevant doc(s) for ground-truth details (endpoint paths, request/response shapes, field names) before implementing any artifact. Do not rely solely on plan.md/context.md if a doc covers the artifact.
+> \<end if\>
 >
 > **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
 >
@@ -450,6 +479,12 @@ For `developer-ui-worker` — also extract `stateholder_contract` from `state.js
 > \<content\>
 >
 > **Stateholder contract path:** \<stateholder_contract from state.json, or "none" if null\>
+>
+> \<if raw_docs is non-empty:\>
+> **Reference docs:**
+> \<for each entry: "<path> — <description>"\>
+> `Read` the relevant doc(s) for ground-truth details (UI stack specs, component structure, field names) before implementing any artifact. Do not rely solely on plan.md/context.md if a doc covers the artifact.
+> \<end if\>
 >
 > **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
 >
@@ -471,6 +506,12 @@ For `developer-ui-worker` — also extract `stateholder_contract` from `state.js
 >
 > **context.md**
 > \<content — re-read from disk\>
+>
+> \<if raw_docs is non-empty:\>
+> **Reference docs:**
+> \<for each entry: "<path> — <description>"\>
+> `Read` the relevant doc(s) for ground-truth details before implementing any artifact.
+> \<end if\>
 >
 > **Batch:** Process only these artifacts: \<batch.artifacts minus completed_artifacts from state.json\>. Skip any already complete in plan.md.
 >

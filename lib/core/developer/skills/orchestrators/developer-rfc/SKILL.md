@@ -74,7 +74,7 @@ Inline — do not spawn an agent:
 
 ## Step 5 — Gather Intent (Non-Interactive)
 
-Spawn `developer-feature-strategist` with mode `gather-intent-prefilled`:
+Spawn `developer-feature-intent-strategist` with mode `gather-intent-prefilled`:
 
 > **Mode: gather-intent-prefilled**
 >
@@ -118,7 +118,7 @@ Wait for all planners to complete. Add spawned layers to `visited`. Append findi
 
 ### 6b — Send findings to strategist
 
-Spawn `developer-feature-strategist` with mode `process-findings`:
+Spawn `developer-feature-convergence-strategist`:
 
 > **Mode: process-findings**
 >

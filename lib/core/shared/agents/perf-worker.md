@@ -61,7 +61,7 @@ Score each dimension **1–10**. Provide a one-line justification for each score
 
 ### D1 — Orchestration Quality
 
-*Did strategists (developer-feature-strategist, developer-backend-worker) coordinate correctly?*
+*Did strategists (developer-feature-intent-strategist, developer-feature-convergence-strategist, developer-backend-worker) coordinate correctly?*
 
 - **N/A (8/10)** if no strategists were spawned — inline work is often correct per P9
 - Check `agent_spawns` for strategist types
@@ -287,7 +287,8 @@ Include the exact agent file path inferred from the `agent_spawns` subagent type
 
 | Subagent type | Agent file |
 |---|---|
-| developer-feature-strategist | developer-feature-strategist |
+| developer-feature-intent-strategist | developer-feature-intent-strategist |
+| developer-feature-convergence-strategist | developer-feature-convergence-strategist |
 | developer-feature-worker | developer-feature-worker |
 | developer-backend-worker | developer-backend-worker |
 | developer-ui-worker | developer-ui-worker |

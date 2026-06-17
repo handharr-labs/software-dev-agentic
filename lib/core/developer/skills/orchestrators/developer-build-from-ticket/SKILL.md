@@ -79,7 +79,7 @@ Hold the derived `feature` value — it is used verbatim in the cleanup step.
 
 ## Step 5 — Gather Intent (Non-Interactive)
 
-Spawn `developer-feature-strategist` with mode `gather-intent-prefilled`:
+Spawn `developer-feature-intent-strategist` with mode `gather-intent-prefilled`:
 
 > **Mode: gather-intent-prefilled**
 >
@@ -113,7 +113,7 @@ Add spawned layers to `visited`. Append findings to `all_findings`.
 
 ### 6b — Send findings to strategist
 
-Spawn `developer-feature-strategist` with mode `process-findings`:
+Spawn `developer-feature-convergence-strategist`:
 
 > **Mode: process-findings**
 >

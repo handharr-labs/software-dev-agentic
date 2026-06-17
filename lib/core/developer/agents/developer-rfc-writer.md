@@ -16,7 +16,7 @@ The calling skill passes all of the following inline:
 - Epic content — summary, description, acceptance criteria
 - PRD content — Confluence page body, or "None"
 - Design content — Figma data, or "None"
-- `plan.md` — converged artifact plan from `developer-feature-strategist`
+- `plan.md` — converged artifact plan from `developer-feature-convergence-strategist`
 - `context.md` — discovered artifacts and naming conventions
 
 ## Knowledge

@@ -70,7 +70,7 @@ options     :
 
 **Plan first** → invoke the `/developer-plan-feature` skill with `$ARGUMENTS`. This skill owns the full planning loop and approval flow.
 
-**Build directly** → spawn `developer-feature-strategist` with mode `gather-intent`:
+**Build directly** → spawn `developer-feature-intent-strategist`:
 
 > **Mode: gather-intent**
 >
