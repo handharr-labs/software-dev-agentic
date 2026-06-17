@@ -139,7 +139,28 @@ Wait for the strategist to return. Route based on the Decision block:
 
   **Resume** → proceed to Step 5 (Execute).  
   **Extend** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or extend.
-- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.5 (if `pending_figma_urls` non-empty) or Step 2.
+- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.2.
+
+## Step 1.2 — Optional Figma Prompt
+
+Skip this step if `pending_figma_urls` is non-empty OR `figma_fetch_dir` is already set.
+
+Call `AskUserQuestion`:
+
+```
+question    : "Do you want to include Figma designs in this feature plan?"
+header      : "Figma"
+multiSelect : false
+options     :
+  - label: "Yes — I have a fetch dir",  description: "I already ran /developer-fetch-figma and have a figma_fetch_dir path"
+  - label: "No",                        description: "Proceed with requirement docs only"
+```
+
+**No** → proceed to Step 2 (skip Step 1.5).
+
+**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect the reply as `figma_fetch_dir`. Proceed to Step 1.5.
+
+> If you haven't fetched Figma frames yet, run `/developer-fetch-figma <url>` first — it outputs a `figma_fetch_dir` path you can pass back here.
 
 ## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
 

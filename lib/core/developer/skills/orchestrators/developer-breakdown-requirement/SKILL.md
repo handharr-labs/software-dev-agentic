@@ -68,6 +68,27 @@ options     :
 - **Provide new URL** → collect new URL or path, re-spawn `developer-doc-resolve-worker` once. If it fails again, offer Paste or Skip only.
 - **Skip** → proceed without that source.
 
+## Step 0c — Optional Figma Fetch
+
+Skip this step if `figma_fetch_dir` is already provided.
+
+Call `AskUserQuestion`:
+
+```
+question    : "Do you want to include Figma designs in this breakdown?"
+header      : "Figma"
+multiSelect : false
+options     :
+  - label: "Yes — I have a fetch dir",  description: "I already ran /developer-fetch-figma and have a figma_fetch_dir path"
+  - label: "No",                        description: "Proceed with requirement docs only"
+```
+
+**No** → set `figma_fetch_dir = "(none)"` and continue.
+
+**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect the reply as `figma_fetch_dir` and continue.
+
+> If you haven't fetched Figma frames yet, run `/developer-fetch-figma <url>` first — it outputs a `figma_fetch_dir` path you can pass back here.
+
 ## Step 0b — Confirm Breakdown Level
 
 Call `AskUserQuestion`:
