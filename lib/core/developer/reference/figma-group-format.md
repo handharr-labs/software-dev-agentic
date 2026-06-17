@@ -15,6 +15,7 @@ One file per screen cluster and one per overlay/dialog cluster, synthesized by m
 screen: <ScreenName>
 type: screen | overlay
 parent_screen: <ScreenName>   # only present when type: overlay
+also_shown_from: [<ScreenName>, ...]   # only present when type: overlay and invoked from more than one screen
 states:
   - state: <state name>
     file: <abs path to figma-<slug>.md>
@@ -43,12 +44,32 @@ overlays: [<figma-uistack-*.md filename>, ...]   # only present when type: scree
 ```
 
 ### Design Tokens
+
+#### Colors
 - <token>: <value>
+
+#### Typography
+- <token>: <value>
+
+#### Spacing / Layout
+- <container or component>: <axis>, gap <value>, padding <value>
 
 ### User Interactions
 | Interaction | Triggers | Effect |
 |---|---|---|
 | <e.g. "Tap retry"> | <event/handler name from Interactions field> | <effect> |
+
+### Localizations
+
+#### Static Text
+| Key | Value | Context | Component |
+|---|---|---|---|
+| <suggested_snake_case_key> | "<string>" | <e.g. "AppBar title", "SectionHeader", "BlankSlate heading", "CTA"> | <dot-path in hierarchy — e.g. "Stage.Content.ListTile-AddRow.Label"> |
+
+#### Value / Placeholder Text
+| Key | Value | Context | Component |
+|---|---|---|---|
+| <suggested_snake_case_key> | "<string>" | <e.g. "Field label", "Placeholder", "Error message", "Picker option"> | <dot-path in hierarchy> |
 ```
 
 ### Field Contracts
@@ -59,7 +80,8 @@ overlays: [<figma-uistack-*.md filename>, ...]   # only present when type: scree
 | `type`, `parent_screen`, `overlays` | pres-planner, ui-worker | Distinguishes standalone screens from overlay components (dialogs, filters, bottom sheets) and links them to their host screen |
 | `Component Hierarchy` | pres-planner, ui-worker | Single merged tree across all states — primary structural reference for Screen/Component artifacts |
 | `State Model`, `User Interactions` | pres-planner, feature-worker | Source for StateHolder state fields and event cases |
-| `Design Tokens` | ui-worker | Token mapping during UI build |
+| `Design Tokens` (Colors, Typography, Spacing/Layout) | ui-worker | Token mapping and layout constraints during UI build |
+| `Localizations` | feature-worker, l10n tooling | Static string catalog — key names feed directly into ARB/strings files |
 
 ---
 
@@ -75,6 +97,7 @@ groups:
   - screen: <cluster name derived from visual structure>
     type: screen | overlay
     parent_screen: <ScreenName>   # only present when type: overlay
+    also_shown_from: [<ScreenName>, ...]   # only present when type: overlay and invoked from more than one screen
     uistack_file: <abs-path-to-figma-uistack-*.md>
     states:
       - state: <inferred state name>
