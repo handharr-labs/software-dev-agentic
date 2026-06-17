@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.30.0] — 2026-06-17
+
+### Added
+- `developer-breakdown-requirement` — default breakdown strategy (state management → shared components → per-screen → infrastructure) with user confirmation step before worker runs
+
+### Changed
+- `developer-breakdown-prd` renamed to `developer-breakdown-requirement` — accepts any requirement source (PRD, Figma UI stack, etc.), not just PRDs
+- `developer-breakdown-requirement` — step numbering updated (0–6) to accommodate new strategy confirmation step
+- `developer-prd-breakdown-worker` now receives `breakdown_strategy` parameter from the orchestrator
+
 ## [12.29.0] — 2026-06-17
 
 ### Added
