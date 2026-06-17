@@ -1,6 +1,6 @@
 ---
 name: developer-prd-breakdown-worker
-description: Analyzes a PRD and optional Figma context to propose a ticket breakdown — fetches PRD from Confluence or uses pasted text, reads Figma design context, then produces a structured list of Jira-ready tickets with type, story points, description, and acceptance criteria. Invoked only by /developer-breakdown-prd.
+description: Analyzes a PRD and optional Figma context to propose a ticket breakdown — fetches PRD from Confluence or uses pasted text, reads Figma design context, then produces a structured list of Jira-ready tickets with type, story points, description, and acceptance criteria. Invoked only by /developer-breakdown-requirement.
 model: sonnet
 tools: Read, mcp__claude_ai_Atlassian__getConfluencePage, mcp__Figma_MCP__get_design_context
 ---

@@ -1,9 +1,9 @@
 # Ticket Format
 
 > Author: Puras Handharmahua · 2026-06-15
-> Related: developer-prd-breakdown-worker.md (proposal writer), developer-ticket-write-worker.md (file writer), developer-breakdown-prd/SKILL.md (parser + orchestrator)
+> Related: developer-prd-breakdown-worker.md (proposal writer), developer-ticket-write-worker.md (file writer), developer-breakdown-requirement/SKILL.md (parser + orchestrator)
 
-Single source of truth for two schemas used by the `/developer-breakdown-prd` flow:
+Single source of truth for two schemas used by the `/developer-breakdown-requirement` flow:
 1. `## Breakdown Proposal` — returned by `developer-prd-breakdown-worker`, parsed by the SKILL
 2. `TICKET-NNN.md` — written by `developer-ticket-write-worker` to the run directory
 

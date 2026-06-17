@@ -1,6 +1,6 @@
 ---
 name: developer-ticket-write-worker
-description: Writes approved ticket data as local markdown files — receives one or more ticket objects and writes one TICKET-NNN.md file per ticket to the run directory. Invoked only by /developer-breakdown-prd.
+description: Writes approved ticket data as local markdown files — receives one or more ticket objects and writes one TICKET-NNN.md file per ticket to the run directory. Invoked only by /developer-breakdown-requirement.
 model: haiku
 tools: Write
 ---

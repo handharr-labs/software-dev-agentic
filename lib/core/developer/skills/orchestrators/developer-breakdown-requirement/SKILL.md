@@ -1,6 +1,6 @@
 ---
-name: developer-breakdown-prd
-description: Break down a PRD into Jira tickets — fetches PRD and optional Figma context, proposes a ticket breakdown for discussion and confirmation, writes approved tickets as local markdown files, and optionally pushes to Jira.
+name: developer-breakdown-requirement
+description: Break down a requirement into Jira tickets — accepts PRD, Figma UI stack, or other requirement sources, proposes a ticket breakdown for discussion and confirmation, writes approved tickets as local markdown files, and optionally pushes to Jira.
 user-invocable: true
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, WebFetch
@@ -36,7 +36,37 @@ mkdir -p "$run_dir/tickets"
 echo "$run_dir"
 ```
 
-## Step 2 — Analyze and Propose
+## Step 2 — Confirm Breakdown Strategy
+
+Present the default strategy and ask the user to confirm or override before the worker begins.
+
+Show inline:
+
+```
+Default breakdown strategy:
+
+ 1. State management — 1 ticket for all BLoC / ViewModel / Presenter + domain models, state classes, events
+ 2. Shared components — 1 ticket for all reusable widgets, design-system wrappers, cross-screen UI pieces
+ 3. Screens — 1 ticket per screen (UI, state-holder wiring, screen-specific components)
+ 4. Infrastructure — 1 ticket each for routing/DI setup, native iOS integration, native Android integration, etc.
+```
+
+Call `AskUserQuestion`:
+
+```
+question    : "Use this breakdown strategy?"
+header      : "Strategy"
+multiSelect : false
+options     :
+  - label: "Use default",  description: "Apply the strategy above"
+  - label: "Custom",       description: "Describe your own grouping rules"
+```
+
+**Use default** → pass the strategy text to the worker as `breakdown_strategy`.
+
+**Custom** → ask the user to describe their preferred grouping. Pass their description as `breakdown_strategy` instead.
+
+## Step 3 — Analyze and Propose
 
 Spawn `developer-prd-breakdown-worker`:
 
@@ -44,12 +74,13 @@ Spawn `developer-prd-breakdown-worker`:
 > prd_source: \<prd_content if already fetched, otherwise raw prd_source\>
 > figma_url: \<figma_url or "(none)"\>
 > run_dir: \<run_dir\>
+> breakdown_strategy: \<confirmed or custom strategy from Step 2\>
 
 Wait for the worker to return a `## Breakdown Proposal` block. Extract:
 - `tickets` — ordered list: `{ index, type, title, story_points, description, acceptance_criteria }`
 - `summary` — N tickets | X SP string
 
-## Step 3 — Discuss
+## Step 4 — Discuss
 
 Show the proposal table inline before calling `AskUserQuestion`:
 
@@ -75,7 +106,7 @@ options     :
   - label: "Cancel",   description: "Stop without writing anything"
 ```
 
-**Approve** → proceed to Step 4.
+**Approve** → proceed to Step 5.
 
 **Cancel** → stop.
 
@@ -84,9 +115,9 @@ options     :
 > feedback: \<user's adjustment instructions\>
 > previous_proposal: \<the previous ## Breakdown Proposal block verbatim\>
 
-Return to top of Step 3 with the new proposal.
+Return to top of Step 4 with the new proposal.
 
-## Step 4 — Write Ticket Files
+## Step 5 — Write Ticket Files
 
 Read `ticket_count` from `tickets`.
 
@@ -114,7 +145,7 @@ Written <N> ticket files to <run_dir>/tickets/
   ...
 ```
 
-## Step 5 — Push to Jira (optional)
+## Step 6 — Push to Jira (optional)
 
 Call `AskUserQuestion`:
 
