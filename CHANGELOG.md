@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.33.1] — 2026-06-17
+
+### Added
+- Test scaffolding: `test-orchestrator-a` (skill, `disable-model-invocation: true`), `test-orchestrator-b` (skill, `disable-model-invocation: true`), `test-orchestrator-c` (skill, `disable-model-invocation: false`), `test-worker-double` and `test-worker-square` agents — for validating disable-model-invocation behavior and skill-to-skill Skill tool invocation
+
+### Changed
+- `developer-fetch-figma` — `disable-model-invocation` set to `false` to allow programmatic invocation via Skill tool from other orchestrator skills
+- `developer-breakdown-requirement` — Step 0c: adds `developer-fetch-figma` to `allowed-tools`; "fetch now" option executes the skill inline via Skill tool and extracts `figma_fetch_dir` from output
+- `developer-plan-feature` — Step 1.2: adds `developer-fetch-figma` to `allowed-tools`; "fetch now" option executes the skill inline via Skill tool and extracts `figma_fetch_dir` from output
+
 ## [12.33.0] — 2026-06-17
 
 ### Added
