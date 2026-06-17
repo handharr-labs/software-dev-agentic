@@ -119,13 +119,14 @@ Return to top of Step 4 with the new proposal.
 
 ## Step 5 — Write Ticket Files
 
-Read `ticket_count` from `tickets`.
+Read `ticket_count` from `tickets`. Extract `breakdown_level` from the `## Breakdown Proposal` header.
 
 **If `ticket_count` ≤ 8** — spawn 1 `developer-ticket-write-worker`:
 
 > run_dir: \<run_dir\>
 > parent_key: \<parent_key\>
 > prd_source: \<prd_source\>
+> breakdown_level: \<breakdown_level\>
 > tickets: \<full tickets list as JSON\>
 
 **If `ticket_count` > 8** — spawn one `developer-ticket-write-worker` per ticket in parallel (single Agent tool call):
@@ -133,6 +134,7 @@ Read `ticket_count` from `tickets`.
 > run_dir: \<run_dir\>
 > parent_key: \<parent_key\>
 > prd_source: \<prd_source\>
+> breakdown_level: \<breakdown_level\>
 > tickets: \<single-element JSON array containing this ticket\>
 
 Wait for all workers to confirm. Show written paths:

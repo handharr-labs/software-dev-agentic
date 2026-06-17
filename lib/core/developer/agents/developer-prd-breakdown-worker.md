@@ -20,6 +20,16 @@ Expect from the skill:
 - **feedback** — optional adjustment instructions from a previous proposal round
 - **previous_proposal** — optional previous `## Breakdown Proposal` block to revise
 
+## Phase 0 — Detect Breakdown Level
+
+Inspect the ticket types the PRD/scope implies:
+- If the work decomposes naturally into **Stories or Tasks** (screens, flows, infrastructure) → `breakdown_level = epic_to_tickets`. Parent is an Epic.
+- If the work decomposes naturally into **Sub-tasks** (atomic implementation units under one screen or flow) → `breakdown_level = ticket_to_subtasks`. Parent is a Story or Task.
+
+When ambiguous, use this heuristic: if the PRD/Figma covers multiple screens or independent flows → `epic_to_tickets`; if it covers a single screen or a single bounded feature → `ticket_to_subtasks`.
+
+Record `breakdown_level` — it gates what you synthesize in Phase 4 and must be emitted in the proposal header.
+
 ## Phase 1 — Fetch PRD
 
 **Already text:** use directly.
@@ -84,6 +94,25 @@ Analyze the PRD (and design context if available) to identify discrete, independ
 - **Task** — technical work with no direct user-facing output (API, data model, infra, config)
 - **Sub-task** — only if explicitly a component of a larger ticket in this breakdown
 
+**System Design synthesis (epic_to_tickets only):**
+
+For each Story or Task ticket, synthesize a `**System Design:**` block using the PRD and Figma context gathered in Phases 1–2. Derive:
+- **Feature Context** — what this screen/feature does and why (1–2 sentences from PRD goals)
+- **Use Cases** — infer names from PRD verbs + nouns (e.g. "Get", "Create", "Delete" + entity); list each with a one-line purpose
+- **API Design** — infer endpoints from PRD API section or user stories; if not explicit, derive from use case names (e.g. `GetFormalEducationDetail` → `GET /formal-education/{id}`)
+- **Data Model** — infer domain entities and DTOs from PRD data fields, Figma detail fields, and form fields
+- **Architecture** — one-line layer chain: `ScreenClass / BlocClass → UseCaseNames → RepositoryInterface → DataSource`
+- **Data Flows** — one per primary user action (load, submit, delete); trace from UI event through BLoC/VM → UseCase → Repo → API and back
+
+Keep each field concise — this is a reference, not prose documentation.
+
+**System Context synthesis (ticket_to_subtasks only):**
+
+For each Sub-task ticket, write a `**System Context:**` block:
+- `Parent system design: <parent_key>` — pointer to the parent's `## System Design`
+- `Relevant use cases:` — only the use cases this sub-task directly implements or calls
+- `Relevant flows:` — only the data flows this sub-task participates in
+
 ## Output
 
 Before writing output, read the format schema:
@@ -92,7 +121,7 @@ Before writing output, read the format schema:
 cat "$CLAUDE_PLUGIN_ROOT/reference/developer/ticket-format.md"
 ```
 
-Follow the `## Breakdown Proposal` schema from `$CLAUDE_PLUGIN_ROOT/reference/developer/ticket-format.md`.
+Follow the `## Breakdown Proposal` schema from `$CLAUDE_PLUGIN_ROOT/reference/developer/ticket-format.md`. Include `**Breakdown Level:** <epic_to_tickets|ticket_to_subtasks>` in the proposal header immediately after `**Summary:**`. Include `**System Design:**` or `**System Context:**` in each ticket's detail block per the level detected in Phase 0.
 
 **Description guidelines:** explain *what* is being built and *why* (user problem or technical need). Never restate the title. Source from PRD — do not invent requirements.
 
