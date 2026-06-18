@@ -3,7 +3,7 @@
 > Author: Puras Handharmahua · 2026-06-13
 > Related: developer-feature-convergence-strategist.md (writer), developer-feature-worker.md, developer-ui-worker.md (readers)
 
-Single source of truth for the `plan.md` / `context.md` schema used by the developer-plan-feature flow — written by `developer-feature-convergence-strategist` (synthesize mode), consumed by `developer-feature-worker` and `developer-ui-worker`.
+Single source of truth for the `plan.md` / `context.md` schema used by the developer-plan-build-feature flow — written by `developer-feature-convergence-strategist` (synthesize mode), consumed by `developer-feature-worker` and `developer-ui-worker`.
 
 ## Living Document Rules
 
@@ -66,7 +66,7 @@ batches:
 | Section | Required | Written by | Read by | Purpose |
 |---|---|---|---|---|
 | frontmatter (`feature`/`status`/`operations`/`separate-ui-layer`) | always | feature-strategist | feature-worker, ui-worker | Run-level metadata — drives layer selection and resume checkpoints |
-| frontmatter `batches` | always | feature-strategist | developer-plan-feature skill | Ordered execution plan — each batch is a unit of work for one worker call; `status` updated live; re-evaluate appends new batches continuing the id sequence |
+| frontmatter `batches` | always | feature-strategist | developer-plan-build-feature skill | Ordered execution plan — each batch is a unit of work for one worker call; `status` updated live; re-evaluate appends new batches continuing the id sequence |
 | `## Domain Layer` table | always | feature-strategist | feature-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |
 | `## Data Layer` table | always | feature-strategist | feature-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |
 | `## Presentation Layer` table | always | feature-strategist | feature-worker | Per-artifact tracking — rows appended on re-evaluate; `done` rows never removed |

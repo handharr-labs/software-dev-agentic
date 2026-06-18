@@ -16,7 +16,7 @@ Create the StateHolder following the {platform} standard architecture, loaded fr
 2. **Confirm** use cases exist in domain layer before proceeding
 3. **Locate** path per `### Creation Order` in the impl doc
 4. **Create** the StateHolder file(s) following the implementation pattern
-5. **Produce** `.claude/agentic-state/developer/runs/<feature>/stateholder-contract.md` per `### StateHolder Contract`
+5. **Produce** `.claude/agentic-state/developer/feature-plans/<feature>/stateholder-contract.md` per `### StateHolder Contract`
 
 ## Rules
 

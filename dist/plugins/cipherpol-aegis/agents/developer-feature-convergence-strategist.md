@@ -171,7 +171,7 @@ git rev-parse --show-toplevel
 **Step 3 — Create run directory:**
 
 ```bash
-mkdir -p <root>/.claude/agentic-state/developer/runs/<feature>
+mkdir -p <root>/.claude/agentic-state/developer/feature-plans/<feature>
 ```
 
 **Step 4 — Write plan.md:**
@@ -193,7 +193,7 @@ cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
 - Write as `batches:` list in plan.md frontmatter — this is the execution plan the skill iterates
 
 ```
-<root>/.claude/agentic-state/developer/runs/<feature>/plan.md
+<root>/.claude/agentic-state/developer/feature-plans/<feature>/plan.md
 ```
 
 Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §plan.md Schema.
@@ -203,7 +203,7 @@ Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §plan.md S
 Before writing, check all planner findings blocks for a `### Figma Alignment` section. If found, extract the full table — it will be embedded in `## Figma Alignment` below. This must happen before writing, not after.
 
 ```
-<root>/.claude/agentic-state/developer/runs/<feature>/context.md
+<root>/.claude/agentic-state/developer/feature-plans/<feature>/context.md
 ```
 
 Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §context.md Schema.

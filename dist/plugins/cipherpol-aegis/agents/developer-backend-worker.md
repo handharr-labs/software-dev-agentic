@@ -134,4 +134,4 @@ After all artifacts are complete, call `developer-type-check` with:
 - <path>
 ```
 
-Suggest next step: run `/developer-plan-feature` to build the Presentation and UI layers.
+Suggest next step: run `/developer-build-feature` to build the Presentation and UI layers.
