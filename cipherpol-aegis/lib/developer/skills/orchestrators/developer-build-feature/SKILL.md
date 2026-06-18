@@ -1,6 +1,6 @@
 ---
 name: developer-build-feature
-description: Feature executor — accepts a run_dir or any plan/spec document. Spawns a scope agent to decompose work into batches, then executes each batch with one or more parallel workers (feature or ui). Self-contained; does not depend on developer-plan-feature. Does not run tests.
+description: Feature executor — accepts a run_dir or any plan/spec document. Spawns a scope agent to decompose work into batches, then executes each batch with one or more parallel workers (feature or ui). After execution, asks the user whether to generate tests via developer-test-worker (all files, specific files, or skip).
 user-invocable: true
 allowed-tools: Agent, Bash, Read
 ---
@@ -86,3 +86,25 @@ Prompt each worker:
 > focus: \<worker.focus\>
 
 **3b — Checkpoint loop.** If a worker returns `## Context Checkpoint`, re-spawn it immediately with the same prompt. Repeat until it returns `## Layers Complete` (feature-worker) or `## Feature Complete` (ui-worker).
+
+## Step 4 — Tests
+
+Scan `plan_doc` for a test section (e.g. a heading containing "test", "unit test", or a table listing test classes). If one exists, extract the test targets listed there — call this `spec_tests`.
+
+Ask the user:
+
+> Tests are next. What would you like to do?
+> 1. Write tests for all implemented files
+> 2. Write tests for specific files (I'll tell you which)
+> 3. Skip tests
+
+If `spec_tests` is non-empty, add a fourth option before option 3:
+> 3. Use the test plan from the spec (`<N>` test targets found)
+> 4. Skip tests
+
+- **Option 1** — collect every source file written across all batches and pass them all to `developer-test-worker`.
+- **Option 2** — ask the user to list the files, then pass that list to `developer-test-worker`.
+- **Option 3 (spec)** — pass `spec_tests` directly to `developer-test-worker`.
+- **Skip** — stop here.
+
+Invoke `developer-test-worker` with `target` set to the resolved file path(s).
