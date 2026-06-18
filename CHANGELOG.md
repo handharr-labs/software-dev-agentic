@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.0.0] — 2026-06-18
+
+### Changed
+- Restructured repo into module-based layout: `lib/core/` → `cipherpol-aegis/lib/`, `kms/` → `cipherpol-8-kms/`
+- Each plugin now owns its source and build config under `<module>/plugin/` — `lib/plugins/` removed
+- `lib/core/<persona>/` → `cipherpol-aegis/lib/<persona>/`; `lib/plugins/cipherpol-aegis/` → `cipherpol-aegis/plugin/`
+- `kms/` → `cipherpol-8-kms/`; `lib/plugins/cipherpol-8/` → `cipherpol-8-kms/plugin/`
+- `build-plugin.sh` discovery updated: scans `*/plugin/build.sh`; resolves plugin name from `build.config.json`
+- Reference dir flattened: `aegis/reference/aegis-saturn-jaygarcia/plan-format.md` → `aegis/reference/saturn-jaygarcia-plan-format.md`
+
+### Removed
+- `lib/ai-platforms/` — platform-specific layer removed (not needed currently)
+
 ## [12.38.0] — 2026-06-18
 
 ### Added
