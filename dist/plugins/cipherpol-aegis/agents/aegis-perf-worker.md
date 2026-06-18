@@ -1,5 +1,5 @@
 ---
-name: perf-worker
+name: aegis-perf-worker
 description: Analyze a Claude session's agentic performance — scores orchestration, worker/skill routing, token efficiency, workflow compliance, and one-shot rate. Writes a numeric-scored .md report to the downstream project's evaluation/ folder.
 model: sonnet
 user-invocable: false

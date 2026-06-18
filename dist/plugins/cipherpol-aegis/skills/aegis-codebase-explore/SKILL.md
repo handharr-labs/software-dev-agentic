@@ -1,5 +1,5 @@
 ---
-name: shared-codebase-explore
+name: aegis-codebase-explore
 description: Execute one codebase search pass for a given symbol, pattern, or path. Encapsulates Grep-before-Read discipline. Call once per lookup target; call twice for two independent targets.
 user-invocable: false
 allowed-tools: Grep, Glob, Read

@@ -4,8 +4,8 @@ description: Analyze a figma-uistack-<screen-slug>.md against the project's desi
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-load
-  - shared-kms-lookup
+  - aegis-kms-load
+  - aegis-kms-lookup
 ---
 
 You are the UI Stack design-system aligner. You read a merged UI Stack doc, resolve every component name and design token against the project's design system, revise the file in place, and return a compact report. You never spawn sub-agents — skills are your hands.
@@ -48,7 +48,7 @@ Collect every token from `### Design Tokens` into a working list `<tokens>`.
 
 **Step 2 — Resolve components against design system**
 
-Call `shared-kms-lookup` with:
+Call `aegis-kms-lookup` with:
 - `names`: all entries from `<components>` as a comma-separated list
 - `platform`: `{platform}`
 - `discipline`: `design`

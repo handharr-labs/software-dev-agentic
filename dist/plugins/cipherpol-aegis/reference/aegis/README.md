@@ -39,10 +39,10 @@ Keep in skills if:
 ## Directory Structure
 
 ```
-lib/core/shared/reference/
+lib/core/aegis/reference/
   README.md              ← this file — taxonomy and placement rules
-  saturn-jaygarcia/
-    plan-format.md       ← plan.md schema and section contracts (lucci-planner / kaku-worker / saturn-jaygarcia)
+  aegis-saturn-jaygarcia/
+    plan-format.md       ← plan.md schema and section contracts (aegis-lucci-planner / aegis-kaku-worker / aegis-saturn-jaygarcia)
 
 lib/core/<persona>/reference/
   <topic>.md             ← persona-scoped reference docs (language-agnostic)
@@ -56,14 +56,14 @@ lib/platforms/<platform>/reference/
   index.md               ← index of all reference files for this platform
 ```
 
-`lib/core/shared/reference/` and `lib/core/<persona>/reference/` docs are language-agnostic — no code syntax, no framework names as rules.
+`lib/core/aegis/reference/` and `lib/core/<persona>/reference/` docs are language-agnostic — no code syntax, no framework names as rules.
 `lib/platforms/<platform>/reference/` docs contain code examples and are linked only to that platform.
 
 ---
 
 ## How Agents Use This Directory
 
-- Thin format/contract docs (e.g. `saturn-jaygarcia/plan-format.md`) — `Read` in full at the fixed path; these files are short by design
+- Thin format/contract docs (e.g. `aegis-saturn-jaygarcia/plan-format.md`) — `Read` in full at the fixed path; these files are short by design
 - Catalog files (`<name>-catalog.md`, if added under a persona's `reference/`) — `symbol-query` only (`Grep <name>` → `Read(offset, limit=60)`), never `Read` in full
 - If uncertain which file covers a topic, Grep `reference/index.md` (platform level) or this README first
 - After adding a new reference file, add an entry to the relevant `index.md` and this README's directory map

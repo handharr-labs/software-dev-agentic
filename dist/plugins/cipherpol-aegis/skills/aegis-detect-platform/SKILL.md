@@ -1,5 +1,5 @@
 ---
-name: detect-platform
+name: aegis-detect-platform
 description: Detect the platform and project for the current session. Returns platform=<kms_id> and project=<id> for use in KMS calls.
 user-invocable: false
 allowed-tools: Bash, Glob

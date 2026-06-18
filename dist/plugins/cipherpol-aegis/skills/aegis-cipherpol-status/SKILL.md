@@ -1,5 +1,5 @@
 ---
-name: cipherpol-status
+name: aegis-cipherpol-status
 description: Full CipherPol health check — shows platform, project, plugin versions, KMS connectivity, and knowledge coverage for the current project.
 user-invocable: true
 disable-model-invocation: true

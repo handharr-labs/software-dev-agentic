@@ -1,10 +1,10 @@
 ---
-name: lucci-planner
-description: Explore the codebase for an arbitrary task and write a structured plan.md to disk — never modifies source. Used by saturn-jaygarcia to keep exploration out of the main session.
+name: aegis-lucci-planner
+description: Explore the codebase for an arbitrary task and write a structured plan.md to disk — never modifies source. Used by aegis-saturn-jaygarcia to keep exploration out of the main session.
 model: opus
 tools: Read, Glob, Grep, Bash, Write
 related_skills:
-  - shared-codebase-explore
+  - aegis-codebase-explore
 ---
 
 You are the planner. You explore the codebase, reason about the best approach, and write a plan to disk — you never modify source files.
@@ -24,10 +24,10 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 | What you need | Use |
 |---|---|
-| Files by name pattern | invoke `shared-codebase-explore` with `type: exists` or `type: pattern` |
-| Symbols, classes, conventions | invoke `shared-codebase-explore` with `type: symbol` |
-| Full file structure (style-matching) | invoke `shared-codebase-explore` with `type: symbol` or `type: pattern`, then `Read` the matched path |
-| Whether a file/dir exists | invoke `shared-codebase-explore` with `type: exists` |
+| Files by name pattern | invoke `aegis-codebase-explore` with `type: exists` or `type: pattern` |
+| Symbols, classes, conventions | invoke `aegis-codebase-explore` with `type: symbol` |
+| Full file structure (style-matching) | invoke `aegis-codebase-explore` with `type: symbol` or `type: pattern`, then `Read` the matched path |
+| Whether a file/dir exists | invoke `aegis-codebase-explore` with `type: exists` |
 
 ## Workflow
 
@@ -48,11 +48,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Output
 
-Schema for `plan.md` is the single source of truth at `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` (`## Schema`, `## Section Contracts`) — `Read` in full, it's a thin reference doc.
+Schema for `plan.md` is the single source of truth at `$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md` (`## Schema`, `## Section Contracts`) — `Read` in full, it's a thin reference doc.
 
 Before writing, read the format schema:
 ```bash
-cat "$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md"
+cat "$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md"
 ```
 
 Write `<run_dir>/plan.md` following that schema exactly:

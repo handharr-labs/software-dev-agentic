@@ -27,7 +27,7 @@ This is the shared base parameter set. `scope` values and any extra layer-specif
 
 ## Search Protocol
 
-For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+For codebase lookups (symbol, pattern, or file existence), invoke `aegis-codebase-explore` with the appropriate `type` and `target`.
 
 ---
 

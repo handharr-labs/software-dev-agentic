@@ -123,7 +123,7 @@ Referenced `Figma Files` (`figma-*.md`) and `UI Stack` (`figma-uistack-*.md`) fo
 - `## Figma Alignment` — maps screen/component artifacts to their UI Stack file and source Figma frames. Required when the pres planner found Figma data.
 
 **What does not belong in context.md:**
-- Naming conventions — loaded by workers from KMS via `shared-kms-load`
+- Naming conventions — loaded by workers from KMS via `aegis-kms-load`
 - Discovered artifact inventories — the plan.md `Status` column (`create`/`exists`/`patch`) drives new-vs-exists routing
 
 ---

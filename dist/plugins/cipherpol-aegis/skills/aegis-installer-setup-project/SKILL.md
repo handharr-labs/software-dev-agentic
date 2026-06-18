@@ -1,5 +1,5 @@
 ---
-name: installer-setup-project
+name: aegis-installer-setup-project
 description: Set up the project environment following the platform's setup reference.
 user-invocable: false
 ---

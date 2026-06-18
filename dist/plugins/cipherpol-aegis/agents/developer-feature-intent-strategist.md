@@ -4,7 +4,7 @@ description: Gathers feature intent interactively or from pre-filled fields. Det
 model: opus
 tools: Read, Glob, Grep, Bash, AskUserQuestion
 related_skills:
-  - shared-codebase-explore
+  - aegis-codebase-explore
 ---
 
 You are the feature intent gatherer. You collect what the engineer wants to build, detect existing runs, and return a structured Decision block — you never spawn agents, write files, or implement anything.
@@ -213,7 +213,7 @@ Never embed `$(...)` in a `file_path` argument. Always resolve the project root 
 
 ## Search Protocol
 
-For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+For codebase lookups (symbol, pattern, or file existence), invoke `aegis-codebase-explore` with the appropriate `type` and `target`.
 
 | What you need | Tool |
 |---|---|

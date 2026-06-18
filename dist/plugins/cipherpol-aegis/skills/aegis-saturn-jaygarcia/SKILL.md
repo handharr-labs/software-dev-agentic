@@ -1,6 +1,6 @@
 ---
-name: saturn-jaygarcia
-description: Plan then build any task — lucci-planner (opus) explores and writes plan.md to disk, you review/discuss/approve it, then kaku-worker (sonnet) executes unattended. Cheap opusplan-style hand-off — exploration never pollutes the main session.
+name: aegis-saturn-jaygarcia
+description: Plan then build any task — aegis-lucci-planner (opus) explores and writes plan.md to disk, you review/discuss/approve it, then aegis-kaku-worker (sonnet) executes unattended. Cheap opusplan-style hand-off — exploration never pollutes the main session.
 user-invocable: true
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read
@@ -12,11 +12,11 @@ This skill is a pure router. Its only permitted direct operations:
 - `Bash` — preflight existence checks, run-dir creation, slug generation
 - `Read` — only `plan.md` from a run directory
 - `AskUserQuestion` — resume routing and the approval gate
-- `Agent` — spawning `lucci-planner` and `kaku-worker`
+- `Agent` — spawning `aegis-lucci-planner` and `aegis-kaku-worker`
 
-**`lucci-planner` and `kaku-worker` are agents — always spawn via the `Agent` tool. Never use the `Skill` tool for them.**
+**`aegis-lucci-planner` and `aegis-kaku-worker` are agents — always spawn via the `Agent` tool. Never use the `Skill` tool for them.**
 
-Never explore the codebase, read source files, or write code directly — all of that is delegated to `lucci-planner` / `kaku-worker`.
+Never explore the codebase, read source files, or write code directly — all of that is delegated to `aegis-lucci-planner` / `aegis-kaku-worker`.
 
 ## Arguments
 
@@ -33,12 +33,12 @@ spec_path=$(echo "$ARGUMENTS" | grep -oE '[^ ]+\.md' | head -1)
 [ -n "$spec_path" ] && ls "$spec_path" 2>/dev/null || spec_path=""
 ```
 
-Carry `spec_path` into Step 1 — `lucci-planner` will receive it as a reference doc to read before planning.
+Carry `spec_path` into Step 1 — `aegis-lucci-planner` will receive it as a reference doc to read before planning.
 
 ## Preflight — Detect Existing Runs
 
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/saturn-jaygarcia" -maxdepth 2 -name "plan.md" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/aegis-saturn-jaygarcia" -maxdepth 2 -name "plan.md" 2>/dev/null
 ```
 
 If results found, `AskUserQuestion`:
@@ -65,10 +65,10 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
    else
      slug=$(echo "<task>" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//;s/-*$//' | cut -c1-50)
    fi
-   run_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/saturn-jaygarcia/$slug"
+   run_dir="$(git rev-parse --show-toplevel)/.claude/agentic-state/runs/aegis-saturn-jaygarcia/$slug"
    mkdir -p "$run_dir"
    ```
-2. Spawn `lucci-planner`:
+2. Spawn `aegis-lucci-planner`:
 
    ```
    mode: plan
@@ -83,11 +83,11 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
 
 ## Step 2 — Present Plan
 
-`plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/shared/saturn-jaygarcia/plan-format.md` — `## Open Questions` is the only section this skill branches on, and is omitted entirely when there's nothing to ask.
+`plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md` — `## Open Questions` is the only section this skill branches on, and is omitted entirely when there's nothing to ask.
 
 1. `Read` `<run_dir>/plan.md` and show its full content to the user.
 
-2. **If `## Open Questions` is present** — the planner couldn't proceed confidently on its own. **Do NOT resolve open questions yourself by reading source files or making assumptions — that violates the routing contract.** Ask the user about each item directly (conversationally, or `AskUserQuestion` if they're discrete choices) before offering the approval gate. Once answered, spawn `lucci-planner`:
+2. **If `## Open Questions` is present** — the planner couldn't proceed confidently on its own. **Do NOT resolve open questions yourself by reading source files or making assumptions — that violates the routing contract.** Ask the user about each item directly (conversationally, or `AskUserQuestion` if they're discrete choices) before offering the approval gate. Once answered, spawn `aegis-lucci-planner`:
    ```
    mode: revise
    run_dir: <run_dir>
@@ -109,7 +109,7 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
 
    - **Approve** → proceed to Step 3.
    - **Discuss** → converse with the user inline for as many turns as needed. When the discussion settles, ask the user whether the plan itself needs to change:
-     - **Plan needs updating** → spawn `lucci-planner`:
+     - **Plan needs updating** → spawn `aegis-lucci-planner`:
        ```
        mode: revise
        run_dir: <run_dir>
@@ -117,13 +117,13 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
        ```
        Wait for `## Plan Written`, then restart Step 2 from the top (re-read the updated plan).
      - **No change needed** (discussion was just clarification) → return to step 3's `AskUserQuestion` without re-spawning.
-   - **Cancel** → tell the user the plan is saved at `<run_dir>/plan.md` and can be resumed by re-running `/saturn-jaygarcia`. Stop.
+   - **Cancel** → tell the user the plan is saved at `<run_dir>/plan.md` and can be resumed by re-running `/aegis-saturn-jaygarcia`. Stop.
 
 ## Step 3 — Build
 
-**NEVER spawn `kaku-worker` without an explicit `Approve` selection from the user via `AskUserQuestion` in Step 2. Resolving open questions yourself is not approval.**
+**NEVER spawn `aegis-kaku-worker` without an explicit `Approve` selection from the user via `AskUserQuestion` in Step 2. Resolving open questions yourself is not approval.**
 
-Spawn `kaku-worker`:
+Spawn `aegis-kaku-worker`:
 
 ```
 plan_path: <run_dir>/plan.md

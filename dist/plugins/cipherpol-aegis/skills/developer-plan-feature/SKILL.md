@@ -2,7 +2,6 @@
 name: developer-plan-feature
 description: Plan a feature — resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-intent-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), and shows an interactive approval prompt. On approval, writes plan.md with status: approved and outputs a ## Plan Output block with run_dir. Usable standalone or invoked by /developer-plan-build-feature.
 user-invocable: true
-disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch, developer-fetch-figma
 ---
 

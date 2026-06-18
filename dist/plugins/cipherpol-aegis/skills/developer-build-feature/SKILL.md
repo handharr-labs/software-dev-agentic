@@ -2,7 +2,6 @@
 name: developer-build-feature
 description: Feature executor — accepts a run_dir or any plan/spec document. Spawns a scope agent to decompose work into batches, then executes each batch with one or more parallel workers (feature or ui). Self-contained; does not depend on developer-plan-feature. Does not run tests.
 user-invocable: true
-disable-model-invocation: true
 allowed-tools: Agent, Bash, Read
 ---
 

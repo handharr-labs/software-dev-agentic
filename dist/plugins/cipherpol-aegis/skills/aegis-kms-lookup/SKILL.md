@@ -1,5 +1,5 @@
 ---
-name: shared-kms-lookup
+name: aegis-kms-lookup
 description: Look up KMS nodes from free-text names. One kms_list scan builds the slug map; exact match is tried first per name; kms_query handles ambiguous or non-canonical names. Returns resolved content + unresolved flags. Call once per batch.
 user-invocable: false
 allowed-tools: mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query

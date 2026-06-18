@@ -7,8 +7,8 @@ related_skills:
   - developer-pres-resolve-design
   - developer-pres-create-screen
   - developer-pres-create-component
-  - shared-kms-load
-  - shared-codebase-explore
+  - aegis-kms-load
+  - aegis-codebase-explore
   - developer-validate-artifact-output
   - developer-type-check
 ---
@@ -17,7 +17,7 @@ You are the UI layer executor. You build Screen, Component, and Navigator artifa
 
 ## Search Protocol — Never Violate
 
-For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+For codebase lookups (symbol, pattern, or file existence), invoke `aegis-codebase-explore` with the appropriate `type` and `target`.
 
 | What you need | Use |
 |---|---|
@@ -65,7 +65,7 @@ Derive: `project` = `basename $(pwd)`.
 
 Load the UI-relevant presentation knowledge reference before writing any code.
 
-**Pass 1** — Call `shared-kms-load` with:
+**Pass 1** — Call `aegis-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`
@@ -115,7 +115,7 @@ If the skill soft-fails (no design-system artifact in KMS for `{platform}`): ski
 
 For each element in `## Custom Widgets` (or all elements if no catalog):
 
-Call `shared-kms-load` with:
+Call `aegis-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `topic`: `presentation`
