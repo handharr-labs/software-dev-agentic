@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-commit hook — auto-updates <!-- N --> section counts in staged reference docs.
-# Only fires when .md files under lib/*/reference/ are staged. Silent otherwise.
+# Only fires when .md files under cipherpol-aegis/*/reference/ are staged. Silent otherwise.
 #
 # Install:
 #   cp scripts/hooks/pre-commit .git/hooks/pre-commit
@@ -11,9 +11,9 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 UPDATER="$REPO_ROOT/scripts/update-ref-counts.sh"
 
-# ── Scope: only staged .md files under lib/*/reference/ ──────────────────────
+# ── Scope: only staged .md files under cipherpol-aegis/*/reference/ ──────────
 staged=$(git diff --cached --name-only \
-  | grep -E '^lib/.*/reference/.*\.md$' || true)
+  | grep -E '^cipherpol-aegis/.*/reference/.*\.md$' || true)
 
 [ -z "$staged" ] && exit 0
 

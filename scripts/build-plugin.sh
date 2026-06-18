@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # build-plugin.sh
-# Discovers plugins in lib/plugins/ and runs each plugin's build.sh.
+# Discovers plugins via */plugin/build.sh in each module dir and runs them.
 #
 # Usage:
 #   scripts/build-plugin.sh                  # build all plugins
@@ -27,9 +27,10 @@ done
 # ── Discover and run ──────────────────────────────────────────────────────────
 
 ran=0
-for build_script in "$SUBMODULE/lib/plugins"/*/build.sh; do
+for build_script in "$SUBMODULE"/*/plugin/build.sh; do
   [ -f "$build_script" ] || continue
-  plugin_name="$(basename "$(dirname "$build_script")")"
+  plugin_dir="$(dirname "$build_script")"
+  plugin_name="$(python3 -c "import json; print(json.load(open('$plugin_dir/build.config.json'))['name'])" 2>/dev/null || basename "$(dirname "$plugin_dir")")"
   if [ -n "$TARGET" ] && [ "$plugin_name" != "$TARGET" ]; then
     continue
   fi
@@ -40,10 +41,11 @@ done
 
 if [ "$ran" -eq 0 ]; then
   if [ -n "$TARGET" ]; then
-    echo "Error: no plugin named '$TARGET' found in lib/plugins/"
-    echo "Available: $(ls "$SUBMODULE/lib/plugins/" | tr '\n' ' ')"
+    echo "Error: no plugin named '$TARGET' found"
+    available=$(for d in "$SUBMODULE"/*/plugin/build.config.json; do python3 -c "import json; print(json.load(open('$d'))['name'])" 2>/dev/null; done | tr '\n' ' ')
+    echo "Available: $available"
   else
-    echo "Error: no plugins found in lib/plugins/"
+    echo "Error: no plugins found (expected */plugin/build.sh)"
   fi
   exit 1
 fi

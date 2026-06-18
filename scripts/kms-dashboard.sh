@@ -31,7 +31,7 @@ fi
 
 if ! python3 -c "import chromadb, yaml" 2>/dev/null; then
   echo "Installing KMS dependencies (one-time)..."
-  pip3 install -q -r "$REPO_ROOT/kms/requirements.txt" \
+  pip3 install -q -r "$REPO_ROOT/cipherpol-8-kms/requirements.txt" \
     || { echo "ERROR: pip install failed. Run: pip install chromadb PyYAML"; exit 1; }
 fi
 

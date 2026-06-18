@@ -6,7 +6,7 @@
 # Agents use this as: Read(file, offset=heading_line, limit=N)
 #
 # Usage:
-#   scripts/update-ref-counts.sh              — all reference docs under lib/
+#   scripts/update-ref-counts.sh              — all reference docs under cipherpol-aegis/
 #   scripts/update-ref-counts.sh <file> ...   — specific files only
 #
 # Called automatically by scripts/hooks/pre-commit for staged reference files.
@@ -67,12 +67,12 @@ if [ $# -gt 0 ]; then
   exit 0
 fi
 
-# ── All reference docs under lib/ ────────────────────────────────────────────
+# ── All reference docs under cipherpol-aegis/ ────────────────────────────────
 total=0
 while IFS= read -r -d '' file; do
   update_file "$file"
   total=$((total + 1))
-done < <(find lib -path "*/reference/*.md" -print0 | sort -z)
+done < <(find cipherpol-aegis -path "*/reference/*.md" -print0 | sort -z)
 
 echo ""
 echo "$total reference file(s) processed."

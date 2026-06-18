@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # scripts/plugin-lib.sh
-# Shared build helpers sourced by lib/plugins/*/build.sh.
+# Shared build helpers sourced by */plugin/build.sh.
 # Expects $SUBMODULE, $VERSION, $PLUGIN_DIR, and $out to be set by the caller.
 
 # ── Config helpers ────────────────────────────────────────────────────────────
@@ -23,7 +23,7 @@ for p in d.get('include', {}).get('$1', []):
 # ── Standard include processors ───────────────────────────────────────────────
 
 # Copy all .md files matching include.agents patterns — flattened into out/agents/
-# Patterns may contain shell globs (e.g. lib/core/*/agents) — unquoted expansion handles them.
+# Patterns may contain shell globs (e.g. cipherpol-aegis/lib/*/agents) — unquoted expansion handles them.
 copy_agents() {
   mkdir -p "$out/agents"
   while IFS= read -r pattern; do
@@ -58,7 +58,7 @@ copy_skills() {
 }
 
 # Copy reference dirs matching include.reference patterns into out/reference/<persona>/
-# e.g. lib/core/aegis/reference/** -> out/reference/shared/**
+# e.g. cipherpol-aegis/lib/aegis/reference/** -> out/reference/aegis/**
 copy_reference() {
   mkdir -p "$out/reference"
   while IFS= read -r pattern; do
