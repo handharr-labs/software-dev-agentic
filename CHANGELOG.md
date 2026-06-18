@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.37.2] — 2026-06-18
+
+### Changed
+- `plan-format.md` — `plan.md` schema redesigned: added `## Steps` section (globally numbered, status-per-step, never pruned — full history preserved); `batches` frontmatter now uses `{ id, layer, label, steps: [ids], status }` instead of `artifacts: [names]`; `Progress` column removed from all layer tables (progress is now exclusively in `## Steps`); layer tables are permanent reference (rows never removed); Living Document Rules updated to match
+- `plan-format.md` — `context.md` frontmatter gains `raw_docs` field; removed stale `state.json` reference from "What does not belong"
+- `developer-feature-convergence-strategist` — batch planning now assigns sequential step IDs and references them in batches; extend mode appends new steps continuing sequence, never modifies existing steps; process-findings reads `Spawned planners:` from input instead of state.json (planning rounds tracking removed)
+- `developer-plan-feature` skill — `raw_docs` moved from state.json to session-local variable derived from args; convergence strategist writes it to context.md frontmatter during synthesis; resume path reads `raw_docs` from context.md frontmatter and `completed_artifacts` from plan.md `batches`; `spawned_planners` passed inline to process-findings
+- `developer-build-feature` skill — `raw_docs` source changed from state.json to context.md frontmatter; batch artifact resolution changed from `batch.artifacts` to step IDs looked up in `## Steps`; worker prompts updated to reference `## Steps` for skip/resume logic; Step 3 unit test targets derived from `## Steps` by layer instead of state.json paths
+
 ## [12.37.1] — 2026-06-18
 
 ### Changed
