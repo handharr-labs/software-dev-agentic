@@ -58,7 +58,7 @@ copy_skills() {
 }
 
 # Copy reference dirs matching include.reference patterns into out/reference/<persona>/
-# e.g. lib/core/shared/reference/** -> out/reference/shared/**
+# e.g. lib/core/aegis/reference/** -> out/reference/shared/**
 copy_reference() {
   mkdir -p "$out/reference"
   while IFS= read -r pattern; do

@@ -58,7 +58,7 @@ Both terms describe persistent facts an agent loads — but via different mechan
 | | **Reference** | **Knowledge** |
 |---|---|---|
 | What | Extracted format, contract, or template reused across agents/skills | Documentation, theory, patterns, project/platform context |
-| Lives in | `lib/core/<persona>/reference/` (flat) or `lib/core/shared/reference/<topic>/` (topic-grouped) | `kms/knowledge-sources/{universal,platform,projects}/` |
+| Lives in | `lib/core/<persona>/reference/` (flat) or `lib/core/aegis/reference/<topic>/` (topic-grouped) | `kms/knowledge-sources/{universal,platform,projects}/` |
 | Loaded via | `Read` in full (thin docs) or `symbol-query` (catalogs) | `kms_list` → `kms_fetch`/`kms_query` |
 | Ships as | Plugin-bundled files at `reference/<persona-or-shared>/...` | Pre-seeded ChromaDB |
 | Platform/project scope | Always agnostic | `scope=universal` is agnostic; `scope=platform`/`scope=project` are explicitly scoped |

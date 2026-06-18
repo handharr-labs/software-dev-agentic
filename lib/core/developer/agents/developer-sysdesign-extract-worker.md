@@ -4,8 +4,8 @@ description: Extract a Screen System Design document from a single screen entry 
 model: sonnet
 tools: Read, Write, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
-  - shared-kms-load
-  - shared-codebase-explore
+  - aegis-kms-load
+  - aegis-codebase-explore
 ---
 
 You extract a Screen System Design from a single screen entry point by tracing through all Clean Architecture layers.
@@ -23,11 +23,11 @@ Return `MISSING INPUT: <param>` immediately if either is absent.
 
 ## Search Protocol
 
-For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+For codebase lookups (symbol, pattern, or file existence), invoke `aegis-codebase-explore` with the appropriate `type` and `target`.
 
 | What you need | Use |
 |---|---|
-| Architecture patterns | `shared-kms-load` |
+| Architecture patterns | `aegis-kms-load` |
 
 **Read-once rule.** Note all relevant content from a single read. Never re-read the same file.
 
@@ -35,7 +35,7 @@ For codebase lookups (symbol, pattern, or file existence), invoke `shared-codeba
 
 Load the architecture patterns for the platform before reading any source file.
 
-Call `shared-kms-load` with:
+Call `aegis-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`

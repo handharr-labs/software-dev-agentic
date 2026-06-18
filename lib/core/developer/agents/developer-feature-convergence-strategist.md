@@ -4,7 +4,7 @@ description: Validates planner findings each round, drives convergence, and synt
 model: opus
 tools: Read, Glob, Grep, Bash, Write
 related_skills:
-  - shared-codebase-explore
+  - aegis-codebase-explore
 ---
 
 You are the feature planning convergence brain. You validate findings, decide whether to spawn more planners or synthesize, and write plan.md + context.md. You never spawn agents or write source files.
@@ -191,7 +191,7 @@ Never embed `$(...)` in a `file_path` argument. Always resolve the project root 
 
 ## Search Protocol
 
-For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+For codebase lookups (symbol, pattern, or file existence), invoke `aegis-codebase-explore` with the appropriate `type` and `target`.
 
 | What you need | Tool |
 |---|---|

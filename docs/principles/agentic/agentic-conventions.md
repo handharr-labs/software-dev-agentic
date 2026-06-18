@@ -38,7 +38,7 @@ The sections below define each component in detail.
 
 ## Component Types
 
-> For the concrete directory layout referenced below (`lib/core/<persona>/`, `lib/core/shared/`, `.claude/`, etc.), see [agentic-directory-structure.md](agentic-directory-structure.md).
+> For the concrete directory layout referenced below (`lib/core/<persona>/`, `lib/core/aegis/`, `.claude/`, etc.), see [agentic-directory-structure.md](agentic-directory-structure.md).
 
 ### Persona
 
@@ -156,7 +156,7 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 | Project | ✓ | ✓ |
 | Repo | ✓ | ✓ |
 
-> **Toolkit O-skills** are user-facing entry points (`developer-build-feature`, `debugger-debug`). **Toolkit P-skills** are platform-agnostic procedures called by agents — they come in two flavors: persona-scoped (`lib/core/<persona>/skills/procedures/`, e.g. `developer-pres-resolve-design`) and cross-persona shared (`lib/core/shared/skills/procedures/`, e.g. `shared-kms-retrieve`, `detect-platform`). Platform-contract skills are always Type P — called by workers programmatically, never by users directly.
+> **Toolkit O-skills** are user-facing entry points (`developer-build-feature`, `debugger-debug`). **Toolkit P-skills** are platform-agnostic procedures called by agents — they come in two flavors: persona-scoped (`lib/core/<persona>/skills/procedures/`, e.g. `developer-pres-resolve-design`) and cross-persona shared (`lib/core/aegis/skills/procedures/`, e.g. `shared-kms-retrieve`, `detect-platform`). Platform-contract skills are always Type P — called by workers programmatically, never by users directly.
 
 ---
 
@@ -175,10 +175,10 @@ Not all combinations are meaningful. Use this as the decision gate when adding a
 
 | Scope | Location | Ships downstream? |
 |---|---|---|
-| **Shared reference** | `lib/core/shared/reference/` | Yes — all personas, all platforms. Cross-cutting facts/contracts shared by multiple agents. Flat by default; use a topic subfolder only when multiple related docs warrant grouping (e.g. `saturn-jaygarcia/plan-format.md`). Bundled to `reference/shared/` in the plugin. |
+| **Shared reference** | `lib/core/aegis/reference/` | Yes — all personas, all platforms. Cross-cutting facts/contracts shared by multiple agents. Flat by default; use a topic subfolder only when multiple related docs warrant grouping (e.g. `saturn-jaygarcia/plan-format.md`). Bundled to `reference/shared/` in the plugin. |
 | **Persona reference** | `lib/core/<persona>/reference/` | Yes — all platforms. Flat — no topic subfolders. Contains `<name>-catalog.md` (queryable symbol/component inventory — agents `symbol-query` these, never load in full) and cross-agent schema/contract docs (e.g. `plan-format.md`, `findings-format.md`). Bundled flat to `reference/<persona>/` in the plugin. |
 
-> **Runtime path from agent body:** `copy_reference` (in `scripts/plugin-lib.sh`) bundles `lib/core/<persona>/reference/**` (including `lib/core/shared/reference/`) into `dist/plugins/<name>/reference/<persona-or-shared>/**` at build time, preserving whatever structure exists under each `reference/` dir — flat for persona reference, topic-grouped for shared reference. Agents must reference these docs as `$CLAUDE_PLUGIN_ROOT/reference/<persona-or-shared>/<path>` — never `.claude/reference/...` (that path resolves against the downstream project root, not the plugin cache).
+> **Runtime path from agent body:** `copy_reference` (in `scripts/plugin-lib.sh`) bundles `lib/core/<persona>/reference/**` (including `lib/core/aegis/reference/`) into `dist/plugins/<name>/reference/<persona-or-shared>/**` at build time, preserving whatever structure exists under each `reference/` dir — flat for persona reference, topic-grouped for shared reference. Agents must reference these docs as `$CLAUDE_PLUGIN_ROOT/reference/<persona-or-shared>/<path>` — never `.claude/reference/...` (that path resolves against the downstream project root, not the plugin cache).
 
 ---
 
@@ -381,7 +381,7 @@ Agents load their procedure skills at startup via the `skills` field — full sk
 
 **Extract identical workflow steps to a procedure skill:**
 
-When the same procedural sequence appears verbatim (or near-verbatim) across multiple agent bodies, extract it to a P-skill and have each agent declare params instead of embedding steps. Scope the skill to the narrowest location that covers all callers: persona-scoped (`lib/core/<persona>/skills/procedures/`) if all callers are in one persona; shared (`lib/core/shared/skills/procedures/`) if callers span personas. The skill owns the protocol; the agent owns the params.
+When the same procedural sequence appears verbatim (or near-verbatim) across multiple agent bodies, extract it to a P-skill and have each agent declare params instead of embedding steps. Scope the skill to the narrowest location that covers all callers: persona-scoped (`lib/core/<persona>/skills/procedures/`) if all callers are in one persona; shared (`lib/core/aegis/skills/procedures/`) if callers span personas. The skill owns the protocol; the agent owns the params.
 
 This applies to any repeated sequence — not just artifact creation. Common candidates: retrieval protocols, validation tails, output formatting steps.
 
@@ -435,7 +435,7 @@ All KMS terms (`scope`, `platform`, `project`, `discipline`, `artifact`, `topic`
 
 **Agent knowledge loading — canonical flow (always both KMS + codebase):**
 
-Agents follow the `shared-kms-retrieve` skill protocol (`lib/core/shared/skills/procedures/shared-kms-retrieve/SKILL.md`). The skill owns the four-step protocol; agents declare only their params (`discipline`, `platform`, `artifact`, `topic`, `project`, `project_artifacts`, `codebase_grep`). Call it once per knowledge domain; call it twice for two disciplines.
+Agents follow the `shared-kms-retrieve` skill protocol (`lib/core/aegis/skills/procedures/shared-kms-retrieve/SKILL.md`). The skill owns the four-step protocol; agents declare only their params (`discipline`, `platform`, `artifact`, `topic`, `project`, `project_artifacts`, `codebase_grep`). Call it once per knowledge domain; call it twice for two disciplines.
 
 The four steps the skill executes:
 1. `kms_list(platform, discipline[, artifact, topic])` → scoped TOC; agent reasons over rows to identify needed patterns
@@ -497,7 +497,7 @@ One concept = one pattern key, everywhere. When adding a new node to the KMS, ch
 | New CLEAN-layer behaviour, same on all platforms | Core worker |
 | New orchestration flow, same on all platforms | Core strategist |
 | New code generation pattern for one platform | Platform-contract skill (same name, platform implements) → `lib/platforms/<platform>/skills/contract/` |
-| Procedural sequence reused across multiple agents, platform-agnostic | Shared toolkit P-skill → `lib/core/shared/skills/procedures/<name>/SKILL.md` (e.g. `shared-kms-retrieve`) |
+| Procedural sequence reused across multiple agents, platform-agnostic | Shared toolkit P-skill → `lib/core/aegis/skills/procedures/<name>/SKILL.md` (e.g. `shared-kms-retrieve`) |
 | Procedural sequence reused within one persona only | Persona toolkit P-skill → `lib/core/<persona>/skills/procedures/<name>/SKILL.md` (e.g. `developer-validate-artifact-output`) |
 | Workflow too platform-specific for any core agent | Platform agent + platform skill → `lib/platforms/<platform>/skills/` (flat) |
 | Architecture pattern knowledge (any topic) | `kms/knowledge-sources/engineering/{platform}-*.md` — theory + definition + code pattern per `##` section, seeded as KMS nodes. Project-specific deviations in `kms/knowledge-sources/projects/{name}/` |

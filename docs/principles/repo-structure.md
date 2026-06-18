@@ -78,7 +78,7 @@ software-dev-agentic/
 
 ### 1. All Agents and Skills in `lib/core/`
 
-**Decision:** Agents and skills are organized persona-first. Each persona owns a subdirectory at `lib/core/<persona>/` containing its `agents/`, `skills/`, and optionally `reference/`. Cross-cutting agents and skills (kaku, lucci, perf, cipherpol-status, etc.) live in `lib/core/shared/`. All are platform-agnostic — they contain no platform-specific paths, syntax, or framework references.
+**Decision:** Agents and skills are organized persona-first. Each persona owns a subdirectory at `lib/core/<persona>/` containing its `agents/`, `skills/`, and optionally `reference/`. Cross-cutting agents and skills (kaku, lucci, perf, cipherpol-status, etc.) live in `lib/core/aegis/`. All are platform-agnostic — they contain no platform-specific paths, syntax, or framework references.
 
 Platform awareness is handled at runtime via two mechanisms:
 - **KMS** — agents load platform-specific conventions via `kms_list` → `kms_query` scoped to the current platform
@@ -135,7 +135,7 @@ Agents always query with explicit `platform` and `project` filters. The cascade 
 
 ### 4. Persona-First Layout in `lib/core/`
 
-**Decision:** Personas are top-level directories under `lib/core/`. Each persona owns its own `agents/`, `skills/`, and optionally `hooks/` and `reference/` subdirs. Cross-cutting components (kaku-worker, lucci-planner, perf-worker, cipherpol-status, etc.) live in `lib/core/shared/`.
+**Decision:** Personas are top-level directories under `lib/core/`. Each persona owns its own `agents/`, `skills/`, and optionally `hooks/` and `reference/` subdirs. Cross-cutting components (kaku-worker, lucci-planner, perf-worker, cipherpol-status, etc.) live in `lib/core/aegis/`.
 
 Adding a new persona: Create `lib/core/<persona>/agents/` and `lib/core/<persona>/skills/{orchestrators,procedures}/`. The `cipherpol-aegis` build uses `lib/core/*/agents` and `lib/core/*/skills/*/*/` glob patterns — it picks up any new persona automatically with no config change.
 
@@ -200,10 +200,10 @@ CipherPol enforces its own conventions through an automated internal review syst
 | Content | Location |
 |---|---|
 | Persona agents (strategists, planners, workers) | `lib/core/<persona>/agents/` |
-| Cross-cutting utility agents (kaku, lucci, perf) | `lib/core/shared/agents/` |
+| Cross-cutting utility agents (kaku, lucci, perf) | `lib/core/aegis/agents/` |
 | Internal tooling agents (not shipped) | `.claude/agents/` |
 | Persona skills (Type O / Type P) | `lib/core/<persona>/skills/{orchestrators,procedures}/<skill-name>/` |
-| Cross-cutting skills (cipherpol-status, etc.) | `lib/core/shared/skills/{orchestrators,procedures}/<skill-name>/` |
+| Cross-cutting skills (cipherpol-status, etc.) | `lib/core/aegis/skills/{orchestrators,procedures}/<skill-name>/` |
 | Internal tooling skills (not shipped) | `.claude/skills/<skill-name>/` |
 | Architecture + SDLC knowledge | `kms/knowledge-sources/{universal,platform,projects}/` |
 | Plugin definitions | `lib/plugins/<plugin-name>/` |

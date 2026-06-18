@@ -25,10 +25,10 @@ Current personas: `developer`, `debugger`, `auditor`, `qa`, `installer`. Each li
 
 ---
 
-## `lib/core/shared/` — Cross-Cutting
+## `lib/core/aegis/` — Cross-Cutting
 
 ```
-lib/core/shared/
+lib/core/aegis/
 ├── agents/             → kaku-worker, lucci-planner, perf-worker, etc. — no persona prefix
 ├── skills/
 │   ├── orchestrators/

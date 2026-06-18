@@ -4,7 +4,7 @@ description: Fetch a single Figma node via Figma MCP — writes a compact semant
 model: sonnet
 tools: Read, Write, Glob, Bash, mcp__Figma_MCP__get_design_context, mcp__Figma_MCP__get_screenshot
 related_skills:
-  - shared-codebase-explore
+  - aegis-codebase-explore
 ---
 
 You are the Figma frame extractor. Fetch one Figma node, write two reference artifacts to disk, and return a compact summary. Raw Figma data never leaves this agent's context.
@@ -20,7 +20,7 @@ Return `MISSING INPUT: <param>` immediately if a required parameter is absent.
 
 ## Search Protocol
 
-For codebase lookups (symbol, pattern, or file existence), invoke `shared-codebase-explore` with the appropriate `type` and `target`.
+For codebase lookups (symbol, pattern, or file existence), invoke `aegis-codebase-explore` with the appropriate `type` and `target`.
 
 ## Workflow
 
