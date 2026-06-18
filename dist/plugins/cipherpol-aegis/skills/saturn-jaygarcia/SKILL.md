@@ -18,6 +18,23 @@ This skill is a pure router. Its only permitted direct operations:
 
 Never explore the codebase, read source files, or write code directly — all of that is delegated to `lucci-planner` / `kaku-worker`.
 
+## Arguments
+
+`$ARGUMENTS` — optional. Accepts:
+- A plain task description: `"refactor the auth module"`
+- A spec file path (`.md`): `docs/specs/2026-06-18-feature-design.md`
+- Both: `docs/specs/2026-06-18-feature-design.md refactor the auth module`
+
+If a `.md` file path is present in `$ARGUMENTS`, extract it as `spec_path` and verify it exists:
+
+```bash
+# Extract .md path from arguments (first token ending in .md)
+spec_path=$(echo "$ARGUMENTS" | grep -oE '[^ ]+\.md' | head -1)
+[ -n "$spec_path" ] && ls "$spec_path" 2>/dev/null || spec_path=""
+```
+
+Carry `spec_path` into Step 1 — `lucci-planner` will receive it as a reference doc to read before planning.
+
 ## Preflight — Detect Existing Runs
 
 ```bash
@@ -57,6 +74,9 @@ options     : <one option per found plan.md, label = first line of "## Goal" sec
    mode: plan
    task: <the user's message verbatim>
    run_dir: <run_dir>
+   <if spec_path is non-empty:>
+   spec_path: <spec_path>
+   spec_instruction: Read the spec file at spec_path before planning. Use it as the source of truth for requirements, architecture decisions, and constraints. Do not re-derive what the spec already answers.
    ```
 
 3. Wait for `## Plan Written`. Proceed to Step 2.
