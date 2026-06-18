@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.36.1] — 2026-06-18
+
+### Added
+- `build-plugins` skill — rebuilds all plugins and pushes without cutting a release; includes KMS seed freshness check
+
 ## [12.36.0] — 2026-06-18
 
 ### Changed
