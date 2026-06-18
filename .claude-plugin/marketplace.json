@@ -11,14 +11,14 @@
       "source": "./dist/plugins/cipherpol-8",
       "description": "KMS knowledge MCP server for Clean Architecture projects",
       "category": "development-workflows",
-      "version": "12.34.0"
+      "version": "12.35.0"
     },
     {
       "name": "cipherpol-aegis",
       "source": "./dist/plugins/cipherpol-aegis",
       "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
       "category": "development-workflows",
-      "version": "12.34.0"
+      "version": "12.35.0"
     }
   ]
 }
