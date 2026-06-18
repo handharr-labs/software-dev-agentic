@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.35.0] — 2026-06-18
+
+### Added
+- `brainstorming` skill — interactive brainstorming session with a local visual companion server; bundles `start-server.sh`, `stop-server.sh`, `server.cjs`, `helper.js`, `frame-template.html`, `visual-companion.md`, and `spec-document-reviewer-prompt.md`; invokes execution skill directly instead of prompting user
+- `saturn-jaygarcia` skill — enhanced with brainstorming integration
+
 ## [12.34.0] — 2026-06-18
 
 ### Added
