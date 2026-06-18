@@ -124,21 +124,9 @@ Spawn `developer-feature-intent-strategist`:
 Wait for the strategist to return. Route based on the Decision block:
 
 - **`Decision: discard-partial`** → `rm -rf "<run_dir from decision>"`. Re-spawn strategist in `gather-intent` mode (same inputs, minus the discarded path from `found_plans`/`found_figma`).
-- **`Decision: resume-execution`** (any `plan_status`) → extract `run_dir` and `open_questions` from the Decision block. Set `update_mode = true`. Read completed artifacts and `raw_docs` from plan.md / context.md:
+- **`Decision: resume-execution`** (any `plan_status`) → extract `run_dir` and `open_questions` from the Decision block. Set `update_mode = true`. Read `raw_docs` from context.md:
 
   ```bash
-  python3 -c "
-  import re, sys
-  try:
-      import yaml
-      with open('<run_dir>/plan.md') as f:
-          m = re.match(r'^---\n(.*?)\n---', f.read(), re.DOTALL)
-      if m:
-          d = yaml.safe_load(m.group(1))
-          done = [a for b in d.get('batches', []) if b.get('status') == 'complete' for a in b.get('artifacts', [])]
-          print(','.join(done))
-  except: pass
-  " 2>/dev/null
   python3 -c "
   import re, sys
   try:
@@ -153,10 +141,10 @@ Wait for the strategist to return. Route based on the Decision block:
   " 2>/dev/null
   ```
 
-  Set `completed_artifacts` from the first script's output. Set `raw_docs` from the second script's output (empty list if context.md absent). Restore `figma_groups` from `<run_dir>/figma-fetch-dir.txt` → `figma-groups.json` if present.
+  Set `raw_docs` from the script's output (empty list if context.md absent). Restore `figma_groups` from `<run_dir>/figma-fetch-dir.txt` → `figma-groups.json` if present.
 
-  Proceed to Step 1.2 (Figma prompt), then Step 2 (convergence loop). The loop will run with `update_mode: true` — planners treat completed artifacts as locked and focus on `open_questions`.
-- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.2.
+  Proceed to Step 1.2 (Figma prompt), then Step 2 (convergence loop). The loop will run with `update_mode: true` — planners focus on `open_questions`.
+- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.2.
 
 ## Step 1.2 — Optional Figma Prompt
 
@@ -361,7 +349,6 @@ Pass to each planner: feature name, platform, module-path, run_dir (from strateg
 
 **If `update_mode` is true** (resume path with new intent), also pass:
 - `open_questions` — the user's stated issues from the Decision block, verbatim. Planners use these to focus on what needs fixing rather than doing a full greenfield sweep.
-- `completed_artifacts` — list of already-built artifact names. Planners treat these as locked: report `exists` status, do not propose recreating them.
 
 For `developer-pres-planner` specifically — if `figma_groups` was established in Step 1.5b or Step R0, also pass:
 - The full `figma_groups` structure (screen → states + file paths) — do NOT inline file contents
@@ -390,8 +377,6 @@ Spawn `developer-feature-convergence-strategist`:
 >
 > **existing_context:**
 > \<content of the archived context-vN.md — re-read from disk if not already in context\>
->
-> **completed_artifacts:** \<comma-separated list\>
 > \<end if\>
 >
 > findings_dir: <run_dir>/findings/
@@ -424,8 +409,6 @@ Spawn `developer-feature-convergence-strategist` with mode `synthesize`:
 >
 > **existing_context:**
 > \<content of current context.md — read from disk\>
->
-> **completed_artifacts:** \<comma-separated list\>
 > \<end if\>
 >
 > findings_dir: <run_dir>/findings/
@@ -449,12 +432,13 @@ options     :
   - label: "Discard",      description: "Cancel and delete this plan"
 ```
 
-**Approve** → Update `status` in `plan.md` frontmatter to `approved`. Output:
+**Approve** → Update `plan.md` frontmatter: set `status: approved` and add `context_doc: context.md` (relative path — points to the sibling context.md in the same run_dir). Output:
 
 ```
 ## Plan Output
 run_dir: <run_dir>
 status: approved
+context_doc: context.md
 ```
 
 Stop.
