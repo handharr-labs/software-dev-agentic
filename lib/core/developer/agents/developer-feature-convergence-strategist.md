@@ -150,11 +150,12 @@ Two variants — the entry skill signals which applies:
 
 - **New feature** (`update: false`) — write plan.md and context.md from scratch.
 - **Extend** (`update: true`) — extend plan.md and context.md in-place. Never replace or archive them. The entry skill passes `existing_plan`, `existing_context`, and `completed_artifacts` inline. Rules:
-  - Rows with `status: done` are permanent — never removed, never reset
-  - Append new artifact rows to the relevant layer table
+  - Remove artifact rows with `Progress: done` from the plan.md body before writing new content — completed work is tracked in the `batches` frontmatter; the body must show only pending/in-progress artifacts
+  - Append new artifact rows (pending only, `Progress: 0/1`) to the relevant layer tables
   - Append new batches to the `batches` frontmatter list, continuing the existing id sequence
-  - Update `context.md` by appending new discovered artifacts and key symbols; update paths/signatures only if they changed
+  - Update `context.md §Key Symbols` by appending new existing-artifact signatures; update paths/signatures only if they changed
   - Update `## Risks and Notes` with any new concerns
+  - Do not add `> Update round N` headers or historical commentary in plan.md — git history captures progression
 
 **Step 1 — Load layer contracts:**
 
