@@ -124,18 +124,36 @@ Spawn `developer-feature-intent-strategist`:
 Wait for the strategist to return. Route based on the Decision block:
 
 - **`Decision: discard-partial`** → `rm -rf "<run_dir from decision>"`. Re-spawn strategist in `gather-intent` mode (same inputs, minus the discarded path from `found_plans`/`found_figma`).
-- **`Decision: resume-execution`** (any `plan_status`) → extract `run_dir` and `open_questions` from the Decision block. Set `update_mode = true`. Read completed artifacts from state.json:
+- **`Decision: resume-execution`** (any `plan_status`) → extract `run_dir` and `open_questions` from the Decision block. Set `update_mode = true`. Read completed artifacts and `raw_docs` from plan.md / context.md:
 
   ```bash
   python3 -c "
-  import json, sys
-  d = json.load(open('<run_dir>/state.json'))
-  layers = [k for k in ('domain','data','pres','app','ui') if d.get(k)]
-  print(','.join(layers))
+  import re, sys
+  try:
+      import yaml
+      with open('<run_dir>/plan.md') as f:
+          m = re.match(r'^---\n(.*?)\n---', f.read(), re.DOTALL)
+      if m:
+          d = yaml.safe_load(m.group(1))
+          done = [a for b in d.get('batches', []) if b.get('status') == 'complete' for a in b.get('artifacts', [])]
+          print(','.join(done))
+  except: pass
+  " 2>/dev/null
+  python3 -c "
+  import re, sys
+  try:
+      import yaml
+      with open('<run_dir>/context.md') as f:
+          m = re.match(r'^---\n(.*?)\n---', f.read(), re.DOTALL)
+      if m:
+          d = yaml.safe_load(m.group(1))
+          for r in d.get('raw_docs', []):
+              print(r['path'] + ' — ' + r['description'])
+  except: pass
   " 2>/dev/null
   ```
 
-  Set `completed_artifacts` to the populated layer keys. Restore `figma_groups` from `<run_dir>/figma-fetch-dir.txt` → `figma-groups.json` if present.
+  Set `completed_artifacts` from the first script's output. Set `raw_docs` from the second script's output (empty list if context.md absent). Restore `figma_groups` from `<run_dir>/figma-fetch-dir.txt` → `figma-groups.json` if present.
 
   Proceed to Step 1.2 (Figma prompt), then Step 2 (convergence loop). The loop will run with `update_mode: true` — planners treat completed artifacts as locked and focus on `open_questions`.
 - **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.2.
@@ -303,14 +321,11 @@ Proceed to Step 2. Do not read widget files, grep the codebase, or write any cod
 
 Repeat until the strategist returns `Decision: converged` or `Decision: blocked`.
 
-**Reset state.json planning section and persist raw_docs** at the start of the first round (round = 1). Always overwrite planning — history from prior sessions is not carried forward. Always write `raw_docs` with the current session's `raw_paths` (empty list if none):
+**Derive `raw_docs`** at the start of the first round (round = 1) — held as a session-local variable. Skip if `raw_docs` was already restored from context.md in the resume path above.
 
 ```bash
 python3 - <<'EOF'
-import json, os, re
-path = "<run_dir>/state.json"
-d = json.load(open(path)) if os.path.exists(path) else {}
-d["planning"] = {"rounds": []}
+import os, re, json
 raw_docs = []
 for p in [<raw_paths as Python list, or []>]:
     desc = os.path.basename(p)
@@ -324,10 +339,11 @@ for p in [<raw_paths as Python list, or []>]:
     except:
         pass
     raw_docs.append({"path": p, "description": desc})
-d["raw_docs"] = raw_docs
-json.dump(d, open(path, "w"), indent=2)
+print(json.dumps(raw_docs))
 EOF
 ```
+
+Store the output as the session-local `raw_docs` list.
 
 ### 2a — Spawn planners for this round
 
@@ -340,7 +356,7 @@ From the current `Decision: spawn-planners` block, read the `spawn:` list. Spawn
 
 Pass to each planner: feature name, platform, module-path, run_dir (from strategist's gather-intent or review-resume output).
 
-**If `raw_docs` in state.json is non-empty**, also pass:
+**If `raw_docs` is non-empty**, also pass:
 - `raw_docs` — list of `{ path, description }` entries. Planners must `Read` each path for ground-truth details (endpoint paths, UI stack specs, etc.) before producing findings. Format when passing: one entry per line as `<path> — <description>`.
 
 **If `update_mode` is true** (resume path with new intent), also pass:
@@ -350,21 +366,11 @@ Pass to each planner: feature name, platform, module-path, run_dir (from strateg
 For `developer-pres-planner` specifically — if `figma_groups` was established in Step 1.5b or Step R0, also pass:
 - The full `figma_groups` structure (screen → states + file paths) — do NOT inline file contents
 
-**Record spawn in state.json** before dispatching — write the round entry with each planner set to `spawned`:
-
-```bash
-python3 - <<'EOF'
-import json, sys
-path = "<run_dir>/state.json"
-d = json.load(open(path))
-d["planning"]["rounds"].append({"round": <N>, "planners": {<layer>: "spawned", ...}})
-json.dump(d, open(path, "w"), indent=2)
-EOF
-```
+Track `spawned_planners` as a session-local list — the layers dispatched in this round (e.g. `[domain, data, pres, app]`). This is passed to the strategist in Step 2b.
 
 Wait for all planners in this round to complete.
 
-Proceed to 2b — the strategist validates findings and updates state.json.
+Proceed to 2b.
 
 ### 2b — Send findings to strategist
 
@@ -374,6 +380,7 @@ Spawn `developer-feature-convergence-strategist`:
 >
 > Round: <N>
 > Visited layers: <comma-separated list from visited set>
+> Spawned planners: <comma-separated list from spawned_planners>
 > run_dir: <run_dir>
 > update_mode: <true | false>
 >
@@ -405,6 +412,9 @@ Wait for the strategist's decision block.
 Spawn `developer-feature-convergence-strategist` with mode `synthesize`:
 
 > **Mode: synthesize**
+>
+> raw_docs:
+> \<list each as "\<path\> — \<description\>", or "(none)"\>
 >
 > \<if update_mode is true:\>
 > **update: true**
