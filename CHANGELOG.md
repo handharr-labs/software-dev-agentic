@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.37.1] — 2026-06-18
+
+### Changed
+- `plan-format.md` — `plan.md` body now shows only pending/in-progress artifact rows; done rows removed from body at synthesis time (tracked exclusively in `batches` frontmatter). Added "no history headers" rule (no `> Update round N` commentary). `context.md` schema drops `## Discovered Artifacts` and `## Naming Conventions` sections — paths are in `state.json`, naming conventions come from KMS
+- `developer-feature-convergence-strategist` — update_mode synthesis now prunes `Progress: done` rows from plan.md body before appending new pending rows; `context.md` update no longer writes discovered artifact inventories; `> Update round N` headers explicitly prohibited
+
 ## [12.37.0] — 2026-06-18
 
 ### Added
