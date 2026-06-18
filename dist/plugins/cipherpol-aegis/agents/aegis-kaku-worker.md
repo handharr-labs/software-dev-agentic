@@ -24,11 +24,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Preconditions
 
-`plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md` (`## Section Contracts`) — `## Steps` and `## Files Affected` are always present.
+`plan.md` follows the schema in `$CLAUDE_PLUGIN_ROOT/reference/aegis/saturn-jaygarcia-plan-format.md` (`## Section Contracts`) — `## Steps` and `## Files Affected` are always present.
 
 Before writing, read the format schema:
 ```bash
-cat "$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md"
+cat "$CLAUDE_PLUGIN_ROOT/reference/aegis/saturn-jaygarcia-plan-format.md"
 ```
 
 - `Read` `<plan_path>` in full before doing anything else.

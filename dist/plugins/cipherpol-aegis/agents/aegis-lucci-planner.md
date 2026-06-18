@@ -48,11 +48,11 @@ Required — return `MISSING INPUT: <param>` immediately if absent:
 
 ## Output
 
-Schema for `plan.md` is the single source of truth at `$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md` (`## Schema`, `## Section Contracts`) — `Read` in full, it's a thin reference doc.
+Schema for `plan.md` is the single source of truth at `$CLAUDE_PLUGIN_ROOT/reference/aegis/saturn-jaygarcia-plan-format.md` (`## Schema`, `## Section Contracts`) — `Read` in full, it's a thin reference doc.
 
 Before writing, read the format schema:
 ```bash
-cat "$CLAUDE_PLUGIN_ROOT/reference/shared/aegis-saturn-jaygarcia/plan-format.md"
+cat "$CLAUDE_PLUGIN_ROOT/reference/aegis/saturn-jaygarcia-plan-format.md"
 ```
 
 Write `<run_dir>/plan.md` following that schema exactly:
