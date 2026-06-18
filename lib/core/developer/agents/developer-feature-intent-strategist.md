@@ -169,7 +169,7 @@ For `spawn-planners` with `restore_findings: true` — also read `<figma_fetch_d
 
 Resolve `run_dir`:
 - Resume path → already set from Step G1
-- Fresh path → `<project_root>/.claude/agentic-state/developer/runs/<feature>`
+- Fresh path → `<project_root>/.claude/agentic-state/developer/feature-plans/<feature>`
 
 Return a `Decision: spawn-planners` block. Always include `run_dir`, `pending_figma_urls` (from `figma_urls` collected in Step G0, or empty list), and `restore_findings`. Include `update_mode: true`, `completed_artifacts`, `open_questions`, and `figma_groups` only on the resume path.
 

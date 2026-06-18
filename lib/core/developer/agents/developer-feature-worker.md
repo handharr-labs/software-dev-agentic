@@ -1,6 +1,6 @@
 ---
 name: developer-feature-worker
-description: Execute an approved feature plan for Domain, Data, Presentation (StateHolder), and App layers — reads plan.md, calls skills in layer order, validates each artifact inline. UI layer (Screen/Component/Navigator) is handled by developer-ui-worker after this worker completes. Invoked by /developer-plan-feature or /developer-build-feature skills after plan approval.
+description: Execute an approved feature plan for Domain, Data, Presentation (StateHolder), and App layers — reads plan.md, calls skills in layer order, validates each artifact inline. UI layer (Screen/Component/Navigator) is handled by developer-ui-worker after this worker completes. Invoked by /developer-build-feature after plan approval.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query
 related_skills:
@@ -49,13 +49,13 @@ cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
 
 Full plan.md/context.md schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md`.
 
-Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-plan-feature` or `/developer-build-feature`.
+Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-build-feature`.
 
 ## Pre-flight
 
 Plan and context are injected inline by the trigger skill. If no pre-loaded content is present, warn the user and stop:
 
-> This agent must be invoked via `/developer-plan-feature` or `/developer-build-feature` — not directly.
+> This agent must be invoked via `/developer-build-feature` — not directly.
 
 Extract from the inlined content:
 - `feature`, `platform`, `operations`, `separate-ui-layer` from plan.md frontmatter
@@ -91,7 +91,7 @@ Layer-specific knowledge references are loaded **per-artifact** immediately befo
 
 Check for a state file to resume from a previous run:
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>" -name "state.json" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/feature-plans/<feature>" -name "state.json" 2>/dev/null
 ```
 If found, read it and skip all artifacts listed in `completed_artifacts`.
 
@@ -175,7 +175,7 @@ Any mismatch found here must be corrected before moving to Validation. Never lea
 
 **StateHolder contract handoff:**
 After `pres-create-stateholder` completes, confirm the contract file was written:
-`.claude/agentic-state/developer/runs/<feature>/stateholder-contract.md`
+`.claude/agentic-state/developer/feature-plans/<feature>/stateholder-contract.md`
 The path is recorded in `state.json` under `stateholder_contract`. The calling skill passes this to `developer-ui-worker` — no action needed here.
 
 **App Layer — direct edits only (no skill):**
@@ -221,7 +221,7 @@ Then concatenate the result with the relative path before passing to Write or Ed
 
 ## State Tracking
 
-Write `.claude/agentic-state/developer/runs/<feature>/state.json` after each artifact completes:
+Write `.claude/agentic-state/developer/feature-plans/<feature>/state.json` after each artifact completes:
 
 ```json
 {

@@ -1,6 +1,6 @@
 ---
 name: developer-ui-worker
-description: Execute the UI layer of an approved feature plan — Screen, Component, and Navigator artifacts only. Spawned by /developer-plan-feature after developer-feature-worker emits Layers Complete. Starts with a clean context: loads plan.md, context.md, stateholder-contract, and Figma references fresh.
+description: Execute the UI layer of an approved feature plan — Screen, Component, and Navigator artifacts only. Spawned by /developer-build-feature after developer-feature-worker emits Layers Complete. Starts with a clean context: loads plan.md, context.md, stateholder-contract, and Figma references fresh.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__kms_query, mcp__Figma_MCP__get_design_context
 related_skills:
@@ -43,13 +43,13 @@ cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
 
 Full plan.md/context.md schema: `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md`.
 
-Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-plan-feature` or `/developer-build-feature`.
+Return `MISSING INPUT` and stop if plan.md content is absent — this agent must be invoked via `/developer-build-feature`.
 
 ## Pre-flight
 
 Plan, context, and stateholder-contract path are injected inline by the trigger skill. If no pre-loaded content is present, warn and stop:
 
-> This agent must be invoked via `/developer-plan-feature` or `/developer-build-feature` — not directly.
+> This agent must be invoked via `/developer-build-feature` — not directly.
 
 Extract from the inlined content:
 - `feature`, `platform`, `separate-ui-layer` from plan.md frontmatter
@@ -76,7 +76,7 @@ Fallback — if the tool is unavailable: proceed without pattern reference.
 
 Check state.json to resume from a previous run:
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>" -name "state.json" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/feature-plans/<feature>" -name "state.json" 2>/dev/null
 ```
 If found, read it and skip all artifacts already in `completed_artifacts`.
 
