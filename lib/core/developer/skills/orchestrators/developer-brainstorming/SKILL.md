@@ -28,7 +28,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit
+6. **Write design doc** — save to `.claude/agentic-state/developer/brainstorming/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — based on task context, recommend and route to `developer-plan-feature` (feature) or `saturn-jaygarcia` (general task) — see Transition section
@@ -101,8 +101,8 @@ digraph brainstorming {
 
 **Documentation:**
 
-- Write the validated design (spec) to `docs/specs/YYYY-MM-DD-<topic>-design.md`
-  - (User preferences for spec location override this default)
+- Resolve the project root: `git rev-parse --show-toplevel`
+- Write the validated design (spec) to `.claude/agentic-state/developer/brainstorming/YYYY-MM-DD-<topic>-design.md`
 - Commit the design document to git
 
 **Spec Self-Review:**
@@ -175,7 +175,7 @@ A browser-based companion for showing mockups, diagrams, and visual options duri
 If they agree to the companion, read the detailed guide before proceeding:
 
 ```bash
-cat "$CLAUDE_PLUGIN_ROOT/skills/brainstorming/visual-companion.md"
+cat "$CLAUDE_PLUGIN_ROOT/skills/developer-brainstorming/visual-companion.md"
 ```
 
 It contains the full server API, HTML templates, CSS classes, event format, and design tips.
@@ -183,7 +183,7 @@ It contains the full server API, HTML templates, CSS classes, event format, and 
 **Starting the server:**
 
 ```bash
-"$CLAUDE_PLUGIN_ROOT/skills/brainstorming/scripts/start-server.sh" --project-dir /path/to/project --open
+"$CLAUDE_PLUGIN_ROOT/skills/developer-brainstorming/scripts/start-server.sh" --project-dir /path/to/project --open
 ```
 
 Save the `screen_dir` and `state_dir` from the JSON response. Share the complete URL (including `?key=…`) with the user.
