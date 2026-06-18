@@ -1,6 +1,6 @@
 ---
 name: developer-plan-feature
-description: Plan then build a feature — optionally resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-intent-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), shows an interactive approval prompt, then executes with developer-feature-worker (Domain/Data/Pres/App) followed by developer-ui-worker (UI layer) on approval.
+description: Plan a feature — resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-intent-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), and shows an interactive approval prompt. On approval, writes plan.md with status: approved and outputs a ## Plan Output block with run_dir. Usable standalone or invoked by /developer-plan-build-feature.
 user-invocable: true
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch, developer-fetch-figma
@@ -23,8 +23,8 @@ Never read source files, search the codebase, or write code. All exploration, pl
 ## Preflight — Detect Existing Runs
 
 ```bash
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs" -maxdepth 2 -name "plan.md" 2>/dev/null
-find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs" -maxdepth 2 -name "figma-fetch-dir.txt" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/feature-plans" -maxdepth 2 -name "plan.md" 2>/dev/null
+find "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/feature-plans" -maxdepth 2 -name "figma-fetch-dir.txt" 2>/dev/null
 ```
 
 Collect results as `found_plans` and `found_figma` (`figma-fetch-dir.txt` paths). **Do not route yet.** Pass them to Step 1 so the strategist sees the user's intent alongside any existing runs before making a routing decision.
@@ -35,7 +35,7 @@ Collect results as `found_plans` and `found_figma` (`figma-fetch-dir.txt` paths)
 echo "$CIPHERPOL_THINKER_MODEL"
 ```
 
-If the value is `cost-saving`, every `Agent` spawn of `developer-feature-intent-strategist`, `developer-feature-convergence-strategist`, or a layer planner (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) anywhere in this skill must pass `model: sonnet` as an override. Otherwise (unset, `optimized`, or any other value), omit the `model` parameter — each agent uses its frontmatter default (`opus`). This does not apply to `developer-figma-fetch-worker`, `developer-feature-worker`, or `developer-ui-worker`.
+If the value is `cost-saving`, every `Agent` spawn of `developer-feature-intent-strategist`, `developer-feature-convergence-strategist`, or a layer planner (`developer-domain-planner`, `developer-data-planner`, `developer-pres-planner`, `developer-app-planner`) anywhere in this skill must pass `model: sonnet` as an override. Otherwise (unset, `optimized`, or any other value), omit the `model` parameter — each agent uses its frontmatter default (`opus`). This does not apply to `developer-figma-fetch-worker`.
 
 ## Step 0 — Classify Inputs
 
@@ -71,8 +71,7 @@ Route:
 
 | Disk state | Action |
 |---|---|
-| `plan.md` + `status: pending` | Set `run_dir = explicit_run_dir`. Proceed to Step 4 (Approve). |
-| `plan.md` + `status: approved` | Set `run_dir = explicit_run_dir`. Proceed to Step 5 (Execute — batch resume skips complete batches). |
+| `plan.md` exists (any status) | Set `run_dir = explicit_run_dir`. Proceed to Step 1 — pass `run_dir` to the strategist so it skips the run-selection prompt and goes straight to gathering updated intent. |
 | No `plan.md` + state.json has ≥ 1 populated artifact layer | Set `run_dir = explicit_run_dir`. Restore `visited` from all populated layer keys (`domain`, `data`, `pres`, `app`) in state.json. Proceed directly to Step 2b (call strategist `process-findings`). |
 | No `plan.md` + no populated artifact layers | Set `run_dir = explicit_run_dir`. Proceed to Step 1 — pass `run_dir` to the strategist so G1 skips the run-selection prompt and goes straight to G1b. |
 
@@ -125,20 +124,20 @@ Spawn `developer-feature-intent-strategist`:
 Wait for the strategist to return. Route based on the Decision block:
 
 - **`Decision: discard-partial`** → `rm -rf "<run_dir from decision>"`. Re-spawn strategist in `gather-intent` mode (same inputs, minus the discarded path from `found_plans`/`found_figma`).
-- **`Decision: resume-execution`** with `plan_status: pending` → extract `run_dir`. Proceed to Step 4 (Approve).
-- **`Decision: resume-execution`** with `plan_status: approved` → extract `run_dir`. Call `AskUserQuestion`:
+- **`Decision: resume-execution`** (any `plan_status`) → extract `run_dir` and `open_questions` from the Decision block. Set `update_mode = true`. Read completed artifacts from state.json:
 
-  ```
-  question    : "This plan was previously approved. How would you like to continue?"
-  header      : "Resume Intent"
-  multiSelect : false
-  options     :
-    - label: "Resume",      description: "Proceed to execution from where it left off"
-    - label: "Extend",       description: "Extend the plan with new or changed requirements — completed work is preserved"
+  ```bash
+  python3 -c "
+  import json, sys
+  d = json.load(open('<run_dir>/state.json'))
+  layers = [k for k in ('domain','data','pres','app','ui') if d.get(k)]
+  print(','.join(layers))
+  " 2>/dev/null
   ```
 
-  **Resume** → proceed to Step 5 (Execute).  
-  **Extend** → re-spawn strategist in `gather-intent` mode with the same inputs, passing `found_plans` and `found_figma` unchanged so the user can pick the run again or extend.
+  Set `completed_artifacts` to the populated layer keys. Restore `figma_groups` from `<run_dir>/figma-fetch-dir.txt` → `figma-groups.json` if present.
+
+  Proceed to Step 1.2 (Figma prompt), then Step 2 (convergence loop). The loop will run with `update_mode: true` — planners treat completed artifacts as locked and focus on `open_questions`.
 - **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `completed_artifacts`, `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.2.
 
 ## Step 1.2 — Optional Figma Prompt
@@ -435,142 +434,27 @@ question    : "What would you like to do with this plan?<if flagged items from S
 header      : "Plan"
 multiSelect : false
 options     :
-  - label: "Approve",      description: "Execute this plan with developer-feature-worker"
+  - label: "Approve",      description: "Mark plan as approved and hand off for execution"
   - label: "Discuss more", description: "I have questions or changes before this plan is finalized"
   - label: "Discard",      description: "Cancel and delete this plan"
 ```
 
-**Approve** → proceed to Step 5.
+**Approve** → Update `status` in `plan.md` frontmatter to `approved`. Output:
+
+```
+## Plan Output
+run_dir: <run_dir>
+status: approved
+```
+
+Stop.
 
 **Discuss more** → address the engineer's questions inline. If the plan itself needs revision, re-run Step 3 (re-synthesize) with the updated requirements added to the findings context. Then call `AskUserQuestion` again with the same three options.
 
 **Discard** → delete the most recent run directory:
 
 ```bash
-rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/runs/<feature>"
+rm -rf "$(git rev-parse --show-toplevel)/.claude/agentic-state/developer/feature-plans/<feature>"
 ```
 
 Stop.
-
-## Step 5 — Execute
-
-Update `status` in `plan.md` frontmatter from `pending` to `approved`. `plan.md` is the single source of truth for execution state — update batch statuses live as work progresses.
-
-Read `batches` from `plan.md` frontmatter. Process each batch in `id` order where `status != complete`.
-
-**For each batch:**
-
-**5a — Mark in progress.** Set the batch's `status` to `in_progress` in `plan.md` frontmatter.
-
-**5b — Determine worker by `layer`:**
-- `layer: ui` → `developer-ui-worker`
-- all others (`domain`, `data`, `pres`, `app`) → `developer-feature-worker`
-
-**5c — Spawn the worker.** Re-read `plan.md` and `context.md` from disk before each spawn.
-
-Also extract `raw_docs` from `state.json` before spawning any worker.
-
-For `developer-feature-worker`:
-
-> Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
->
-> **plan.md**
-> \<content\>
->
-> **context.md**
-> \<content\>
->
-> \<if raw_docs is non-empty:\>
-> **Reference docs:**
-> \<for each entry: "<path> — <description>"\>
-> `Read` the relevant doc(s) for ground-truth details (endpoint paths, request/response shapes, field names) before implementing any artifact. Do not rely solely on plan.md/context.md if a doc covers the artifact.
-> \<end if\>
->
-> **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
->
-> Proceed directly to the first pending artifact in this batch.
-
-For `developer-ui-worker` — also extract `stateholder_contract` from `state.json` first:
-
-> Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
->
-> **plan.md**
-> \<content\>
->
-> **context.md**
-> \<content\>
->
-> **Stateholder contract path:** \<stateholder_contract from state.json, or "none" if null\>
->
-> \<if raw_docs is non-empty:\>
-> **Reference docs:**
-> \<for each entry: "<path> — <description>"\>
-> `Read` the relevant doc(s) for ground-truth details (UI stack specs, component structure, field names) before implementing any artifact. Do not rely solely on plan.md/context.md if a doc covers the artifact.
-> \<end if\>
->
-> **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
->
-> \<if ## Figma Alignment section is present in context.md, include — otherwise omit\>
-> **Figma Instruction:** For every Screen and Component artifact, before writing any code:
-> 1. Look up the artifact in the `## Figma Alignment` table in context.md above to get its `UI Stack` and `Figma Files`
-> 2. `Read` the `UI Stack` file (`figma-uistack-*.md`) first — this is the merged Component Hierarchy, State Model, and User Interactions for this artifact (and any overlay components it mounts). Use this as the structural blueprint
-> 3. For each state referenced in the UI Stack's `states` frontmatter: `Read` its `.md`, `layout_file` JSX (full file, no truncation), and `screenshot` `.png` (mandatory — visual inspection required before implementing)
-> 4. For any overlay referenced (`← see figma-uistack-*.md`), repeat steps 2–3 for that overlay's UI Stack when implementing the overlay's Component artifact
->
-> Proceed directly to the first pending UI artifact in this batch.
-
-**5d — Checkpoint loop (fallback).** If the worker returns `## Context Checkpoint` instead of its completion signal, immediately re-spawn the same worker type without user interaction:
-
-> Resuming from context checkpoint. Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
->
-> **plan.md**
-> \<content — re-read from disk\>
->
-> **context.md**
-> \<content — re-read from disk\>
->
-> \<if raw_docs is non-empty:\>
-> **Reference docs:**
-> \<for each entry: "<path> — <description>"\>
-> `Read` the relevant doc(s) for ground-truth details before implementing any artifact.
-> \<end if\>
->
-> **Batch:** Process only these artifacts: \<batch.artifacts minus completed_artifacts from state.json\>. Skip any already complete in plan.md.
->
-> **Resume from:** \<next_artifact from checkpoint block\>
-> **State file:** \<state_file from checkpoint block\>
->
-> \<for ui-worker: include Stateholder contract path and Figma Instruction as above\>
->
-> Read state.json, skip completed artifacts, proceed directly to next_artifact.
-
-Repeat until the worker returns `## Layers Complete` (feature-worker) or `## Feature Complete` (ui-worker).
-
-**5e — Mark complete.** Set the batch's `status` to `complete` in `plan.md` frontmatter.
-
-Proceed to Step 6 after all batches are complete.
-
-## Step 6 — Unit Tests
-
-Read `state.json` from the run directory. Extract all paths under `domain`, `data`, and `presentation` keys — these are the unit-testable artifacts. Skip `ui` and `app`.
-
-Call `AskUserQuestion` immediately — do NOT describe choices in prose:
-
-```
-question    : "Run unit tests for created artifacts?"
-header      : "Unit Tests"
-multiSelect : false
-options     :
-  - label: "Yes",  description: "Generate unit tests for all created artifacts via developer-test-worker"
-  - label: "Skip", description: "I'll run tests manually later"
-```
-
-**Yes** → spawn `developer-test-worker`:
-
-> target: <comma-separated artifact paths from state.json>
-> platform: <platform from plan.md frontmatter>
-
-**Skip** → surface the paths as a reminder:
-
-> Tests not generated. Run when ready:
-> `/developer-test-worker` — targets: <paths>

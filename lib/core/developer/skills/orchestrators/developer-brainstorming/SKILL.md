@@ -31,7 +31,7 @@ You MUST create a task for each of these items and complete them in order:
 6. **Write design doc** — save to `.claude/agentic-state/developer/brainstorming/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — based on task context, recommend and route to `developer-plan-feature` (feature) or `saturn-jaygarcia` (general task) — see Transition section
+9. **Transition to implementation** — based on task context, recommend and route to `developer-build-feature` (feature) or `saturn-jaygarcia` (general task) — see Transition section
 
 ## Process Flow
 
@@ -60,7 +60,7 @@ digraph brainstorming {
 }
 ```
 
-**The terminal state is routing to `developer-plan-feature` or `saturn-jaygarcia`.** Do NOT write code or scaffold before the user confirms the execution path.
+**The terminal state is routing to `developer-build-feature` or `saturn-jaygarcia`.** Do NOT write code or scaffold before the user confirms the execution path.
 
 ## The Process
 
@@ -126,7 +126,7 @@ Wait for the user's response. If they request changes, make them and re-run the 
 
 Based on the full brainstorming context, assess the task type before presenting options:
 
-- **Signals for `developer-plan-feature`**: new screen, new feature, domain entity, use case, repository, data layer, BLoC, StateHolder, API integration — anything that touches Clean Architecture layers
+- **Signals for `developer-build-feature`**: new screen, new feature, domain entity, use case, repository, data layer, BLoC, StateHolder, API integration — anything that touches Clean Architecture layers
 - **Signals for `saturn-jaygarcia`**: refactor, tooling, script, config, migration, CI/CD, infrastructure — non-layered changes
 
 Place the recommended option first with `(Recommended)` in its label. Call `AskUserQuestion`:
@@ -138,13 +138,13 @@ multiSelect : false
 options     :
   [recommended first, other second]
   - label: "Clean Architecture Feature (Recommended)",
-    description: "Spawns layer-specialist agents (Domain → Data → Pres → App → UI). Pass the spec path — planners will read it as a reference doc."
+    description: "Passes the spec to /developer-build-feature — runs the convergence planning loop then executes layer by layer."
   - label: "General Engineering Task (Recommended)",
     description: "lucci-planner reads the spec and explores the codebase, then kaku-worker executes the plan unattended."
 ```
 
 **If Clean Architecture Feature chosen:**
-Invoke the `developer-plan-feature` skill via the Skill tool, passing `<spec-path>` as the argument. Do not ask the user to run it manually.
+Invoke the `developer-build-feature` skill via the Skill tool, passing `<spec-path>` as the argument. Do not ask the user to run it manually.
 
 **If General Engineering Task chosen:**
 Invoke the `saturn-jaygarcia` skill via the Skill tool, passing `<spec-path>` as the argument. Do not ask the user to run it manually.
