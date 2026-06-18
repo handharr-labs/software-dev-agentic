@@ -60,11 +60,28 @@ Read `batches` from `<run_dir>/plan.md` frontmatter. Process each batch in `id` 
 
 **2c — Spawn the worker.** Re-read `plan.md` and `context.md` from disk before each spawn.
 
-Also extract `raw_docs` from `state.json` (if present) before spawning any worker.
+Extract `raw_docs` from context.md frontmatter and resolve the batch's artifact names from `## Steps` by matching the batch's `steps` IDs:
+
+```bash
+python3 -c "
+import re, sys
+try:
+    import yaml
+    with open('<run_dir>/context.md') as f:
+        m = re.match(r'^---\n(.*?)\n---', f.read(), re.DOTALL)
+    if m:
+        d = yaml.safe_load(m.group(1))
+        for r in d.get('raw_docs', []):
+            print(r['path'] + ' — ' + r['description'])
+except: pass
+" 2>/dev/null
+```
+
+Parse `## Steps` from plan.md — for each step ID in `batch.steps`, extract the artifact name. These are the artifacts to pass to the worker.
 
 For `developer-feature-worker`:
 
-> Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
+> Pre-loaded context below — do not re-read plan.md or context.md.
 >
 > **plan.md**
 > \<content\>
@@ -78,13 +95,13 @@ For `developer-feature-worker`:
 > `Read` the relevant doc(s) for ground-truth details (endpoint paths, request/response shapes, field names) before implementing any artifact. Do not rely solely on plan.md/context.md if a doc covers the artifact.
 > \<end if\>
 >
-> **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
+> **Batch:** Process only these steps: \<step IDs and artifact names from batch.steps, e.g. "1. LeaveRequest, 2. LeaveRequestRepository"\>. Skip any already `done` in `## Steps`.
 >
-> Proceed directly to the first pending artifact in this batch.
+> Proceed directly to the first pending step in this batch.
 
 For `developer-ui-worker` — also extract `stateholder_contract` from `state.json` first:
 
-> Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
+> Pre-loaded context below — do not re-read plan.md or context.md.
 >
 > **plan.md**
 > \<content\>
@@ -100,7 +117,7 @@ For `developer-ui-worker` — also extract `stateholder_contract` from `state.js
 > `Read` the relevant doc(s) for ground-truth details (UI stack specs, component structure, field names) before implementing any artifact. Do not rely solely on plan.md/context.md if a doc covers the artifact.
 > \<end if\>
 >
-> **Batch:** Process only these artifacts: \<batch.artifacts comma-separated\>. Skip any already complete in plan.md.
+> **Batch:** Process only these steps: \<step IDs and artifact names from batch.steps\>. Skip any already `done` in `## Steps`.
 >
 > \<if ## Figma Alignment section is present in context.md, include — otherwise omit\>
 > **Figma Instruction:** For every Screen and Component artifact, before writing any code:
@@ -113,7 +130,7 @@ For `developer-ui-worker` — also extract `stateholder_contract` from `state.js
 
 **2d — Checkpoint loop (fallback).** If the worker returns `## Context Checkpoint` instead of its completion signal, immediately re-spawn the same worker type without user interaction:
 
-> Resuming from context checkpoint. Pre-loaded context below — do not re-read plan.md, context.md, or state.json.
+> Resuming from context checkpoint. Pre-loaded context below — do not re-read plan.md or context.md.
 >
 > **plan.md**
 > \<content — re-read from disk\>
@@ -127,14 +144,13 @@ For `developer-ui-worker` — also extract `stateholder_contract` from `state.js
 > `Read` the relevant doc(s) for ground-truth details before implementing any artifact.
 > \<end if\>
 >
-> **Batch:** Process only these artifacts: \<batch.artifacts minus completed_artifacts from state.json\>. Skip any already complete in plan.md.
+> **Batch:** Process only these steps: \<step IDs and artifact names from batch.steps — skip any already `done` in `## Steps`\>.
 >
 > **Resume from:** \<next_artifact from checkpoint block\>
-> **State file:** \<state_file from checkpoint block\>
 >
 > \<for ui-worker: include Stateholder contract path and Figma Instruction as above\>
 >
-> Read state.json, skip completed artifacts, proceed directly to next_artifact.
+> Proceed directly to the resumed artifact — skip any steps already marked `done` in `## Steps`.
 
 Repeat until the worker returns `## Layers Complete` (feature-worker) or `## Feature Complete` (ui-worker).
 
@@ -144,9 +160,9 @@ Proceed to Step 3 after all batches are complete.
 
 ## Step 3 — Unit Tests
 
-Read `state.json` from the run directory. Extract all paths under `domain`, `data`, and `presentation` keys — these are the unit-testable artifacts. Skip `ui` and `app`.
+Read `## Steps` from plan.md. Extract artifact names for all steps with `layer: domain`, `layer: data`, or `layer: pres` — these are the unit-testable artifacts. Skip `ui` and `app`.
 
-If `state.json` is absent (plan not produced by `developer-plan-feature`), skip this step.
+If no steps are present (plan not produced by `developer-plan-feature`), skip this step.
 
 Call `AskUserQuestion` immediately — do NOT describe choices in prose:
 
@@ -161,10 +177,10 @@ options     :
 
 **Yes** → spawn `developer-test-worker`:
 
-> target: <comma-separated artifact paths from state.json>
+> target: <comma-separated artifact names from testable steps>
 > platform: <platform from plan.md frontmatter>
 
-**Skip** → surface the paths as a reminder:
+**Skip** → surface the artifacts as a reminder:
 
 > Tests not generated. Run when ready:
-> `/developer-test-worker` — targets: <paths>
+> `/developer-test-worker` — targets: <artifact names>

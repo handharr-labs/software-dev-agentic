@@ -54,42 +54,15 @@ This agent emits: `spawn-planners` (omit `pending_figma_urls` and `figma_groups`
 
 Called after each planner round. The entry skill passes `run_dir`, `update_mode`, `Round: <N>` (session-local counter, starts at 1 every invocation), and (when `update_mode: true`) `existing_plan`, `existing_context`, and `completed_artifacts`. Read all findings files from `<run_dir>/findings/` — findings are not passed inline.
 
-**Step 0 — Validate findings and update state.json**
+**Step 0 — Validate findings**
 
-Read the current round's planner list from state.json:
-
-```bash
-python3 -c "
-import json
-d = json.load(open('<run_dir>/state.json'))
-rounds = d['planning']['rounds']
-print(json.dumps(rounds[-1]))
-"
-```
-
-For each planner listed as `spawned` in that round, check its findings file exists:
+Read the `Spawned planners:` list passed by the entry skill. For each layer, check its findings file exists:
 
 ```bash
 ls "<run_dir>/findings/<layer>-findings.md"
 ```
 
-Update state.json — mark each planner `done` if the file exists, `failed` if not:
-
-```bash
-python3 - <<'EOF'
-import json, os
-path = "<run_dir>/state.json"
-d = json.load(open(path))
-findings_dir = "<run_dir>/findings"
-entry = d["planning"]["rounds"][-1]
-for layer in entry["planners"]:
-    exists = os.path.isfile(f"{findings_dir}/{layer}-findings.md")
-    entry["planners"][layer] = "done" if exists else "failed"
-json.dump(d, open(path, "w"), indent=2)
-EOF
-```
-
-If any planner is `failed`, return `Decision: blocked`:
+If any findings file is missing, return `Decision: blocked`:
 
 ```
 ## Decision: blocked
@@ -150,8 +123,8 @@ Two variants — the entry skill signals which applies:
 
 - **New feature** (`update: false`) — write plan.md and context.md from scratch.
 - **Extend** (`update: true`) — extend plan.md and context.md in-place. Never replace or archive them. The entry skill passes `existing_plan`, `existing_context`, and `completed_artifacts` inline. Rules:
-  - Remove artifact rows with `Progress: done` from the plan.md body before writing new content — completed work is tracked in the `batches` frontmatter; the body must show only pending/in-progress artifacts
-  - Append new artifact rows (pending only, `Progress: 0/1`) to the relevant layer tables
+  - Append new artifact rows to the relevant layer tables — never remove or modify existing rows
+  - Append new step rows to `## Steps`, continuing the existing step ID sequence — never modify or remove existing step rows
   - Append new batches to the `batches` frontmatter list, continuing the existing id sequence
   - Update `context.md §Key Symbols` by appending new existing-artifact signatures; update paths/signatures only if they changed
   - Update `## Risks and Notes` with any new concerns
@@ -183,13 +156,12 @@ Before writing, read the plan format schema:
 cat "$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md"
 ```
 
-**Batch planning** — before writing, group all artifacts into execution batches:
+**Step and batch planning** — before writing, assign step IDs to all artifacts and group into batches:
 
 - Layer order (fixed): `domain → data → pres → app → ui`
-- Each layer that has artifacts gets at least one batch
-- If a layer has more than 5 artifacts, split into consecutive sub-batches of up to 5
-- Assign sequential `id` starting at 1 across all layers
-- All batches start with `status: pending`
+- Assign sequential step IDs (starting at 1) to every artifact across all layers in layer order
+- Each layer that has artifacts gets at least one batch; if a layer has more than 5 artifacts, split into consecutive sub-batches of up to 5
+- Each batch references the step IDs it covers: `{ id, layer, label, steps: [N, N+1, ...], status: pending }`
 - Omit layers with no artifacts
 - Write as `batches:` list in plan.md frontmatter — this is the execution plan the skill iterates
 
@@ -203,13 +175,15 @@ Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §plan.md S
 
 Before writing, check all planner findings blocks for a `### Figma Alignment` section. If found, extract the full table — it will be embedded in `## Figma Alignment` below. This must happen before writing, not after.
 
+Include `raw_docs` from the entry skill's input in the frontmatter — write as a YAML list of `{path, description}` objects. Write an empty list if none were passed.
+
 ```
 <root>/.claude/agentic-state/developer/feature-plans/<feature>/context.md
 ```
 
 Format: see `$CLAUDE_PLUGIN_ROOT/reference/developer/plan-format.md` §context.md Schema.
 
-**Step 6 — Return plan summary** as a flat numbered list (one line per artifact, layer + status). Do not return file contents — the entry skill handles the approval interaction.
+**Step 6 — Return plan summary** as a numbered list matching the `## Steps` section — one line per step: `N. ArtifactName (layer) — pending`. Do not return file contents — the entry skill handles the approval interaction.
 
 ## Write Path Rule
 
