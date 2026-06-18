@@ -1,5 +1,5 @@
 ---
-name: brainstorming
+name: developer-brainstorming
 description: Use when a user brings a new idea, feature request, or open-ended problem that needs to be turned into a concrete design and spec before any implementation begins — especially when scope, approach, or constraints are still unclear.
 user-invocable: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, Write, Edit, WebFetch, Skill
