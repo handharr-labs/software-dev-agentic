@@ -2,7 +2,7 @@
 name: brainstorming
 description: Use when a user brings a new idea, feature request, or open-ended problem that needs to be turned into a concrete design and spec before any implementation begins — especially when scope, approach, or constraints are still unclear.
 user-invocable: true
-allowed-tools: Agent, AskUserQuestion, Bash, Read, Write, Edit, WebFetch
+allowed-tools: Agent, AskUserQuestion, Bash, Read, Write, Edit, WebFetch, Skill
 ---
 
 # Brainstorming Ideas Into Designs
@@ -144,10 +144,10 @@ options     :
 ```
 
 **If Clean Architecture Feature chosen:**
-> Tell the user: "Run `/developer-plan-feature <spec-path>` — the spec will be passed to all layer planners as a reference document."
+Invoke the `developer-plan-feature` skill via the Skill tool, passing `<spec-path>` as the argument. Do not ask the user to run it manually.
 
 **If General Engineering Task chosen:**
-> Tell the user: "Run `/saturn-jaygarcia <spec-path>` — lucci-planner will read the spec before writing the plan."
+Invoke the `saturn-jaygarcia` skill via the Skill tool, passing `<spec-path>` as the argument. Do not ask the user to run it manually.
 
 ## Key Principles
 
