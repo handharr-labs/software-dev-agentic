@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.36.0] — 2026-06-18
+
+### Changed
+- `developer-brainstorming` — moved from `lib/core/shared/skills/orchestrators/brainstorming/` to `lib/core/developer/skills/orchestrators/developer-brainstorming/`; renamed skill `name` to `developer-brainstorming`; spec output path changed from `docs/specs/` to `.claude/agentic-state/developer/brainstorming/`; plugin script paths updated to match new skill directory name
+
 ## [12.35.0] — 2026-06-18
 
 ### Added
