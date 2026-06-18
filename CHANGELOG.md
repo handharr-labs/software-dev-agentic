@@ -7,6 +7,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.37.3] — 2026-06-18
+
+### Changed
+- `developer-build-feature` skill — Step 2 simplified: three worker prompt templates (feature-worker, ui-worker, checkpoint resume) replaced by a single two-line prompt (`run_dir` + `batch`); orchestrator no longer reads context.md, extracts raw_docs, or reads state.json
+- `developer-feature-worker` — Input changed from inline-injected plan/context to `run_dir` + `batch` params; Pre-flight now reads plan.md and context.md from disk directly
+- `developer-ui-worker` — same Input/Pre-flight simplification; `stateholder_contract` now sourced from state.json (already read in pre-flight) instead of being injected by the orchestrator
+
 ## [12.37.2] — 2026-06-18
 
 ### Changed
