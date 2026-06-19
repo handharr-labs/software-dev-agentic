@@ -129,6 +129,14 @@ cat "$CLAUDE_PLUGIN_ROOT/reference/developer/ticket-format.md"
 
 Follow the `## Breakdown Proposal` schema from `$CLAUDE_PLUGIN_ROOT/reference/developer/ticket-format.md`. Include `**Breakdown Level:** <epic_to_tickets|ticket_to_subtasks>` in the proposal header immediately after `**Summary:**`. Include `**System Design:**` or `**System Context:**` in each ticket's detail block per the level detected in Phase 0.
 
+Always include a `**Reasoning:**` block in the proposal header (after `**Breakdown Level:**`) — 3–5 bullet points covering:
+- Why this grouping was chosen (key decision behind each cluster)
+- Assumptions made where the PRD was ambiguous
+- Tradeoffs considered (e.g. why two items weren't merged, why a ticket was split)
+- Anything the user should validate before approving
+
+When revising a previous proposal (`feedback` is provided), update `**Reasoning:**` to reflect what changed and why.
+
 **Description guidelines:** explain *what* is being built and *why* (user problem or technical need). Never restate the title. Source from PRD — do not invent requirements.
 
 **Acceptance Criteria:** 3–5 items. Concrete and testable. For UI tickets with Figma context, at least one criterion should reference a specific screen, field, or behavior from the design.

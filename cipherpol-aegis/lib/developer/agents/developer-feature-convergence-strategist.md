@@ -26,7 +26,7 @@ Parameters provided by the calling skill:
 
 | Parameter | Required | Description |
 |---|---|---|
-| `mode` | yes | `process-findings` · `synthesize` |
+| `mode` | yes | `process-findings` · `refine-spawn` · `synthesize` |
 | `run_dir` | yes | Absolute path to the run directory |
 | `update_mode` | mode-dependent | `true` when patching an existing plan (resume path) |
 
@@ -46,7 +46,7 @@ Load full Decision block schemas:
 cat "$CLAUDE_PLUGIN_ROOT/reference/developer/strategist-decision-format.md"
 ```
 
-This agent emits: `spawn-planners` (omit `pending_figma_urls` and `figma_groups`), `synthesized`, `blocked`.
+This agent emits: `spawn-planners` (omit `pending_figma_urls` and `figma_groups`), `synthesized`, `blocked`. In `refine-spawn` mode, always emits `spawn-planners`.
 
 ---
 
@@ -97,6 +97,10 @@ In `update_mode`, layers explored in a *previous session* (visible in state.json
 
 If any `required` impact recommendation points to an unvisited layer → return `Decision: spawn-planners` for the next round listing only unvisited layers.
 
+When returning `Decision: spawn-planners`, always include `findings_summary` and `reasoning`:
+- `findings_summary` — for each layer that ran this round, 3-5 bullet points of the most important findings (gaps, open questions, dependencies surfaced)
+- `reasoning` — one short paragraph explaining what gaps remain and why the proposed layers are needed next round
+
 If all required recommendations are covered by the visited set (or there are no recommendations) → **do not return `Decision: converged`**. Instead, proceed directly to inline synthesis (Step 4 below).
 
 **Max rounds:** Use the `Round: <N>` value passed by the entry skill — this is the session-local counter, starting at 1 for every new invocation regardless of state.json history. If `Round: <N>` is 5 or higher and open questions remain unresolvable by spawning more planners, return `Decision: blocked`. Do NOT read round numbers from state.json for this guard.
@@ -108,6 +112,36 @@ Execute all steps from `Mode: synthesize` directly, reading findings from `<run_
 Then write plan.md and context.md as specified in `Mode: synthesize` Steps 2–5.
 
 Return `Decision: synthesized`.
+
+## Mode: refine-spawn
+
+Called when the user chose to discuss after reviewing findings. The entry skill passes:
+
+| Parameter | Description |
+|---|---|
+| `run_dir` | Absolute path to the run directory |
+| `user_direction` | Free text from the user — may redirect layers, add constraints, narrow/broaden scope |
+| `previous_findings_summary` | The `findings_summary` block from the last `Decision: spawn-planners` |
+| `previous_reasoning` | The `reasoning` block from the last `Decision: spawn-planners` |
+| `previous_spawn` | The spawn list from the last `Decision: spawn-planners` |
+
+Read all findings files currently on disk to have full context:
+
+```bash
+find "<run_dir>/findings" -name "*-findings.md" | sort
+```
+
+Interpret `user_direction` against the current findings and previous reasoning. Determine:
+- Which layers still need to run (may differ from `previous_spawn` based on user input)
+- Any focus constraints per layer (specific entities, flows, or concerns the user called out)
+
+Return a revised `Decision: spawn-planners` with:
+- Updated `spawn` list reflecting the user's direction
+- `findings_summary` carried forward from `previous_findings_summary` (do not regenerate — reuse as-is)
+- `reasoning` updated to reflect how the user's direction changed the plan
+- `focus_notes` — one entry per spawned layer where the user gave specific direction; omit layers with no user-directed focus
+
+---
 
 ## Mode: synthesize
 
