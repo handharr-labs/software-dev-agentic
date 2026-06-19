@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.1.0] — 2026-06-19
+
+### Added
+- `developer-sysdesign-component-extract-worker` — new worker that extracts a Component System Design from a single component file (manager, service, repository, datasource, etc.); traces public interface, dependencies, and key behaviors; outputs to `.claude/agentic-state/developer/sysdesign/components/`
+- `reference/component-system-design-format.md` — 6-section schema for component designs (Purpose, Public Interface, Dependencies, Data Model, High-Level Design, Key Behaviors)
+
+### Changed
+- `developer-extract-sysdesign` — orchestrator now classifies each source file as screen or component by filename pattern per platform and routes to the appropriate worker; consolidation passes `design_paths` (was `screen_design_paths`) to support mixed screen + component inputs
+- `developer-sysdesign-consolidate-worker` — accepts mixed screen and component designs; added Step 1a Relevance Check (shared entities, shared endpoints, dependency references, complementary behaviors) — returns `NOT_RELATED` with reason if no signal found, skipping flow creation
+
 ## [13.0.1] — 2026-06-19
 
 ### Changed
