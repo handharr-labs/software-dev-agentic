@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.2.1] — 2026-06-19
+
+### Changed
+- `developer-fetch-figma` — Step 4b UIStack Review Gate added: surfaces per-screen `flagged` items and worker `reasoning` before finishing; supports Confirm / Discuss / Converge now paths with one non-recursive refinement round on Discuss
+
 ## [13.2.0] — 2026-06-19
 
 ### Added
