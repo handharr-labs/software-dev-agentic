@@ -179,7 +179,43 @@ If `partial_align = true`, use the unaligned UIStack file paths collected in Ste
 > platform: \<platform\>
 > figma_fetch_dir: \<figma_fetch_dir\>
 
-Collect all `## UIStack Align Output` blocks. Aggregate `flagged` items across all workers.
+Each worker's `## UIStack Align Output` block must include:
+- `flagged` — list of components that could not be matched
+- `reasoning` — 3–5 bullets: why each match was made or failed, assumptions, tradeoffs, what to validate
+
+Collect all output blocks. Aggregate `flagged` items and `reasoning` across all workers.
+
+## Step 4b — UIStack Review Gate
+
+Build a per-screen review summary:
+
+```
+<for each screen in figma_groups:>
+• <screen>
+  Flagged: <flagged items for this screen, or "none">
+  Reasoning:
+  <reasoning bullets for this screen>
+```
+
+Call `AskUserQuestion`:
+
+```
+question    : "UIStack alignment complete. Review the reasoning and flagged items before finishing.
+
+               <review summary>"
+header      : "UIStack Review"
+multiSelect : false
+options     :
+  - label: "Confirm",       description: "Looks correct — proceed to report"
+  - label: "Discuss",       description: "I want to redirect the alignment for some screens"
+  - label: "Converge now",  description: "Skip remaining alignment and finish with current results"
+```
+
+**Confirm** → proceed to Step 5.
+
+**Converge now** → proceed to Step 5 with current aggregated results.
+
+**Discuss** → ask: "Which screens need adjustment, and what should change?" Collect free text. Respawn `developer-uistack-align-worker` only for the affected screens, passing the user's direction as an additional `user_direction` field in the prompt. Collect revised output blocks, merge into aggregated results, then present updated review summary and call `AskUserQuestion` with **Confirm / Converge now** only (no recursive Discuss).
 
 ## Step 5 — Report
 
