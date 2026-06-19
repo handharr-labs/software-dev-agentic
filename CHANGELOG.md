@@ -7,6 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.2.0] — 2026-06-19
+
+### Added
+- **Transparent Steering pattern** — documented in `agentic-conventions.md` (Convergence Gate Model + Supervised Interaction Pattern) and `agentic-design-principles.md`; term defined in `agentic-glossary.md` and `glossary.md`
+- Glossary auto-loaded in `CLAUDE.md` via `@docs/principles/glossary.md` import — always in context for every contributor
+
+### Changed
+- `developer-feature-convergence-strategist` — `process-findings` now emits `findings_summary` and `reasoning` in every `Decision: spawn-planners`; new `refine-spawn` mode for user-directed convergence adjustment
+- `developer-plan-feature` — convergence loop now gates after every round (Transparent Steering): shows findings + strategist reasoning, user confirms / discusses / converges now; Discuss path spawns strategist in `refine-spawn` mode and carries `focus_notes` to planners
+- `developer-breakdown-requirement` — Step 4 now surfaces worker's `reasoning` block above the proposal table before asking approve / discuss / cancel
+- `developer-prd-breakdown-worker` — `## Breakdown Proposal` output now requires a `**Reasoning:**` block (grouping decisions, assumptions, tradeoffs, what to validate)
+- `strategist-decision-format.md` — `Decision: spawn-planners` schema extended with `findings_summary`, `reasoning`, and `focus_notes` fields
+
 ## [13.1.0] — 2026-06-19
 
 ### Added
