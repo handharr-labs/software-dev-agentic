@@ -25,6 +25,23 @@ spawn:
   - pres
   - app
 reason: <one line per planner explaining why it is needed>
+findings_summary:          # convergence-strategist only — omit on first spawn-planners from intent-strategist
+  domain: |
+    - <key finding 1>
+    - <key finding 2>
+  data: |
+    - <key finding 1>
+  pres: |
+    - <key finding 1>
+  app: |
+    - <key finding 1>
+reasoning: |               # convergence-strategist only — why more rounds are needed, what gaps remain
+  <explanation>
+focus_notes:               # convergence-strategist only — present only after refine-spawn, omit otherwise
+  domain: <user-directed focus for this layer>
+  data: <user-directed focus for this layer>
+  pres: <user-directed focus for this layer>
+  app: <user-directed focus for this layer>
 scope:
   domain: [entity, usecase, repository, service]   # omit types not relevant to this intent
   data:   [dto, mapper, datasource, repository_impl]

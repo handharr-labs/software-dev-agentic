@@ -382,12 +382,79 @@ Spawn `developer-feature-convergence-strategist`:
 
 Wait for the strategist's decision block.
 
-- **`Decision: spawn-planners`** → increment `round`, go back to 2a
 - **`Decision: synthesized`** → plan.md and context.md are already written; skip Step 3 and proceed directly to Step 4
 - **`Decision: blocked`** → present the strategist's question to the user via `AskUserQuestion`, send the answer back to strategist as a follow-up `process-findings` call, then re-evaluate
+- **`Decision: spawn-planners`** → do NOT act on it immediately. Proceed to the **Convergence Gate** below.
 
 **Max rounds guard:** If `round` reaches 6 without convergence, stop the loop and surface to the user:
 > "Planning could not converge after 5 rounds. Open questions: <list from last blocked decision>. Please clarify before retrying."
+
+### Convergence Gate
+
+After receiving `Decision: spawn-planners` from the strategist, extract `findings_summary`, `reasoning`, and `spawn`. Build the findings display:
+
+```
+<for each layer present in findings_summary:>
+<Layer>:
+<bullet points from findings_summary[layer]>
+```
+
+Call `AskUserQuestion`:
+
+```
+question: "Round <N> complete.
+
+           Findings:
+           <findings display>
+
+           Strategist reasoning: <reasoning>
+           Proposed next round: <spawn list>"
+header: "Convergence"
+multiSelect: false
+options:
+  - label: "Confirm",       description: "Run next round as proposed"
+  - label: "Discuss",       description: "Redirect or ask something before the next round runs"
+  - label: "Converge now",  description: "Synthesize a plan with what we have"
+```
+
+**Confirm** → increment `round`, carry `focus_notes` (empty) forward, go back to 2a.
+
+**Converge now** → proceed directly to Step 3 (synthesize).
+
+**Discuss** → collect the user's free text. Spawn `developer-feature-convergence-strategist` in `refine-spawn` mode:
+
+> **Mode: refine-spawn**
+>
+> run_dir: <run_dir>
+> user_direction: <user's free text verbatim>
+> previous_findings_summary: <findings_summary block from last Decision>
+> previous_reasoning: <reasoning block from last Decision>
+> previous_spawn: <spawn list from last Decision>
+
+Wait for the revised `Decision: spawn-planners`. Extract the updated `spawn`, `reasoning`, and `focus_notes`.
+
+Present the revision to the user:
+
+```
+question: "Updated proposal based on your input.
+
+           Strategist reasoning: <updated reasoning>
+           Revised next round: <updated spawn list>
+           <if focus_notes non-empty:>
+           Focus notes: <per-layer focus_notes>"
+header: "Convergence"
+multiSelect: false
+options:
+  - label: "Confirm",       description: "Run the revised round"
+  - label: "Converge now",  description: "Synthesize a plan with what we have"
+```
+
+**Confirm** → increment `round`, carry `focus_notes` forward to 2a.
+**Converge now** → proceed directly to Step 3 (synthesize).
+
+**Passing `focus_notes` to planners:** In Step 2a, if `focus_notes` is non-empty, append to each matching planner's input:
+
+> focus: <focus_notes[layer]>
 
 ## Step 3 — Synthesize Plan (fallback only)
 

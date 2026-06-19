@@ -179,13 +179,17 @@ Wait for the worker to return a `## Breakdown Proposal` block. Extract:
 - `tickets` — ordered list: `{ index, type, title, story_points, description, system_design, system_context, acceptance_criteria }`
 - `summary` — N tickets | X SP string
 - `breakdown_level` — carried through from the proposal header (must match Step 0b value)
+- `reasoning` — the `**Reasoning:**` bullet list from the proposal header
 
 ## Step 4 — Discuss
 
-Show the proposal table inline before calling `AskUserQuestion`:
+Show the proposal reasoning and table inline before calling `AskUserQuestion`:
 
 ```
 Proposed breakdown: <summary>
+
+Why this grouping:
+<reasoning bullet points>
 
  #   Type      SP   Title
 ─────────────────────────────────────────────────────
@@ -201,21 +205,21 @@ question    : "Does this breakdown look right?"
 header      : "Ticket Breakdown"
 multiSelect : false
 options     :
-  - label: "Approve",  description: "Write these as local markdown files"
-  - label: "Adjust",   description: "Change scope, split, merge, or rename tickets"
-  - label: "Cancel",   description: "Stop without writing anything"
+  - label: "Approve",   description: "Write these as local markdown files"
+  - label: "Discuss",   description: "Change scope, split, merge, rename, or redirect the approach"
+  - label: "Cancel",    description: "Stop without writing anything"
 ```
 
 **Approve** → proceed to Step 5.
 
 **Cancel** → stop.
 
-**Adjust** → ask the user to describe the changes. Re-spawn `developer-prd-breakdown-worker` with the original inputs plus:
+**Discuss** → ask the user to describe the changes. Re-spawn `developer-prd-breakdown-worker` with the original inputs plus:
 
-> feedback: \<user's adjustment instructions\>
+> feedback: \<user's instructions verbatim\>
 > previous_proposal: \<the previous ## Breakdown Proposal block verbatim\>
 
-Return to top of Step 4 with the new proposal.
+Return to top of Step 4 with the new proposal (which will include updated reasoning reflecting what changed).
 
 ## Step 5 — Write Ticket Files
 
