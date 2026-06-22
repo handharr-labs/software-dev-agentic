@@ -19,6 +19,13 @@
       "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
       "category": "development-workflows",
       "version": "13.2.1"
+    },
+    {
+      "name": "cipherpol-9",
+      "source": "./dist/plugins/cipherpol-9",
+      "description": "Generic plan-then-build orchestration for any task",
+      "category": "development-workflows",
+      "version": "13.2.1"
     }
   ]
 }

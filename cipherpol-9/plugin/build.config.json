@@ -1,0 +1,9 @@
+{
+  "name": "cipherpol-9",
+  "description": "Generic plan-then-build orchestration for any task",
+  "include": {
+    "agents": ["cipherpol-9/lib/*/agents"],
+    "skills": ["cipherpol-9/lib/*/skills/*/*/"],
+    "reference": ["cipherpol-9/lib/*/reference"]
+  }
+}
