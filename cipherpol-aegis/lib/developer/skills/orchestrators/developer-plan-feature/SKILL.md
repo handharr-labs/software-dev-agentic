@@ -2,7 +2,7 @@
 name: developer-plan-feature
 description: Plan a feature — resolves external inputs (Jira, PRD, Figma, local .md), gathers intent via developer-feature-intent-strategist, runs the convergence planning loop (spawning only the needed layer planners per round), and shows an interactive approval prompt. On approval, writes plan.md with status: approved and outputs a ## Plan Output block with run_dir. Usable standalone or invoked by /developer-plan-build-feature.
 user-invocable: true
-allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch, developer-fetch-figma
+allowed-tools: Agent, AskUserQuestion, Bash, Read, WebFetch, developer-fetch-figma, developer-debug
 ---
 
 ## Routing Contract
@@ -43,9 +43,10 @@ Parse only the formal arguments passed on the invocation line. The skill only fe
 | Pattern | Type | Action |
 |---|---|---|
 | URL containing `jira` or `atlassian`, or bare ticket ID (e.g. `PROJ-123`) | Jira ticket | Fetch inline via Atlassian MCP → `resolved_inputs` |
-| Any other URL (including `figma.com`) | PRD / doc / design | Fetch inline via `WebFetch` → `resolved_inputs` (Figma page URLs) or add to `raw_paths` |
+| Any other URL (excluding `figma.com`) | PRD / doc | Fetch inline via `WebFetch` → `resolved_inputs` |
+| `figma.com` URL | Figma frame or section URL | Add to `pending_figma_urls` — passed to `developer-fetch-figma` in Step 1.2 |
 | Local path where `ls <path>/state.json` or `ls <path>/plan.md` returns results | Existing run dir | Set as `explicit_run_dir` — skip Step 1, route via inline checkpoint below |
-| Local path where `ls <path>/frame_*/` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 1.5 fetch. Write path to `<run_dir>/figma-fetch-dir.txt` after run_dir is known. |
+| Local path where `ls <path>/figma-groups.json` returns results | Existing figma fetch dir | Set as `figma_fetch_dir` — skip Step 1.2 |
 | Local file path or directory path | Local content | Add to `raw_paths` — do not read |
 
 If no arguments are provided, skip this step — proceed to Step 1 with `resolved_inputs = []` and `raw_paths = []`.
@@ -91,13 +92,13 @@ options     :
   - label: "Cancel",           description: "Stop and retry after fixing the inputs"
 ```
 
-**Continue** → proceed with `resolved_inputs` as-is.  
-**Provide manually** → collect content from user, append to `resolved_inputs`. Then proceed.  
+**Continue** → proceed with `resolved_inputs` as-is.
+**Provide manually** → collect content from user, append to `resolved_inputs`. Then proceed.
 **Cancel** → stop.
 
-## Step 0.5 — Ambiguity Check
+## Step 1 — Gather Intent
 
-Skip this step if `explicit_run_dir` was set in Step 0.
+Skip if `explicit_run_dir` was set in Step 0 (route via checkpoint above).
 
 Call `AskUserQuestion`:
 
@@ -109,8 +110,6 @@ options     :
   - label: "Yes — I know what to build",  description: "Proceed directly to intent gathering"
   - label: "Not yet — explore first",      description: "Browse the codebase to identify the right scope before planning"
 ```
-
-**Yes** → proceed to Step 1 with no additional context.
 
 **Not yet** → spawn `developer-feature-intent-strategist` in `pre-plan` mode:
 
@@ -135,18 +134,9 @@ options     :
   <one option per entry in decision.options — label = label, description = description>
 ```
 
-Store the selected option as `pre_plan_context` (label, description, module_path). Proceed to Step 1, appending to the strategist's prompt:
+Store the selected option as `pre_plan_context` (label, description, module_path).
 
-> **Pre-selected scope:**
-> Feature: \<label\>
-> Scope: \<description\>
-> Module path: \<module_path\>
->
-> Use this as the starting point for intent gathering — skip re-deriving feature name and module path unless the user overrides them in Step G2.
-
-## Step 1 — Gather Intent
-
-Spawn `developer-feature-intent-strategist`:
+Spawn `developer-feature-intent-strategist` in `gather-intent` mode:
 
 > **Mode: gather-intent**
 >
@@ -166,6 +156,12 @@ Spawn `developer-feature-intent-strategist`:
 > <if raw_paths is non-empty, include:>
 > **Raw Paths:**
 > \<list each path — strategist should read these to extract context and Figma URLs\>
+>
+> <if pre_plan_context is set, include:>
+> **Pre-selected scope:**
+> Feature: \<label\>
+> Scope: \<description\>
+> Module path: \<module_path\>
 >
 > Ask the user for feature intent. Surface any existing runs and let the user choose to continue or start fresh. Return a Decision block when done.
 
@@ -189,14 +185,36 @@ Wait for the strategist to return. Route based on the Decision block:
   " 2>/dev/null
   ```
 
-  Set `raw_docs` from the script's output (empty list if context.md absent). Restore `figma_groups` from `<run_dir>/figma-fetch-dir.txt` → `figma-groups.json` if present.
+  Set `raw_docs` from the script's output (empty list if context.md absent). Restore `figma_fetch_dir` from `<run_dir>/figma-fetch-dir.txt` if present. Proceed to Step 1.1.
 
-  Proceed to Step 1.2 (Figma prompt), then Step 2 (convergence loop). The loop will run with `update_mode: true` — planners focus on `open_questions`.
-- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `open_questions`, `figma_groups`. Extract `pending_figma_urls` (may be empty). Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** The loop always starts counting at 1 on every orchestrator invocation. Proceed to Step 1.2.
+- **`Decision: spawn-planners`** → extract `feature`, `platform`, `module_path`, `run_dir`. If `update_mode: true` also extract `open_questions`. Initialize `visited = []`, `round = 1` — **ignore any `round:` value present in the Decision block itself.** Proceed to Step 1.1.
 
-## Step 1.2 — Optional Figma Prompt
+## Step 1.1 — Bug Check
 
-Skip this step if `pending_figma_urls` is non-empty OR `figma_fetch_dir` is already set.
+Skip if `update_mode` is true (resuming an existing run).
+
+Call `AskUserQuestion`:
+
+```
+question    : "Is this a bug that needs investigation before planning a fix?"
+header      : "Bug Check"
+multiSelect : false
+options     :
+  - label: "No — this is a feature",   description: "Proceed to planning"
+  - label: "Yes — investigate first",  description: "Run /developer-debug to find root cause before planning (recommended)"
+```
+
+**No** → proceed to Step 1.2.
+
+**Yes** → invoke `developer-debug` skill with the bug description from the gathered intent. When it completes and surfaces a root cause and fix recommendation, output:
+
+> "Debug investigation complete. Return here with `/developer-plan-feature` to plan the fix."
+
+Stop.
+
+## Step 1.2 — Figma
+
+Skip if `figma_fetch_dir` is already set (resolved from Step 0).
 
 Call `AskUserQuestion`:
 
@@ -205,151 +223,16 @@ question    : "Do you want to include Figma designs in this feature plan?"
 header      : "Figma"
 multiSelect : false
 options     :
-  - label: "Yes — fetch now",          description: "Run /developer-fetch-figma inline to fetch frames"
-  - label: "Yes — I have a fetch dir", description: "I already have a figma_fetch_dir path"
-  - label: "No",                       description: "Proceed with requirement docs only"
+  - label: "Yes",  description: "Fetch and group Figma frames before planning"
+  - label: "No",   description: "Proceed with requirement docs only"
 ```
 
-**No** → proceed to Step 2 (skip Step 1.5).
+**No** → proceed to Step 2.
 
-**Yes — I have a fetch dir** → ask: `"Paste the figma_fetch_dir path."` Collect as `figma_fetch_dir`. Proceed to Step 1.5.
-
-**Yes — fetch now** → execute `developer-fetch-figma` skill via the Skill tool. When it completes, extract `figma_fetch_dir` from the `Fetch directory:` line in its output. Use as `figma_fetch_dir`. Proceed to Step 1.5.
-
-## Step 1.5 — Fetch Figma Inputs (skip if `pending_figma_urls` is empty AND `figma_fetch_dir` already set)
-
-**If `figma_fetch_dir` was set in Step 0** (user passed an existing fetch dir), write the pointer and jump to Step 1.5b:
-
-```bash
-echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
-```
-
-Spawn `developer-figma-validate-worker` with all `pending_figma_urls`:
-
-> figma_urls: \<newline-separated URLs\>
-
-Read `## Figma Validate Output`. Set `figma_fetch_dir` from the block. Write the pointer:
-
-```bash
-echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"
-```
-
-If `invalid` is non-empty, call `AskUserQuestion`:
-
-```
-question    : "Some Figma URLs are invalid: <list each with reason>. What would you like to do?"
-header      : "Figma URLs"
-multiSelect : false
-options     :
-  - label: "Continue",  description: "Proceed with the valid frames only"
-  - label: "Cancel",    description: "Stop and fix the URLs first"
-```
-
-**Cancel** → stop.
-
-Read the validated frame list:
-
-```bash
-cat "<figma_fetch_dir>/pending-frames.json"
-```
-
-Spawn one `developer-figma-fetch-worker` per entry — pass `figma_url`, `feature`, and `figma_fetch_dir`. **Spawn all workers in parallel** (single Agent tool call).
-
-Collect results into `figma_resolved` (workers that returned `## Figma Worker Output` blocks) and `figma_failed` (errors). If `figma_failed` is non-empty, call `AskUserQuestion`:
-
-```
-question    : "Some frames couldn't be fetched: <list each with reason>. What would you like to do?"
-header      : "Figma Fetch"
-multiSelect : false
-options     :
-  - label: "Continue",  description: "Proceed with the frames that were successfully fetched"
-  - label: "Cancel",    description: "Stop and retry after fixing the inputs"
-```
-
-**Cancel** → stop.
-
-### Step 1.5b — Verify Figma Grouping (skip if `figma_resolved` is empty)
-
-Spawn `developer-figma-group-worker`:
-
-> figma_fetch_dir: \<figma_fetch_dir\>
-> platform: \<platform\>
-
-Wait for the `## Figma Groups` output block. Extract `groups` as `figma_groups`, `review` (may be absent), and `ds_available` (may be absent — treat missing as `false`).
-
-Build the grouping summary:
-```
-<for each group with type: screen:>
-• <screen> — states: <comma-separated state names><if overlays present:>, overlays: <comma-separated overlay screen names>
-<for each group with type: overlay:>
-• <screen> (overlay of <parent_screen>) — states: <comma-separated state names>
-<if review present:>
-
-Needs your eye:
-<for each review entry:>
-• <frame>: <reason>
-```
-
-Call `AskUserQuestion`:
-
-```
-question    : "Figma frames grouped into screens. Does this look correct?
-
-               <grouping summary>"
-header      : "Figma Screens"
-multiSelect : false
-options     :
-  - label: "Correct",  description: "Grouping looks right — proceed to planning"
-  - label: "Adjust",   description: "The grouping needs changes before we continue"
-```
-
-**Correct** → store `figma_groups` and proceed.
-
-**Adjust** → ask the user to describe corrections (which frames belong to which screen, any renames). Apply to `figma_groups`. Then proceed.
-
-`figma_groups` structure carried forward:
-```
-[
-  {
-    screen: "<parent_frame>",
-    type: "screen" | "overlay",
-    parent_screen: "<screen name>",      // only present when type: overlay
-    uistack_file: "<abs-path-to-figma-uistack-*.md>",
-    states: [
-      { state: "<state>", file: "<abs-path-to-.md>", layout_file: "<abs-path-to--layout.jsx>", screenshot: "<url>" },
-      ...
-    ]
-  },
-  ...
-]
-```
-
-### Step 1.5c — Align UI Stacks to Design System (skip if `ds_available` is false or absent)
-
-If `ds_available` is false or not present in the `## Figma Groups` block, skip this step entirely.
-
-Collect the `uistack_file` path from every entry in `figma_groups`. Spawn one `developer-uistack-align-worker` per uistack file **in parallel** (single Agent tool call):
-
-> uistack_file: \<abs path to figma-uistack-*.md\>
-> platform: \<platform\>
-> figma_fetch_dir: \<figma_fetch_dir\>
-
-Collect all `## UIStack Align Output` blocks. Aggregate `flagged` items across all workers. If any items are flagged, carry the summary forward — it will be appended to the Step 4 approval prompt so the engineer sees design-system gaps before approving the plan.
-
-**Persist figma_groups to disk** — write immediately after grouping is confirmed:
-
-```bash
-cat > "<figma_fetch_dir>/figma-groups.json" << 'EOF'
-<figma_groups as JSON>
-EOF
-```
-
-Initialize:
-- `visited` = [] (empty set of explored layers)
-- `all_findings` = [] (accumulated planner findings across all rounds)
-- `round` = 1
-
-Proceed to Step 2. Do not read widget files, grep the codebase, or write any code — all exploration, planning, and implementation is done by planners and workers.
+**Yes** → invoke `developer-fetch-figma` skill, passing any `pending_figma_urls` from Step 0 as arguments. When it completes:
+- Extract `figma_fetch_dir` from the `Fetch directory:` line in its output
+- Write the pointer: `echo "$figma_fetch_dir" > "<run_dir>/figma-fetch-dir.txt"`
+- Proceed to Step 2
 
 ## Step 2 — Planning Convergence Loop
 
@@ -390,22 +273,18 @@ From the current `Decision: spawn-planners` block, read the `spawn:` list. Spawn
 - `developer-pres-planner` — if `pres` is in the spawn list
 - `developer-app-planner` — if `app` is in the spawn list
 
-Pass to each planner: feature name, platform, module-path, run_dir (from strategist's gather-intent or review-resume output).
+Pass to each planner: feature name, platform, module-path, run_dir.
 
 **If `raw_docs` is non-empty**, also pass:
-- `raw_docs` — list of `{ path, description }` entries. Planners must `Read` each path for ground-truth details (endpoint paths, UI stack specs, etc.) before producing findings. Format when passing: one entry per line as `<path> — <description>`.
+- `raw_docs` — list of `{ path, description }` entries. Format: one entry per line as `<path> — <description>`.
 
-**If `update_mode` is true** (resume path with new intent), also pass:
-- `open_questions` — the user's stated issues from the Decision block, verbatim. Planners use these to focus on what needs fixing rather than doing a full greenfield sweep.
+**If `update_mode` is true**, also pass:
+- `open_questions` — the user's stated issues from the Decision block, verbatim.
 
-For `developer-pres-planner` specifically — if `figma_groups` was established in Step 1.5b or Step R0, also pass:
-- The full `figma_groups` structure (screen → states + file paths) — do NOT inline file contents
+**For `developer-pres-planner`** — if `figma_fetch_dir` is set, also pass:
+- `figma_fetch_dir` — planner reads `<figma_fetch_dir>/figma-groups.json` for screen and state structure.
 
-Track `spawned_planners` as a session-local list — the layers dispatched in this round (e.g. `[domain, data, pres, app]`). This is passed to the strategist in Step 2b.
-
-Wait for all planners in this round to complete.
-
-Proceed to 2b.
+Track `spawned_planners` as a session-local list. Wait for all planners in this round to complete. Proceed to 2b.
 
 ### 2b — Send findings to strategist
 
@@ -507,7 +386,7 @@ options:
 
 ## Step 3 — Synthesize Plan (fallback only)
 
-> **When reached:** This step is only reached if the strategist returned `Decision: synthesized` is NOT yet used — e.g., in a future `discuss-more` re-synthesis triggered from Step 4. The normal convergence path skips here because `Decision: synthesized` from Step 2b means plan.md and context.md are already on disk.
+> **When reached:** Only reached if `Decision: synthesized` has not yet been returned — e.g., a `discuss-more` re-synthesis triggered from Step 4. The normal convergence path skips here because `Decision: synthesized` from Step 2b means plan.md and context.md are already on disk.
 
 Spawn `developer-feature-convergence-strategist` with mode `synthesize`:
 
@@ -535,10 +414,7 @@ Wait for the strategist to return the plan summary and write plan.md + context.m
 Call `AskUserQuestion` immediately after synthesis — do NOT describe choices in prose:
 
 ```
-question    : "What would you like to do with this plan?<if flagged items from Step 1.5c exist:>
-
-               ⚠ Design System Gaps (<N> items): some UI Stack components could not be matched to the design system or codebase. See `### Design System Alignment` in each uistack file for details.
-               <end if>"
+question    : "What would you like to do with this plan?"
 header      : "Plan"
 multiSelect : false
 options     :
@@ -547,7 +423,7 @@ options     :
   - label: "Discard",      description: "Cancel and delete this plan"
 ```
 
-**Approve** → Update `plan.md` frontmatter: set `status: approved` and add `context_doc: context.md` (relative path — points to the sibling context.md in the same run_dir). Output:
+**Approve** → Update `plan.md` frontmatter: set `status: approved` and add `context_doc: context.md`. Output:
 
 ```
 ## Plan Output
