@@ -1,5 +1,5 @@
 ---
-name: debugger-add-logs
+name: developer-debug-add-logs
 description: Add strategic debug logs to trace execution flow or diagnose a bug.
 user-invocable: false
 allowed-tools: Read, Edit, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch

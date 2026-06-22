@@ -1,6 +1,6 @@
 ---
-name: debugger-remove-logs
-description: Remove all debug logs added by debugger-add-logs.
+name: developer-debug-remove-logs
+description: Remove all debug logs added by developer-debug-add-logs.
 user-invocable: false
 allowed-tools: Read, Edit, Glob, Grep, mcp__cp8__kms_list, mcp__cp8__kms_fetch
 knowledge_scope: engineering
