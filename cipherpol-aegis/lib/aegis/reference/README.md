@@ -41,8 +41,6 @@ Keep in skills if:
 ```
 lib/core/aegis/reference/
   README.md              ← this file — taxonomy and placement rules
-  aegis-saturn-jaygarcia/
-    plan-format.md       ← plan.md schema and section contracts (aegis-lucci-planner / aegis-kaku-worker / aegis-saturn-jaygarcia)
 
 lib/core/<persona>/reference/
   <topic>.md             ← persona-scoped reference docs (language-agnostic)
@@ -63,7 +61,7 @@ lib/platforms/<platform>/reference/
 
 ## How Agents Use This Directory
 
-- Thin format/contract docs (e.g. `saturn-jaygarcia-plan-format.md`) — `Read` in full at the fixed path; these files are short by design
+- Thin format/contract docs — `Read` in full at the fixed path; these files are short by design
 - Catalog files (`<name>-catalog.md`, if added under a persona's `reference/`) — `symbol-query` only (`Grep <name>` → `Read(offset, limit=60)`), never `Read` in full
 - If uncertain which file covers a topic, Grep `reference/index.md` (platform level) or this README first
 - After adding a new reference file, add an entry to the relevant `index.md` and this README's directory map
