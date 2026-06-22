@@ -1,6 +1,6 @@
 ---
-name: debugger-debug
-description: Trigger the debugger-strategist agent. Accepts an optional bug description, collects any missing intake (error message, expected vs actual behavior, entry point, platform), then hands off to the agent.
+name: developer-debug
+description: Trigger the developer-debug-strategist agent. Accepts an optional bug description, collects any missing intake (error message, expected vs actual behavior, entry point, platform), then hands off to the agent.
 allowed-tools: Agent, AskUserQuestion
 user-invocable: true
 disable-model-invocation: true
@@ -21,7 +21,7 @@ disable-model-invocation: true
    - Platform: `web`, `ios`, or `flutter` (if not described)
    - Target files or class names (if not already named in the description or ticket — skip this question if they are)
 
-3. Spawn `debugger-strategist` with all collected intake in the spawn prompt:
+3. Spawn `developer-debug-strategist` with all collected intake in the spawn prompt:
 
    > Bug description: <description>
    > Error message: <error>
