@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.4.0] — 2026-06-22
+
+### Removed
+- `aegis-saturn-jaygarcia` skill — moved to cipherpol-9 as `cp9-rob-lucci`
+- `aegis-lucci-planner` agent — moved to cipherpol-9 as `cp9-fukurou-planner`
+- `aegis-kaku-worker` agent — moved to cipherpol-9 as `cp9-kaku-worker`
+- `aegis-perf-worker` agent — orphaned (no skill entry point); removed
+- `saturn-jaygarcia-plan-format.md` reference doc — superseded by `lucci-plan-format.md` in cipherpol-9
+
+### Changed
+- `developer-brainstorming` — Transition section now routes only to `developer-build-feature`; removed cross-plugin dependency on general-task executor
+
 ## [13.3.0] — 2026-06-22
 
 ### Added
