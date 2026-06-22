@@ -7,6 +7,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.5.0] — 2026-06-22
+
+### Changed
+- `developer-debug-*` — migrated all debugger persona agents and skills into `lib/developer/` with the `developer-debug-` prefix; deleted standalone `lib/debugger/` directory
+  - `debugger-log-worker` → `developer-debug-log-worker`
+  - `debugger-strategist` → `developer-debug-strategist`
+  - `debugger-worker` → `developer-debug-worker`
+  - `debugger-debug` skill → `developer-debug`
+  - `debugger-add-logs` skill → `developer-debug-add-logs`
+  - `debugger-remove-logs` skill → `developer-debug-remove-logs`
+
 ## [13.4.1] — 2026-06-22
 
 ### Added
