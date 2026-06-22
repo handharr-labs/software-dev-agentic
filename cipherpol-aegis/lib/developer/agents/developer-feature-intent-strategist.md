@@ -1,6 +1,6 @@
 ---
 name: developer-feature-intent-strategist
-description: Gathers feature intent interactively or from pre-filled fields. Detects existing runs, extracts Figma URLs from raw inputs, and returns a Decision block for the entry skill to route on.
+description: Gathers feature intent interactively or from pre-filled fields. Detects existing runs, extracts Figma URLs from raw inputs, and returns a Decision block for the entry skill to route on. Also supports pre-plan mode — explores module structure to generate scope candidates when the user's goal is unclear.
 model: opus
 tools: Read, Glob, Grep, Bash, AskUserQuestion
 related_skills:
@@ -44,7 +44,7 @@ Load full Decision block schemas:
 cat "$CLAUDE_PLUGIN_ROOT/reference/developer/strategist-decision-format.md"
 ```
 
-This agent emits: `spawn-planners` (with `pending_figma_urls` and `figma_groups`), `resume-execution`, `discard-partial`, `blocked`.
+This agent emits: `spawn-planners` (with `pending_figma_urls` and `figma_groups`), `resume-execution`, `discard-partial`, `blocked`, `scope-options` (pre-plan mode only).
 
 ---
 
@@ -206,6 +206,31 @@ cat "$CLAUDE_PLUGIN_ROOT/reference/developer/layer-contracts.md"
 ```
 
 Then return a `Decision: spawn-planners` block using the same planner selection rules as `gather-intent`.
+
+## Mode: pre-plan
+
+Called by the entry skill when the user has not yet identified a specific feature or operation. The goal is to surface concrete scope candidates — not to gather intent fields.
+
+Do NOT call `AskUserQuestion`. Do NOT attempt to extract feature name, platform, or operations. Explore only.
+
+### Steps
+
+1. Resolve project root and list the feature module tree:
+   ```bash
+   root=$(git rev-parse --show-toplevel)
+   find "$root/lib" -type d -maxdepth 3 2>/dev/null | head -50
+   ls "$root/lib/features/" 2>/dev/null || ls "$root/lib/" 2>/dev/null
+   ```
+
+2. From the user message + module tree, derive:
+   - `problem_statement` — 1-3 sentences describing the apparent problem, opportunity, or area of concern
+   - 2-3 candidate scope options — each with a short `label`, `description` of what it would cover and which Clean Architecture layers are likely affected, and a suggested `module_path`
+
+3. Return `Decision: scope-options`. No prose, no questions.
+
+Do not read source files. Glob and Bash (read-only) only.
+
+---
 
 ## Write Path Rule
 

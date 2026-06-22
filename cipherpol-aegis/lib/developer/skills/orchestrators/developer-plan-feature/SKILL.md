@@ -95,6 +95,55 @@ options     :
 **Provide manually** → collect content from user, append to `resolved_inputs`. Then proceed.  
 **Cancel** → stop.
 
+## Step 0.5 — Ambiguity Check
+
+Skip this step if `explicit_run_dir` was set in Step 0.
+
+Call `AskUserQuestion`:
+
+```
+question    : "Do you have a specific feature goal in mind?"
+header      : "Goal Clarity"
+multiSelect : false
+options     :
+  - label: "Yes — I know what to build",  description: "Proceed directly to intent gathering"
+  - label: "Not yet — explore first",      description: "Browse the codebase to identify the right scope before planning"
+```
+
+**Yes** → proceed to Step 1 with no additional context.
+
+**Not yet** → spawn `developer-feature-intent-strategist` in `pre-plan` mode:
+
+> **Mode: pre-plan**
+>
+> **User message:**
+> \<the full user message verbatim\>
+>
+> \<if raw_paths is non-empty:\>
+> **Raw Paths:**
+> \<list each path\>
+
+Route on `Decision: scope-options` — call `AskUserQuestion`:
+
+```
+question    : "<problem_statement from decision>
+
+               Which of these scopes fits what you have in mind?"
+header      : "Scope"
+multiSelect : false
+options     :
+  <one option per entry in decision.options — label = label, description = description>
+```
+
+Store the selected option as `pre_plan_context` (label, description, module_path). Proceed to Step 1, appending to the strategist's prompt:
+
+> **Pre-selected scope:**
+> Feature: \<label\>
+> Scope: \<description\>
+> Module path: \<module_path\>
+>
+> Use this as the starting point for intent gathering — skip re-deriving feature name and module path unless the user overrides them in Step G2.
+
 ## Step 1 — Gather Intent
 
 Spawn `developer-feature-intent-strategist`:

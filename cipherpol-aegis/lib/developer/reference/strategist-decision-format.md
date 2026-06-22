@@ -115,3 +115,19 @@ options:
   - <option 1>
   - <option 2>
 ```
+
+---
+
+## Decision: scope-options
+
+Returned by `developer-feature-intent-strategist` in `pre-plan` mode when the user's goal is exploratory and the codebase structure suggests concrete scope candidates. The entry skill presents these options to the user, then re-spawns `gather-intent` with the confirmed scope as additional context.
+
+```
+## Decision: scope-options
+problem_statement: |
+  <1-3 sentences describing the apparent problem, opportunity, or area of concern found in the codebase>
+options:
+  - label: <short feature/scope name>
+    description: <what this scope covers and which Clean Architecture layers are likely affected>
+    module_path: <suggested module path>
+```
