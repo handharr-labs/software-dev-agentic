@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.3.0] — 2026-06-22
+
+### Added
+- **cipherpol-9 plugin** — standalone generic plan-then-build plugin, no SDLC or KMS dependency
+- `cp9-rob-lucci` — orchestrator skill: discovery loop → plan → build; loops in discovery until user is ready to plan
+- `cp9-jabra-discovery` — consultant-discoverer agent (opus): understands user needs, explores freely, surfaces findings and hypotheses; writes `## Our Understanding` and `## Clarifications Needed` so the orchestrator can validate intent before planning
+- `cp9-fukurou-planner` — planner agent (opus): reads `discovery.md` as spec before planning; supports `plan` and `revise` modes
+- `cp9-kaku-worker` — builder agent (sonnet): executes approved `plan.md` end-to-end
+- `lucci-plan-format.md` reference doc for the cp9 plan schema
+
 ## [13.2.1] — 2026-06-19
 
 ### Changed
