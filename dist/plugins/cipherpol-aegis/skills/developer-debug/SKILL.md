@@ -31,9 +31,9 @@ disable-model-invocation: false
    > Platform: <platform>
    > Target files: <comma-separated file paths or class names, or "unknown" if not identified>
    > Available logs: <pasted log output, or "none">
-   > Investigation file: .claude/agentic-state/runs/developer/debug/<timestamp>-<slug>.md
+   > Investigation file: .claude/agentic-state/developer/debug/<timestamp>-<slug>.md
 
-   The strategist must write or update the investigation file at `.claude/agentic-state/runs/developer/debug/<timestamp>-<slug>.md` with its findings each round. Document format:
+   The strategist must write or update the investigation file at `.claude/agentic-state/developer/debug/<timestamp>-<slug>.md` with its findings each round. Document format:
 
    ```bash
    cat "$CLAUDE_PLUGIN_ROOT/reference/developer/debug-investigation-format.md"
@@ -51,4 +51,4 @@ disable-model-invocation: false
 
    d. If the strategist output contains `root_cause` and `fix_recommendation` — exit the loop and surface both to the user. Otherwise return to 4a.
 
-5. End the skill. The investigation file at `.claude/agentic-state/runs/developer/debug/<timestamp>-<slug>.md` is the durable record of the session.
+5. End the skill. The investigation file at `.claude/agentic-state/developer/debug/<timestamp>-<slug>.md` is the durable record of the session.
