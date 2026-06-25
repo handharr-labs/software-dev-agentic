@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.8.0] — 2026-06-25
+
+### Added
+- `developer-debug-report-ts` skill — orchestrator flow that investigates a Technical Support issue end-to-end: classifies it (API / ANR / Crash), gates on data availability, fetches from Firebase Crashlytics and/or Grafana Loki, traces the root cause in code, proposes solutions via `AskUserQuestion`, then implements the chosen fix. Callable from any Talenta repo once the plugin is built/installed.
+- `developer-debug-ts-classify-worker` agent — two modes: `classify` (api/anr/crash/other from the report + code) and `analyze-root-cause` (traces the call chain across layers and proposes solutions)
+- `developer-debug-ts-firebase-worker` agent — fetches Crashlytics issues via `crashlytics_get_report` + `crashlytics_batch_get_events`, filtered by error type / version / OS / date, then loops events to match custom keys (user id / company id)
+- `developer-debug-ts-loki-query-worker`, `developer-debug-ts-loki-live-tracking-worker`, `developer-debug-ts-log-analyzer-worker` agents — promoted from local Loki/Grafana agents for production log retrieval and timeline / root-cause analysis
+- `developer-debug-ts-fix-worker` agent — implements localized fixes; emits a `/developer-build-feature` handoff for large multi-layer fixes
+- `debug-report-ts-format.md`, `debug-report-ts-config.md` — reference docs: run-report output contract and Talenta environment constants (app IDs, project, dashboards, the `mekari_log_cache_retention_validator` Loki gate flag, Grafana datasource URL)
+
 ## [13.7.0] — 2026-06-23
 
 ### Changed
