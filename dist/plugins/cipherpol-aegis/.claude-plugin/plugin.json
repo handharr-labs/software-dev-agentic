@@ -1,7 +1,7 @@
 {
   "name": "cipherpol-aegis",
   "description": "developer, debugger, tracker, auditor personas for Clean Architecture projects",
-  "version": "13.7.0",
+  "version": "13.8.0",
   "author": {
     "name": "Jurnal Engineering"
   }

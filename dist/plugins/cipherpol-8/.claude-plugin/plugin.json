@@ -1,7 +1,7 @@
 {
   "name": "cipherpol-8",
   "description": "KMS knowledge MCP server for Clean Architecture projects",
-  "version": "13.7.0",
+  "version": "13.8.0",
   "author": {
     "name": "Jurnal Engineering"
   }
