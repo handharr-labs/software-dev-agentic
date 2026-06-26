@@ -7,6 +7,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [13.7.1] — 2026-06-26
+
+### Fixed
+- `developer-extract-sysdesign` skill — added output path validation after worker extraction: each returned path must end in `-system-design.md` and exist on disk; prevents naming convention violations (e.g. snake_case, wrong suffix) from silently propagating to the consolidate worker
+
 ## [13.7.0] — 2026-06-23
 
 ### Changed
