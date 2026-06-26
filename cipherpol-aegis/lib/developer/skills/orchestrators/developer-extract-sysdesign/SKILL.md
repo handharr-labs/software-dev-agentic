@@ -72,7 +72,11 @@ Spawn one worker per source file **in parallel** (single Agent call), routing by
 
 Wait for all workers. Each returns `## Output` with the written design path. Collect all paths as `new_design_paths`.
 
-If any worker fails, surface the failure — do not silently skip.
+**Validate each returned path:**
+- Must end in `-system-design.md` (e.g. `overtime-form-screen-system-design.md`) — naming convention violation if it does not
+- Must exist on disk (`ls <path>`) — worker output error if it does not
+
+If any worker fails, returns an invalid path, or returns a path that does not exist, surface the failure — do not silently skip.
 
 ## Step 3 — Route on Total
 
