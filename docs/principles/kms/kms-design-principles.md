@@ -23,7 +23,7 @@ A ChromaDB-backed knowledge store shipped inside the Claude Code plugin. Agents 
 
 ### 1. Single collection — cascade via metadata
 
-One ChromaDB collection for all knowledge. Scope is enforced by metadata fields (`scope`, `platform`, `project`, `discipline`, `layer`, `artifact`, `topic`, `section` [=`subtopic`=`pattern`], plus `owner`; `area` retained but scheduled for removal), not by collection separation. Splitting by platform would break cascade fallthrough which requires all tiers queryable in a single call.
+One ChromaDB collection for all knowledge. Scope is enforced by metadata fields (`scope`, `platform`, `project`, `discipline`, `layer`, `artifact`, `topic`, `section` [=`subtopic`=`pattern`], plus `owner`), not by collection separation. Splitting by platform would break cascade fallthrough which requires all tiers queryable in a single call.
 
 Nodes from multiple platforms and projects naturally accumulate in a single ChromaDB instance — this is expected. Agents always query with explicit `platform` and `project` filters, so cross-platform nodes are never surfaced to an agent working in a different context. The presence of flutter or android nodes in an iOS plugin's ChromaDB is not an error.
 
@@ -52,11 +52,11 @@ Each knowledge source declares which sections it owns. `UpsertKnowledge` use cas
 
 ### 4. Knowledge Path is the single source of truth
 
-The **Knowledge Path** — the ordered tuple `scope → platform/project → discipline → area → artifact → topic → subtopic → pattern` — is the canonical address of every knowledge node. Everything else derives from it:
+The **Knowledge Path** — the ordered tuple `scope → platform/project → discipline → artifact → topic → section` — is the canonical address of every knowledge node. Everything else derives from it:
 
 | Layer | How it derives from the Knowledge Path |
 |---|---|
-| **Directory structure** | Encodes the coarse tiers physically — `{scope}/[{platform}\|{project}]/{discipline}/{area}/{artifact}.md`. Within a file: `#` → `topic` (and engineering CLEAN-layer marker), each `##` → **one node** (`section`); `###`/`####` are that node's internal body — no longer promoted to separate nodes |
+| **Directory structure** | Encodes the coarse tiers physically — `{scope}/[{platform}\|{project}]/{discipline}/{artifact}.md` (3-level, no `area`). Within a file: `#` → `topic` (and engineering CLEAN-layer marker), each `##` → **one node** (`section`); `###`/`####` are that node's internal body — no longer promoted to separate nodes |
 | **Seeder** (`DirectorySource`) | Reads frontmatter first, path as fallback; derives + validates all facets, and derives `layer` from frontmatter → `#`-topic marker → `cross` floor |
 | **DB schema** (`KnowledgeNode`) | Stores facets as metadata; node `id` is an opaque uuid5 over `source_file#topic#section`, stable across facet reclassification |
 

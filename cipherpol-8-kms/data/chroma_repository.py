@@ -43,7 +43,6 @@ def _to_meta(node: KnowledgeNode) -> dict:
         "platform":       node.platform or _NULL,
         "project":        node.project or _NULL,
         "discipline":     node.discipline,
-        "area":           node.area,
         "layer":          node.layer or _NULL,
         "owner":          node.owner,
         "artifact":       node.artifact or _NULL,
@@ -79,7 +78,6 @@ def _from_meta(meta: dict, content: Optional[str] = None) -> KnowledgeNode:
         platform=None if meta.get("platform") == _NULL else meta.get("platform"),
         project=None if meta.get("project") == _NULL else meta.get("project"),
         discipline=meta["discipline"],
-        area=meta.get("area", ""),
         layer=None if meta.get("layer") == _NULL else meta.get("layer"),
         owner=meta.get("owner", "curated"),
         artifact=None if meta.get("artifact") == _NULL else meta.get("artifact"),
@@ -111,7 +109,6 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         platform: Optional[str] = None,
         project: Optional[str] = None,
         discipline: Optional[str] = None,
-        area: Optional[str] = None,
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
         subtopic: Optional[str] = None,
@@ -131,8 +128,6 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             where["project"] = pj
         if discipline is not None:
             where["discipline"] = discipline
-        if area is not None:
-            where["area"] = area
         if artifact is not None:
             where["artifact"] = artifact
         if topic is not None:
@@ -155,7 +150,6 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         platform: Optional[str],
         project: Optional[str],
         discipline: str,
-        area: str,
         artifact: Optional[str],
         topic: str,
         subtopic: str,
@@ -165,7 +159,6 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             "platform":   platform or _NULL,
             "project":    project or _NULL,
             "discipline": discipline,
-            "area":       area,
             "artifact":   artifact or _NULL,
             "topic":      topic,
             "subtopic":   subtopic or pattern,

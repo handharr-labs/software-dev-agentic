@@ -1,3 +1,8 @@
+---
+tags:
+  - design-system
+---
+
 # Mekari Pixel — iOS Design System Catalog
 
 ## Package Info

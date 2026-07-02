@@ -3,7 +3,9 @@
 
 Path conventions, chunk strategy, metadata schema, discipline vocabulary, and retrieval protocol — the practical reference for authoring knowledge docs and writing agents that query the KMS.
 
-> **Knowledge Path Structure** — the directory + heading convention defined across this doc (Path Conventions, Chunk Strategy, and Metadata Schema below) that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{area}/{artifact}.md`, then `#`→`topic`/`##`→`subtopic`/`###`→`pattern` (depth-aware, see Chunk Strategy below) inside the file. See [kms-glossary.md](kms-glossary.md#glossary) for one-line definitions of each term.
+> **⚠ Reconciled 2026-07-03** by the [knowledge-management redesign](../../initiatives/2026-07-03-kms-knowledge-management-redesign.md). Two changes supersede older prose below: (1) the path is **3-level** — the `area` segment is gone; (2) chunking is at **`##` = one node** — `###`/`####` are that node's body, no longer promoted to separate `pattern` nodes (so `subtopic == pattern == ## slug` always). The path examples in this section are updated; the "Chunk Strategy" prose describing `###` promotion is retained for history — follow the redesign doc + `kms-knowledge-source-rules.md` where they differ.
+
+> **Knowledge Path Structure** — the directory + heading convention that every Knowledge Path is an instance of: `{scope}/[{platform}|{project}]/{discipline}/{artifact}.md` (3-level), then `#`→`topic` and each `##`→one node (`section`, stored as `subtopic == pattern`) inside the file. See [kms-glossary.md](kms-glossary.md#glossary) for one-line definitions of each term.
 
 ---
 
@@ -13,41 +15,38 @@ Raw documents live here — any format (`.md`, `.txt`), any origin. Engineers dr
 
 > For the directory tree (what's actually under `knowledge-sources/`, and the rest of `kms/`), see [kms-directory-structure.md](kms-directory-structure.md).
 
-Five path segments map directly to metadata fields. Three top-level buckets mirror the cascade tiers — three path conventions:
+Four path segments map directly to metadata fields (3-level — the `area` segment was removed 2026-07-03). Three top-level buckets mirror the cascade tiers — three path conventions:
 
-**1. Universal knowledge — `universal/{discipline}/{area}/{artifact}.md`:**
+**1. Universal knowledge — `universal/{discipline}/{artifact}.md`:**
 ```
-universal/agile/core/sprint-ceremonies.md   → scope=universal, discipline=agile, area=core, artifact=sprint-ceremonies
-universal/engineering/core/conventions.md   → scope=universal, discipline=engineering, area=core, artifact=conventions
+universal/agile/sprint-ceremonies.md   → scope=universal, discipline=agile, artifact=sprint-ceremonies
+universal/engineering/conventions.md   → scope=universal, discipline=engineering, artifact=conventions
 ```
 
 - `discipline` → subdirectory (must match `DISCIPLINE_VALUES`)
-- `area` → next subdirectory — fixed vocabulary (`core` | `design-system`, see `AREA_VALUES`), inserted between `discipline` and `artifact`
 - `artifact` → the filename stem — the named body of knowledge within the discipline
 - `scope` → always `universal`
 
-**2. Platform knowledge — `platform/{platform}/{discipline}/{area}/{artifact}.md`:**
+**2. Platform knowledge — `platform/{platform}/{discipline}/{artifact}.md`:**
 ```
-platform/flutter/engineering/core/conventions.md           → scope=platform, platform=flutter, discipline=engineering, area=core, artifact=conventions
-platform/flutter/engineering/core/standard-architecture.md  → scope=platform, platform=flutter, discipline=engineering, area=core, artifact=standard-architecture
-platform/flutter/design/design-system/mekari-pixel.md      → scope=platform, platform=flutter, discipline=design, area=design-system, artifact=mekari-pixel
+platform/flutter/engineering/conventions.md            → scope=platform, platform=flutter, discipline=engineering, artifact=conventions
+platform/flutter/engineering/standard-architecture.md  → scope=platform, platform=flutter, discipline=engineering, artifact=standard-architecture
+platform/flutter/design/mekari-pixel.md                → scope=platform, platform=flutter, discipline=design, artifact=mekari-pixel  (tags: [design-system])
 ```
 
 - `platform` → subdirectory under `platform/` (one of `flutter`, `ios`, `android`, `web`)
 - `discipline` → next subdirectory (must match `DISCIPLINE_VALUES`)
-- `area` → next subdirectory — fixed vocabulary (`core` | `design-system`, see `AREA_VALUES`), inserted between `discipline` and `artifact`
-- `artifact` → the filename stem — named knowledge body. When `area=design-system`, `artifact` is the specific design system/library name (e.g. `mekari-pixel`), so additional design systems (e.g. `legacy-kit`) coexist without collision
+- `artifact` → the filename stem — named knowledge body. A design-system catalog lives under `discipline: design` with `tags: [design-system]`; `artifact` is the specific design system name (e.g. `mekari-pixel`), so additional systems (e.g. `legacy-kit`) coexist without collision
 - `scope` → always `platform`
 
-**3. Project-specific knowledge — `projects/{project-name}/{area}/{artifact}.md`:**
+**3. Project-specific knowledge — `projects/{project-name}/{discipline}/{artifact}.md`:**
 ```
-projects/mobile-talenta/core/feature-inventory.md  → project=mobile-talenta, area=core, artifact=feature-inventory, scope=project
-projects/mobile-talenta/core/api-endpoints.md      → project=mobile-talenta, area=core, artifact=api-endpoints, scope=project
+projects/mobile-talenta/engineering/feature-inventory.md  → project=mobile-talenta, discipline=engineering, artifact=feature-inventory, scope=project
+projects/mobile-talenta/engineering/api-endpoints.md      → project=mobile-talenta, discipline=engineering, artifact=api-endpoints, scope=project
 ```
 
 - `platform` and `project` read from `repo.yaml` in the project directory — not encoded in filenames
-- `discipline` defaults to `engineering` — project docs are always codebase-derived
-- `area` → subdirectory — fixed vocabulary (`core` | `design-system`, see `AREA_VALUES`), inserted between the project directory and `artifact`
+- `discipline` defaults to `engineering` — project docs are usually codebase-derived
 - `scope` is always `project`
 
 Each project directory requires a `repo.yaml`:
@@ -110,18 +109,19 @@ last_scanned_local_path: null
 
 | Field | Mandatory | Source | Values |
 |---|---|---|---|
-| `scope` | ✅ | path (tier) | `universal`, `platform`, `project` — encoded as `platform/flutter` or `project/name` in frontmatter |
-| `discipline` | ✅ | path (dir) | `engineering`, `design`, `qa`, `devops`, `security`, `code_review`, `product`, `architecture`, `agile` |
-| `area` | ✅ | path (dir) | `core`, `design-system` (extensible — see `AREA_VALUES`) |
+| `scope` | ✅ | frontmatter → path (tier) | `universal`, `platform`, `project` |
+| `discipline` | ✅ | frontmatter → path (dir) | `engineering`, `design`, `qa`, `devops`, `security`, `code_review`, `product`, `architecture`, `agile` |
 | `artifact` | ✅ | path (filename stem) | named knowledge body within a discipline — `conventions`, `standard-architecture`, `feature-inventory`, etc. |
 | `topic` | ✅ | `#` heading | slug of the parent `#` heading; artifact name if no `#` present |
-| `subtopic` | ✅ | `##` heading | slug of the `##` heading — equals `pattern` when the `##` has no `###` children |
-| `pattern` | ✅ | `##` or `###` heading | slug of the `###` heading if the parent `##` has `###` children, else the `##` heading itself — the retrieval key |
-| `schema_version` | ✅ | constant | `"2"` — increment on breaking field changes |
-| `platform` | ⬜ | path / repo.yaml | `flutter`, `ios`, `android`, `web` — omit if `scope=universal` |
-| `project` | ⬜ | repo.yaml | project name — omit if `scope != project` |
-| `tags` | ⬜ | manual | JSON array string |
-| `source_file` | ⬜ | derived | absolute path to source file |
+| `subtopic` | ✅ | `##` heading | the `section` slug — equals `pattern` (`##`-concept chunking) |
+| `pattern` | ✅ | `##` heading | the `section` slug — the retrieval key (equals `subtopic`) |
+| `schema_version` | ✅ | constant | `"4"` — increment on breaking field changes |
+| `platform` | ⬜ | frontmatter → path / repo.yaml | `flutter`, `ios`, `android`, `web` — omit if `scope=universal` |
+| `project` | ⬜ | frontmatter → repo.yaml | project name — omit if `scope != project` |
+| `layer` | ⬜ | frontmatter → `#`-topic marker → `cross` | `domain`, `data`, `presentation`, `cross` — per-agent scoping (see `LAYER_VALUES`) |
+| `owner` | ⬜ | frontmatter | `curated`, `extracted` (see `OWNER_VALUES`) |
+| `tags` | ⬜ | frontmatter | JSON array string (design-system catalogs use `[design-system]`) |
+| `source_file` | ⬜ | derived | path relative to `knowledge-sources/` |
 | `updated_at` | ⬜ | derived | ISO date string |
 | `content_hash` | ⬜ | derived | SHA hash of the node's content after chunking — used for incremental seed detection |
 | `content_type` | ⬜ | derived | `"real"` (default) — reserved, stub seeding removed |

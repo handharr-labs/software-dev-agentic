@@ -50,7 +50,7 @@ Emit a consolidated summary — one row per draft — then the aggregate next st
 
 ```
 Classified N drafts:
-  error-handling.md   → platform/flutter/engineering/core/data-error-mapping.md  (layer=data, 3 sections)
+  error-handling.md   → platform/flutter/engineering/data-error-mapping.md  (layer=data, 3 sections)
   sso-notes.md        → MERGE PROPOSAL: .../conventions.proposed.md  (2 new, 1 overlap)
 
 Next: review the written files as a git diff, delete the processed _inbox drafts,

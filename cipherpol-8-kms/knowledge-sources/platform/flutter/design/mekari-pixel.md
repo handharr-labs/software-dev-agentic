@@ -1,3 +1,8 @@
+---
+tags:
+  - design-system
+---
+
 # Metadata
 
 - **Platform:** Flutter only. Non-Flutter platforms: N/A.

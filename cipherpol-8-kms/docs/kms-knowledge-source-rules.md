@@ -39,8 +39,7 @@ Facets are **frontmatter-authoritative** — a value in the file's YAML frontmat
 | `discipline` | frontmatter → path | `DISCIPLINE_VALUES` |
 | `layer` | frontmatter → `#`-topic marker → `cross` | `domain` / `data` / `presentation` / `cross` |
 | `owner` | frontmatter (default `curated`) | `curated` (hand-owned) / `extracted` (scanner-regenerated) |
-| `area` | frontmatter → path | `core` / `design-system` *(retained; scheduled for removal — do not rely on it as a filter)* |
-| `tags` | frontmatter | free-form |
+| `tags` | frontmatter | free-form (design-system catalogs use `tags: [design-system]` under `discipline: design`) |
 
 - **`layer`** enables per-agent scoping — a `domain-planner` retrieves `layer ∈ {domain, cross}` and never sees data-layer nodes. If you don't set it, engineering docs inherit it from the `#` topic marker; everything else floors to `cross` (always in-scope).
 - **`owner: extracted`** marks machine-generated files (feature-inventory, api-endpoints) that scanners regenerate wholesale — never hand-edit them.
@@ -69,12 +68,12 @@ No  → universal/ or platform/{platform}/ (from question 1)
 
 | Knowledge type | Example | Bucket |
 |---|---|---|
-| SDLC process applies to all platforms | Sprint retrospective guide, PR review checklist | `universal/{discipline}/core/` |
-| Architecture principle applies to all platforms | Clean Architecture layers, SOLID rules | `universal/engineering/core/` |
-| Implementation pattern tied to one platform | Flutter BLoC pattern, iOS UIKit coordinator | `platform/{platform}/engineering/core/` |
-| UI component catalog for one platform | Flutter Mekari Pixel catalog | `platform/{platform}/design/design-system/` |
-| Project deviates from the platform standard | Custom DI pattern, non-standard folder structure | `projects/{project-name}/core/` |
-| Project inventory (features, endpoints) | Feature list, API endpoints | `projects/{project-name}/core/` |
+| SDLC process applies to all platforms | Sprint retrospective guide, PR review checklist | `universal/{discipline}/` |
+| Architecture principle applies to all platforms | Clean Architecture layers, SOLID rules | `universal/engineering/` |
+| Implementation pattern tied to one platform | Flutter BLoC pattern, iOS UIKit coordinator | `platform/{platform}/engineering/` |
+| UI component catalog for one platform | Flutter Mekari Pixel catalog | `platform/{platform}/design/` (`tags: [design-system]`) |
+| Project deviates from the platform standard | Custom DI pattern, non-standard folder structure | `projects/{project-name}/{discipline}/` |
+| Project inventory (features, endpoints) | Feature list, API endpoints | `projects/{project-name}/{discipline}/` |
 
 ### The deviation test for `projects/`
 
@@ -103,38 +102,36 @@ Most knowledge lives at `universal/` or `platform/` tier. `projects/` is the exc
 
 ## File Naming Rules
 
-### Universal knowledge — `kms/knowledge-sources/universal/{discipline}/{area}/`
+Paths are **3-level** — no `area` segment (removed 2026-07-03). Design-system catalogs live under `discipline: design` with `tags: [design-system]`.
+
+### Universal knowledge — `knowledge-sources/universal/{discipline}/`
 
 | Path | Example | Derived metadata |
 |---|---|---|
-| `universal/{discipline}/{area}/{artifact}.md` | `universal/agile/core/sprint-ceremonies.md` | `scope=universal, discipline=agile, area=core, artifact=sprint-ceremonies` |
+| `universal/{discipline}/{artifact}.md` | `universal/agile/sprint-ceremonies.md` | `scope=universal, discipline=agile, artifact=sprint-ceremonies` |
 
 - `{discipline}` — must match `DISCIPLINE_VALUES`
-- `{area}` — must match `AREA_VALUES` (`core` | `design-system`); fixed vocabulary, inserted between `discipline` and `artifact`
 - `{artifact}.md` — kebab-case filename stem; the named body of knowledge within the discipline
 
-### Platform knowledge — `kms/knowledge-sources/platform/{platform}/{discipline}/{area}/`
+### Platform knowledge — `knowledge-sources/platform/{platform}/{discipline}/`
 
 | Path | Example | Derived metadata |
 |---|---|---|
-| `platform/{platform}/{discipline}/{area}/{artifact}.md` | `platform/flutter/engineering/core/conventions.md` | `scope=platform, platform=flutter, discipline=engineering, area=core, artifact=conventions` |
+| `platform/{platform}/{discipline}/{artifact}.md` | `platform/flutter/engineering/conventions.md` | `scope=platform, platform=flutter, discipline=engineering, artifact=conventions` |
 
 - `{platform}` — one of `flutter`, `ios`, `android`, `web`
 - `{discipline}` — must match `DISCIPLINE_VALUES`
-- `{area}` — must match `AREA_VALUES` (`core` | `design-system`); fixed vocabulary, inserted between `discipline` and `artifact`
 - `{artifact}.md` — kebab-case filename stem; the named body of knowledge
-- No platform prefix in filenames — all metadata is directory-encoded
+- No platform prefix in filenames — all metadata is directory- or frontmatter-encoded
+- Design-system catalog: `platform/{platform}/design/{system}.md` (e.g. `mekari-pixel.md`) with `tags: [design-system]`
 
-**`area` convention:** `core` is for standard platform-owned artifacts (conventions, standard-architecture, etc.). `design-system` is for design-system catalogs, where `{artifact}` becomes the specific design system name (e.g. `mekari-pixel`) — this lets multiple design systems coexist per platform (e.g. a future `legacy-kit`) without folder-name collisions.
-
-### Project knowledge — `kms/knowledge-sources/projects/{project-name}/{area}/`
+### Project knowledge — `knowledge-sources/projects/{project-name}/{discipline}/`
 
 | Path | Example | Derived metadata |
 |---|---|---|
-| `projects/{project}/{area}/{artifact}.md` | `projects/mobile-talenta/core/feature-inventory.md` | `scope=project, area=core, artifact=feature-inventory` |
+| `projects/{project}/{discipline}/{artifact}.md` | `projects/mobile-talenta/engineering/feature-inventory.md` | `scope=project, discipline=engineering, artifact=feature-inventory` |
 
 - `platform` and `project` read from `repo.yaml` — not encoded in filename
-- `{area}` — must match `AREA_VALUES` (`core` | `design-system`); fixed vocabulary, inserted between the project directory and `artifact`
 - `{artifact}.md` — kebab-case filename stem; the aspect of the project this covers (`feature-inventory`, `api-endpoints`, `deviations`, etc.)
 
 ---
@@ -243,16 +240,16 @@ Each discipline has a natural `##` unit (the node) and — for theory-heavy disc
 
 Examples:
 ```
-platform/flutter/engineering/core/standard-architecture.md
-  # Domain → ## Entity (flat), ## Use Case → ### Theory, ### Code Pattern, ### Example
+platform/flutter/engineering/standard-architecture.md
+  # Domain → ## Entity, ## Use Case (### Theory, ### Code Pattern are the node body)
   # Data   → ## Repository Impl, ## Data Source
-  # Presentation → ## BLoC → ### Theory, ### Code Pattern
+  # Presentation → ## BLoC
 
-platform/flutter/design/design-system/mekari-pixel.md
-  # Atoms → ## MpButton, ## MpTextField   (flat — subtopic == pattern)
+platform/flutter/design/mekari-pixel.md   (tags: [design-system])
+  # Atoms → ## MpButton, ## MpTextField
   # Components → ## MpCard, ## MpBottomSheet
 
-universal/qa/core/mobile-regression-checklist.md
+universal/qa/mobile-regression-checklist.md
   # Auth Flow → ## Login, ## SSO
   # Payment Flow → ## Payslip, ## Reimbursement
 ```
@@ -261,7 +258,7 @@ universal/qa/core/mobile-regression-checklist.md
 
 ## Project Doc Rules
 
-Project docs live in `kms/knowledge-sources/projects/{project-name}/{area}/` (typically `area=core`) and are generated by `kms-extract-worker`. The same chunking contract applies — the artifact filename stem sets the artifact metadata, `#` groups set topic, `##` headings are the subtopic/retrieval units (split into `###` only if a feature/endpoint/component needs Theory/Code Pattern/Example granularity).
+Project docs live in `knowledge-sources/projects/{project-name}/{discipline}/` and are generated by `kms-extract-worker`. The same chunking contract applies — the artifact filename stem sets the artifact metadata, `#` groups set topic, and each `##` heading is one retrieval node (its `###`/`####` are the node body).
 
 | Artifact folder | Recommended `#` groups | Recommended `##` unit |
 |---|---|---|

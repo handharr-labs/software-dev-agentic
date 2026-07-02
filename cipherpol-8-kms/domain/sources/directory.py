@@ -11,7 +11,6 @@ import yaml
 
 from ..entities import KnowledgeNode
 from ..schema import (
-    AREA_VALUES,
     DEFAULT_LAYER,
     DISCIPLINE_VALUES,
     LAYER_VALUES,
@@ -192,11 +191,11 @@ class DirectorySource(KnowledgeSource):
     sensible defaults (and keeps the tree browsable), but a file is no longer silently
     mis-seeded by its folder: invalid facet values are reported and skipped.
 
-    Three path conventions mirror the cascade tiers:
+    Three path conventions mirror the cascade tiers (3-level — no area segment):
 
-    1. Universal: {root}/universal/{discipline}/{area}/{artifact}.md
-    2. Platform:  {root}/platform/{platform}/{discipline}/{area}/{artifact}.md
-    3. Project:   {root}/projects/{project}/{discipline}/{area}/{artifact}.md
+    1. Universal: {root}/universal/{discipline}/{artifact}.md
+    2. Platform:  {root}/platform/{platform}/{discipline}/{artifact}.md
+    3. Project:   {root}/projects/{project}/{discipline}/{artifact}.md
        (platform + canonical project name come from repo.yaml)
     """
 
@@ -237,14 +236,12 @@ class DirectorySource(KnowledgeSource):
             return str(path)
 
     @staticmethod
-    def _validate(platform, project, discipline, area, layer, owner) -> list[str]:
+    def _validate(platform, project, discipline, layer, owner) -> list[str]:
         errs: list[str] = []
         if platform is not None and platform not in PLATFORM_VALUES:
             errs.append(f"platform '{platform}' not in {PLATFORM_VALUES}")
         if discipline not in DISCIPLINE_VALUES:
             errs.append(f"discipline '{discipline}' not in {DISCIPLINE_VALUES}")
-        if area not in AREA_VALUES:
-            errs.append(f"area '{area}' not in {AREA_VALUES}")
         if layer is not None and layer not in LAYER_VALUES:
             errs.append(f"layer '{layer}' not in {LAYER_VALUES}")
         if owner not in OWNER_VALUES:
@@ -258,7 +255,6 @@ class DirectorySource(KnowledgeSource):
         path_platform: Optional[str],
         path_project: Optional[str],
         path_discipline: str,
-        path_area: str,
     ) -> Iterator[KnowledgeNode]:
         raw = path.read_text(encoding="utf-8").strip()
         fm = _parse_frontmatter(raw)
@@ -267,13 +263,12 @@ class DirectorySource(KnowledgeSource):
         platform = fm.get("platform") or path_platform
         project = fm.get("project") or path_project
         discipline = fm.get("discipline") or path_discipline
-        area = fm.get("area") or path_area
         fm_layer = fm.get("layer") or None   # explicit frontmatter layer wins over topic inference
         owner = fm.get("owner") or "curated"
         tags = fm.get("tags") or []
         artifact = (fm.get("artifact") or path.stem).replace("-", "_")
 
-        errs = self._validate(platform, project, discipline, area, fm_layer, owner)
+        errs = self._validate(platform, project, discipline, fm_layer, owner)
         if errs:
             for e in errs:
                 print(f"  skip (invalid facet): {self._relpath(path)} — {e}")
@@ -293,7 +288,6 @@ class DirectorySource(KnowledgeSource):
                 platform=platform,
                 project=project,
                 discipline=discipline,
-                area=area,
                 layer=node_layer,
                 owner=owner,
                 artifact=artifact,
@@ -342,19 +336,15 @@ class DirectorySource(KnowledgeSource):
         for discipline_dir in sorted(scope_dir.iterdir()):
             if not discipline_dir.is_dir() or discipline_dir.name not in DISCIPLINE_VALUES:
                 continue
-            for area_dir in sorted(discipline_dir.iterdir()):
-                if not area_dir.is_dir() or area_dir.name not in AREA_VALUES:
+            for path in sorted(discipline_dir.iterdir()):
+                if not self._is_seedable(path):
                     continue
-                for path in sorted(area_dir.iterdir()):
-                    if not self._is_seedable(path):
-                        continue
-                    yield from self._emit_nodes(
-                        path,
-                        path_platform=platform,
-                        path_project=None,
-                        path_discipline=discipline_dir.name,
-                        path_area=area_dir.name,
-                    )
+                yield from self._emit_nodes(
+                    path,
+                    path_platform=platform,
+                    path_project=None,
+                    path_discipline=discipline_dir.name,
+                )
 
     # ------------------------------------------------------------------
     # Project docs
@@ -371,16 +361,12 @@ class DirectorySource(KnowledgeSource):
             for discipline_dir in sorted(project_dir.iterdir()):
                 if not discipline_dir.is_dir() or discipline_dir.name not in DISCIPLINE_VALUES:
                     continue
-                for area_dir in sorted(discipline_dir.iterdir()):
-                    if not area_dir.is_dir() or area_dir.name not in AREA_VALUES:
+                for path in sorted(discipline_dir.iterdir()):
+                    if not self._is_seedable(path):
                         continue
-                    for path in sorted(area_dir.iterdir()):
-                        if not self._is_seedable(path):
-                            continue
-                        yield from self._emit_nodes(
-                            path,
-                            path_platform=repo.platform,
-                            path_project=repo.name,
-                            path_discipline=discipline_dir.name,
-                            path_area=area_dir.name,
-                        )
+                    yield from self._emit_nodes(
+                        path,
+                        path_platform=repo.platform,
+                        path_project=repo.name,
+                        path_discipline=discipline_dir.name,
+                    )

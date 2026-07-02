@@ -11,7 +11,6 @@ _ID_NAMESPACE = uuid.UUID("6b6f6d73-0000-4000-8000-000000000001")
 class KnowledgeNode:
     scope: str                 # universal | platform | project — see schema.SCOPE_VALUES
     discipline: str            # see schema.DISCIPLINE_VALUES
-    area: str                  # see schema.AREA_VALUES
     topic: str
     pattern: str
     subtopic: str = ""               # ## heading slug — equals pattern when no ### children exist

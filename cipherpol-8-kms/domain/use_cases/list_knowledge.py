@@ -19,7 +19,6 @@ class ListKnowledge:
         platform: Optional[str] = None,
         project: Optional[str] = None,
         discipline: Optional[str] = None,
-        area: Optional[str] = None,
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
         subtopic: Optional[str] = None,
@@ -28,7 +27,7 @@ class ListKnowledge:
         from ..repository import NULL_SENTINEL
 
         # No scope filters — return everything (e.g. kms-status overview).
-        if platform is None and project is None and discipline is None and area is None and artifact is None and topic is None and subtopic is None and layer is None:
+        if platform is None and project is None and discipline is None and artifact is None and topic is None and subtopic is None and layer is None:
             nodes = self._repo.list()
             return sorted(nodes, key=lambda n: (n.discipline, n.artifact or "", n.topic, n.subtopic, n.pattern))
 
@@ -36,15 +35,15 @@ class ListKnowledge:
         tiers: list[list[KnowledgeNode]] = []
 
         # Universal tier: nodes where platform stored as "null".
-        tiers.append(self._repo.list(platform=NULL_SENTINEL, project=NULL_SENTINEL, discipline=discipline, area=area, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer))
+        tiers.append(self._repo.list(platform=NULL_SENTINEL, project=NULL_SENTINEL, discipline=discipline, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer))
 
         if platform:
             # Platform-base (project=None → stored as "null").
-            tiers.append(self._repo.list(platform=platform, project=NULL_SENTINEL, discipline=discipline, area=area, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer))
+            tiers.append(self._repo.list(platform=platform, project=NULL_SENTINEL, discipline=discipline, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer))
 
         if project:
             # Project-specific overrides — platform already stored in the node from repo.yaml.
-            tiers.append(self._repo.list(platform=platform, project=project, discipline=discipline, area=area, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer))
+            tiers.append(self._repo.list(platform=platform, project=project, discipline=discipline, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer))
 
         # Merge: later tiers (more specific) win on (discipline, artifact, topic, subtopic, pattern) key.
         seen: dict[tuple[str, str, str, str, str], KnowledgeNode] = {}

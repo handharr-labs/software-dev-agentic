@@ -18,8 +18,6 @@ DISCIPLINE_VALUES = [
     "agile",
 ]
 
-AREA_VALUES = ["core", "design-system"]
-
 # CLEAN-layer facet — enables per-agent retrieval scoping (domain-planner never
 # gets data-layer nodes). "cross" = cross-cutting; always unioned into agent scopes.
 LAYER_VALUES = ["domain", "data", "presentation", "cross"]
@@ -42,11 +40,11 @@ TOPIC_LAYER_MARKERS = {
 # agent's scope, so an unmarked node is never invisible to scoped retrieval.
 DEFAULT_LAYER = "cross"
 
-MANDATORY_FIELDS = ["scope", "discipline", "area", "artifact", "topic", "subtopic", "pattern", "schema_version"]
+MANDATORY_FIELDS = ["scope", "discipline", "artifact", "topic", "subtopic", "pattern", "schema_version"]
 
 OPTIONAL_FIELDS = ["platform", "project", "layer", "owner", "tags", "source_file", "updated_at", "content_hash"]
 
-SCHEMA_VERSION = "3"
+SCHEMA_VERSION = "4"
 
 # Default section ownership per source type — enforced by UpsertKnowledge use case.
 SOURCE_TYPE_OWNS: dict[str, list[str]] = {

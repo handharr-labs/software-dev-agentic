@@ -1,3 +1,8 @@
+---
+tags:
+  - design-system
+---
+
 # Mekari Pixel — Android Design System Catalog
 
 ## Package Info
