@@ -138,15 +138,18 @@ def kms_list(
     artifact: Optional[str] = None,
     topic: Optional[str] = None,
     subtopic: Optional[str] = None,
+    layer: Optional[str] = None,
 ) -> list[dict]:
     """
     Return a scoped table of contents — metadata only, no content.
     Merges project-specific + platform-base + universal nodes; more specific overrides less specific
     when (discipline, area, artifact, topic, subtopic, pattern) collides.
     Use this as Step 0 before kms_fetch — reason over the TOC to decide what to fetch.
+    `layer` scopes to one CLEAN layer (domain|data|presentation) plus cross-cutting knowledge —
+    e.g. a domain-layer explorer passes layer="domain" and never sees data-layer nodes.
     """
     t0 = time.monotonic()
-    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, area=area, artifact=artifact, topic=topic, subtopic=subtopic)
+    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, area=area, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer)
     result = [
         {
             "id":         n.id,
@@ -154,6 +157,7 @@ def kms_list(
             "project":    n.project,
             "discipline": n.discipline,
             "area":       n.area,
+            "layer":      n.layer,
             "artifact":   n.artifact,
             "topic":      n.topic,
             "subtopic":   n.subtopic,
@@ -163,7 +167,7 @@ def kms_list(
         }
         for n in nodes
     ]
-    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "area": area, "artifact": artifact, "topic": topic, "subtopic": subtopic}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "area": area, "layer": layer, "artifact": artifact, "topic": topic, "subtopic": subtopic}, len(nodes), (time.monotonic() - t0) * 1000, result)
     return result
 
 
@@ -220,12 +224,14 @@ def kms_query(
     platform: Optional[str] = None,
     discipline: Optional[str] = None,
     area: Optional[str] = None,
+    layer: Optional[str] = None,
     n_results: int = 5,
 ) -> list[dict]:
     """
     Semantic search across the knowledge store.
     Use when the agent doesn't know which topic/pattern it needs — intent-based discovery.
-    Optional platform, discipline, and area filters narrow the search scope.
+    Optional platform, discipline, area, and layer filters narrow the search scope.
+    `layer` scopes to one CLEAN layer (domain|data|presentation) plus cross-cutting knowledge.
     Returns top-k nodes with full content, ranked by similarity.
     """
     where: dict = {}
@@ -235,6 +241,8 @@ def kms_query(
         where["discipline"] = discipline
     if area:
         where["area"] = area
+    if layer:
+        where["layer"] = {"$in": [layer, "cross"]}
 
     t0 = time.monotonic()
     nodes = _query_uc.execute(text=text, where=where or None, n_results=n_results)
@@ -243,6 +251,7 @@ def kms_query(
             "id":         n.id,
             "discipline": n.discipline,
             "area":       n.area,
+            "layer":      n.layer,
             "topic":      n.topic,
             "subtopic":   n.subtopic,
             "pattern":    n.pattern,
@@ -251,7 +260,7 @@ def kms_query(
         }
         for n in nodes
     ]
-    _log("kms_query", {"text": text, "platform": platform, "discipline": discipline, "area": area, "n_results": n_results}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    _log("kms_query", {"text": text, "platform": platform, "discipline": discipline, "area": area, "layer": layer, "n_results": n_results}, len(nodes), (time.monotonic() - t0) * 1000, result)
     return result
 
 

@@ -42,6 +42,7 @@ The StateHolder topic is platform-specific (flutter → `state_management`; MVP 
 **Pass 1** — Call `aegis-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
+- `layer`: `presentation`
 - `artifact`: `standard-architecture`
 - `topic`: `presentation`
 - `codebase_grep`: `extends Bloc\|extends Cubit\|extends ChangeNotifier\|class.*ViewModel\|class.*StateHolder`

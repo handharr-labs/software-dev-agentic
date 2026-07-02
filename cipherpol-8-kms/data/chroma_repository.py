@@ -115,6 +115,7 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
         subtopic: Optional[str] = None,
+        layer: Optional[str] = None,
     ) -> list[KnowledgeNode]:
         def _resolve(v: Optional[str]) -> Optional[str]:
             if v is None:
@@ -138,6 +139,9 @@ class ChromaKnowledgeRepository(KnowledgeRepository):
             where["topic"] = topic
         if subtopic is not None:
             where["subtopic"] = subtopic
+        if layer is not None:
+            # scope to the requested layer OR cross-cutting knowledge
+            where["layer"] = {"$in": [layer, "cross"]}
 
         result = self._col.get(
             where=_build_where(where),

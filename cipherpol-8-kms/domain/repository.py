@@ -20,8 +20,10 @@ class KnowledgeRepository(ABC):
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
         subtopic: Optional[str] = None,
+        layer: Optional[str] = None,
     ) -> list[KnowledgeNode]:
-        """Return metadata-only nodes matching all supplied filters (no content)."""
+        """Return metadata-only nodes matching all supplied filters (no content).
+        `layer` matches the node's layer OR `cross` (cross-cutting is never scoped out)."""
 
     @abstractmethod
     def fetch_exact(
