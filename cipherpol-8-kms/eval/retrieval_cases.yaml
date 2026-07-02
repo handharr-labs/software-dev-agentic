@@ -1,0 +1,75 @@
+# KMS retrieval eval cases — the gate the redesign is measured against (step 1a).
+#
+# Each case is a realistic agent query + the scope filter an agent would pass +
+# the node(s) that SHOULD appear in the top-k results.
+#
+# Matching: a returned node satisfies an expectation when its `source_file` ends
+# with `file` AND its `subtopic` (the `##` heading slug) OR `pattern` equals `section`.
+# This identifier (file + section) is stable across the schema change — it survives
+# the move from composite ids to opaque uuids.
+#
+# `where` uses only facets that exist in the CURRENT DB (platform/project/discipline/
+# artifact). When the `layer` facet lands (migration step 2a/5), add e.g.
+#   where: { platform: flutter, discipline: engineering, layer: [data, cross] }
+# to the relevant cases and re-baseline.
+
+cases:
+  - id: flutter-nullable-handling
+    query: "how should I handle nullable values instead of raw ?? operators"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/conventions.md, section: null_safety_extensions }
+
+  - id: flutter-helper-extensions
+    query: "reusable extension helpers for common Dart types"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/conventions.md, section: helper_extensions }
+
+  - id: flutter-magic-constants
+    query: "avoid magic numbers and hardcoded constant values"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/conventions.md, section: magic_constants }
+
+  - id: flutter-clean-dependency-rule
+    query: "which layer is allowed to depend on which in clean architecture"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/standard-architecture.md, section: dependency_rule }
+
+  - id: flutter-usecase-pattern
+    query: "how do I structure a use case in the domain layer"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/standard-architecture.md, section: use_case }
+
+  - id: flutter-repository-interface
+    query: "where does the repository interface live and what depends on it"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/standard-architecture.md, section: repository_interface }
+
+  - id: flutter-entity-definition
+    query: "how to define a domain entity"
+    where: { platform: flutter, discipline: engineering }
+    expect_any:
+      - { file: platform/flutter/engineering/core/standard-architecture.md, section: entity }
+
+  - id: flex-firebase-integration
+    query: "does flex-mobile use firebase and what for"
+    where: { project: flex-mobile, discipline: engineering }
+    expect_any:
+      - { file: projects/flex-mobile/engineering/core/third-party-integrations.md, section: firebase }
+
+  - id: flex-biometrics
+    query: "biometric authentication support in flex-mobile"
+    where: { project: flex-mobile, discipline: engineering }
+    expect_any:
+      - { file: projects/flex-mobile/engineering/core/third-party-integrations.md, section: biometrics }
+
+  - id: flex-auth-endpoints
+    query: "authentication API endpoints used by flex-mobile"
+    where: { project: flex-mobile, discipline: engineering }
+    expect_any:
+      - { file: projects/flex-mobile/engineering/core/api-endpoints.md, section: authentication_flex_core_credit_base_url }

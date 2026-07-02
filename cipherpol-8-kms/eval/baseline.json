@@ -1,0 +1,70 @@
+{
+  "collection": "knowledge",
+  "k": 5,
+  "node_count": 1331,
+  "cases": 10,
+  "recall_at_k": 0.8,
+  "mrr": 0.645,
+  "per_case": [
+    {
+      "id": "flutter-nullable-handling",
+      "hit": true,
+      "rank": 1,
+      "returned": 5
+    },
+    {
+      "id": "flutter-helper-extensions",
+      "hit": true,
+      "rank": 1,
+      "returned": 5
+    },
+    {
+      "id": "flutter-magic-constants",
+      "hit": true,
+      "rank": 1,
+      "returned": 5
+    },
+    {
+      "id": "flutter-clean-dependency-rule",
+      "hit": false,
+      "rank": null,
+      "returned": 5
+    },
+    {
+      "id": "flutter-usecase-pattern",
+      "hit": true,
+      "rank": 4,
+      "returned": 5
+    },
+    {
+      "id": "flutter-repository-interface",
+      "hit": true,
+      "rank": 1,
+      "returned": 5
+    },
+    {
+      "id": "flutter-entity-definition",
+      "hit": false,
+      "rank": null,
+      "returned": 5
+    },
+    {
+      "id": "flex-firebase-integration",
+      "hit": true,
+      "rank": 5,
+      "returned": 5
+    },
+    {
+      "id": "flex-biometrics",
+      "hit": true,
+      "rank": 1,
+      "returned": 5
+    },
+    {
+      "id": "flex-auth-endpoints",
+      "hit": true,
+      "rank": 1,
+      "returned": 5
+    }
+  ]
+}
