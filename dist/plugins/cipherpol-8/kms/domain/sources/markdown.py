@@ -71,7 +71,7 @@ class MarkdownSource(KnowledgeSource):
             except yaml.YAMLError:
                 continue
 
-            if not all(meta.get(k) for k in ("discipline", "area", "topic", "pattern")):
+            if not all(meta.get(k) for k in ("discipline", "topic", "pattern")):
                 continue
 
             content = raw[fm_match.end():].strip()
@@ -83,7 +83,8 @@ class MarkdownSource(KnowledgeSource):
                 platform=platform,
                 project=project,
                 discipline=meta["discipline"],
-                area=meta["area"],
+                layer=meta.get("layer") or None,
+                owner=meta.get("owner") or "curated",
                 topic=meta["topic"],
                 subtopic=meta.get("subtopic") or meta["pattern"],
                 pattern=meta["pattern"],

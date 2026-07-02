@@ -39,6 +39,7 @@ Derive: `project` = `basename $(pwd)`.
 Call `aegis-kms-load` with:
 - `discipline`: `engineering`
 - `platform`: `{platform}`
+- `layer`: `data`
 - `artifact`: `standard-architecture`
 - `topic`: `data`
 - `project`: `{project}`

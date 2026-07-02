@@ -16,12 +16,13 @@ class KnowledgeRepository(ABC):
         platform: Optional[str] = None,
         project: Optional[str] = None,
         discipline: Optional[str] = None,
-        area: Optional[str] = None,
         artifact: Optional[str] = None,
         topic: Optional[str] = None,
         subtopic: Optional[str] = None,
+        layer: Optional[str] = None,
     ) -> list[KnowledgeNode]:
-        """Return metadata-only nodes matching all supplied filters (no content)."""
+        """Return metadata-only nodes matching all supplied filters (no content).
+        `layer` matches the node's layer OR `cross` (cross-cutting is never scoped out)."""
 
     @abstractmethod
     def fetch_exact(
@@ -29,7 +30,6 @@ class KnowledgeRepository(ABC):
         platform: Optional[str],
         project: Optional[str],
         discipline: str,
-        area: str,
         artifact: Optional[str],
         topic: str,
         subtopic: str,

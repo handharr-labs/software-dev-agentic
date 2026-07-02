@@ -134,26 +134,28 @@ def kms_list(
     platform: Optional[str] = None,
     project: Optional[str] = None,
     discipline: Optional[str] = None,
-    area: Optional[str] = None,
     artifact: Optional[str] = None,
     topic: Optional[str] = None,
     subtopic: Optional[str] = None,
+    layer: Optional[str] = None,
 ) -> list[dict]:
     """
     Return a scoped table of contents — metadata only, no content.
     Merges project-specific + platform-base + universal nodes; more specific overrides less specific
-    when (discipline, area, artifact, topic, subtopic, pattern) collides.
+    when (discipline, artifact, topic, subtopic, pattern) collides.
     Use this as Step 0 before kms_fetch — reason over the TOC to decide what to fetch.
+    `layer` scopes to one CLEAN layer (domain|data|presentation) plus cross-cutting knowledge —
+    e.g. a domain-layer explorer passes layer="domain" and never sees data-layer nodes.
     """
     t0 = time.monotonic()
-    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, area=area, artifact=artifact, topic=topic, subtopic=subtopic)
+    nodes = _list_uc.execute(platform=platform, project=project, discipline=discipline, artifact=artifact, topic=topic, subtopic=subtopic, layer=layer)
     result = [
         {
             "id":         n.id,
             "platform":   n.platform,
             "project":    n.project,
             "discipline": n.discipline,
-            "area":       n.area,
+            "layer":      n.layer,
             "artifact":   n.artifact,
             "topic":      n.topic,
             "subtopic":   n.subtopic,
@@ -163,14 +165,13 @@ def kms_list(
         }
         for n in nodes
     ]
-    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "area": area, "artifact": artifact, "topic": topic, "subtopic": subtopic}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    _log("kms_list", {"platform": platform, "project": project, "discipline": discipline, "layer": layer, "artifact": artifact, "topic": topic, "subtopic": subtopic}, len(nodes), (time.monotonic() - t0) * 1000, result)
     return result
 
 
 @mcp.tool()
 def kms_fetch(
     discipline: str,
-    area: str,
     artifact: str,
     topic: str,
     subtopic: str,
@@ -186,7 +187,6 @@ def kms_fetch(
     t0 = time.monotonic()
     node = _fetch_uc.execute(
         discipline=discipline,
-        area=area,
         artifact=artifact,
         topic=topic,
         subtopic=subtopic,
@@ -199,7 +199,7 @@ def kms_fetch(
         "platform":    node.platform,
         "project":     node.project,
         "discipline":  node.discipline,
-        "area":        node.area,
+        "layer":       node.layer,
         "artifact":    node.artifact,
         "topic":       node.topic,
         "subtopic":    node.subtopic,
@@ -210,7 +210,7 @@ def kms_fetch(
         "updated_at":  node.updated_at,
         "content":     node.content,
     }
-    _log("kms_fetch", {"discipline": discipline, "area": area, "artifact": artifact, "topic": topic, "subtopic": subtopic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
+    _log("kms_fetch", {"discipline": discipline, "artifact": artifact, "topic": topic, "subtopic": subtopic, "pattern": pattern, "platform": platform, "project": project}, 1 if node else 0, (time.monotonic() - t0) * 1000, result)
     return result
 
 
@@ -219,13 +219,14 @@ def kms_query(
     text: str,
     platform: Optional[str] = None,
     discipline: Optional[str] = None,
-    area: Optional[str] = None,
+    layer: Optional[str] = None,
     n_results: int = 5,
 ) -> list[dict]:
     """
     Semantic search across the knowledge store.
     Use when the agent doesn't know which topic/pattern it needs — intent-based discovery.
-    Optional platform, discipline, and area filters narrow the search scope.
+    Optional platform, discipline, and layer filters narrow the search scope.
+    `layer` scopes to one CLEAN layer (domain|data|presentation) plus cross-cutting knowledge.
     Returns top-k nodes with full content, ranked by similarity.
     """
     where: dict = {}
@@ -233,8 +234,8 @@ def kms_query(
         where["platform"] = platform
     if discipline:
         where["discipline"] = discipline
-    if area:
-        where["area"] = area
+    if layer:
+        where["layer"] = {"$in": [layer, "cross"]}
 
     t0 = time.monotonic()
     nodes = _query_uc.execute(text=text, where=where or None, n_results=n_results)
@@ -242,7 +243,7 @@ def kms_query(
         {
             "id":         n.id,
             "discipline": n.discipline,
-            "area":       n.area,
+            "layer":      n.layer,
             "topic":      n.topic,
             "subtopic":   n.subtopic,
             "pattern":    n.pattern,
@@ -251,7 +252,7 @@ def kms_query(
         }
         for n in nodes
     ]
-    _log("kms_query", {"text": text, "platform": platform, "discipline": discipline, "area": area, "n_results": n_results}, len(nodes), (time.monotonic() - t0) * 1000, result)
+    _log("kms_query", {"text": text, "platform": platform, "discipline": discipline, "layer": layer, "n_results": n_results}, len(nodes), (time.monotonic() - t0) * 1000, result)
     return result
 
 
@@ -260,12 +261,13 @@ def kms_upsert(
     platform: Optional[str],
     project: Optional[str],
     discipline: str,
-    area: str,
     artifact: str,
     topic: str,
     pattern: str,
     content: str,
     subtopic: Optional[str] = None,
+    layer: Optional[str] = None,
+    owner: str = "curated",
     summary: str = "",
     tags: list[str] = [],
     source_file: Optional[str] = None,
@@ -276,7 +278,8 @@ def kms_upsert(
     Used by the dashboard (live edits) and the scan agent (code_pattern extraction).
     content must be the full document body (## Theory ... ## Definition ... ## Code Pattern ...).
     scope is derived: project set → "project", else platform set → "platform", else "universal".
-    subtopic defaults to pattern when not supplied (no ### children — pattern is its own subtopic).
+    subtopic defaults to pattern when not supplied. layer scopes the node to a CLEAN layer
+    (domain|data|presentation|cross); owner is curated|extracted.
     """
     from datetime import date
     scope = "project" if project else "platform" if platform else "universal"
@@ -285,7 +288,8 @@ def kms_upsert(
         platform=platform,
         project=project,
         discipline=discipline,
-        area=area,
+        layer=layer,
+        owner=owner,
         artifact=artifact,
         topic=topic,
         subtopic=subtopic or pattern,
@@ -298,7 +302,7 @@ def kms_upsert(
     )
     t0 = time.monotonic()
     _upsert_uc.execute(node)
-    _log("kms_upsert", {"platform": platform, "project": project, "discipline": discipline, "area": area, "artifact": artifact, "topic": topic, "subtopic": node.subtopic, "pattern": pattern}, 1, (time.monotonic() - t0) * 1000)
+    _log("kms_upsert", {"platform": platform, "project": project, "discipline": discipline, "layer": layer, "artifact": artifact, "topic": topic, "subtopic": node.subtopic, "pattern": pattern}, 1, (time.monotonic() - t0) * 1000)
     return {"id": node.id, "status": "ok"}
 
 
