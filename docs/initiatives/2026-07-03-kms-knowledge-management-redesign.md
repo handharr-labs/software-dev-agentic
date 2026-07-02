@@ -287,11 +287,11 @@ This eval set also catches the `##`-over-merge risk (chunks grown so large the e
 
 ## Migration Order (each step independently shippable)
 
-1. **Retrieval playground** — "query-as-agent" view against the *current* DB.
-1a. **Eval set + baseline** — author `eval/retrieval_cases.yaml` and the runner; record baseline `recall@5` / `MRR` on the current DB. **This is the gate every later step is measured against.**
-2. **Reseed changes** — `directory.py`: frontmatter-authoritative facets (path fallback) **with vocab validation**, drop `area`, `##`-chunk, read `layer`/`owner` from frontmatter, capture preamble, loud-skip warnings; `chroma_repository.py`: **template** contextual-embed, opaque id, new metadata set.
-2a. **`layer` back-fill** — classify existing content by CLEAN layer (heading markers, else `kms-classify` proposal), human-reviewed, before the reseed relies on it.
-3. **`--force` reseed into a second collection** — run the eval set; **must beat the step-1a baseline** on both metrics.
+1. **Retrieval playground** — "query-as-agent" view against the *current* DB. *(deferred — the eval runner covers the measurement need; playground is now a dashboard concern, step 7.)*
+1a. **Eval set + baseline** — ✅ **DONE** — `eval/retrieval_cases.yaml` + `run_eval.py`; baseline `recall@5=0.80`, `MRR=0.645` (1331 nodes) in `eval/baseline.json`.
+2. **Reseed changes** — ✅ **DONE** (schema v3 additive; `directory.py` frontmatter-authoritative + vocab validation + `##`-chunk + preamble capture + relative `source_file`; `chroma_repository.py` template contextual-embed + opaque uuid id keyed on `source_file#topic#section`). **`area` removal still deferred** (subtractive — after cutover) so the live collection/MCP stay intact.
+2a. **`layer` back-fill** — ⏭ NEXT. Concrete signal found: the `standard-architecture.md` files already carry `# Domain` / `# Data` / `# Presentation` / `# UI` as `topic` — those map directly to `layer`. Feature/api/component docs are mostly `cross` or `data`. Classify by topic-marker where present, else `kms-classify` proposal; human-reviewed.
+3. **`--force` reseed into a second collection** — ✅ **DONE** — `knowledge_v2` seeded (836 nodes, down from 1331). **Gate PASSES: recall@5=0.90 (▲0.10), MRR=0.70 (▲0.055).**
 4. **Cutover + reconcile the docs** — repoint MCP to the new collection. The prior restructure made **path authoritative, frontmatter documentation-only**; this initiative reverses that. Update `cipherpol-8-kms/docs/kms-knowledge-source-rules.md` and `kms-design-principles.md` (and the `kms-knowledge-restructure-initiative.md` header) to state frontmatter-authoritative + path-advisory, the dropped `area`, and the 3-level canonical path — otherwise the specs contradict. Also update `kms-source-audit-worker` (it validates against the old path-as-contract rules) and re-point the stale `sources.yaml` `path: kms/knowledge-sources` → `cipherpol-8-kms/knowledge-sources`.
 5. **Agent scoping** — add default `where` to cipherpol-aegis planner frontmatter + wire the MCP filter.
 6. **Contribution flow** — `_inbox/`, `kms-classify-worker`, `kms-contribute` orchestrator.
