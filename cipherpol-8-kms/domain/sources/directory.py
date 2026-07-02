@@ -10,15 +10,24 @@ from typing import Iterator, Optional
 import yaml
 
 from ..entities import KnowledgeNode
-from ..schema import AREA_VALUES, DISCIPLINE_VALUES, PLATFORM_VALUES, PROJECT_VALUES, SEED_EXCLUDE_PATTERNS
+from ..schema import (
+    AREA_VALUES,
+    DISCIPLINE_VALUES,
+    LAYER_VALUES,
+    OWNER_VALUES,
+    PLATFORM_VALUES,
+    SEED_EXCLUDE_PATTERNS,
+)
 from .base import KnowledgeSource
 
 _SUPPORTED_SUFFIXES = {".md", ".txt"}
 _FIRST_SENTENCE_RE = re.compile(r"^[^#\n].+?(?<=[.!?])\s", re.DOTALL)
+_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 _UNIVERSAL_DIR = "universal"
 _PLATFORM_DIR = "platform"
 _PROJECTS_DIR = "projects"
 _REPO_YAML = "repo.yaml"
+_OVERVIEW_SECTION = "overview"
 
 
 @dataclass
@@ -42,12 +51,7 @@ def _load_repo_meta(project_dir: Path) -> _RepoMeta:
     """
     repo_file = project_dir / _REPO_YAML
     if not repo_file.exists():
-        return _RepoMeta(
-            name=project_dir.name,
-            platform=None,
-            remote=None,
-            local_path=None,
-        )
+        return _RepoMeta(name=project_dir.name, platform=None, remote=None, local_path=None)
     with repo_file.open() as f:
         data = yaml.safe_load(f) or {}
     remote = data.get("remote") or None
@@ -70,19 +74,30 @@ def _extract_summary(content: str) -> str:
 
 
 def _parse_filename(stem: str) -> tuple[str, str]:
-    """Derive (topic, pattern) from filename stem. Platform is directory-derived, not filename-derived.
+    """Derive (topic, pattern) from filename stem. Platform is directory-derived.
 
     standard-architecture → (standard_architecture, standard_architecture)
-    feature-inventory     → (feature_inventory, feature_inventory)
     """
     snake = stem.replace("-", "_")
     return snake, snake
 
 
 def _heading_to_slug(heading: str) -> str:
-    """Convert a markdown heading to a snake_case slug for use as topic/pattern."""
+    """Convert a markdown heading to a snake_case slug for use as topic/section."""
     slug = re.sub(r"[^\w\s]", "", heading.lower())
     return re.sub(r"\s+", "_", slug.strip())
+
+
+def _parse_frontmatter(raw: str) -> dict:
+    """Return the YAML frontmatter block as a dict ({} when absent or unparseable)."""
+    m = _FRONTMATTER_RE.match(raw)
+    if not m:
+        return {}
+    try:
+        data = yaml.safe_load(m.group(1))
+    except yaml.YAMLError:
+        return {}
+    return data if isinstance(data, dict) else {}
 
 
 def _strip_frontmatter(content: str) -> str:
@@ -93,79 +108,6 @@ def _strip_frontmatter(content: str) -> str:
     if end == -1:
         return content
     return content[end + 5:].strip()
-
-
-def _chunk_by_sections(content: str) -> list[tuple[str, str, str, str]]:
-    """Split content by ## and ### headings. Returns [(topic_slug, subtopic_slug, pattern_slug, section_content), ...].
-
-    # heading   → updates topic context; not a chunk boundary
-    ## heading  → subtopic boundary; becomes the pattern node UNLESS it has ### children
-    ### heading → when present under a ##, becomes its own pattern node (subtopic = ## slug)
-    #### +      → content within the enclosing node; not split further
-
-    Returns [] when no ## headings found — caller yields file as a single node.
-    topic_slug is "" when no # heading precedes the ## — caller uses artifact name as fallback.
-    Lines before the first ## (preamble), and lines between a ## heading and its first
-    ### child (if any), are discarded.
-    """
-    lines = content.splitlines()
-
-    # Pass 1: split into ##-sections — (topic_slug, subtopic_slug, lines)
-    raw_sections: list[tuple[str, str, list[str]]] = []
-    current_topic: str = ""
-    current_subtopic: str | None = None
-    current_lines: list[str] = []
-
-    for line in lines:
-        if line.startswith("# ") and not line.startswith("## "):
-            if current_subtopic is not None:
-                raw_sections.append((current_topic, current_subtopic, current_lines))
-                current_subtopic = None
-                current_lines = []
-            current_topic = _heading_to_slug(line[2:].strip())
-        elif line.startswith("## "):
-            if current_subtopic is not None:
-                raw_sections.append((current_topic, current_subtopic, current_lines))
-            current_subtopic = _heading_to_slug(line[3:].strip())
-            current_lines = [line]
-        elif current_subtopic is not None:
-            current_lines.append(line)
-        # else: preamble before first ## — discard
-
-    if current_subtopic is not None:
-        raw_sections.append((current_topic, current_subtopic, current_lines))
-
-    # Pass 2: split each ##-section further by ### if present
-    sections: list[tuple[str, str, str, str]] = []
-    for topic_slug, subtopic_slug, sec_lines in raw_sections:
-        sub_sections: list[tuple[str, list[str]]] = []
-        current_pattern: str | None = None
-        current_sub_lines: list[str] = []
-
-        for line in sec_lines:
-            if line.startswith("### "):
-                if current_pattern is not None:
-                    sub_sections.append((current_pattern, current_sub_lines))
-                current_pattern = _heading_to_slug(line[4:].strip())
-                current_sub_lines = [line]
-            elif current_pattern is not None:
-                current_sub_lines.append(line)
-            # else: lines before first ### (incl. the ## heading line) — discard
-
-        if current_pattern is not None:
-            sub_sections.append((current_pattern, current_sub_lines))
-
-        if sub_sections:
-            for pattern_slug, sub_lines in sub_sections:
-                section_content = "\n".join(sub_lines).strip()
-                if section_content:
-                    sections.append((topic_slug, subtopic_slug, pattern_slug, section_content))
-        else:
-            section_content = "\n".join(sec_lines).strip()
-            if section_content:
-                sections.append((topic_slug, subtopic_slug, subtopic_slug, section_content))
-
-    return sections
 
 
 def _is_template_file(path: Path) -> bool:
@@ -181,19 +123,79 @@ def _derive_scope(platform: str | None, project: str | None) -> str:
     return "universal"
 
 
+def _is_heading(line: str) -> bool:
+    return line.lstrip().startswith("#")
+
+
+def _chunk_by_sections(content: str) -> list[tuple[str, str, str]]:
+    """Chunk content at the `##` level — one node per concept.
+
+    Returns [(topic_slug, section_slug, section_content), ...].
+
+    - `# heading`   → updates topic context; NOT a node boundary.
+    - `## heading`  → node boundary. The node includes everything beneath it
+      (`###`, `####`, prose) up to the next `##` — theory + code pattern stay together.
+    - Preamble before the first `##` is captured as an `overview` node — never
+      discarded — but only when it contains real (non-heading) prose.
+
+    Returns [] only when there is no content at all.
+    """
+    lines = content.splitlines()
+    sections: list[tuple[str, str, str]] = []
+
+    current_topic = ""
+    current_section: Optional[str] = None
+    current_lines: list[str] = []
+    preamble_lines: list[str] = []
+    seen_section = False
+
+    def _flush(topic: str, section: str, buf: list[str]) -> None:
+        text = "\n".join(buf).strip()
+        if text:
+            sections.append((topic, section, text))
+
+    def _flush_preamble() -> None:
+        # Only emit an overview node if the preamble holds non-heading prose.
+        if any(ln.strip() and not _is_heading(ln) for ln in preamble_lines):
+            _flush(current_topic, _OVERVIEW_SECTION, preamble_lines)
+
+    for line in lines:
+        if line.startswith("# ") and not line.startswith("## "):
+            current_topic = _heading_to_slug(line[2:].strip())
+            (preamble_lines if not seen_section else current_lines).append(line)
+        elif line.startswith("## "):
+            if not seen_section:
+                _flush_preamble()
+                seen_section = True
+            else:
+                _flush(current_topic, current_section or _OVERVIEW_SECTION, current_lines)
+            current_section = _heading_to_slug(line[3:].strip())
+            current_lines = [line]
+        else:
+            (preamble_lines if not seen_section else current_lines).append(line)
+
+    if seen_section:
+        _flush(current_topic, current_section or _OVERVIEW_SECTION, current_lines)
+    else:
+        # No `##` at all — whole file is one node.
+        _flush(current_topic, _OVERVIEW_SECTION, preamble_lines)
+
+    return sections
+
+
 class DirectorySource(KnowledgeSource):
-    """Reads any supported file from kms/knowledge-sources/ — no frontmatter required.
+    """Reads any supported file from kms/knowledge-sources/ — frontmatter-authoritative.
+
+    Facets resolve **frontmatter first, path as fallback**. The path still provides
+    sensible defaults (and keeps the tree browsable), but a file is no longer silently
+    mis-seeded by its folder: invalid facet values are reported and skipped.
 
     Three path conventions mirror the cascade tiers:
 
-    1. Universal knowledge: {root}/universal/{discipline}/{area}/{artifact}.md
-       scope=universal, platform=None, discipline/area from directory names, artifact from filename stem
-
-    2. Platform knowledge: {root}/platform/{platform}/{discipline}/{area}/{artifact}.md
-       scope=platform, platform/discipline/area from directory names, artifact from filename stem
-
-    3. Project-specific knowledge: {root}/projects/{project-name}/{area}/{artifact}.md
-       scope=project, platform and project read from repo.yaml, area from directory name, artifact from filename stem
+    1. Universal: {root}/universal/{discipline}/{area}/{artifact}.md
+    2. Platform:  {root}/platform/{platform}/{discipline}/{area}/{artifact}.md
+    3. Project:   {root}/projects/{project}/{discipline}/{area}/{artifact}.md
+       (platform + canonical project name come from repo.yaml)
     """
 
     def __init__(self, name: str, path: str, owns: list[str]) -> None:
@@ -222,182 +224,159 @@ class DirectorySource(KnowledgeSource):
         yield from self._read_project_docs()
 
     # ------------------------------------------------------------------
-    # Universal docs: {root}/universal/{discipline}/{file}.md
+    # Facet resolution + validation (frontmatter authoritative, path fallback)
+    # ------------------------------------------------------------------
+
+    def _relpath(self, path: Path) -> str:
+        """source_file relative to the knowledge-sources root — portable + drift-proof."""
+        try:
+            return str(path.relative_to(self._path))
+        except ValueError:
+            return str(path)
+
+    @staticmethod
+    def _validate(platform, project, discipline, area, layer, owner) -> list[str]:
+        errs: list[str] = []
+        if platform is not None and platform not in PLATFORM_VALUES:
+            errs.append(f"platform '{platform}' not in {PLATFORM_VALUES}")
+        if discipline not in DISCIPLINE_VALUES:
+            errs.append(f"discipline '{discipline}' not in {DISCIPLINE_VALUES}")
+        if area not in AREA_VALUES:
+            errs.append(f"area '{area}' not in {AREA_VALUES}")
+        if layer is not None and layer not in LAYER_VALUES:
+            errs.append(f"layer '{layer}' not in {LAYER_VALUES}")
+        if owner not in OWNER_VALUES:
+            errs.append(f"owner '{owner}' not in {OWNER_VALUES}")
+        return errs
+
+    def _emit_nodes(
+        self,
+        path: Path,
+        *,
+        path_platform: Optional[str],
+        path_project: Optional[str],
+        path_discipline: str,
+        path_area: str,
+    ) -> Iterator[KnowledgeNode]:
+        raw = path.read_text(encoding="utf-8").strip()
+        fm = _parse_frontmatter(raw)
+
+        # Frontmatter wins when present; path is the fallback.
+        platform = fm.get("platform") or path_platform
+        project = fm.get("project") or path_project
+        discipline = fm.get("discipline") or path_discipline
+        area = fm.get("area") or path_area
+        layer = fm.get("layer") or None
+        owner = fm.get("owner") or "curated"
+        tags = fm.get("tags") or []
+        artifact = (fm.get("artifact") or path.stem).replace("-", "_")
+
+        errs = self._validate(platform, project, discipline, area, layer, owner)
+        if errs:
+            for e in errs:
+                print(f"  skip (invalid facet): {self._relpath(path)} — {e}")
+            return
+
+        scope = _derive_scope(platform, project)
+        rel = self._relpath(path)
+        content_type = "stub" if _is_template_file(path) else "real"
+        file_topic, _ = _parse_filename(path.stem)
+        content = _strip_frontmatter(raw)
+
+        for topic_slug, section_slug, section_content in _chunk_by_sections(content):
+            yield KnowledgeNode(
+                scope=scope,
+                platform=platform,
+                project=project,
+                discipline=discipline,
+                area=area,
+                layer=layer,
+                owner=owner,
+                artifact=artifact,
+                topic=topic_slug or file_topic,
+                subtopic=section_slug,
+                pattern=section_slug,
+                summary=_extract_summary(section_content),
+                tags=tags,
+                source_file=rel,
+                updated_at=date.today().isoformat(),
+                content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
+                content=section_content,
+                content_type=content_type,
+            )
+
+    @staticmethod
+    def _is_seedable(path: Path) -> bool:
+        if path.is_dir() or path.name in ("README.md", _REPO_YAML):
+            return False
+        if path.suffix not in _SUPPORTED_SUFFIXES:
+            return False
+        if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
+            print(f"  skip (excluded): {path.name}")
+            return False
+        return True
+
+    # ------------------------------------------------------------------
+    # Universal + platform docs
     # ------------------------------------------------------------------
 
     def _read_universal_docs(self) -> Iterator[KnowledgeNode]:
         yield from self._read_scope_dir(self._path / _UNIVERSAL_DIR, platform=None)
-
-    # ------------------------------------------------------------------
-    # Platform docs: {root}/platform/{platform}/{discipline}/{file}.md
-    # ------------------------------------------------------------------
 
     def _read_platform_docs(self) -> Iterator[KnowledgeNode]:
         platform_root = self._path / _PLATFORM_DIR
         if not platform_root.exists():
             return
         for platform_dir in sorted(platform_root.iterdir()):
-            if not platform_dir.is_dir():
-                continue
-            if platform_dir.name not in PLATFORM_VALUES:
+            if not platform_dir.is_dir() or platform_dir.name not in PLATFORM_VALUES:
                 continue
             yield from self._read_scope_dir(platform_dir, platform=platform_dir.name)
-
-    # ------------------------------------------------------------------
-    # Shared discipline traversal
-    # ------------------------------------------------------------------
 
     def _read_scope_dir(self, scope_dir: Path, platform: Optional[str]) -> Iterator[KnowledgeNode]:
         if not scope_dir.exists():
             return
-        scope = _derive_scope(platform, None)
-
         for discipline_dir in sorted(scope_dir.iterdir()):
-            if not discipline_dir.is_dir():
+            if not discipline_dir.is_dir() or discipline_dir.name not in DISCIPLINE_VALUES:
                 continue
-            if discipline_dir.name not in DISCIPLINE_VALUES:
-                continue
-            discipline = discipline_dir.name
-
             for area_dir in sorted(discipline_dir.iterdir()):
-                if not area_dir.is_dir():
+                if not area_dir.is_dir() or area_dir.name not in AREA_VALUES:
                     continue
-                if area_dir.name not in AREA_VALUES:
-                    continue
-                area = area_dir.name
-
                 for path in sorted(area_dir.iterdir()):
-                    if path.is_dir() or path.name in ("README.md",):
+                    if not self._is_seedable(path):
                         continue
-                    if path.suffix not in _SUPPORTED_SUFFIXES:
-                        continue
-                    if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
-                        print(f"  skip (excluded): {path.name}")
-                        continue
-
-                    artifact = path.stem.replace("-", "_")
-                    file_topic, file_pattern = _parse_filename(path.stem)
-                    raw = path.read_text(encoding="utf-8").strip()
-                    content = _strip_frontmatter(raw)
-                    chunks = _chunk_by_sections(content)
-                    node_content_type = "stub" if _is_template_file(path) else "real"
-
-                    if chunks:
-                        for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
-                            yield KnowledgeNode(
-                                scope=scope,
-                                platform=platform,
-                                project=None,
-                                discipline=discipline,
-                                area=area,
-                                artifact=artifact,
-                                topic=topic_slug if topic_slug else file_topic,
-                                subtopic=subtopic_slug,
-                                pattern=pattern_slug,
-                                summary=_extract_summary(section_content),
-                                source_file=str(path),
-                                updated_at=date.today().isoformat(),
-                                content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
-                                content=section_content,
-                                content_type=node_content_type,
-                            )
-                    else:
-                        yield KnowledgeNode(
-                            scope=scope,
-                            platform=platform,
-                            project=None,
-                            discipline=discipline,
-                            area=area,
-                            artifact=artifact,
-                            topic=file_topic,
-                            subtopic=file_pattern,
-                            pattern=file_pattern,
-                            summary=_extract_summary(content),
-                            source_file=str(path),
-                            updated_at=date.today().isoformat(),
-                            content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                            content=content,
-                            content_type=node_content_type,
-                        )
+                    yield from self._emit_nodes(
+                        path,
+                        path_platform=platform,
+                        path_project=None,
+                        path_discipline=discipline_dir.name,
+                        path_area=area_dir.name,
+                    )
 
     # ------------------------------------------------------------------
-    # Project-specific docs: {root}/projects/{project}/{file}.md
+    # Project docs
     # ------------------------------------------------------------------
 
     def _read_project_docs(self) -> Iterator[KnowledgeNode]:
         projects_dir = self._path / _PROJECTS_DIR
         if not projects_dir.exists():
             return
-
         for project_dir in sorted(projects_dir.iterdir()):
             if not project_dir.is_dir():
                 continue
-
             repo = _load_repo_meta(project_dir)
-
             for discipline_dir in sorted(project_dir.iterdir()):
-                if not discipline_dir.is_dir():
+                if not discipline_dir.is_dir() or discipline_dir.name not in DISCIPLINE_VALUES:
                     continue
-                if discipline_dir.name not in DISCIPLINE_VALUES:
-                    continue
-                discipline = discipline_dir.name
-
                 for area_dir in sorted(discipline_dir.iterdir()):
-                    if not area_dir.is_dir():
+                    if not area_dir.is_dir() or area_dir.name not in AREA_VALUES:
                         continue
-                    if area_dir.name not in AREA_VALUES:
-                        continue
-                    area = area_dir.name
-
                     for path in sorted(area_dir.iterdir()):
-                        if path.is_dir():
+                        if not self._is_seedable(path):
                             continue
-                        if path.name in ("README.md", _REPO_YAML):
-                            continue
-                        if path.suffix not in _SUPPORTED_SUFFIXES:
-                            continue
-                        if any(fnmatch.fnmatch(path.name, pat) for pat in SEED_EXCLUDE_PATTERNS):
-                            print(f"  skip (excluded): {path.name}")
-                            continue
-
-                        artifact = path.stem.replace("-", "_")
-                        stem = artifact
-                        raw = path.read_text(encoding="utf-8").strip()
-                        content = _strip_frontmatter(raw)
-                        chunks = _chunk_by_sections(content)
-
-                        if chunks:
-                            for topic_slug, subtopic_slug, pattern_slug, section_content in chunks:
-                                yield KnowledgeNode(
-                                    scope="project",
-                                    platform=repo.platform,
-                                    project=repo.name,
-                                    discipline=discipline,
-                                    area=area,
-                                    artifact=artifact,
-                                    topic=topic_slug if topic_slug else stem,
-                                    subtopic=subtopic_slug,
-                                    pattern=pattern_slug,
-                                    summary=_extract_summary(section_content),
-                                    source_file=str(path),
-                                    updated_at=date.today().isoformat(),
-                                    content_hash=hashlib.sha256(section_content.encode()).hexdigest(),
-                                    content=section_content,
-                                )
-                        else:
-                            yield KnowledgeNode(
-                                scope="project",
-                                platform=repo.platform,
-                                project=repo.name,
-                                discipline=discipline,
-                                area=area,
-                                artifact=artifact,
-                                topic=stem,
-                                subtopic=stem,
-                                pattern=stem,
-                                summary=_extract_summary(content),
-                                source_file=str(path),
-                                updated_at=date.today().isoformat(),
-                                content_hash=hashlib.sha256(content.encode()).hexdigest(),
-                                content=content,
-                            )
+                        yield from self._emit_nodes(
+                            path,
+                            path_platform=repo.platform,
+                            path_project=repo.name,
+                            path_discipline=discipline_dir.name,
+                            path_area=area_dir.name,
+                        )
