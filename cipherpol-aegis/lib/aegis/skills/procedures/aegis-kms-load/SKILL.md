@@ -11,6 +11,7 @@ allowed-tools: Grep, Read, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__km
 |---|---|---|
 | `discipline` | Yes | KMS discipline — e.g. `engineering`, `design` |
 | `platform` | Yes | Platform slug — e.g. `flutter`, `ios`, `web` |
+| `layer` | No | CLEAN layer scope — `domain`, `data`, or `presentation`. Restricts retrieval to that layer plus cross-cutting knowledge. Omit for cross-layer work (e.g. app/wiring). |
 | `artifact` | No | Narrow the TOC to a specific artifact — e.g. `standard-architecture`, `conventions` |
 | `topic` | No | Narrow further to a specific topic within the artifact — e.g. `domain`, `data` |
 | `project` | No | Project id for project-tier lookup — e.g. `talenta`. Omit to skip project tier. |
@@ -22,15 +23,15 @@ allowed-tools: Grep, Read, mcp__cp8__kms_list, mcp__cp8__kms_fetch, mcp__cp8__km
 
 ### 1 — Scan platform-tier TOC
 
-`kms_list(discipline="{discipline}", platform="{platform}"[, artifact="{artifact}"][, topic="{topic}"])` → returns available `(artifact, topic, pattern)` rows.
+`kms_list(discipline="{discipline}", platform="{platform}"[, layer="{layer}"][, artifact="{artifact}"][, topic="{topic}"])` → returns available `(artifact, topic, pattern)` rows.
 
-From the TOC, identify which patterns are relevant to the current task. Reason over the row list — do not fetch everything blindly.
+When `layer` is provided, the TOC is already scoped to that layer plus cross-cutting nodes — out-of-layer knowledge never appears. From the TOC, identify which patterns are relevant to the current task. Reason over the row list — do not fetch everything blindly.
 
 ### 2 — Fetch identified patterns
 
 For each identified pattern: `kms_fetch(discipline="{discipline}", artifact="{artifact}", topic="{topic}", pattern="{pattern}", platform="{platform}")` — exact, cascade-resolved content.
 
-**Cold-start fallback only:** if the TOC vocabulary cannot be mapped to a needed concept, use `kms_query(text="<concept>", platform="{platform}", discipline="{discipline}", n_results=3)`. Prefer `kms_fetch` — it is deterministic and cheaper.
+**Cold-start fallback only:** if the TOC vocabulary cannot be mapped to a needed concept, use `kms_query(text="<concept>", platform="{platform}", discipline="{discipline}"[, layer="{layer}"], n_results=3)`. Prefer `kms_fetch` — it is deterministic and cheaper.
 
 ### 3 — Project-tier lookup (if `project` provided)
 

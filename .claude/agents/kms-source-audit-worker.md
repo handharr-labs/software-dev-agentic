@@ -1,6 +1,6 @@
 ---
 name: kms-source-audit-worker
-description: Audit files in cipherpol-8-kms/knowledge-sources/ against kms-knowledge-source-rules.md — checks heading structure, naming conventions, duplicate slugs, and section size. Returns structured findings. Called by /kms-audit skill.
+description: Audit files in cipherpol-8-kms/knowledge-sources/ against kms-knowledge-source-rules.md — checks frontmatter facet validity, heading structure, naming conventions, duplicate slugs, and section size. Returns structured findings. Called by /kms-audit skill.
 model: haiku
 tools: Read, Glob, Grep
 user-invocable: false
@@ -31,12 +31,12 @@ Return `MISSING INPUT: <param>` immediately if either is absent.
 
 **Step 1 — Load rules**
 
-Read `{rules_path}`. Extract the rule IDs and their descriptions (R1–R7 and project doc rules).
+Read `{rules_path}`. Extract the *Frontmatter & Facets* controlled vocabulary (for F1) and the rule IDs (R1–R7 + project doc rules). Note the current model: 3-level path (no `area`), `##`-concept chunking (`###`/`####` are node body), frontmatter-authoritative facets.
 
 **Step 2 — Collect files**
 
 If `target_path` is a file: audit that file only.
-If `target_path` is a directory: `Glob("{target_path}/**/*.md")` — exclude `README.md` and `repo.yaml`.
+If `target_path` is a directory: `Glob("{target_path}/**/*.md")` — exclude `README.md`, `repo.yaml`, and anything under `_inbox/` (loose drafts are not seeded — auditing them against the strict rules is noise; they are normalized by `/kms-contribute`).
 
 **Step 3 — Audit each file**
 
@@ -44,9 +44,20 @@ For each file, run all checks below. Record every finding with: rule ID, severit
 
 ---
 
+### F1 — Frontmatter facet values must be valid (Error)
+
+If the file has YAML frontmatter, validate each facet against the controlled vocabulary — the seeder is frontmatter-authoritative and **silently skips a file whose facet value is invalid**, so a typo here means the knowledge never seeds.
+
+- `platform` ∈ `flutter` \| `ios` \| `android` \| `web`
+- `discipline` ∈ `engineering` \| `design` \| `qa` \| `devops` \| `security` \| `code_review` \| `product` \| `architecture` \| `agile`
+- `layer` ∈ `domain` \| `data` \| `presentation` \| `cross`
+- `owner` ∈ `curated` \| `extracted`
+
+Flag any facet whose value is outside its set → **Error F1** (e.g. `platform: fluttr`). `area` is **not** a valid facet anymore (removed 2026-07-03) — flag any `area:` key as **Warning F1** (dead key, ignored by the seeder).
+
 ### R1 — Use `#` to group, `##` to define retrieval units (Error)
 
-Parse the file. If no line matches `^## ` → **Error R1**: file seeds as a single blob. `#` headings group related `##` sections under a named topic; a file with only `###` headings or no headings at all fails this rule.
+Parse the file (ignoring frontmatter). If no line matches `^## ` → **Error R1**: file seeds as a single node for the whole file. `#` headings group related `##` sections under a named topic; each `##` is one retrieval node.
 
 ### R2 — One concept per `##` heading (Warning)
 
@@ -54,11 +65,11 @@ Flag any `##` heading whose text contains ` and `, ` & `, or a comma — these a
 
 ### R3 — `##` heading names are retrieval keys — name them precisely (Warning)
 
-Flag any `##` heading whose slug resolves to one of: `overview`, `notes`, `misc`, `other`, `general`, `introduction`, `summary`, `todo`. The `##` heading text becomes the `pattern` slug — vague headings produce meaningless retrieval keys. **Warning R3**.
+Flag any `##` heading whose slug resolves to one of: `overview`, `notes`, `misc`, `other`, `general`, `introduction`, `summary`, `todo`. The `##` heading text becomes the `section` slug (stored as `subtopic == pattern`) — vague headings produce meaningless retrieval keys. **Warning R3**. (`overview` is exempt when it is the auto-captured preamble node.)
 
 ### R4 — No duplicate `##` headings under the same `#` group (Error)
 
-Compute the slug for each `##` heading (`lowercase, spaces→underscores, strip non-word chars`), scoped to its parent `#` group. If the same slug appears more than once under the same `#` group → **Error R4**: duplicate nodes produce identical `(discipline, artifact, topic, pattern)` and the second upsert silently overwrites the first. The same `##` heading under a *different* `#` group is allowed (different `topic`, no collision). List all duplicate slugs found, with their parent `#` group.
+Compute the slug for each `##` heading (`lowercase, spaces→underscores, strip non-word chars`), scoped to its parent `#` group. If the same slug appears more than once under the same `#` group → **Error R4**: both map to the same node id key `(source_file, topic, section)` and the second upsert silently overwrites the first. The same `##` heading under a *different* `#` group is allowed (different `topic`, so distinct id). List all duplicate slugs found, with their parent `#` group.
 
 ### R5 — Each `##` section must be self-contained (Warning)
 

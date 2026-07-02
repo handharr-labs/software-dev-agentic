@@ -55,6 +55,9 @@ Call `aegis-kms-load` with:
 - `platform`: `{platform}`
 - `artifact`: `standard-architecture`
 - `topic`: `app`
+  <!-- No `layer` scope on purpose: app-layer wiring (DI, routes, modules) is cross-cutting and references every CLEAN layer. Scoping it would starve it. -->
+
+
 - `project`: `{project}`
 - `project_artifacts`: `["deviations"]`
 - `codebase_grep`: `*module*, *di*, *injection*, *locator*`

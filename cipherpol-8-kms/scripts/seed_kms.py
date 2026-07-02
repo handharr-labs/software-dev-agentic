@@ -156,7 +156,7 @@ def _register_source(target: str, repo_root: Path) -> dict | None:
 def _seed_source(adapter: KnowledgeSource, upsert: UpsertKnowledge, repo: ChromaKnowledgeRepository, force: bool = False) -> tuple[int, int]:
     ok = skipped = 0
     for node in adapter.read():
-        existing = repo.fetch_exact(node.platform, node.project, node.discipline, node.area, node.artifact, node.topic, node.subtopic, node.pattern)
+        existing = repo.fetch_exact(node.platform, node.project, node.discipline, node.artifact, node.topic, node.subtopic, node.pattern)
         if not force and existing and existing.content_hash and existing.content_hash == node.content_hash and existing.content:
             skipped += 1
             continue
@@ -172,9 +172,10 @@ def seed(
     add_target: str | None = None,
     repo_root: Path | None = None,
     force: bool = False,
+    collection: str = "knowledge",
 ) -> None:
     repo_root = repo_root or Path(__file__).resolve().parent.parent.parent
-    repo = ChromaKnowledgeRepository(db_path=os.path.abspath(db_path))
+    repo = ChromaKnowledgeRepository(db_path=os.path.abspath(db_path), collection=collection)
     upsert = UpsertKnowledge(repo)
 
     if add_target:
@@ -236,6 +237,7 @@ if __name__ == "__main__":
     parser.add_argument("--type", dest="src_type", help="Seed all sources of this type")
     parser.add_argument("--add", dest="add_target", help="Detect, register, and seed a new source")
     parser.add_argument("--force", action="store_true", help="Re-upsert all nodes even if content_hash matches")
+    parser.add_argument("--collection", default="knowledge", help="Target ChromaDB collection (default: knowledge)")
     args = parser.parse_args()
 
     seed(
@@ -244,4 +246,5 @@ if __name__ == "__main__":
         type_filter=args.src_type,
         add_target=args.add_target,
         force=args.force,
+        collection=args.collection,
     )

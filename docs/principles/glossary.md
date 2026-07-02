@@ -13,7 +13,9 @@ A single, alphabetical index of every term coined — or given a project-specifi
 |---|---|---|
 | agentic-state | [Agentic](agentic/agentic-glossary.md) | Runtime scratch directory in a downstream project at `.claude/agentic-state/` — holds run directories, session ID, and RFC outputs. Never part of this repo. |
 | Agentic Stack | [Agentic](agentic/agentic-glossary.md) | The three-tier execution model: Orchestrator Skill (Type O) → Agent(s) → Procedure Skill(s) (Type P). |
-| Area | [KMS](kms/kms-glossary.md) | Fixed-vocabulary path segment between `discipline` and `artifact` — `core` (default) or `design-system`. |
+| Area | [KMS](kms/kms-glossary.md) | *Removed 2026-07-03* — was a `core`/`design-system` path segment; design-system catalogs now use `discipline: design` + `tags: [design-system]`. |
+| Layer | [KMS](kms/kms-glossary.md) | CLEAN facet `domain`/`data`/`presentation`/`cross` for per-agent scoping; derived frontmatter → `#`-topic marker → `cross`. |
+| Owner | [KMS](kms/kms-glossary.md) | Lifecycle facet — `curated` (hand-owned) or `extracted` (scanner-regenerated). |
 | Artifact | [KMS](kms/kms-glossary.md) | Named body of knowledge within a discipline — filename stem (kebab-case, snake_cased for storage), e.g. `conventions`, `standard-architecture`. |
 | Build-directly | [Agentic](agentic/agentic-glossary.md) | Deliberate opt-out where a worker makes layer decisions inline with no plan/gate — brand-new features only. |
 | Cascade resolution | [KMS](kms/kms-glossary.md) | Fallback order `project → platform → universal` when fetching a knowledge node. |
@@ -28,8 +30,8 @@ A single, alphabetical index of every term coined — or given a project-specifi
 | kaku-worker | [Agentic](agentic/agentic-glossary.md#named-agents) | Generic executor that implements an approved `plan.md` end-to-end. |
 | KMS | [KMS](kms/kms-glossary.md) | Knowledge Management System — ChromaDB-backed knowledge store, queried via `cp8` MCP. |
 | kms_fetch / kms_list / kms_query / kms_upsert | [KMS](kms/kms-glossary.md) | The four MCP tools for exact retrieval, TOC browsing, semantic search, and manual seeding. |
-| Knowledge Path | [KMS](kms/kms-glossary.md) | The ordered tuple of Rosetta Stone terms (`scope` → `platform`/`project` → `discipline` → `area` → `artifact` → `topic` → `pattern`) that addresses a knowledge node. |
-| Knowledge Path Structure | [KMS](kms/kms-glossary.md) | The directory + heading convention every Knowledge Path is an instance of — `{scope}/[{platform}\|{project}]/{discipline}/{area}/{artifact}.md` plus `#`/`##` chunking. |
+| Knowledge Path | [KMS](kms/kms-glossary.md) | The ordered tuple of Rosetta Stone terms (`scope` → `platform`/`project` → `discipline` → `artifact` → `topic` → `section`) that addresses a knowledge node. |
+| Knowledge Path Structure | [KMS](kms/kms-glossary.md) | The directory + heading convention every Knowledge Path is an instance of — `{scope}/[{platform}\|{project}]/{discipline}/{artifact}.md` (3-level) plus `#`→topic / `##`→one node chunking. |
 | Knowledge | [Agentic](agentic/agentic-glossary.md) | Theory/conventions stored in KMS, retrieved via `kms_*` tools — distinct from Reference. |
 | lucci-planner | [Agentic](agentic/agentic-glossary.md#named-agents) | Generic codebase explorer that writes a `plan.md` for an arbitrary task — never modifies source. |
 | Marketplace | [Agentic](agentic/agentic-glossary.md) | The Claude Code plugin marketplace (`hndhr/software-dev-agentic`) that this repo's Plugins are published to. |
@@ -50,7 +52,7 @@ A single, alphabetical index of every term coined — or given a project-specifi
 | Rosetta Stone | [KMS](kms/kms-conventions.md) | The full term-to-path-to-metadata mapping table in `kms-conventions.md`. |
 | saturn-jaygarcia | [Agentic](agentic/agentic-glossary.md#named-agents) | Type O skill pairing `lucci-planner` + `kaku-worker` into a plan-then-build flow. |
 | Scope | [KMS](kms/kms-glossary.md) | Cascade tier of a knowledge node — `universal`, `platform`, or `project`. |
-| Scoping funnel | [KMS](kms/kms-glossary.md) | `kms_list` narrowing order: `platform`/`project` → `discipline` → `area` → `artifact` → `topic` → `pattern`. |
+| Scoping funnel | [KMS](kms/kms-glossary.md) | `kms_list` narrowing order: `platform`/`project` → `discipline` → `layer` → `artifact` → `topic` → `section`. |
 | Search Protocol | [Agentic](agentic/agentic-glossary.md) | Decision-gate table for which tool (KMS, Grep, Read, Glob) to use for a given lookup. |
 | Skill-First Entry | [Agentic](agentic/agentic-glossary.md) | Principle that trigger skills are the only supported entry path into a persona. |
 | Strategist | [Agentic](agentic/agentic-glossary.md) | Pure-reasoning agent — decides and returns Decision blocks, never spawns agents or writes files. |

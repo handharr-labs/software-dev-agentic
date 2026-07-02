@@ -1,10 +1,10 @@
 sources:
-- last_seeded: '2026-06-18'
+- last_seeded: '2026-07-03'
   name: knowledge-sources
   owns:
   - theory
   - definition
   - code_pattern
   - rationale
-  path: kms/knowledge-sources
+  path: cipherpol-8-kms/knowledge-sources
   type: directory

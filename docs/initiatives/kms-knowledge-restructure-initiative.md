@@ -1,5 +1,7 @@
 # KMS Knowledge Structure Restructure Initiative
 
+> **⚠ Partially superseded (2026-07-03)** by the [knowledge-management redesign](2026-07-03-kms-knowledge-management-redesign.md). Still valid: the scope/discipline/area directory tiers. **Reversed:** this doc made the *path authoritative and frontmatter documentation-only*, and chunked with `###`→`pattern` promotion. The redesign makes **frontmatter authoritative** (path fallback) and chunks at **`##` = one node** (`###` stays as body), adds `layer`/`owner` facets and opaque uuid ids. Where the two conflict, the redesign wins.
+
 **Status:** Complete — all implementation done, smoke test passed (653 nodes seeded)
 **Goal:** Restructure `kms/knowledge-sources/` to mirror the two knowledge axes explicitly, so agents can scope queries with precision and engineers can place knowledge without ambiguity.
 

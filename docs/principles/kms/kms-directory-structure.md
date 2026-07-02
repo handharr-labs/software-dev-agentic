@@ -32,38 +32,30 @@ kms/
 
 ## `kms/knowledge-sources/` — Knowledge Path Structure
 
-Three top-level buckets mirror the cascade tiers (`scope`); each then nests `{discipline}/{area}/{artifact}.md` (or `{platform}/{discipline}/{area}/{artifact}.md` under `platform/`):
+Three top-level buckets mirror the cascade tiers (`scope`); each then nests `{discipline}/{artifact}.md` (or `{platform}/{discipline}/{artifact}.md` under `platform/`) — **3-level, no `area` segment** (removed 2026-07-03):
 
 ```
-kms/knowledge-sources/
+knowledge-sources/
+├── _inbox/                 → loose contribution drafts — NOT seeded (see /kms-contribute)
 ├── universal/              → scope=universal — general principles, all platforms
-│   ├── agile/
-│   ├── architecture/
-│   ├── design/
-│   ├── devops/
 │   ├── engineering/
-│   ├── product/
 │   ├── qa/
-│   └── security/
-│       └── {area}/{artifact}.md
+│   └── … (one dir per discipline)
+│       └── {artifact}.md
 ├── platform/               → scope=platform — implemented for a specific platform
 │   ├── android/
 │   ├── flutter/
 │   └── ios/
-│       └── {discipline}/{area}/{artifact}.md
+│       └── {discipline}/{artifact}.md
 └── projects/               → scope=project — deviations for a specific project
     ├── flex-mobile/
-    ├── mobile-talenta/
-    ├── talenta-ios/
-    └── talenta-mobile-android/
-        └── {area}/{artifact}.md   (+ repo.yaml)
+    └── … (one dir per project)
+        └── {discipline}/{artifact}.md   (+ repo.yaml)
 ```
 
-`{area}` is a fixed-vocabulary path segment between `discipline` (or the project dir, for `projects/`) and `artifact`:
-- `core` — default for platform-/project-owned internal docs (conventions, standard-architecture, feature-inventory, api-endpoints, deviations, shared-components, third-party-integrations, etc.)
-- `design-system` — design-system catalog artifacts; here `artifact` is the specific design system name (e.g. `mekari-pixel`), allowing multiple design systems per platform (e.g. a future `legacy-kit`) to coexist without collision
+Design-system catalogs live under `discipline: design` with `tags: [design-system]` in frontmatter (e.g. `platform/flutter/design/mekari-pixel.md`) — `area` no longer exists as a path segment.
 
-Each `{artifact}.md` is then chunked by heading: `#` → `topic`, `##` → `subtopic`, `###` → `pattern` (depth-aware — `##` is also `pattern` when it has no `###` children). See [kms-conventions.md — Path Conventions](kms-conventions.md#kmsknowledge-sources--path-conventions) and [Chunk Strategy](kms-conventions.md#chunk-strategy--heading-hierarchy) for the full rules, and [kms-glossary.md](kms-glossary.md) for term definitions (`scope`, `discipline`, `area`, `artifact`, `topic`, `subtopic`, `pattern`, Knowledge Path, Knowledge Path Structure).
+Each `{artifact}.md` is then chunked by heading: `#` → `topic` (and engineering CLEAN-layer marker), each `##` → **one node** (`section`, stored as `subtopic == pattern`); `###`/`####` are that node's body. See [kms-conventions.md — Path Conventions](kms-conventions.md#kmsknowledge-sources--path-conventions) and the [redesign initiative](../../initiatives/2026-07-03-kms-knowledge-management-redesign.md) for the full rules, and [kms-glossary.md](kms-glossary.md) for term definitions.
 
 ---
 
