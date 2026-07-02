@@ -61,10 +61,15 @@ def _to_meta(node: KnowledgeNode) -> dict:
 
 
 def _build_where(filters: dict) -> Optional[dict]:
-    """Wrap multiple equality filters in $and as required by ChromaDB."""
+    """Wrap multiple filters in $and as required by ChromaDB.
+
+    A scalar value is treated as equality; a dict value is passed through as an
+    explicit operator expression (e.g. {"layer": {"$in": ["domain", "cross"]}}) so
+    callers can express agent-scope filters like layer ∈ {domain, cross}.
+    """
     if not filters:
         return None
-    clauses = [{k: {"$eq": v}} for k, v in filters.items()]
+    clauses = [{k: (v if isinstance(v, dict) else {"$eq": v})} for k, v in filters.items()]
     return clauses[0] if len(clauses) == 1 else {"$and": clauses}
 
 

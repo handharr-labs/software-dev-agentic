@@ -28,6 +28,20 @@ LAYER_VALUES = ["domain", "data", "presentation", "cross"]
 # "curated" are hand-owned and never auto-overwritten.
 OWNER_VALUES = ["curated", "extracted"]
 
+# layer back-fill (migration step 2a): when a node has no explicit frontmatter
+# `layer`, derive it from the enclosing `#` topic heading. Architecture docs already
+# use `# Domain` / `# Data` / `# Presentation` / `# UI` as CLEAN-layer markers.
+TOPIC_LAYER_MARKERS = {
+    "domain": "domain",
+    "data": "data",
+    "presentation": "presentation",
+    "ui": "presentation",
+}
+
+# Floor for anything not otherwise classified. "cross" is always unioned into an
+# agent's scope, so an unmarked node is never invisible to scoped retrieval.
+DEFAULT_LAYER = "cross"
+
 MANDATORY_FIELDS = ["scope", "discipline", "area", "artifact", "topic", "subtopic", "pattern", "schema_version"]
 
 OPTIONAL_FIELDS = ["platform", "project", "layer", "owner", "tags", "source_file", "updated_at", "content_hash"]

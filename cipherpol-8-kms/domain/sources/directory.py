@@ -12,11 +12,13 @@ import yaml
 from ..entities import KnowledgeNode
 from ..schema import (
     AREA_VALUES,
+    DEFAULT_LAYER,
     DISCIPLINE_VALUES,
     LAYER_VALUES,
     OWNER_VALUES,
     PLATFORM_VALUES,
     SEED_EXCLUDE_PATTERNS,
+    TOPIC_LAYER_MARKERS,
 )
 from .base import KnowledgeSource
 
@@ -266,12 +268,12 @@ class DirectorySource(KnowledgeSource):
         project = fm.get("project") or path_project
         discipline = fm.get("discipline") or path_discipline
         area = fm.get("area") or path_area
-        layer = fm.get("layer") or None
+        fm_layer = fm.get("layer") or None   # explicit frontmatter layer wins over topic inference
         owner = fm.get("owner") or "curated"
         tags = fm.get("tags") or []
         artifact = (fm.get("artifact") or path.stem).replace("-", "_")
 
-        errs = self._validate(platform, project, discipline, area, layer, owner)
+        errs = self._validate(platform, project, discipline, area, fm_layer, owner)
         if errs:
             for e in errs:
                 print(f"  skip (invalid facet): {self._relpath(path)} — {e}")
@@ -284,13 +286,15 @@ class DirectorySource(KnowledgeSource):
         content = _strip_frontmatter(raw)
 
         for topic_slug, section_slug, section_content in _chunk_by_sections(content):
+            # layer precedence: explicit frontmatter > topic-heading marker > cross floor
+            node_layer = fm_layer or TOPIC_LAYER_MARKERS.get(topic_slug) or DEFAULT_LAYER
             yield KnowledgeNode(
                 scope=scope,
                 platform=platform,
                 project=project,
                 discipline=discipline,
                 area=area,
-                layer=layer,
+                layer=node_layer,
                 owner=owner,
                 artifact=artifact,
                 topic=topic_slug or file_topic,
